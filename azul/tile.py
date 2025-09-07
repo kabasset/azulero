@@ -21,31 +21,15 @@ class Tile(object):
         self.data = np.stack([c.data for c in channels])
         self.rms = np.stack([c.rms for c in channels])
 
-    def scale(self, *factors):
+    def __imul__(self, factors):
         for i in range(len(factors)):
             self.data[i] *= factors[i]
+        return self
 
-    def asinh(self, a):
-        pass
-
-
-def visnir_to_lrgb(iyjh: Tile, bf=0, rf=0):
-
-    i, y, j, h = iyjh
-
-    r = h
-    g = (y + j) * 0.5 if bf == 0 else j
-    b = i if bf == 0 else (i + y * bf) / (1 + bf)
-    l = i if rf == 0 else (i + h * rf) / (1 + rf)
-
-    return np.stack([l, r, g, b])
-
-
-def parse_slice(text):
-    parse_index = lambda i: int(i) if i else None
-    return tuple(
-        slice(*[parse_index(i) for i in axis.split(":")]) for axis in text.split(",")
-    )
+    def __idiv__(self, factors):
+        for i in range(len(factors)):
+            self.data[i] *= factors[i]
+        return self
 
 
 def inpaint(tile: Tile, threshold: float):

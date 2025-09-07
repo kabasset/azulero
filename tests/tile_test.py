@@ -14,20 +14,10 @@ def test_scaling():
     channel = tile.Channel(data, rms)
     raw = tile.Tile(channel, channel)
 
-    raw.scale(2, 3)
+    raw *= (2, 3)
 
     assert np.all(raw.data[0] == 2)
     assert np.all(raw.data[1] == 3)
-
-
-def test_slicing():
-
-    text = ":,3:14"
-    slicing = tile.parse_slice(text)
-    assert slicing == (slice(None, None), slice(3, 14))
-    a = np.zeros((9, 16))
-    b = a[slicing]
-    assert b.shape == (9, 11)
 
 
 def test_inpainting():
