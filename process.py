@@ -13,14 +13,18 @@ def parse_args():
     parser.add_argument(
         "workdir",
         type=str,
-        required=True,
         help="Working directory, containing input images",
     )
     parser.add_argument(
         "output",
         type=str,
-        required=True,
         help="Output filename relative to the working directory",
+    )
+    parser.add_argument(
+        "--slice",
+        type=str,
+        default=None,
+        help="Input images region following Python slicing syntax",
     )
     parser.add_argument(
         "--scaling",
@@ -35,6 +39,9 @@ def parse_args():
     parser.add_argument(
         "--hl", type=float, default=0.3, help="H to L transmission factor"
     )
+    parser.add_argument(
+        "--saturation", type=float, default=1.0, help="Saturation level"
+    )
     return parser.parse_args()
 
 
@@ -42,7 +49,7 @@ def process(args):
     print(f"Read IYJH images in: {args.workdir}")
     tile = io.read_iyjh(Path(args.workdir), args.slice)
     transform = color.Transform(
-        iyjh_scaling=args.scaling,
+        iyjh_scaling=list(args.scaling),
         y_to_b=args.yb,
         h_to_l=args.hl,
         saturation=args.saturation,

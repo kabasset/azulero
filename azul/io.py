@@ -3,14 +3,14 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from astropy.io import fits
-import glob
 import numpy as np
 import tifffile
+from pathlib import Path
 
 from azul import tile
 
 
-def parse_slice(text):
+def parse_slice(text: str):
     """
     Parse a 2D slice, e.g. ":,3:14".
     """
@@ -20,7 +20,7 @@ def parse_slice(text):
     )
 
 
-def read_fits(path, slicing=None):
+def read_fits(path: Path, slicing=None):
     """
     Read a region in the primary array of a FITS file.
     """
@@ -28,7 +28,7 @@ def read_fits(path, slicing=None):
     return data if slicing is None else data[slicing]
 
 
-def write_tiff(rgb: np.ndarray, path):
+def write_tiff(rgb: np.ndarray, path: Path):
     """
     Write a normalized RGB image.
     """
@@ -36,24 +36,22 @@ def write_tiff(rgb: np.ndarray, path):
     tifffile.imwrite(path, data)
 
 
-def read_channel(dir, channel, slicing=None):
+def read_channel(workdir: Path, channel: tile.Channel, slicing=None):
     """
     Read the region of one channel.
     """
-    data = glob.glob(dir / f"EUC_*{channel}*.fits")
-    rms = glob.glob(dir / f"EUC_*{channel}*.fits")  # FIXME
-    assert len(data) == 1
-    assert len(rms) == 1
+    data = list(workdir.glob(f"EUC_*{channel}.fits"))  # FIXME
+    rms = list(workdir.glob(f"EUC_*{channel}_FLAG.fits"))  # FIXME
     return tile.Channel(read_fits(data[0], slicing), read_fits(rms[0], slicing))
 
 
-def read_iyjh(dir, slicing=None):
+def read_iyjh(workdir: Path, slicing=None):
     """
     Read the region of a VIS- and NIR-covered tile.
     """
     return tile.Tile(
-        read_channel(dir, "VIS", slicing),
-        read_channel(dir, "NIR-Y", slicing),
-        read_channel(dir, "NIR-J", slicing),
-        read_channel(dir, "NIR-H", slicing),
+        read_channel(workdir, "VIS", slicing),
+        read_channel(workdir, "NIR-Y", slicing),
+        read_channel(workdir, "NIR-J", slicing),
+        read_channel(workdir, "NIR-H", slicing),
     )

@@ -10,11 +10,11 @@ from azul import tile
 
 
 @dataclass
-def Transform(object):
-    iyjh_scaling = (1, 1, 1, 1)
-    y_to_b = 0
-    h_to_l = 0
-    saturation = 1
+class Transform(object):
+    iyjh_scaling: list
+    y_to_b: float
+    h_to_l: float
+    saturation: float
 
 
 def iyjh_to_rgb(tile: tile.Tile, transform: Transform):
