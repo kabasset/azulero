@@ -11,6 +11,9 @@ from azul import tile
 
 
 def parse_slice(text):
+    """
+    Parse a 2D slice, e.g. ":,3:14".
+    """
     parse_index = lambda i: int(i) if i else None
     return tuple(
         slice(*[parse_index(i) for i in axis.split(":")]) for axis in text.split(",")
@@ -18,16 +21,25 @@ def parse_slice(text):
 
 
 def read_fits(path, slicing=None):
+    """
+    Read a region in the primary array of a FITS file.
+    """
     data = fits.getdata(path)
     return data if slicing is None else data[slicing]
 
 
-def write_tiff(path, rgb: np.ndarray):
+def write_tiff(rgb: np.ndarray, path):
+    """
+    Write a normalized RGB image.
+    """
     data = (rgb.flipud() * 65535).astype(np.uint16)
     tifffile.imwrite(path, data)
 
 
 def read_channel(dir, channel, slicing=None):
+    """
+    Read the region of one channel.
+    """
     data = glob.glob(dir / f"EUC_*{channel}*.fits")
     rms = glob.glob(dir / f"EUC_*{channel}*.fits")  # FIXME
     assert len(data) == 1
@@ -35,7 +47,10 @@ def read_channel(dir, channel, slicing=None):
     return tile.Channel(read_fits(data[0], slicing), read_fits(rms[0], slicing))
 
 
-def read_visnir(dir, slicing=None):
+def read_iyjh(dir, slicing=None):
+    """
+    Read the region of a VIS- and NIR-covered tile.
+    """
     return tile.Tile(
         read_channel(dir, "VIS", slicing),
         read_channel(dir, "NIR-Y", slicing),
