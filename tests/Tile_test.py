@@ -7,6 +7,19 @@ import numpy as np
 from azul import tile
 
 
+def test_scaling():
+
+    data = np.ones((2, 3), dtype=int)
+    rms = np.ones((2, 3))
+    channel = tile.Channel(data, rms)
+    raw = tile.Tile(channel, channel)
+
+    raw.scale(2, 3)
+
+    assert np.all(raw.data[0] == 2)
+    assert np.all(raw.data[1] == 3)
+
+
 def test_slicing():
 
     text = ":,3:14"

@@ -22,7 +22,8 @@ class Tile(object):
         self.rms = np.stack([c.rms for c in channels])
 
     def scale(self, *factors):
-        self.data *= factors
+        for i in range(len(factors)):
+            self.data[i] *= factors[i]
 
 
 def parse_slice(text):
