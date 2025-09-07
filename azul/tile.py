@@ -25,6 +25,21 @@ class Tile(object):
         for i in range(len(factors)):
             self.data[i] *= factors[i]
 
+    def asinh(self, a):
+        pass
+
+
+def visnir_to_lrgb(iyjh: Tile, bf=0, rf=0):
+
+    i, y, j, h = iyjh
+
+    r = h
+    g = (y + j) * 0.5 if bf == 0 else j
+    b = i if bf == 0 else (i + y * bf) / (1 + bf)
+    l = i if rf == 0 else (i + h * rf) / (1 + rf)
+
+    return np.stack([l, r, g, b])
+
 
 def parse_slice(text):
     parse_index = lambda i: int(i) if i else None
