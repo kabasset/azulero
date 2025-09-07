@@ -46,8 +46,8 @@ def parse_args():
 
 
 def process(args):
-    print(f"Read IYJH images in: {args.workdir}")
-    tile = io.read_iyjh(Path(args.workdir), args.slice)
+    print(f"Read IYJH image from: {args.workdir}")
+    tile = io.read_iyjh(Path(args.workdir), io.parse_slice(args.slice))
     transform = color.Transform(
         iyjh_scaling=list(args.scaling),
         y_to_b=args.yb,

@@ -20,6 +20,7 @@ class Tile(object):
     def __init__(self, *channels):
         self.data = np.stack([c.data for c in channels])
         self.rms = np.stack([c.rms for c in channels])
+        assert self.data.shape == self.rms.shape
 
     @property
     def shape(self):

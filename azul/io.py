@@ -14,6 +14,8 @@ def parse_slice(text: str):
     """
     Parse a 2D slice, e.g. ":,3:14".
     """
+    if text is None:
+        return None
     parse_index = lambda i: int(i) if i else None
     return tuple(
         slice(*[parse_index(i) for i in axis.split(":")]) for axis in text.split(",")
@@ -40,11 +42,17 @@ def read_channel(workdir: Path, channel: tile.Channel, slicing=None):
     """
     Read the region of one channel.
     """
-    data = list(workdir.glob(f"EUC_*{channel}.fits"))  # FIXME
-    rms = list(workdir.glob(f"EUC_*{channel}_FLAG.fits"))  # FIXME
-    return tile.Channel(
-        read_fits(data[0], slicing).astype(np.float32), read_fits(rms[0], slicing)
-    )
+    data_files = list(workdir.glob(f"EUC_*{channel}_*.fits"))
+    assert len(data_files) == 1
+    data = read_fits(data_files[0], slicing)
+
+    rms_files = list(workdir.glob(f"EUC_*{channel}-FLAG*.fits"))
+    if len(rms_files) == 0:
+        rms = np.zeros_like(data, dtype=np.int8)
+    else:
+        assert len(rms_files) == 1
+        rms = read_fits(rms_files[0], slicing)
+    return tile.Channel(data, rms)
 
 
 def read_iyjh(workdir: Path, slicing=None):
