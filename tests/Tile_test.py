@@ -7,6 +7,16 @@ import numpy as np
 from azul import tile
 
 
+def test_slicing():
+
+    text = ":,3:14"
+    slicing = tile.parse_slice(text)
+    assert slicing == (slice(None, None), slice(3, 14))
+    a = np.zeros((9, 16))
+    b = a[slicing]
+    assert b.shape == (9, 11)
+
+
 def test_inpainting():
 
     data = np.ones((4, 9, 16))

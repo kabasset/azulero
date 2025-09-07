@@ -25,6 +25,13 @@ class Tile(object):
         self.data *= factors
 
 
+def parse_slice(text):
+    parse_index = lambda i: int(i) if i else None
+    return tuple(
+        slice(*[parse_index(i) for i in axis.split(":")]) for axis in text.split(",")
+    )
+
+
 def inpaint(tile: Tile, threshold: float):
     mask = np.where(tile.rms > threshold, 1, 0)
     return skinpaint.inpaint_biharmonic(tile.data, mask)
