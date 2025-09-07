@@ -28,12 +28,12 @@ class Tile(object):
 
     def __imul__(self, factors):
         for i in range(len(factors)):
-            self.data[i] *= factors[i]
+            self.data[i] = self.data[i] * factors[i]
         return self
 
     def __itruediv__(self, factors):
         for i in range(len(factors)):
-            self.data[i] /= factors[i]
+            self.data[i] = self.data[i] / factors[i]
         return self
 
 

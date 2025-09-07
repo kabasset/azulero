@@ -42,6 +42,10 @@ def parse_args():
     parser.add_argument(
         "--saturation", type=float, default=1.0, help="Saturation level"
     )
+    parser.add_argument("--contrast", type=float, default=30, help="Contrast parameter")
+    parser.add_argument(
+        "--span", nargs=2, type=float, default=[-2, 1000], help="Black and white points"
+    )
     return parser.parse_args()
 
 
@@ -53,6 +57,8 @@ def process(args):
         y_to_b=args.yb,
         h_to_l=args.hl,
         saturation=args.saturation,
+        contrast=args.contrast,
+        span=args.span,
     )
     print(f"Transform IYJH to RGB image")
     res = color.iyjh_to_rgb(tile, transform)
