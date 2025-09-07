@@ -21,14 +21,18 @@ class Tile(object):
         self.data = np.stack([c.data for c in channels])
         self.rms = np.stack([c.rms for c in channels])
 
+    @property
+    def shape(self):
+        return self.data.shape
+
     def __imul__(self, factors):
         for i in range(len(factors)):
             self.data[i] *= factors[i]
         return self
 
-    def __idiv__(self, factors):
+    def __itruediv__(self, factors):
         for i in range(len(factors)):
-            self.data[i] *= factors[i]
+            self.data[i] /= factors[i]
         return self
 
 

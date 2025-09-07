@@ -55,9 +55,9 @@ def process(args):
         saturation=args.saturation,
     )
     print(f"Transform IYJH to RGB image")
-    color.iyjh_to_rgb(tile, transform)
+    res = color.iyjh_to_rgb(tile, transform)
     print(f"Write output to: {args.output}")
-    io.write_tiff(tile.data, Path(args.workdir) / args.output)
+    io.write_tiff(res, Path(args.workdir) / args.output)
     print(f"Done.")
 
 

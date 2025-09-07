@@ -32,7 +32,7 @@ def write_tiff(rgb: np.ndarray, path: Path):
     """
     Write a normalized RGB image.
     """
-    data = (rgb.flipud() * 65535).astype(np.uint16)
+    data = np.flipud(rgb * 65535).astype(np.uint16)
     tifffile.imwrite(path, data)
 
 
@@ -42,7 +42,9 @@ def read_channel(workdir: Path, channel: tile.Channel, slicing=None):
     """
     data = list(workdir.glob(f"EUC_*{channel}.fits"))  # FIXME
     rms = list(workdir.glob(f"EUC_*{channel}_FLAG.fits"))  # FIXME
-    return tile.Channel(read_fits(data[0], slicing), read_fits(rms[0], slicing))
+    return tile.Channel(
+        read_fits(data[0], slicing).astype(np.float32), read_fits(rms[0], slicing)
+    )
 
 
 def read_iyjh(workdir: Path, slicing=None):
