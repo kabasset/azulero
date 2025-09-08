@@ -2,9 +2,7 @@
 # SPDX-PackageSourceInfo: https://github.com/kabasset/azul
 # SPDX-License-Identifier: Apache-2.0
 
-import cv2
 import enum
-import numpy as np
 from skimage.restoration import inpaint as skinpaint
 
 

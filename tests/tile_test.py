@@ -44,16 +44,11 @@ def test_scaling():
 
 def test_inpainting():
 
-    data = np.ones((4, 9, 16))
-    mask = np.zeros((4, 9, 16))
+    data = np.ones((9, 16, 3))
+    mask = np.zeros((9, 16))
     data[1, 1, 1] = 0
-    mask[1, 1, 1] = 1
+    mask[1, 1] = 1
 
-    channel = np.ma.array(data, mask=mask)
-
-    raw = np.ma.stack((channel, channel, channel, channel))
-    for i in range(len(raw)):
-        assert raw[i, 1, 1, 1] is np.ma.masked
-    res = tile.inpaint(raw)
+    res = tile.inpaint(data, mask)
 
     assert np.all(res == 1)

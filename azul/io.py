@@ -7,8 +7,6 @@ import numpy as np
 import tifffile
 from pathlib import Path
 
-from azul import tile
-
 
 def parse_slice(text: str):
     """
@@ -44,21 +42,7 @@ def read_channel(workdir: Path, channel: str, slicing=None):
     """
     data_files = list(workdir.glob(f"EUC_*{channel}_*.fits"))
     assert len(data_files) == 1
-    data = read_fits(data_files[0], slicing)
-    return data.view(np.ma.MaskedArray)  # FIXME
-
-    # flag_files = list(workdir.glob(f"EUC_*{channel}-FLAG*.fits"))
-
-    # if len(flag_files) == 0:
-    #     print(f"WARNING: cannot find RMS map for channel {channel}")
-    #     return data.view(np.ma.MaskedArray)
-
-    # assert len(flag_files) == 1
-    # mask = np.vectorize(
-    #     tile.VisFlag.invalid if channel == "VIS" else tile.NirFlag.invalid
-    # )
-    # flagmap = read_fits(flag_files[0], slicing)
-    # return np.ma.array(data, mask=mask(flagmap))
+    return read_fits(data_files[0], slicing)
 
 
 def read_iyjh(workdir: Path, slicing=None):
