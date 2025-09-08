@@ -19,20 +19,20 @@ class Transform(object):
     span: list  # black, white
 
 
-def iyjh_to_rgb(tile: tile.Tile, transform: Transform):
+def iyjh_to_rgb(data, transform: Transform):
 
-    tile /= transform.iyjh_scaling
+    tile.channelwise_div(data, transform.iyjh_scaling)
 
-    i, y, j, h = tile.data
+    i, y, j, h = data
     y_to_b = transform.y_to_b
     h_to_l = transform.h_to_l
 
-    rgb = np.zeros((tile.shape[1], tile.shape[2], 3), dtype=np.float32)
+    rgb = np.zeros((data.shape[1], data.shape[2], 3), dtype=np.float32)
     rgb[:, :, 0] = h
     rgb[:, :, 1] = (y + j) * 0.5 if y_to_b == 0 else j
     rgb[:, :, 2] = i if y_to_b == 0 else (i + y * y_to_b) / (1 + y_to_b)
     l = i if h_to_l == 0 else (i + h * h_to_l) / (1 + h_to_l)
-    del tile
+    del data
 
     rgb = normalized_asinh(rgb, transform)
     l = normalized_asinh(l, transform)

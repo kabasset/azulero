@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import argparse
+import numpy as np
 from pathlib import Path
 
 from azul import color, io, tile
@@ -19,12 +20,6 @@ def parse_args():
         "output",
         type=str,
         help="Output filename relative to the working directory",
-    )
-    parser.add_argument(
-        "--rms",
-        type=float,
-        default=None,
-        help="RMS threshold for inpainting (None to disable)",
     )
     parser.add_argument(
         "--slice",
@@ -56,8 +51,6 @@ def parse_args():
 
 
 def process(args):
-    print(f"Read IYJH image from: {args.workdir}")
-    iyjh = io.read_iyjh(Path(args.workdir), io.parse_slice(args.slice))
     transform = color.Transform(
         iyjh_scaling=list(args.scaling),
         y_to_b=args.yb,
@@ -66,14 +59,26 @@ def process(args):
         contrast=args.contrast,
         span=args.span,
     )
-    if args.rms is not None:
-        print(f"Inpainting pixels where RMS > {args.rms}")
-        iyjh.data = tile.inpaint(iyjh, args.rms)  # FIXME no need for tile anymore
+
+    print(f"Read IYJH image from: {args.workdir}")
+    iyjh = io.read_iyjh(Path(args.workdir), io.parse_slice(args.slice))
+
+    print(f"Detect invalid pixels")
+    mask = tile.bad_pixels(*iyjh)
+    io.write_tiff(mask, Path(args.workdir) / "mask.tiff")
+    print(np.sum(mask))
+
     print(f"Transform IYJH to RGB image")
     res = color.iyjh_to_rgb(iyjh, transform)
     del iyjh
+
+    print(f"Inpaint invalid pixels")
+    io.write_tiff(res, Path(args.workdir) / "res.tiff")
+    res = tile.inpaint(res, mask)
+
     print(f"Write output to: {args.output}")
     io.write_tiff(res, Path(args.workdir) / args.output)
+
     print(f"Done.")
 
 

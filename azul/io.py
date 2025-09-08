@@ -38,31 +38,38 @@ def write_tiff(rgb: np.ndarray, path: Path):
     tifffile.imwrite(path, data)
 
 
-def read_channel(workdir: Path, channel: tile.Channel, slicing=None):
+def read_channel(workdir: Path, channel: str, slicing=None):
     """
     Read the region of one channel.
     """
     data_files = list(workdir.glob(f"EUC_*{channel}_*.fits"))
     assert len(data_files) == 1
     data = read_fits(data_files[0], slicing)
+    return data.view(np.ma.MaskedArray)  # FIXME
 
-    rms_files = list(workdir.glob(f"EUC_*{channel}-FLAG*.fits"))
-    if len(rms_files) == 0:
-        print(f"WARNING: cannot find RMS map for channel {channel}")
-        rms = np.zeros_like(data, dtype=np.int8)
-    else:
-        assert len(rms_files) == 1
-        rms = read_fits(rms_files[0], slicing)
-    return tile.Channel(data, rms)
+    # flag_files = list(workdir.glob(f"EUC_*{channel}-FLAG*.fits"))
+
+    # if len(flag_files) == 0:
+    #     print(f"WARNING: cannot find RMS map for channel {channel}")
+    #     return data.view(np.ma.MaskedArray)
+
+    # assert len(flag_files) == 1
+    # mask = np.vectorize(
+    #     tile.VisFlag.invalid if channel == "VIS" else tile.NirFlag.invalid
+    # )
+    # flagmap = read_fits(flag_files[0], slicing)
+    # return np.ma.array(data, mask=mask(flagmap))
 
 
 def read_iyjh(workdir: Path, slicing=None):
     """
     Read the region of a VIS- and NIR-covered tile.
     """
-    return tile.Tile(
-        read_channel(workdir, "VIS", slicing),
-        read_channel(workdir, "NIR-Y", slicing),
-        read_channel(workdir, "NIR-J", slicing),
-        read_channel(workdir, "NIR-H", slicing),
+    return np.ma.stack(
+        (
+            read_channel(workdir, "VIS", slicing),
+            read_channel(workdir, "NIR-Y", slicing),
+            read_channel(workdir, "NIR-J", slicing),
+            read_channel(workdir, "NIR-H", slicing),
+        )
     )
