@@ -40,11 +40,11 @@ def parse_args():
         "--hl", type=float, default=0.3, help="H to L transmission factor"
     )
     parser.add_argument(
-        "--saturation", type=float, default=1.0, help="Saturation level"
+        "--saturation", type=float, default=1.6, help="Saturation level"
     )
     parser.add_argument("--contrast", type=float, default=30, help="Contrast parameter")
     parser.add_argument(
-        "--span", nargs=2, type=float, default=[-2, 1000], help="Black and white points"
+        "--span", nargs=2, type=float, default=[-2, 100], help="Black and white points"
     )
     return parser.parse_args()
 
@@ -62,6 +62,7 @@ def process(args):
     )
     print(f"Transform IYJH to RGB image")
     res = color.iyjh_to_rgb(tile, transform)
+    del tile
     print(f"Write output to: {args.output}")
     io.write_tiff(res, Path(args.workdir) / args.output)
     print(f"Done.")

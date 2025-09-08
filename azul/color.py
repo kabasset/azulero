@@ -32,15 +32,19 @@ def iyjh_to_rgb(tile: tile.Tile, transform: Transform):
     rgb[:, :, 1] = (y + j) * 0.5 if y_to_b == 0 else j
     rgb[:, :, 2] = i if y_to_b == 0 else (i + y * y_to_b) / (1 + y_to_b)
     l = i if h_to_l == 0 else (i + h * h_to_l) / (1 + h_to_l)
+    del tile
 
-    normalized_asinh(rgb, transform)
-    normalized_asinh(l, transform)
+    rgb = normalized_asinh(rgb, transform)
+    l = normalized_asinh(l, transform)
 
     hsv = cv2.cvtColor(rgb, cv2.COLOR_RGB2HSV)
     hsv[:, :, 1] = np.clip(hsv[:, :, 1] * transform.saturation, 0, 1)
     rgb = cv2.cvtColor(hsv, cv2.COLOR_HSV2RGB)
+    del hsv
     lab = cv2.cvtColor(rgb, cv2.COLOR_RGB2Lab)
+    del rgb
     lab[:, :, 0] = l * 100
+    del l
 
     return cv2.cvtColor(lab, cv2.COLOR_Lab2RGB)
 
@@ -50,4 +54,4 @@ def normalized_asinh(data: np.ndarray, transform: Transform):
     data = np.arcsinh(data / a)
     black = np.arcsinh(transform.span[0] / a)
     white = np.arcsinh(transform.span[1] / a)
-    data = np.clip((data - black) / (white - black), 0, 1)
+    return np.clip((data - black) / (white - black), 0, 1, dtype=np.float32)

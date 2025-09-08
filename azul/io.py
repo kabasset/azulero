@@ -48,6 +48,7 @@ def read_channel(workdir: Path, channel: tile.Channel, slicing=None):
 
     rms_files = list(workdir.glob(f"EUC_*{channel}-FLAG*.fits"))
     if len(rms_files) == 0:
+        print(f"WARNING: cannot find RMS map for channel {channel}")
         rms = np.zeros_like(data, dtype=np.int8)
     else:
         assert len(rms_files) == 1
