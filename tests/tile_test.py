@@ -33,28 +33,27 @@ def test_flagging():
 
 def test_scaling():
 
-    data = np.ones((2, 3), dtype=int)
-    rms = np.ones((2, 3))
-    channel = tile.Channel(data, rms)
-    raw = tile.Tile(channel, channel)
+    data = np.ones((2, 4, 3), dtype=int) * 12
+    raw = data.view(np.ma.MaskedArray)
 
-    raw *= (2, 3)
+    raw = tile.channelwise_div(raw, (3, 2))
 
-    assert np.all(raw.data[0] == 2)
-    assert np.all(raw.data[1] == 3)
+    assert np.all(raw[0] == 4)
+    assert np.all(raw[1] == 6)
 
 
 def test_inpainting():
 
     data = np.ones((4, 9, 16))
-    rms = np.zeros((4, 9, 16))
-    threshold = 10
+    mask = np.zeros((4, 9, 16))
     data[1, 1, 1] = 0
-    rms[1, 1, 1] = threshold + 1
+    mask[1, 1, 1] = 1
 
-    channel = tile.Channel(data, rms)
+    channel = np.ma.array(data, mask=mask)
 
-    raw = tile.Tile(channel, channel, channel, channel)
-    res = tile.inpaint(raw, threshold)
+    raw = np.ma.stack((channel, channel, channel, channel))
+    for i in range(len(raw)):
+        assert raw[i, 1, 1, 1] is np.ma.masked
+    res = tile.inpaint(raw)
 
     assert np.all(res == 1)

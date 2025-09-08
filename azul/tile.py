@@ -38,6 +38,12 @@ class Tile(object):
         return self
 
 
+def channelwise_div(data, factors):
+    for i in range(len(factors)):
+        data[i] = data[i] / factors[i]
+    return data
+
+
 class Flag(enum.Enum):
 
     @classmethod
@@ -70,6 +76,5 @@ class NirFlag(Flag):
     NL_SATURATED = 12
 
 
-def inpaint(tile: Tile, threshold: float):
-    mask = np.where(tile.rms > threshold, 1, 0)
-    return skinpaint.inpaint_biharmonic(tile.data, mask)
+def inpaint(ma: np.ma.MaskedArray):
+    return skinpaint.inpaint_biharmonic(ma.data, ma.mask)
