@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from dataclasses import dataclass
+import enum
 
 import numpy as np
 from skimage.restoration import inpaint as skinpaint
@@ -35,6 +36,38 @@ class Tile(object):
         for i in range(len(factors)):
             self.data[i] = self.data[i] / factors[i]
         return self
+
+
+class Flag(enum.Enum):
+
+    @classmethod
+    def valid(cls, value):
+        for flag in cls:
+            if value & 2**flag.value:
+                return False
+        return True
+
+    @classmethod
+    def invalid(cls, value):
+        return not cls.valid(value)
+
+
+class VisFlag(Flag):
+    HOT = 0
+    COLD = 1
+    SATURATED = 2
+    BAD = 8
+
+
+class NirFlag(Flag):
+    INVALID = 1
+    DISCONNECTED = 2
+    ZERO_QE = 3
+    SUPER_QE = 6
+    HOT = 7
+    SNOWBALL = 9
+    SATURATED = 10
+    NL_SATURATED = 12
 
 
 def inpaint(tile: Tile, threshold: float):

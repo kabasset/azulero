@@ -7,6 +7,30 @@ import numpy as np
 from azul import tile
 
 
+def test_flagging():
+
+    assert tile.VisFlag.valid(0)
+    assert tile.VisFlag.invalid(1)
+    assert tile.VisFlag.invalid(2)
+    assert tile.VisFlag.invalid(3)
+    assert tile.VisFlag.invalid(4)
+    assert tile.VisFlag.valid(8)
+
+    assert tile.NirFlag.valid(0)
+    assert tile.NirFlag.valid(1)
+    assert tile.NirFlag.invalid(2)
+    assert tile.NirFlag.invalid(3)
+    assert tile.NirFlag.invalid(4)
+    assert tile.NirFlag.invalid(8)
+    assert tile.NirFlag.valid(16)
+    assert tile.NirFlag.invalid(2**6)
+    assert tile.NirFlag.invalid(2**7)
+    assert tile.NirFlag.invalid(2**9)
+    assert tile.NirFlag.invalid(2**10)
+    assert tile.NirFlag.valid(2**11)
+    assert tile.NirFlag.invalid(2**12)
+
+
 def test_scaling():
 
     data = np.ones((2, 3), dtype=int)
