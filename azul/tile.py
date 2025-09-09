@@ -45,9 +45,9 @@ class NirFlag(Flag):
     NL_SATURATED = 12
 
 
-def saturated_pixels(i, y, j, h):
+def dead_pixels(i, y, j, h):
 
-    return (i == 0) | (y == 0) | (j == 0) | (h == 0)
+    return (i == 0, (y == 0) | (j == 0) | (h == 0))
 
 
 def hot_pixels(i, y, j, h):

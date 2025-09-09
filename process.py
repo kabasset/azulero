@@ -64,10 +64,11 @@ def process(args):
     iyjh = io.read_iyjh(Path(args.workdir), io.parse_slice(args.slice))
 
     print(f"Detect invalid pixels")
-    saturated_pixels = tile.saturated_pixels(*iyjh)
-    hot_pixels = tile.hot_pixels(*iyjh)
-    print(f"- Saturated: {np.sum(saturated_pixels)}")
-    print(f"- Hot: {np.sum(hot_pixels)}")
+    dead_vis, dead_nir = tile.dead_pixels(*iyjh)
+    hot = tile.hot_pixels(*iyjh)
+    print(f"- Dead VIS: {np.sum(dead_vis)}")
+    print(f"- Dead NIR: {np.sum(dead_nir)}")
+    print(f"- Hot: {np.sum(hot)}")
 
     print(f"Transform IYJH to RGB image")
     res = color.iyjh_to_rgb(iyjh, transform)
@@ -75,8 +76,9 @@ def process(args):
 
     print(f"Inpaint invalid pixels")
     io.write_tiff(res, Path(args.workdir) / "res.tiff")
-    res[saturated_pixels] = np.max(res)
-    res = tile.inpaint(res, hot_pixels)
+    res[dead_vis & dead_nir] = np.max(res[:, :, 0])
+    res = tile.inpaint(res, dead_nir)
+    res = tile.inpaint(res, hot)
 
     print(f"Write output to: {args.output}")
     io.write_tiff(res, Path(args.workdir) / args.output)
