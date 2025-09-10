@@ -1,4 +1,4 @@
-![Logo](azul.svg)
+![Logo](azul.png)
 
 # Bring colors to Euclid tiles!
 
