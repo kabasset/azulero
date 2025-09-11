@@ -7,7 +7,7 @@ import time
 import numpy as np
 from pathlib import Path
 
-from azul import color, io, tile
+from azul import color, io, mask
 
 
 def parse_args():
@@ -84,8 +84,8 @@ def process(args):
     timer.tic_print()
 
     print(f"Detect invalid pixels")
-    dead_vis, dead_nir = tile.dead_pixels(*iyjh)
-    hot = tile.hot_pixels(*iyjh)
+    dead_vis, dead_nir = mask.dead_pixels(*iyjh)
+    hot = mask.hot_pixels(*iyjh)
     print(f"- Dead VIS: {np.sum(dead_vis)}")
     print(f"- Dead NIR: {np.sum(dead_nir)}")
     print(f"- Hot: {np.sum(hot)}")
@@ -98,9 +98,9 @@ def process(args):
 
     print(f"Inpaint invalid pixels")
     io.write_tiff(res, Path(args.workdir) / "res.tiff")
-    res = tile.inpaint(res, dead_nir)
+    res = mask.inpaint(res, dead_nir)
     res[dead_vis] = np.max(res[:, :, 0])
-    res = tile.inpaint(res, hot)
+    res = mask.inpaint(res, hot)
     timer.tic_print()
 
     print(f"Write output to: {args.output}")
