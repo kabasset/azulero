@@ -15,7 +15,7 @@ class Transform(object):
     y_to_b: float
     h_to_l: float
     saturation: float
-    contrast: float
+    stretch: float
     span: list  # black, white
 
 
@@ -51,7 +51,7 @@ def channelwise_div(data, factors):
 
 
 def normalized_asinh(data: np.ndarray, transform: Transform):
-    a = transform.span[1] / transform.contrast
+    a = 1.0 / transform.stretch
     data = np.arcsinh(data / a)
     black = np.arcsinh(transform.span[0] / a)
     white = np.arcsinh(transform.span[1] / a)

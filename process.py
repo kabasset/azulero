@@ -36,7 +36,7 @@ def parse_args():
         help="Inverse scaling factors for IYJH bands",
     )
     parser.add_argument(
-        "--yb", type=float, default=0.6, help="Y to B transmission factor"
+        "--yb", type=float, default=0.7, help="Y to B transmission factor"
     )
     parser.add_argument(
         "--hl", type=float, default=0.3, help="H to L transmission factor"
@@ -44,10 +44,11 @@ def parse_args():
     parser.add_argument(
         "--saturation", type=float, default=1.6, help="Saturation level"
     )
-    parser.add_argument("--contrast", type=float, default=30, help="Contrast parameter")
     parser.add_argument(
-        "--span", nargs=2, type=float, default=[-2, 100], help="Black and white points"
+        "--stretch", type=float, default=0.7, help="Stretching parameter"
     )
+    parser.add_argument("--black", type=float, default=0.0, help="Black point")
+    parser.add_argument("--white", type=float, default=None, help="White point")
     return parser.parse_args()
 
 
@@ -73,8 +74,8 @@ def process(args):
         y_to_b=args.yb,
         h_to_l=args.hl,
         saturation=args.saturation,
-        contrast=args.contrast,
-        span=args.span,
+        stretch=args.stretch,
+        span=(args.black, args.white),
     )
 
     timer = Timer()
