@@ -37,16 +37,11 @@ def iyjh_to_rgb(data, transform: Transform):
     rgb = normalized_asinh(rgb, transform)
     l = normalized_asinh(l, transform)
 
-    hsv = cv2.cvtColor(rgb, cv2.COLOR_RGB2HSV)
-    hsv[:, :, 1] = np.clip(hsv[:, :, 1] * transform.saturation, 0, 1)
-    rgb = cv2.cvtColor(hsv, cv2.COLOR_HSV2RGB)
-    del hsv
-    lab = cv2.cvtColor(rgb, cv2.COLOR_RGB2Lab)
-    del rgb
-    lab[:, :, 0] = l * 100
-    del l
+    hls = cv2.cvtColor(rgb, cv2.COLOR_RGB2HLS)
+    hls[:, :, 2] = np.clip(hls[:, :, 2] * transform.saturation, 0, 1)
+    hls[:, :, 1] = l
 
-    return cv2.cvtColor(lab, cv2.COLOR_Lab2RGB)
+    return cv2.cvtColor(hls, cv2.COLOR_HLS2RGB)
 
 
 def channelwise_div(data, factors):
