@@ -6,12 +6,6 @@ import enum
 from skimage.restoration import inpaint as skinpaint
 
 
-def channelwise_div(data, factors):
-    for i in range(len(factors)):
-        data[i] = data[i] / factors[i]
-    return data
-
-
 class Flag(enum.Enum):
 
     @classmethod

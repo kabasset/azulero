@@ -6,7 +6,7 @@ from dataclasses import dataclass
 import numpy as np
 import cv2
 
-from azul import tile
+from azul import mask
 
 
 @dataclass
@@ -21,7 +21,7 @@ class Transform(object):
 
 def iyjh_to_rgb(data, transform: Transform):
 
-    tile.channelwise_div(data, transform.iyjh_scaling)
+    channelwise_div(data, transform.iyjh_scaling)
 
     i, y, j, h = data
     y_to_b = transform.y_to_b
@@ -47,6 +47,12 @@ def iyjh_to_rgb(data, transform: Transform):
     del l
 
     return cv2.cvtColor(lab, cv2.COLOR_Lab2RGB)
+
+
+def channelwise_div(data, factors):
+    for i in range(len(factors)):
+        data[i] = data[i] / factors[i]
+    return data
 
 
 def normalized_asinh(data: np.ndarray, transform: Transform):
