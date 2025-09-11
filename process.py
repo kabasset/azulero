@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import argparse
+import time
 import numpy as np
 from pathlib import Path
 
@@ -50,6 +51,22 @@ def parse_args():
     return parser.parse_args()
 
 
+class Timer(object):
+
+    def __init__(self):
+        self.start = time.perf_counter()
+        self.prev = self.start
+
+    def tic(self):
+        prev = self.prev
+        self.prev = time.perf_counter()
+        return self.prev - prev, self.prev - self.start
+
+    def tic_print(self):
+        split, total = self.tic()
+        print(f"- Elapsed: {split}s [Total: {total}s]")
+
+
 def process(args):
     transform = color.Transform(
         iyjh_scaling=list(args.scaling),
@@ -60,8 +77,11 @@ def process(args):
         span=args.span,
     )
 
+    timer = Timer()
+
     print(f"Read IYJH image from: {args.workdir}")
     iyjh = io.read_iyjh(Path(args.workdir), io.parse_slice(args.slice))
+    timer.tic_print()
 
     print(f"Detect invalid pixels")
     dead_vis, dead_nir = tile.dead_pixels(*iyjh)
@@ -69,21 +89,23 @@ def process(args):
     print(f"- Dead VIS: {np.sum(dead_vis)}")
     print(f"- Dead NIR: {np.sum(dead_nir)}")
     print(f"- Hot: {np.sum(hot)}")
+    timer.tic_print()
 
     print(f"Transform IYJH to RGB image")
     res = color.iyjh_to_rgb(iyjh, transform)
     del iyjh
+    timer.tic_print()
 
     print(f"Inpaint invalid pixels")
     io.write_tiff(res, Path(args.workdir) / "res.tiff")
-    res[dead_vis & dead_nir] = np.max(res[:, :, 0])
     res = tile.inpaint(res, dead_nir)
+    res[dead_vis] = np.max(res[:, :, 0])
     res = tile.inpaint(res, hot)
+    timer.tic_print()
 
     print(f"Write output to: {args.output}")
     io.write_tiff(res, Path(args.workdir) / args.output)
-
-    print(f"Done.")
+    timer.tic_print()
 
 
 if __name__ == "__main__":
