@@ -98,7 +98,6 @@ def process(args):
     timer.tic_print()
 
     print(f"Inpaint invalid pixels")
-    io.write_tiff(res, Path(args.workdir) / "res.tiff")
     res = mask.inpaint(res, dead_nir)
     res[dead_vis] = np.max(res[:, :, 0])
     res = mask.inpaint(res, hot)
