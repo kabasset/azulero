@@ -23,6 +23,18 @@ def parse_args():
         help="Output filename relative to the working directory",
     )
     parser.add_argument(
+        "--black",
+        type=float,
+        default=0.0,
+        help="Black point (0 for background-subtracted inputs)",
+    )
+    parser.add_argument(
+        "--white",
+        type=float,
+        default=None,
+        help="White point (defaults to the max intensity)",
+    )
+    parser.add_argument(
         "--slice",
         type=str,
         default=None,
@@ -42,13 +54,14 @@ def parse_args():
         "--hl", type=float, default=0.3, help="H to L transmission factor"
     )
     parser.add_argument(
-        "--saturation", type=float, default=1.6, help="Saturation level"
+        "--stretch",
+        type=float,
+        default=0.7,
+        help="Stretching parameter (inverse arcsinh scaling factor)",
     )
     parser.add_argument(
-        "--stretch", type=float, default=0.7, help="Stretching parameter"
+        "--saturation", type=float, default=1.6, help="Saturation factor"
     )
-    parser.add_argument("--black", type=float, default=0.0, help="Black point")
-    parser.add_argument("--white", type=float, default=None, help="White point")
     return parser.parse_args()
 
 
