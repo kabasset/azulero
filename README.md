@@ -15,7 +15,7 @@ It detects and inpaints bad pixels (hot and cold pixels, saturated stars...), an
 export TILE=101835789
 export DSR=DR1_R2
 
-curl -s "https://eas-dps-rest-ops.esac.esa.int/REST?project=EUCLID&class_name=DpdMerBksMosaic&Data.TileIndex=$TILE&Header.DataSetRelease=DR1_R1&fields=Data.Filter.Name:Header.ProductId.LimitedString" | grep -e "VIS" -e "NIR" | cut -d, -f2 > ~/Downloads/$TILE.txt
+curl -n -s "https://eas-dps-rest-ops.esac.esa.int/REST?project=EUCLID&class_name=DpdMerBksMosaic&Data.TileIndex=$TILE&Header.DataSetRelease=DR1_R1&fields=Data.Filter.Name:Header.ProductId.LimitedString" | grep -e "VIS" -e "NIR" | cut -d, -f2 > ~/Downloads/$TILE.txt
 
 mkdir ~/Downloads/$TILE
 
