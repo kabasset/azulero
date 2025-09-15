@@ -6,8 +6,6 @@ from dataclasses import dataclass
 import numpy as np
 import cv2
 
-from azul import mask
-
 
 @dataclass
 class Transform(object):

@@ -3,10 +3,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import argparse
-import gzip
 from pathlib import Path
 import requests
-import shutil
 import time
 
 
@@ -21,13 +19,13 @@ def parse_args():
     )
     parser.add_argument("--dsr", type=str, default="DR1_R1", help="Data set release")
     parser.add_argument(
-        "--output-dir", type=str, default="~/Downloads", help="Output parent directory"
+        "--workspace", type=str, default="~/Downloads", help="Workspace"
     )
 
     return parser.parse_args()
 
 
-class Timer(object): # FIXME to lib
+class Timer(object):  # FIXME to lib
 
     def __init__(self):
         self.start = time.perf_counter()
@@ -53,9 +51,11 @@ def query_datafiles(tile, dsr):
         "Header.DataSetRelease": dsr,
         "fields": "Data.DataStorage.DataContainer.FileName:Data.Filter.Name",
     }
-    lines = requests.get(
-        "https://eas-dps-rest-ops.esac.esa.int/REST", params=query
-    ).text.replace('"', "").split()
+    lines = (
+        requests.get("https://eas-dps-rest-ops.esac.esa.int/REST", params=query)
+        .text.replace('"', "")
+        .split()
+    )
     datafiles = {}
     for l in lines:
         if "VIS" in l or "NIR" in l:
@@ -66,33 +66,20 @@ def query_datafiles(tile, dsr):
     return datafiles
 
 
-def download_datafiles(datafiles, output_dir):
-    print(f"Download datafiles to: {output_dir}")
+def download_datafiles(datafiles, workdir):
+    print(f"Download and extract datafiles to: {workdir}")
 
-    for n in datafiles: # TODO parallelize?
-        url = f"https://euclidsoc.esac.esa.int/{n}"
-        print(f"- URL: {url}")
-        path = (output_dir / n).with_suffix("")
-        r = requests.get(url)
+    for n in datafiles:  # TODO parallelize?
+        path = (workdir / n).with_suffix("")
+        r = requests.get(f"https://euclidsoc.esac.esa.int/{n}")
         with open(path, "wb") as f:
             f.write(r.content)
-        print(f"- Downloaded: {path}")
+        print(f"- {path}")
 
 
-def decompress(path):
-    print(path)
-    res = path.with_suffix("")
-    print(res)
-    with gzip.open(path, "rb") as f_in:
-        with open(res, "wb") as f_out:
-            shutil.copyfileobj(f_in, f_out)
-    return res
-
-
-if __name__ == "__main__":
-    args = parse_args()
+def retrieve(args):
     timer = Timer()
-    for tile in args.tiles: # TODO parallelize?
+    for tile in args.tiles:  # TODO parallelize?
         datafiles = query_datafiles(tile, args.dsr)
         timer.tic_print()
         if len(datafiles) < 4:
@@ -100,7 +87,12 @@ if __name__ == "__main__":
             continue
         if len(datafiles) > 4:
             print(f"WARNING: More than 4 files found: {len(datafiles)}.")
-        output_dir = Path(args.output_dir).expanduser() / tile
-        output_dir.mkdir(parents=True, exist_ok=True)
-        download_datafiles(datafiles, output_dir)
+        workdir = Path(args.workspace).expanduser() / tile
+        workdir.mkdir(parents=True, exist_ok=True)
+        download_datafiles(datafiles, workdir)
         timer.tic_print()
+
+
+if __name__ == "__main__":
+    args = parse_args()
+    retrieve(args)

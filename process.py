@@ -13,14 +13,22 @@ from azul import color, io, mask
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "workdir",
+        "tile",
         type=str,
-        help="Working directory, containing input images",
+        help="Tile folder name",
     )
     parser.add_argument(
-        "output",
+        "--output",
+        "-o",
         type=str,
-        help="Output filename relative to the working directory",
+        default="output.tiff",
+        help="Output filename relative to the tile folder",
+    )
+    parser.add_argument(
+        "--workspace",
+        type=str,
+        default="~/Downloads",
+        help="Working directory, containing the tile folder",
     )
     parser.add_argument(
         "--black",
@@ -31,8 +39,8 @@ def parse_args():
     parser.add_argument(
         "--white",
         type=float,
-        default=None,
-        help="White point (defaults to the max intensity)",
+        default=100000.0,
+        help="White point (-1 to use the max intensity)",
     )
     parser.add_argument(
         "--slice",
@@ -91,10 +99,13 @@ def process(args):
         span=(args.black, args.white),
     )
 
+    workdir = Path(args.workspace).expanduser() / args.tile
+
     timer = Timer()
 
-    print(f"Read IYJH image from: {args.workdir}")
-    iyjh = io.read_iyjh(Path(args.workdir), io.parse_slice(args.slice))
+    print(f"Read IYJH image from: {workdir}")
+    iyjh = io.read_iyjh(workdir, io.parse_slice(args.slice))
+    print(f"- Size: {iyjh.shape[2]} x {iyjh.shape[1]} x {iyjh.shape[0]}")
     timer.tic_print()
 
     print(f"Detect invalid pixels")
@@ -108,6 +119,7 @@ def process(args):
     print(f"Transform IYJH to RGB image")
     res = color.iyjh_to_rgb(iyjh, transform)
     del iyjh
+    io.write_tiff(res, workdir / "rgb.tiff")
     timer.tic_print()
 
     print(f"Inpaint invalid pixels")
@@ -117,7 +129,7 @@ def process(args):
     timer.tic_print()
 
     print(f"Write output to: {args.output}")
-    io.write_tiff(res, Path(args.workdir) / args.output)
+    io.write_tiff(res, workdir / args.output)
     timer.tic_print()
 
 
