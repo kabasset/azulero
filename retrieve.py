@@ -7,7 +7,7 @@ import gzip
 from pathlib import Path
 import requests
 import shutil
-import subprocess
+import time
 
 
 def parse_args():
@@ -27,83 +27,80 @@ def parse_args():
     return parser.parse_args()
 
 
-def get_products(tile, dsr):
-    print(f"Query products for tile {tile}:")
+class Timer(object): # FIXME to lib
+
+    def __init__(self):
+        self.start = time.perf_counter()
+        self.prev = self.start
+
+    def tic(self):
+        prev = self.prev
+        self.prev = time.perf_counter()
+        return self.prev - prev, self.prev - self.start
+
+    def tic_print(self):
+        split, total = self.tic()
+        print(f"- Elapsed: {split}s [Total: {total}s]")
+
+
+def query_datafiles(tile, dsr):
+    print(f"Query datafiles for tile {tile}:")
 
     query = {
         "project": "EUCLID",
         "class_name": "DpdMerBksMosaic",
         "Data.TileIndex": tile,
         "Header.DataSetRelease": dsr,
-        "fields": "Data.Filter.Name:Header.ProductId.LimitedString",
+        "fields": "Data.DataStorage.DataContainer.FileName:Data.Filter.Name",
     }
     lines = requests.get(
         "https://eas-dps-rest-ops.esac.esa.int/REST", params=query
-    ).text.split()
-    products = [
-        l.split(",")[-1].replace('"', "") for l in lines if ("VIS" in l or "NIR" in l)
-    ]
-    for p in products:
-        print(f"- {p}")
-    return products
+    ).text.replace('"', "").split()
+    datafiles = {}
+    for l in lines:
+        if "VIS" in l or "NIR" in l:
+            file_name, filter_name = l.split(",")
+            datafiles[file_name] = filter_name
+    for f in datafiles:
+        print(f"- [{datafiles[f]}] {f}")
+    return datafiles
 
 
-def get_datafiles(products, output_dir):
-    print(f"Download data files to: {output_dir}")
-    for p in products:
-        get_product_datafiles(p, output_dir)
-        print(f"- {p}")
+def download_datafiles(datafiles, output_dir):
+    print(f"Download datafiles to: {output_dir}")
 
-
-def get_product_datafiles(product, output_dir):
-    cmd = [
-        "E-Run",
-        "ST_Operations",
-        "ST_ArchiveClient",
-        "--env",
-        "ops",
-        "--project",
-        "EUCLID",
-        "--with-files",
-        "eas",
-        "get",
-        "--type",
-        "DpdMerBksMosaic",
-        "--id",
-        f"'{product}'",
-        "--files-include",
-        "'EUC_MER_BGSUB*'",
-        "--output",
-        str(output_dir),
-    ]
-    subprocess.run(" ".join(cmd), shell=True, capture_output=True)
-    # FIXME test result
+    for n in datafiles: # TODO parallelize?
+        url = f"https://euclidsoc.esac.esa.int/{n}"
+        print(f"- URL: {url}")
+        path = (output_dir / n).with_suffix("")
+        r = requests.get(url)
+        with open(path, "wb") as f:
+            f.write(r.content)
+        print(f"- Downloaded: {path}")
 
 
 def decompress(path):
+    print(path)
+    res = path.with_suffix("")
+    print(res)
     with gzip.open(path, "rb") as f_in:
-        with open(path.with_suffix(""), "wb") as f_out:
+        with open(res, "wb") as f_out:
             shutil.copyfileobj(f_in, f_out)
-
-
-def decompress_datafiles(output_dir: Path):
-    print(f"Decompress data files")
-    for f in output_dir.iterdir():
-        if f.suffix == ".gz":
-            decompress(f)
-            print(f"- {f}")
+    return res
 
 
 if __name__ == "__main__":
     args = parse_args()
-    for tile in args.tiles:
-        products = get_products(tile, args.dsr)
-        if len(products) < 4:
-            print(f"ERROR: Only {len(products)} products found; Skipping this tile.")
+    timer = Timer()
+    for tile in args.tiles: # TODO parallelize?
+        datafiles = query_datafiles(tile, args.dsr)
+        timer.tic_print()
+        if len(datafiles) < 4:
+            print(f"ERROR: Only {len(datafiles)} files found; Skipping this tile.")
             continue
-        if len(products) > 4:
-            print(f"WARNING: More than 4 products found: {len(products)}.")
+        if len(datafiles) > 4:
+            print(f"WARNING: More than 4 files found: {len(datafiles)}.")
         output_dir = Path(args.output_dir).expanduser() / tile
         output_dir.mkdir(parents=True, exist_ok=True)
-        get_datafiles(products, output_dir)
-        decompress_datafiles(output_dir)
+        download_datafiles(datafiles, output_dir)
+        timer.tic_print()
