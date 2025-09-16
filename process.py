@@ -39,7 +39,7 @@ def parse_args():
     parser.add_argument(
         "--white",
         type=float,
-        default=100000.0,
+        default=10000.0,
         help="White point (-1 to use the max intensity)",
     )
     parser.add_argument(
@@ -124,7 +124,8 @@ def process(args):
 
     print(f"Inpaint invalid pixels")
     res = mask.inpaint(res, dead_nir)
-    res[dead_vis] = np.max(res[:, :, 0])
+    res = mask.inpaint(res, dead_vis)
+    res[dead_vis] = mask.resaturate(res[dead_vis])
     res = mask.inpaint(res, hot)
     timer.tic_print()
 

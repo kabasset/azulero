@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import enum
+import numpy as np
 from skimage.restoration import inpaint as skinpaint
 
 
@@ -57,3 +58,14 @@ def hot_pixels(i, y, j, h):
 
 def inpaint(data, mask):
     return skinpaint.inpaint_biharmonic(data, mask, channel_axis=-1)
+
+
+def _resaturate(x):
+    if x <= 0.8:
+        return x
+    if x >= 0.9:
+        return 1
+    return 2 * x - 0.8
+
+
+resaturate = np.vectorize(_resaturate)
