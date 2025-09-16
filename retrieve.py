@@ -66,6 +66,15 @@ def query_datafiles(tile, dsr):
     return datafiles
 
 
+def make_workdir(workspace, tile):
+    workdir = Path(workspace).expanduser() / tile
+    if workdir.is_dir():
+        print("WARNING: Working directory already exists.")
+    else:
+        workdir.mkdir(parents=True)
+    return workdir
+
+
 def download_datafiles(datafiles, workdir):
     print(f"Download and extract datafiles to: {workdir}")
 
@@ -87,8 +96,7 @@ def retrieve(args):
             continue
         if len(datafiles) > 4:
             print(f"WARNING: More than 4 files found: {len(datafiles)}.")
-        workdir = Path(args.workspace).expanduser() / tile
-        workdir.mkdir(parents=True, exist_ok=True)
+        workdir = make_workdir(args.workspace, tile)
         download_datafiles(datafiles, workdir)
         timer.tic_print()
 
