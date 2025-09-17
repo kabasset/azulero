@@ -89,6 +89,7 @@ def download_datafiles(datafiles, workdir):
 def retrieve(args):
     timer = Timer()
     for tile in args.tiles:  # TODO parallelize?
+        workdir = make_workdir(args.workspace, tile)
         datafiles = query_datafiles(tile, args.dsr)
         timer.tic_print()
         if len(datafiles) < 4:
@@ -96,9 +97,10 @@ def retrieve(args):
             continue
         if len(datafiles) > 4:
             print(f"WARNING: More than 4 files found: {len(datafiles)}.")
-        workdir = make_workdir(args.workspace, tile)
         download_datafiles(datafiles, workdir)
         timer.tic_print()
+        print(f"You may now run:")
+        print(f"python3 process.py --workspace {args.workspace} {tile}")
 
 
 if __name__ == "__main__":
