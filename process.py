@@ -52,20 +52,23 @@ def parse_args():
         "--scaling",
         nargs=4,
         type=float,
-        default=[0.00234, 0.65, 1.00, 1.14],
-        help="Inverse scaling factors for IYJH bands",
+        default=[400, 1.5, 1.00, 0.85],
+        help="Scaling factors for IYJH bands",
     )
     parser.add_argument(
-        "--yb", type=float, default=0.7, help="Y to B transmission factor"
+        "--yg", type=float, default=0, help="Y to G transmission factor"
     )
     parser.add_argument(
-        "--hl", type=float, default=0.3, help="H to L transmission factor"
+        "--ib", type=float, default=0.6, help="I to B transmission factor"
+    )
+    parser.add_argument(
+        "--hl", type=float, default=0.25, help="H to L transmission factor"
     )
     parser.add_argument(
         "--stretch",
         type=float,
         default=0.7,
-        help="Stretching parameter (inverse arcsinh scaling factor)",
+        help="Stretching parameter (arcsinh scaling factor)",
     )
     parser.add_argument(
         "--saturation", type=float, default=1.6, help="Saturation factor"
@@ -91,12 +94,13 @@ class Timer(object):
 
 def process(args):
     transform = color.Transform(
-        iyjh_scaling=list(args.scaling),
-        y_to_b=args.yb,
+        iyjh_scaling=np.array(args.scaling),
+        y_to_g=args.yg,
+        i_to_b=args.ib,
         h_to_l=args.hl,
         saturation=args.saturation,
         stretch=args.stretch,
-        span=(args.black, args.white),
+        bw=np.array([args.black, args.white]),
     )
 
     workdir = Path(args.workspace).expanduser() / args.tile

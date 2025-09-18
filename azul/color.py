@@ -9,27 +9,26 @@ import cv2
 
 @dataclass
 class Transform(object):
-    iyjh_scaling: list  # inverse factors
-    y_to_b: float
+    iyjh_scaling: list
+    y_to_g: float
+    i_to_b: float
     h_to_l: float
     saturation: float
     stretch: float
-    span: list  # black, white
+    bw: list
 
 
 def iyjh_to_rgb(data, transform: Transform):
 
-    channelwise_div(data, transform.iyjh_scaling)
+    channelwise_mul(data, transform.iyjh_scaling)
 
     i, y, j, h = data
-    y_to_b = transform.y_to_b
-    h_to_l = transform.h_to_l
 
     rgb = np.zeros((data.shape[1], data.shape[2], 3), dtype=np.float32)
     rgb[:, :, 0] = h
-    rgb[:, :, 1] = (y + j) * 0.5 if y_to_b == 0 else j
-    rgb[:, :, 2] = i if y_to_b == 0 else (i + y * y_to_b) / (1 + y_to_b)
-    l = i if h_to_l == 0 else (i + h * h_to_l) / (1 + h_to_l)
+    rgb[:, :, 1] = lerp(transform.y_to_g, y, j)
+    rgb[:, :, 2] = lerp(transform.i_to_b, i, y)
+    l = lerp(transform.h_to_l, h, i)
     del data
 
     rgb = normalized_asinh(rgb, transform)
@@ -42,6 +41,20 @@ def iyjh_to_rgb(data, transform: Transform):
     return cv2.cvtColor(hls, cv2.COLOR_HLS2RGB)
 
 
+def lerp(x, a, b):
+    if x == 0:
+        return b
+    if x == 1:
+        return a
+    return x * a + (1 - x) * b
+
+
+def channelwise_mul(data, factors):
+    for i in range(len(factors)):
+        data[i] = data[i] * factors[i]
+    return data
+
+
 def channelwise_div(data, factors):
     for i in range(len(factors)):
         data[i] = data[i] / factors[i]
@@ -49,8 +62,7 @@ def channelwise_div(data, factors):
 
 
 def normalized_asinh(data: np.ndarray, transform: Transform):
-    a = 1.0 / transform.stretch
-    data = np.arcsinh(data / a)
-    black = np.arcsinh(transform.span[0] / a)
-    white = np.arcsinh(transform.span[1] / a)
+    a = transform.stretch
+    data = np.arcsinh(data * a)
+    black, white = np.arcsinh(transform.bw * a)
     return np.clip((data - black) / (white - black), 0, 1, dtype=np.float32)
