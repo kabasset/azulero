@@ -9,18 +9,18 @@ import cv2
 
 @dataclass
 class Transform(object):
-    iyjh_scaling: list
+    iyjh_scaling: np.array
     y_to_g: float
     i_to_b: float
     h_to_l: float
     saturation: float
     stretch: float
-    bw: list
+    bw: np.array
 
 
 def iyjh_to_rgb(data, transform: Transform):
 
-    channelwise_mul(data, transform.iyjh_scaling)
+    data *= transform.iyjh_scaling[:, np.newaxis, np.newaxis]
 
     i, y, j, h = data
 

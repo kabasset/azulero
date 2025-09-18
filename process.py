@@ -52,7 +52,7 @@ def parse_args():
         "--scaling",
         nargs=4,
         type=float,
-        default=[400, 1.6, 1, 0.8],  # NIR passbands ~ 0.25, 0.4, 0.5
+        default=[500, 1.6, 1, 1],  # NIR passbands ~ 0.25, 0.4, 0.5, H = 1 boosts R
         help="Scaling factors for IYJH bands",
     )
     parser.add_argument(
