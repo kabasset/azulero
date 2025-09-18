@@ -52,14 +52,14 @@ def parse_args():
         "--scaling",
         nargs=4,
         type=float,
-        default=[400, 1.5, 1.00, 0.85],
+        default=[400, 1.6, 1, 0.8],  # NIR passbands ~ 0.25, 0.4, 0.5
         help="Scaling factors for IYJH bands",
     )
     parser.add_argument(
-        "--yg", type=float, default=0, help="Y to G transmission factor"
+        "--yg", type=float, default=0.3, help="Y to G transmission factor"
     )
     parser.add_argument(
-        "--ib", type=float, default=0.6, help="I to B transmission factor"
+        "--ib", type=float, default=0.3, help="I to B transmission factor"
     )
     parser.add_argument(
         "--hl", type=float, default=0.25, help="H to L transmission factor"
