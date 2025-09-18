@@ -55,12 +55,9 @@ def parse_args():
         default=[500, 1.6, 1, 1],  # NIR passbands ~ 0.25, 0.4, 0.5, H = 1 boosts R
         help="Scaling factors for IYJH bands",
     )
-    parser.add_argument(
-        "--yg", type=float, default=0.3, help="Y to G transmission factor"
-    )
-    parser.add_argument(
-        "--ib", type=float, default=0.2, help="I to B transmission factor"
-    )
+    parser.add_argument("--nirl", type=float, default=0.5, help="NIR contribution to L")
+    parser.add_argument("--yg", type=float, default=0.3, help="Y contribution to G")
+    parser.add_argument("--ib", type=float, default=0.2, help="I contribution to B")
     parser.add_argument(
         "--stretch",
         type=float,
@@ -92,6 +89,7 @@ class Timer(object):
 def process(args):
     transform = color.Transform(
         iyjh_scaling=np.array(args.scaling),
+        nir_to_l=args.nirl,
         y_to_g=args.yg,
         i_to_b=args.ib,
         saturation=args.saturation,

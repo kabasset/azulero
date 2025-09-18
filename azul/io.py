@@ -49,7 +49,7 @@ def read_iyjh(workdir: Path, slicing=None):
     """
     Read the region of a VIS- and NIR-covered tile.
     """
-    return np.ma.stack(
+    return np.stack(
         (
             read_channel(workdir, "VIS", slicing),
             read_channel(workdir, "NIR-Y", slicing),
