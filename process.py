@@ -40,7 +40,7 @@ def parse_args():
         "--white",
         type=float,
         default=10000.0,
-        help="White point (-1 to use the max intensity)",
+        help="White point",
     )
     parser.add_argument(
         "--slice",
@@ -59,10 +59,7 @@ def parse_args():
         "--yg", type=float, default=0.3, help="Y to G transmission factor"
     )
     parser.add_argument(
-        "--ib", type=float, default=0.3, help="I to B transmission factor"
-    )
-    parser.add_argument(
-        "--hl", type=float, default=0.25, help="H to L transmission factor"
+        "--ib", type=float, default=0.2, help="I to B transmission factor"
     )
     parser.add_argument(
         "--stretch",
@@ -97,7 +94,6 @@ def process(args):
         iyjh_scaling=np.array(args.scaling),
         y_to_g=args.yg,
         i_to_b=args.ib,
-        h_to_l=args.hl,
         saturation=args.saturation,
         stretch=args.stretch,
         bw=np.array([args.black, args.white]),

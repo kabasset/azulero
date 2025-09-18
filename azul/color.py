@@ -12,7 +12,6 @@ class Transform(object):
     iyjh_scaling: np.array
     y_to_g: float
     i_to_b: float
-    h_to_l: float
     saturation: float
     stretch: float
     bw: np.array
@@ -23,13 +22,13 @@ def iyjh_to_rgb(data, transform: Transform):
     data *= transform.iyjh_scaling[:, np.newaxis, np.newaxis]
 
     i, y, j, h = data
+    l = np.max(data, axis=0)
 
     rgb = np.zeros((data.shape[1], data.shape[2], 3), dtype=np.float32)
     rgb[:, :, 0] = h
     rgb[:, :, 1] = lerp(transform.y_to_g, y, j)
     rgb[:, :, 2] = lerp(transform.i_to_b, i, y)
-    l = lerp(transform.h_to_l, h, i)
-    del data
+    del data, i, y, j, h
 
     rgb = normalized_asinh(rgb, transform)
     l = normalized_asinh(l, transform)
