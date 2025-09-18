@@ -80,6 +80,9 @@ def download_datafiles(datafiles, workdir):
 
     for n in datafiles:  # TODO parallelize?
         path = (workdir / n).with_suffix("")
+        if path.is_file():
+            print(f"WARNING: File existd; skip: {path.name}")
+            continue
         r = requests.get(f"https://euclidsoc.esac.esa.int/{n}")
         with open(path, "wb") as f:
             f.write(r.content)
