@@ -13,9 +13,7 @@ def run():
         prog="azul", description="Bring colors to Euclid tiles!"
     )
 
-    parser.add_argument(
-        "--workspace", type=str, default="~/Downloads", help="Workspace"
-    )
+    parser.add_argument("--workspace", type=str, default=".", help="Workspace")
 
     subparsers = parser.add_subparsers()
     retrieve.add_parser(subparsers)
