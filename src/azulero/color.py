@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: Copyright (C) 2025, Antoine Basset
-# SPDX-PackageSourceInfo: https://github.com/kabasset/azul
+# SPDX-PackageSourceInfo: https://github.com/kabasset/azulero
 # SPDX-License-Identifier: Apache-2.0
 
 from dataclasses import dataclass
