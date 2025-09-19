@@ -1,4 +1,4 @@
-![Logo](azul.png)
+![Logo](https://raw.githubusercontent.com/kabasset/azulero/v0.1.0/azul.png)
 
 # Bring colors to Euclid tiles!
 
@@ -9,7 +9,7 @@ It detects and inpaints bad pixels (hot and cold pixels, saturated stars...), an
 
 # License
 
-[Apache-2.0](LICENSE)
+[Apache-2.0](https://raw.githubusercontent.com/kabasset/azulero/refs/tags/v0.1.0/LICENSE)
 
 # Disclamer
 
@@ -65,7 +65,7 @@ One day I'll find some time to write something useful here... 🤔
 # How to help?
 
 * [Report bugs, request features](https://github.com/kabasset/azulero/issues), tell me what you think of the tool and results...
-* Mention `kabasset/azulero` when you publish images processed with this tool.
+* Mention myself and/or `azulero` when you publish images processed with this tool.
 * Let me know when you publish images with this tool, I'm curious!
 
 # Acknowledgements
