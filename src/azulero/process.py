@@ -3,15 +3,16 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import argparse
-import time
 import numpy as np
 from pathlib import Path
 
-from azul import color, io, mask
+from azulero import color, io, mask
+from azulero.timing import Timer
 
 
-def parse_args():
-    parser = argparse.ArgumentParser()
+def add_parser(subparsers):
+    parser = subparsers.add_parser("process", help="Process MER channels")
+
     parser.add_argument(
         "tile",
         type=str,
@@ -23,12 +24,6 @@ def parse_args():
         type=str,
         default="output.tiff",
         help="Output filename relative to the tile folder",
-    )
-    parser.add_argument(
-        "--workspace",
-        type=str,
-        default="~/Downloads",
-        help="Working directory, containing the tile folder",
     )
     parser.add_argument(
         "--black",
@@ -67,26 +62,11 @@ def parse_args():
     parser.add_argument(
         "--saturation", type=float, default=1.6, help="Saturation factor"
     )
-    return parser.parse_args()
+
+    parser.set_defaults(func=run)
 
 
-class Timer(object):
-
-    def __init__(self):
-        self.start = time.perf_counter()
-        self.prev = self.start
-
-    def tic(self):
-        prev = self.prev
-        self.prev = time.perf_counter()
-        return self.prev - prev, self.prev - self.start
-
-    def tic_print(self):
-        split, total = self.tic()
-        print(f"- Elapsed: {split}s [Total: {total}s]")
-
-
-def process(args):
+def run(args):
     transform = color.Transform(
         iyjh_scaling=np.array(args.scaling),
         nir_to_l=args.nirl,
@@ -130,8 +110,3 @@ def process(args):
     print(f"Write output to: {args.output}")
     io.write_tiff(res, workdir / args.output)
     timer.tic_print()
-
-
-if __name__ == "__main__":
-    args = parse_args()
-    process(args)

@@ -5,11 +5,12 @@
 import argparse
 from pathlib import Path
 import requests
-import time
+
+from azulero.timing import Timer
 
 
-def parse_args():
-    parser = argparse.ArgumentParser()
+def add_parser(subparsers):
+    parser = subparsers.add_parser("retrieve", help="Retrieve MER datafiles")
 
     parser.add_argument(
         "tiles",
@@ -18,27 +19,8 @@ def parse_args():
         help="Tile indices",
     )
     parser.add_argument("--dsr", type=str, default="DR1_R1", help="Data set release")
-    parser.add_argument(
-        "--workspace", type=str, default="~/Downloads", help="Workspace"
-    )
 
-    return parser.parse_args()
-
-
-class Timer(object):  # FIXME to lib
-
-    def __init__(self):
-        self.start = time.perf_counter()
-        self.prev = self.start
-
-    def tic(self):
-        prev = self.prev
-        self.prev = time.perf_counter()
-        return self.prev - prev, self.prev - self.start
-
-    def tic_print(self):
-        split, total = self.tic()
-        print(f"- Elapsed: {split}s [Total: {total}s]")
+    parser.set_defaults(func=run)
 
 
 def query_datafiles(tile, dsr):
@@ -89,7 +71,7 @@ def download_datafiles(datafiles, workdir):
         print(f"- {path}")
 
 
-def retrieve(args):
+def run(args):
     timer = Timer()
     for tile in args.tiles:  # TODO parallelize?
         workdir = make_workdir(args.workspace, tile)
@@ -103,9 +85,4 @@ def retrieve(args):
         download_datafiles(datafiles, workdir)
         timer.tic_print()
         print(f"You may now run:")
-        print(f"python3 process.py --workspace {args.workspace} {tile}")
-
-
-if __name__ == "__main__":
-    args = parse_args()
-    retrieve(args)
+        print(f"azul --workspace {args.workspace} process {tile}")

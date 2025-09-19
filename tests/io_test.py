@@ -4,7 +4,7 @@
 
 import numpy as np
 
-from azul import io
+from azulero import io
 
 
 def test_slicing():

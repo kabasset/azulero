@@ -57,6 +57,7 @@ def hot_pixels(i, y, j, h):
 
 
 def inpaint(data, mask):
+    # return cv2.inpaint(data, mask.astype(np.int8), 3, cv2.INPAINT_TELEA) # Won't support 3-channel float
     return skinpaint.inpaint_biharmonic(data, mask, channel_axis=-1)
 
 

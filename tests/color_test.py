@@ -4,7 +4,7 @@
 
 import numpy as np
 
-from azul import color
+from azulero import color
 
 
 def test_scaling():
