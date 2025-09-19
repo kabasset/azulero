@@ -13,6 +13,14 @@ classifiers = [
 ]
 license = "Apache-2.0"
 license-files = ["LICEN[CS]E*"]
+dependencies = [
+    "numpy >= 2.0",
+    "astropy",
+    "opencv-python",
+    "requests",
+    "scikit-image",
+    "tifffile"
+]
 
 [project.urls]
 Homepage = "https://github.com/kabasset/azulero"
@@ -26,7 +34,8 @@ requires = [
     "opencv-python",
     "requests",
     "scikit-image",
-    "tifffile"]
+    "tifffile"
+]
 build-backend = "hatchling.build"
 
 [project.scripts]

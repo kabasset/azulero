@@ -5,7 +5,7 @@
 Azul(ERO)* downloads and merges VIS and NIR observations over a MER tile.
 It detects and inpaints bad pixels (hot and cold pixels, saturated stars...), and combines the 4 channels (I, Y, J, H) into an sRGB image.
 
-*I started this project when Euclid ERO came out...
+*I started this project when Euclid EROs came out...
 
 # License
 
