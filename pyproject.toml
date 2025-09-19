@@ -24,7 +24,9 @@ requires = [
     "numpy >= 2.0",
     "astropy",
     "opencv-python",
-    "scikit-image"]
+    "requests",
+    "scikit-image",
+    "tifffile"]
 build-backend = "hatchling.build"
 
 [project.scripts]
