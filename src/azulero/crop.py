@@ -14,7 +14,7 @@ from azulero.timing import Timer
 
 def add_parser(subparsers):
     parser = subparsers.add_parser(
-        "show", help="Show VIS channel between values 0 and 1"
+        "crop", help="Show VIS channel between values 0 and 1 for region selection"
     )
 
     parser.add_argument(
@@ -42,7 +42,7 @@ def run(args):
     print(f"Prepare data.")
     h, w = data.shape
     data = np.clip(data[::10, ::10], 0, 1)
-    im = plt.imshow(np.flipud(data), extent=[0, w, 0, h])
+    im = plt.imshow(np.flipud(np.asinh(data / 0.7)), extent=[0, w, 0, h])
     timer.tic_print()
 
     plt.title("Zoom to select a region, then close the window.")
