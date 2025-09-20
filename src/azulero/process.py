@@ -61,6 +61,9 @@ def add_parser(subparsers):
 
 
 def run(args):
+
+    print()
+
     transform = color.Transform(
         iyjh_scaling=np.array(args.scaling),
         nir_to_l=args.nirl,

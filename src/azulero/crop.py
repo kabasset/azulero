@@ -29,6 +29,8 @@ def add_parser(subparsers):
 
 def run(args):
 
+    print()
+
     workdir = Path(args.workspace).expanduser() / args.tile
 
     timer = Timer()
@@ -43,16 +45,16 @@ def run(args):
     im = plt.imshow(np.flipud(data), extent=[0, w, 0, h])
     timer.tic_print()
 
-    plt.title("Zoom to select a region")
+    plt.title("Zoom to select a region, then close the window.")
     plt.show()
 
     rounding = args.round
     x0, x1 = im.axes.get_xlim()
     y0, y1 = im.axes.get_ylim()
     x0 = math.floor(x0 / rounding) * rounding
-    x1 = math.ceil(x1 / rounding) * rounding
+    x1 = min(math.ceil(x1 / rounding) * rounding, w)
     y0 = math.floor(y0 / rounding) * rounding
-    y1 = math.ceil(y1 / rounding) * rounding
+    y1 = min(math.ceil(y1 / rounding) * rounding, h)
 
     print(f"\nYou may now run:")
     print(

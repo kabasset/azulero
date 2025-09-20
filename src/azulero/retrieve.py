@@ -72,6 +72,9 @@ def download_datafiles(datafiles, workdir):
 
 
 def run(args):
+
+    print()
+
     timer = Timer()
     for tile in args.tiles:  # TODO parallelize?
         workdir = make_workdir(args.workspace, tile)
