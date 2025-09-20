@@ -16,7 +16,7 @@ def add_parser(subparsers):
     parser.add_argument(
         "tile",
         type=str,
-        help="Tile folder name",
+        help="Tile folder name and optional slicing",
     )
     parser.add_argument(
         "--output",
@@ -36,12 +36,6 @@ def add_parser(subparsers):
         type=float,
         default=10000.0,
         help="White point",
-    )
-    parser.add_argument(
-        "--slice",
-        type=str,
-        default=None,
-        help="Input images region following Python slicing syntax",
     )
     parser.add_argument(
         "--scaling",
@@ -77,13 +71,14 @@ def run(args):
         bw=np.array([args.black, args.white]),
     )
 
-    workdir = Path(args.workspace).expanduser() / args.tile
+    tile, slicing = io.parse_tile(args.tile)
+    workdir = Path(args.workspace).expanduser() / tile
 
     timer = Timer()
 
     print(f"Read IYJH image from: {workdir}")
-    iyjh = io.read_iyjh(workdir, io.parse_slice(args.slice))
-    print(f"- Size: {iyjh.shape[2]} x {iyjh.shape[1]} x {iyjh.shape[0]}")
+    iyjh = io.read_iyjh(workdir, slicing)
+    print(f"- Shape: {iyjh.shape[1]} x {iyjh.shape[2]}")
     timer.tic_print()
 
     print(f"Detect invalid pixels")

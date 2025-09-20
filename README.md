@@ -11,7 +11,7 @@ It detects and inpaints bad pixels (hot and cold pixels, saturated stars...), an
 
 [Apache-2.0](https://raw.githubusercontent.com/kabasset/azulero/refs/tags/v0.1.0/LICENSE)
 
-# Disclamer
+# Disclaimer
 
 ⚠️ **This is a beta version!** ⚠️
 
@@ -66,7 +66,7 @@ One day I'll find some time to write something useful here... 🤔
 
 * [Report bugs, request features](https://github.com/kabasset/azulero/issues), tell me what you think of the tool and results...
 * Mention myself and/or `azulero` when you publish images processed with this tool.
-* Let me know when you publish images with this tool, I'm curious!
+* Share with me your images, I'm curious!
 
 # Acknowledgements
 

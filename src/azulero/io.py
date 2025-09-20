@@ -8,6 +8,13 @@ import tifffile
 from pathlib import Path
 
 
+def parse_tile(text: str):
+    tile_slicing = text.split("[")
+    if len(tile_slicing) == 1:
+        return tile_slicing[0], None
+    return tile_slicing[0], parse_slice(tile_slicing[1][:-1])
+
+
 def parse_slice(text: str):
     """
     Parse a 2D slice, e.g. ":,3:14".
