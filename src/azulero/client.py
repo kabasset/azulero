@@ -4,7 +4,7 @@
 
 import argparse
 
-from azulero import retrieve, process
+from azulero import retrieve, process, show
 
 
 def run():
@@ -18,6 +18,7 @@ def run():
     subparsers = parser.add_subparsers()
     retrieve.add_parser(subparsers)
     process.add_parser(subparsers)
+    show.add_parser(subparsers)
 
     args = parser.parse_args()
     args.func(args)

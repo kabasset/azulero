@@ -16,6 +16,7 @@ license-files = ["LICEN[CS]E*"]
 dependencies = [
     "numpy >= 2.0",
     "astropy",
+    "matplotlib",
     "opencv-python",
     "requests",
     "scikit-image",
@@ -31,6 +32,7 @@ requires = [
     "hatchling >= 1.26",
     "numpy >= 2.0",
     "astropy",
+    "matplotlib",
     "opencv-python",
     "requests",
     "scikit-image",
