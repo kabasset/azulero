@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import argparse
+import math
 import matplotlib.pyplot as plt
 import numpy as np
 from pathlib import Path
@@ -21,6 +22,7 @@ def add_parser(subparsers):
         type=str,
         help="Tile folder name",
     )
+    parser.add_argument("--round", type=int, default=500, help="Image region rounding")
 
     parser.set_defaults(func=run)
 
@@ -38,7 +40,21 @@ def run(args):
     print(f"Prepare data.")
     h, w = data.shape
     data = np.clip(data[::10, ::10], 0, 1)
-    plt.imshow(data, extent=[0, w, 0, h])
+    im = plt.imshow(np.flipud(data), extent=[0, w, 0, h])
     timer.tic_print()
 
+    plt.title("Zoom to select a region")
     plt.show()
+
+    rounding = args.round
+    x0, x1 = im.axes.get_xlim()
+    y0, y1 = im.axes.get_ylim()
+    x0 = math.floor(x0 / rounding) * rounding
+    x1 = math.ceil(x1 / rounding) * rounding
+    y0 = math.floor(y0 / rounding) * rounding
+    y1 = math.ceil(y1 / rounding) * rounding
+
+    print(f"\nYou may now run:")
+    print(
+        f"\nazul --workspace {args.workspace} process {args.tile}[{y0}:{y1},{x0}:{x1}]\n"
+    )
