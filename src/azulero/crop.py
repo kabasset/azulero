@@ -8,14 +8,20 @@ import matplotlib.pyplot as plt
 import numpy as np
 from pathlib import Path
 
-from azulero import color, io, mask
+from azulero import io
 from azulero.timing import Timer
 
 
 def add_parser(subparsers):
     parser = subparsers.add_parser(
         "crop",
-        help="Show VIS channel between values 0 and 1 for region selection",
+        help="Display the VIS channel for region selection.",
+        description=(
+            "Display the VIS channel between values 0 and 1 in a new window, "
+            "and enable cropping a region by zooming in. "
+            "When the window is closed, "
+            "the program prints out the corresponding image processing command."
+        ),
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
 
@@ -23,14 +29,18 @@ def add_parser(subparsers):
         "tile",
         type=str,
         metavar="INDEX",
-        help="Tile folder name",
+        help="Tile index.",
     )
     parser.add_argument(
         "--round",
         type=int,
         default=500,
         metavar="INC",
-        help="Image region rounding increment",
+        help=(
+            "Image region rounding increment. "
+            "The returned region is the smallest region which contains the selected region, "
+            "and whose bounds are multiples of the increment."
+        ),
     )
 
     parser.set_defaults(func=run)

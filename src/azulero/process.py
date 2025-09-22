@@ -13,7 +13,16 @@ from azulero.timing import Timer
 def add_parser(subparsers):
     parser = subparsers.add_parser(
         "process",
-        help="Process MER channels",
+        help="Process MER channels.",
+        description=(
+            "Process MER channels: "
+            "1. Scale each channel; "
+            "2. Blend IYJH channels into RGB and lightness (L) channels; "
+            "3. Stretch dynamic range using arcsinh function; "
+            "4. Set black and white points; "
+            "5. Boost color saturation; "
+            "6. Inpaint bad pixels."
+        ),
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
 
@@ -21,7 +30,7 @@ def add_parser(subparsers):
         "tile",
         type=str,
         metavar="SPEC",
-        help="Tile folder name and optional slicing",
+        help="Tile index and optional slicing à-la NumPy, e.g. 102160611[1500:7500,11500:17500]",
     )
     parser.add_argument(
         "--output",
@@ -29,7 +38,13 @@ def add_parser(subparsers):
         type=str,
         default="{tile}_{step}.tiff",
         metavar="TEMPLATE",
-        help="Output filename or template, relative to the tile folder",
+        help=(
+            "Output filename or template, relative to the tile folder. "
+            "Placeholder {tile} is replaced by the tile index, "
+            "and {step} is replaced by the processing step. "
+            "If {step} is not present in the template, "
+            "intermediate steps are not saved."
+        ),
     )
     parser.add_argument(
         "--scaling",
@@ -37,37 +52,49 @@ def add_parser(subparsers):
         type=float,
         default=[500, 1.6, 1, 1],  # NIR passbands ~ 0.25, 0.4, 0.5, H = 1 boosts R
         metavar=("GAIN_I", "GAIN_Y", "GAIN_J", "GAIN_H"),
-        help="Scaling factors for IYJH bands",
+        help="Scaling factors applied immediately to the IYJH bands",
     )
     parser.add_argument(
-        "--nirl", type=float, default=0.5, metavar="RATE", help="NIR contribution to L"
-    )
-    parser.add_argument(
-        "--yg", type=float, default=0.3, metavar="RATE", help="Y contribution to G"
-    )
-    parser.add_argument(
-        "--ib", type=float, default=0.2, metavar="RATE", help="I contribution to B"
-    )
-    parser.add_argument(
-        "--black",
+        "--nirl",
         type=float,
-        default=0.0,
-        metavar="VALUE",
-        help="Black point (0 for background-subtracted inputs)",
+        default=0.5,
+        metavar="RATE",
+        help="NIR contribution to L, between 0 and 1.",
     )
     parser.add_argument(
-        "--white",
+        "--yg",
         type=float,
-        default=10000.0,
-        metavar="VALUE",
-        help="White point",
+        default=0.3,
+        metavar="RATE",
+        help="Y contribution to G, between 0 and 1.",
+    )
+    parser.add_argument(
+        "--ib",
+        type=float,
+        default=0.2,
+        metavar="RATE",
+        help="I contribution to B, between 0 and 1.",
     )
     parser.add_argument(
         "--stretch",
         type=float,
         default=0.7,
         metavar="FACTOR",
-        help="Stretching parameter (arcsinh scaling factor)",
+        help="Scaling factor `a` in `arcsinh(data * a)`.",
+    )
+    parser.add_argument(
+        "--black",
+        type=float,
+        default=0.0,
+        metavar="VALUE",
+        help="Black point, which may be 0 for background-subtracted inputs.",
+    )
+    parser.add_argument(
+        "--white",
+        type=float,
+        default=10000.0,
+        metavar="VALUE",
+        help="White point.",
     )
     parser.add_argument(
         "--saturation",

@@ -94,7 +94,8 @@ def add_parser(subparsers):
 
     parser = subparsers.add_parser(
         "retrieve",
-        help="Retrieve MER datafiles",
+        help="Retrieve MER datafiles.",
+        description="TODO",  # FIXME
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
 
@@ -103,20 +104,20 @@ def add_parser(subparsers):
         type=str,
         nargs="+",
         metavar="INDICES",
-        help="Space-separated list of tile indices",
+        help="Space-separated list of tile indices.",
     )
     parser.add_argument(
         "--dsr",
         type=str,
         default="DR1_R2,DR1_R1,Q1_R1",
-        help="Comma-separated list of data set releases",
+        help="Comma-separated list of data set releases.",
     )
     parser.add_argument(
         "--from",
         type=str,
         default="dss",
         metavar="PROVIDER",
-        help=f"Data provider: {choice(providers.keys())}",
+        help=f"Data provider: {choice(providers.keys())}.",
     )
 
     parser.set_defaults(func=run)
