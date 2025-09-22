@@ -14,7 +14,9 @@ from azulero.timing import Timer
 
 def add_parser(subparsers):
     parser = subparsers.add_parser(
-        "crop", help="Show VIS channel between values 0 and 1 for region selection"
+        "crop",
+        help="Show VIS channel between values 0 and 1 for region selection",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
 
     parser.add_argument(

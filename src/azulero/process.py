@@ -11,7 +11,11 @@ from azulero.timing import Timer
 
 
 def add_parser(subparsers):
-    parser = subparsers.add_parser("process", help="Process MER channels")
+    parser = subparsers.add_parser(
+        "process",
+        help="Process MER channels",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    )
 
     parser.add_argument(
         "tile",

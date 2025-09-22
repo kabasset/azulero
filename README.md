@@ -28,7 +28,7 @@ Install the `azulero` package with:
 pip install azulero
 ```
 
-Setup the `~/.netrc` file for `eas-dps-rest-ops.esac.esa.int` and `euclidsoc.esac.esa.int` with your Euclid credentials:
+If you wish to access Euclid-internal data, setup the `~/.netrc` file for `eas-dps-rest-ops.esac.esa.int` and `euclidsoc.esac.esa.int` with your Euclid credentials:
 
 ```xml
 machine eas-dps-rest-ops.esac.esa.int
@@ -43,9 +43,9 @@ machine euclidsoc.esac.esa.int
 
 The typical workflow is as follows:
 
-* Download the MER-processed FITS file of your tiles with `azul retrieve`.
-* Optionally select the region to be processed with `azul crop`.
-* Blend the channels and inpaint artifacts with `azul process`.
+* 💾 Download the MER-processed FITS file of your tiles with `azul retrieve`.
+* ✂️ Optionally select the region to be processed with `azul crop`.
+* 🌟 Blend the channels and inpaint artifacts with `azul process`.
 
 Usage:
 
@@ -58,7 +58,7 @@ azul [--workspace <workspace>] process <tile_slicing>
 with:
 
 * `<workspace>` - The parent directory to save everything, in which one folder per tile will be created (defaults to the current directory).
-* `<dataset_release>` - The dataset release of the tiles to be downloaded (defaults to `DR1_R1`).
+* `<dataset_release>` - The dataset release of the tiles to be downloaded.
 * `<tile_indices>` - The space-separated list of tiles to be downloaded.
 * `<tile_index>` - A single tile index.
 * `<tile_slicing>` - A single tile index, optionally followed by a slicing à-la NumPy.
@@ -66,7 +66,7 @@ with:
 Example:
 
 ```
-azul retrieve 102034383 --dsr DR1_R2
+azul retrieve 102034383 --dsr DR1_R1
 azul show 102034383
 azul process 102034383[1000:9000,7500:13500]
 ```
@@ -81,10 +81,14 @@ One day I'll find some time to write something useful here... 🤔
 * Mention myself (Dr Antoine Basset, CNES) and/or [`azulero`](https://pypi.org/project/azulero/) when you publish images processed with this tool.
 * Share with me your images, I'm curious!
 
+# Contributors
+
+* Mischa Schirmer's (MPIA): Azul's color blending is freely inspired by that of his own script `eummy.py`.
+* Téo Bouvard (Thales): drafed `retrieve`.
+* Rollin Gimenez (CNES): Fixed packaging.
+* Kane Nguyen-Kim (IAP): Provided URLs for retrieving public data.
+
 # Acknowledgements
 
-* Azul's color blending is freely inspired by that of Mischa Schirmer's `eummy.py`.
-* Thank you Téo Bouvard for helping me drafting `retrieve`!
-* Thank you Kane Nguyen-Kim (IAP) and Rollin Gimenez (CNES), early beta-testers...
 * 🔥 Congratulations to the whole Euclid community; The mosaics are simply unbelievable!
 * 😍 Thank you also for answering my dummy questions on the contents of the images I posted.

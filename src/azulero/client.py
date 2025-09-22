@@ -10,12 +10,14 @@ from azulero import retrieve, process, crop
 def run():
 
     parser = argparse.ArgumentParser(
-        prog="azul", description="Bring colors to Euclid tiles!"
+        prog="azul",
+        description="Bring colors to Euclid tiles!",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
 
-    parser.add_argument("--workspace", type=str, default=".", help="Workspace")
+    parser.add_argument("--workspace", type=str, default=".", help="Parent workspace")
 
-    subparsers = parser.add_subparsers()
+    subparsers = parser.add_subparsers(title="Commands")
     retrieve.add_parser(subparsers)
     crop.add_parser(subparsers)
     process.add_parser(subparsers)
