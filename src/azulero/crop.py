@@ -22,9 +22,16 @@ def add_parser(subparsers):
     parser.add_argument(
         "tile",
         type=str,
+        metavar="INDEX",
         help="Tile folder name",
     )
-    parser.add_argument("--round", type=int, default=500, help="Image region rounding")
+    parser.add_argument(
+        "--round",
+        type=int,
+        default=500,
+        metavar="INC",
+        help="Image region rounding increment",
+    )
 
     parser.set_defaults(func=run)
 

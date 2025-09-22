@@ -20,45 +20,61 @@ def add_parser(subparsers):
     parser.add_argument(
         "tile",
         type=str,
+        metavar="SPEC",
         help="Tile folder name and optional slicing",
     )
     parser.add_argument(
         "--output",
         "-o",
         type=str,
-        default="output.tiff",
-        help="Output filename relative to the tile folder",
-    )
-    parser.add_argument(
-        "--black",
-        type=float,
-        default=0.0,
-        help="Black point (0 for background-subtracted inputs)",
-    )
-    parser.add_argument(
-        "--white",
-        type=float,
-        default=10000.0,
-        help="White point",
+        default="{tile}_{step}.tiff",
+        metavar="TEMPLATE",
+        help="Output filename or template, relative to the tile folder",
     )
     parser.add_argument(
         "--scaling",
         nargs=4,
         type=float,
         default=[500, 1.6, 1, 1],  # NIR passbands ~ 0.25, 0.4, 0.5, H = 1 boosts R
+        metavar=("GAIN_I", "GAIN_Y", "GAIN_J", "GAIN_H"),
         help="Scaling factors for IYJH bands",
     )
-    parser.add_argument("--nirl", type=float, default=0.5, help="NIR contribution to L")
-    parser.add_argument("--yg", type=float, default=0.3, help="Y contribution to G")
-    parser.add_argument("--ib", type=float, default=0.2, help="I contribution to B")
+    parser.add_argument(
+        "--nirl", type=float, default=0.5, metavar="RATE", help="NIR contribution to L"
+    )
+    parser.add_argument(
+        "--yg", type=float, default=0.3, metavar="RATE", help="Y contribution to G"
+    )
+    parser.add_argument(
+        "--ib", type=float, default=0.2, metavar="RATE", help="I contribution to B"
+    )
+    parser.add_argument(
+        "--black",
+        type=float,
+        default=0.0,
+        metavar="VALUE",
+        help="Black point (0 for background-subtracted inputs)",
+    )
+    parser.add_argument(
+        "--white",
+        type=float,
+        default=10000.0,
+        metavar="VALUE",
+        help="White point",
+    )
     parser.add_argument(
         "--stretch",
         type=float,
         default=0.7,
+        metavar="FACTOR",
         help="Stretching parameter (arcsinh scaling factor)",
     )
     parser.add_argument(
-        "--saturation", type=float, default=1.6, help="Saturation factor"
+        "--saturation",
+        type=float,
+        default=1.6,
+        metavar="GAIN",
+        help="Saturation factor",
     )
 
     parser.set_defaults(func=run)
@@ -80,6 +96,7 @@ def run(args):
 
     tile, slicing = io.parse_tile(args.tile)
     workdir = Path(args.workspace).expanduser() / tile
+    name = args.output.replace("{tile}", tile)
 
     timer = Timer()
 
@@ -99,7 +116,10 @@ def run(args):
     print(f"Transform IYJH to RGB image")
     res = color.iyjh_to_rgb(iyjh, transform)
     del iyjh
-    io.write_tiff(res, workdir / "rgb.tiff")
+    if "{step}" in name:
+        path = workdir / name.replace("{step}", "blended")
+        print(f"- Write intermediate output: {path.name}")
+        io.write_tiff(res, path)
     timer.tic_print()
 
     print(f"Inpaint invalid pixels")
@@ -109,6 +129,7 @@ def run(args):
     res = mask.inpaint(res, hot)
     timer.tic_print()
 
-    print(f"Write output to: {args.output}")
-    io.write_tiff(res, workdir / args.output)
+    path = workdir / name.replace("{step}", "inpainted")
+    print(f"Write output: {path.name}")
+    io.write_tiff(res, path)
     timer.tic_print()

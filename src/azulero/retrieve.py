@@ -102,18 +102,20 @@ def add_parser(subparsers):
         "tiles",
         type=str,
         nargs="+",
-        help="Tile indices",
+        metavar="INDICES",
+        help="Space-separated list of tile indices",
     )
     parser.add_argument(
         "--dsr",
         type=str,
         default="DR1_R2,DR1_R1,Q1_R1",
-        help="Comma separated data set releases",
+        help="Comma-separated list of data set releases",
     )
     parser.add_argument(
         "--from",
         type=str,
         default="dss",
+        metavar="PROVIDER",
         help=f"Data provider: {choice(providers.keys())}",
     )
 

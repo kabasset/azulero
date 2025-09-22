@@ -15,7 +15,9 @@ def run():
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
 
-    parser.add_argument("--workspace", type=str, default=".", help="Parent workspace")
+    parser.add_argument(
+        "--workspace", type=str, default=".", metavar="PATH", help="Parent workspace"
+    )
 
     subparsers = parser.add_subparsers(title="Commands")
     retrieve.add_parser(subparsers)

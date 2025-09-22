@@ -83,7 +83,7 @@ One day I'll find some time to write something useful here... 🤔
 
 # Contributors
 
-* Mischa Schirmer's (MPIA): Azul's color blending is freely inspired by that of his own script `eummy.py`.
+* Mischa Schirmer (MPIA): Azul's color blending is freely inspired by that of his own script `eummy.py`.
 * Téo Bouvard (Thales): drafed `retrieve`.
 * Rollin Gimenez (CNES): Fixed packaging.
 * Kane Nguyen-Kim (IAP): Provided URLs for retrieving public data.
