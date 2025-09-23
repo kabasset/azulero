@@ -62,18 +62,18 @@ def add_parser(subparsers):
         help="NIR contribution to L, between 0 and 1.",
     )
     parser.add_argument(
-        "--yg",
-        type=float,
-        default=0.3,
-        metavar="RATE",
-        help="Y contribution to G, between 0 and 1.",
-    )
-    parser.add_argument(
         "--ib",
         type=float,
         default=0.2,
         metavar="RATE",
         help="I contribution to B, between 0 and 1.",
+    )
+    parser.add_argument(
+        "--yg",
+        type=float,
+        default=0.3,
+        metavar="RATE",
+        help="Y contribution to G, between 0 and 1.",
     )
     parser.add_argument(
         "--stretch",
