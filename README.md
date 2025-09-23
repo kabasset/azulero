@@ -125,11 +125,15 @@ Using:
 Do:
 
 * Balancing: Multiply channels $I, Y, J, H$ by gains $g_I, g_Y, g_J, g_H$, respectively.
-* Colors: Set $R = H$, $G = \text{lerp}_{Y, G}(Y, J), B = \text{lerp}_{I, B}(I, Y)$.
-* Lightness: Set $L = \text{lerp}_{\text{NIR}, L}(\text{median}(Y, J, H), I)$.
-* Stretching: Set $x = \text{arcsinh}(x / a)$ for $x$ in $R, G, B, L, b, w$.
-* Normalization: Set $x = \text{clip}_{0, 1}((x - b) / (w - b))$ for $x$ in $R, G, B, L$.
-* Saturation: Set $S = g_S \, \text{saturation}(R, G, B)$.
+* Blending: Set
+  * $R = H$,
+  * $G = \text{lerp}_{Y, G}(Y, J)$,
+  * $B = \text{lerp}_{I, B}(I, Y)$,
+  * $L = \text{lerp}_{\text{NIR}, L}(\text{median}(Y, J, H), I)$.
+* Stretching: Set
+  * $x = \text{arcsinh}(x / a)$ for $x$ in $R, G, B, L, b, w$,
+  * $x = \text{clip}_{0, 1}((x - b) / (w - b))$ for $x$ in $R, G, B, L$.
+* Saturation: Set $S = g_S \times \text{saturation}(R, G, B)$.
 * Remapping: Recompute $R, G, B$ from $\text{hue}(R, G, B), L, S$.
 
 Default parameters give good resuts in the vast majority of cases.
