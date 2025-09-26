@@ -160,7 +160,7 @@ azul process -h
 
 # Contributors
 
-* Mischa Schirmer (MPIA): Azul's color blending is freely inspired by that of his own script `eummy.py`.
+* Dr Mischa Schirmer (MPIA): Azul's color blending is freely inspired by that Mischa's script `eummy.py`.
 * Téo Bouvard (Thales): drafed `retrieve`.
 * Rollin Gimenez (CNES): Fixed packaging.
 * Kane Nguyen-Kim (IAP): Provided URLs for retrieving public data.

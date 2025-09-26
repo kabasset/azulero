@@ -137,6 +137,8 @@ def query_datafiles(retriever, tile, dsr):
     print(f"Query datafiles for tile {tile} and dataset release {dsr}:")
 
     datafiles = retriever.query_datafiles(tile, dsr)
+    if len(datafiles) == 0:
+        print("- None found.")
 
     for f in datafiles:
         print(f"- [{datafiles[f]}] {f}")
@@ -177,6 +179,6 @@ def run(args):
         download_datafiles(provider, datafiles, workdir)
         timer.tic_print()
         print(f"\nYou may now run:")
-        print(f"\nazul --workspace {args.workspace} show {tile}\n")
+        print(f"\nazul --workspace {args.workspace} crop {tile}\n")
         print(f"or:")
         print(f"\nazul --workspace {args.workspace} process {tile}\n")
