@@ -77,6 +77,7 @@ def add_parser(subparsers):
     )
     parser.add_argument(
         "--stretch",
+        "-a",
         type=float,
         default=0.7,
         metavar="FACTOR",
@@ -84,6 +85,7 @@ def add_parser(subparsers):
     )
     parser.add_argument(
         "--black",
+        "-b",
         type=float,
         default=0.0,
         metavar="VALUE",
@@ -91,8 +93,9 @@ def add_parser(subparsers):
     )
     parser.add_argument(
         "--white",
+        "-w",
         type=float,
-        default=10000.0,
+        default=1000.0,
         metavar="VALUE",
         help="White point.",
     )
