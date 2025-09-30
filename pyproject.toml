@@ -1,6 +1,6 @@
 [project]
 name = "azulero"
-version = "0.3.0"
+version = "0.4.0"
 authors = [
   { name="Antoine Basset", email="antoine.basset@cnes.fr" },
 ]
@@ -30,13 +30,6 @@ Issues = "https://github.com/kabasset/azulero/issues"
 [build-system]
 requires = [
     "hatchling >= 1.26",
-    "numpy >= 2.0",
-    "astropy",
-    "matplotlib",
-    "opencv-python",
-    "requests",
-    "scikit-image",
-    "tifffile"
 ]
 build-backend = "hatchling.build"
 
