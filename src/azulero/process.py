@@ -57,14 +57,14 @@ def add_parser(subparsers):
     parser.add_argument(
         "--nirl",
         type=float,
-        default=0.5,
+        default=0.1,
         metavar="RATE",
         help="NIR contribution to L, between 0 and 1.",
     )
     parser.add_argument(
         "--ib",
         type=float,
-        default=0.2,
+        default=0.5,
         metavar="RATE",
         help="I contribution to B, between 0 and 1.",
     )
@@ -78,7 +78,7 @@ def add_parser(subparsers):
     parser.add_argument(
         "--jr",
         type=float,
-        default=0.0,
+        default=0.9,
         metavar="RATE",
         help="J contribution to R, between 0 and 1.",
     )
@@ -86,7 +86,7 @@ def add_parser(subparsers):
         "--stretch",
         "-a",
         type=float,
-        default=0.7,
+        default=0.5,
         metavar="FACTOR",
         help="Scaling factor `a` in `arcsinh(data * a)`.",
     )
@@ -94,7 +94,7 @@ def add_parser(subparsers):
         "--black",
         "-b",
         type=float,
-        default=0.0,
+        default=-1.0,
         metavar="VALUE",
         help="Black point, which may be 0 for background-subtracted inputs.",
     )
@@ -102,7 +102,7 @@ def add_parser(subparsers):
         "--white",
         "-w",
         type=float,
-        default=1000.0,
+        default=2000.0,
         metavar="VALUE",
         help="White point.",
     )
@@ -153,6 +153,7 @@ def run(args):
     print(f"Inpaint dead pixels")
     for i in range(len(iyjh)):
         iyjh[i] = mask.inpaint(iyjh[i], dead[i])
+    timer.tic_print()
 
     print(f"Transform IYJH to RGB image")
     res = color.iyjh_to_rgb(iyjh, transform)
