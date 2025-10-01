@@ -49,7 +49,7 @@ The typical workflow is as follows:
 Usage:
 
 ```xml
-azul [--workspace <workspace>] retrieve [--dsr <dataset_release>] <tile_indices>
+azul [--workspace <workspace>] retrieve [--dsr <dataset_release>] [--from <provider>] <tile_indices>
 azul [--workspace <workspace>] crop <tile_index>
 azul [--workspace <workspace>] process <tile_slicing>
 ```
@@ -58,17 +58,35 @@ with:
 
 * `<workspace>` - The parent directory to save everything, in which one folder per tile will be created (defaults to the current directory).
 * `<dataset_release>` - The dataset release of the tiles to be downloaded (defaults to a list of known releases).
+* `<provider>` - The data archive name.
 * `<tile_indices>` - The space-separated list of tiles to be downloaded.
 * `<tile_index>` - A single tile index.
 * `<tile_slicing>` - A single tile index, optionally followed by a slicing à-la NumPy.
 
-Example:
+# Example: The Ring Field
+
+Here is an example output and the commands which produced it below:
+
+![processed](https://raw.githubusercontent.com/kabasset/azulero/develop/102159776.jpg)
 
 ```
-azul retrieve 102034383 --dsr DR1_R1
-azul crop 102034383
-azul process 102034383[1000:9000,7500:13500]
+azul retrieve 102159776 --from sas
+azul crop 102159776
+azul process 102159776[5500:7500,5000:7000] -w 2000 --nirl 0.1 --jr 0.9 --ib 0.5 -a 0.5 -b -1
 ```
+I have post-processed the output to my liking:
+
+![postprocessed](https://raw.githubusercontent.com/kabasset/azulero/develop/102159776_post.jpg)
+
+> The two thick blue rings 💍 are artifacts of the VIS instrument known as ghosts.
+> To my knowledge, the galaxy in the center has never been resolved this way.
+> Rendering the image allowed me to discover this is a splendid polar ring 💍 galaxy!
+> The previously unseen golden structure top left may be an Einstein ring 💍 or a collisional ring 💍 -- the question remains open. 
+
+As you can see, getting a nice image required a bit of parametrization.
+This is because we are using the public Q1 data.
+DR1 data, to be published in 2026, have a much better signal-to-noise ration, and default parameters give very good results.
+I already rendered the DR1 version of this field; I cannot share it today, but I can already tell you it is mesmerizing 😏
 
 # Advanced usage
 
