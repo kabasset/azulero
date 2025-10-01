@@ -63,11 +63,13 @@ with:
 * `<tile_index>` - A single tile index.
 * `<tile_slicing>` - A single tile index, optionally followed by a slicing à-la NumPy.
 
-# Example: The Ring Field
+# Example
 
 Here is an example output and the commands which produced it below:
 
 ![processed](https://raw.githubusercontent.com/kabasset/azulero/develop/102159776.jpg)
+
+> Credit: Antoine Basset, CNES/ESA Euclid/Euclid Consortium/NASA/Q1-2025
 
 ```
 azul retrieve 102159776 --from sas
@@ -78,9 +80,11 @@ I have post-processed the output to my liking:
 
 ![postprocessed](https://raw.githubusercontent.com/kabasset/azulero/develop/102159776_post.jpg)
 
+> Credit: Antoine Basset, CNES/ESA Euclid/Euclid Consortium/NASA/Q1-2025
+
 > The two thick blue rings 💍 are artifacts of the VIS instrument known as ghosts.
 > To my knowledge, the galaxy in the center has never been resolved this way.
-> Rendering the image allowed me to discover this is a splendid polar ring 💍 galaxy!
+> Rendering the image allowed me to discover this is a splendid polar-ring 💍 galaxy!
 > The previously unseen golden structure top left may be an Einstein ring 💍 or a collisional ring 💍 -- the question remains open. 
 
 As you can see, getting a nice image required a bit of parametrization.
