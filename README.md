@@ -85,7 +85,7 @@ I have post-processed the output to my liking:
 
 As you can see, getting a nice image required a bit of parametrization.
 This is because we are using the public Q1 data.
-DR1 data, to be published in 2026, have a much better signal-to-noise ration, and default parameters give very good results.
+DR1 data, to be published in 2026, have a much better signal-to-noise ratio, and default parameters give very good results.
 I already rendered the DR1 version of this field; I cannot share it today, but I can already tell you it is mesmerizing 😏
 
 # Advanced usage

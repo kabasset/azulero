@@ -143,14 +143,14 @@ def run(args):
     print(f"- Shape: {iyjh.shape[1]} x {iyjh.shape[2]}")
     timer.tic_print()
 
-    print(f"Detect invalid pixels")
+    print(f"Detect dead and hot pixels")
     dead = mask.dead_pixels(iyjh)
     hot = mask.hot_pixels(*iyjh)
-    print(f"- Dead VIS: {np.sum(dead[0])}")
-    # print(f"- Dead NIR: {np.sum(dead_nir)}")
+    print(f"- Dead: {np.sum(dead[0])}")
     print(f"- Hot: {np.sum(hot)}")
     timer.tic_print()
 
+    print(f"Inpaint dead pixels")
     for i in range(len(iyjh)):
         iyjh[i] = mask.inpaint(iyjh[i], dead[i])
 
@@ -163,7 +163,7 @@ def run(args):
         io.write_tiff(res, path)
     timer.tic_print()
 
-    print(f"Inpaint invalid pixels")
+    print(f"Inpaint hot pixels")
     res[dead[0]] = mask.resaturate(res[dead[0]])
     res = mask.inpaint(res, hot)
     timer.tic_print()
