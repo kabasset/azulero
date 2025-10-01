@@ -11,8 +11,9 @@ import cv2
 class Transform(object):
     iyjh_scaling: np.array
     nir_to_l: float
-    y_to_g: float
     i_to_b: float
+    y_to_g: float
+    j_to_r: float
     saturation: float
     stretch: float
     bw: np.array
@@ -26,7 +27,7 @@ def iyjh_to_rgb(data, transform: Transform):
     l = lerp(transform.nir_to_l, np.median(data[1:], axis=0), i)
 
     rgb = np.zeros((data.shape[1], data.shape[2], 3), dtype=np.float32)
-    rgb[:, :, 0] = h
+    rgb[:, :, 0] = lerp(transform.j_to_r, j, h)
     rgb[:, :, 1] = lerp(transform.y_to_g, y, j)
     rgb[:, :, 2] = lerp(transform.i_to_b, i, y)
     del i, y, j, h

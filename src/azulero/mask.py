@@ -5,6 +5,7 @@
 import enum
 import numpy as np
 from skimage.restoration import inpaint as skinpaint
+import cv2
 
 
 class Flag(enum.Enum):
@@ -40,9 +41,8 @@ class NirFlag(Flag):
     NL_SATURATED = 12
 
 
-def dead_pixels(i, y, j, h):
-
-    return (i == 0, (y == 0) | (j == 0) | (h == 0))
+def dead_pixels(iyjh):
+    return iyjh == 0
 
 
 def hot_pixels(i, y, j, h):
@@ -56,9 +56,10 @@ def hot_pixels(i, y, j, h):
     return hot_i | hot_y | hot_j | hot_h
 
 
-def inpaint(data, mask):
-    # return cv2.inpaint(data, mask.astype(np.int8), 3, cv2.INPAINT_TELEA) # Won't support 3-channel float
-    return skinpaint.inpaint_biharmonic(data, mask, channel_axis=-1)
+def inpaint(data: np.ndarray, mask: np.ndarray):
+    if data.ndim > 2:
+        return skinpaint.inpaint_biharmonic(data, mask, channel_axis=-1)
+    return cv2.inpaint(data, mask.astype(np.uint8), 3, cv2.INPAINT_TELEA)
 
 
 def _resaturate(x):

@@ -76,6 +76,13 @@ def add_parser(subparsers):
         help="Y contribution to G, between 0 and 1.",
     )
     parser.add_argument(
+        "--jr",
+        type=float,
+        default=0.0,
+        metavar="RATE",
+        help="J contribution to R, between 0 and 1.",
+    )
+    parser.add_argument(
         "--stretch",
         "-a",
         type=float,
@@ -117,8 +124,9 @@ def run(args):
     transform = color.Transform(
         iyjh_scaling=np.array(args.scaling),
         nir_to_l=args.nirl,
-        y_to_g=args.yg,
         i_to_b=args.ib,
+        y_to_g=args.yg,
+        j_to_r=args.jr,
         saturation=args.saturation,
         stretch=args.stretch,
         bw=np.array([args.black, args.white]),
@@ -136,12 +144,15 @@ def run(args):
     timer.tic_print()
 
     print(f"Detect invalid pixels")
-    dead_vis, dead_nir = mask.dead_pixels(*iyjh)
+    dead = mask.dead_pixels(iyjh)
     hot = mask.hot_pixels(*iyjh)
-    print(f"- Dead VIS: {np.sum(dead_vis)}")
-    print(f"- Dead NIR: {np.sum(dead_nir)}")
+    print(f"- Dead VIS: {np.sum(dead[0])}")
+    # print(f"- Dead NIR: {np.sum(dead_nir)}")
     print(f"- Hot: {np.sum(hot)}")
     timer.tic_print()
+
+    for i in range(len(iyjh)):
+        iyjh[i] = mask.inpaint(iyjh[i], dead[i])
 
     print(f"Transform IYJH to RGB image")
     res = color.iyjh_to_rgb(iyjh, transform)
@@ -153,9 +164,7 @@ def run(args):
     timer.tic_print()
 
     print(f"Inpaint invalid pixels")
-    res = mask.inpaint(res, dead_nir)
-    res = mask.inpaint(res, dead_vis)
-    res[dead_vis] = mask.resaturate(res[dead_vis])
+    res[dead[0]] = mask.resaturate(res[dead[0]])
     res = mask.inpaint(res, hot)
     timer.tic_print()
 
