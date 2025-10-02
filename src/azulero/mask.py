@@ -59,7 +59,7 @@ def hot_pixels(i, y, j, h):
 def inpaint(data: np.ndarray, mask: np.ndarray):
     if data.ndim > 2:
         return skinpaint.inpaint_biharmonic(data, mask, channel_axis=-1)
-    return cv2.inpaint(data, mask.astype(np.uint8), 3, cv2.INPAINT_TELEA)
+    return cv2.inpaint(data, mask.astype(np.uint8), 3, cv2.INPAINT_NS)
 
 
 def _resaturate(x):
