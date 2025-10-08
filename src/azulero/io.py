@@ -27,12 +27,29 @@ def parse_slice(text: str):
     )
 
 
+def parse_map(text: str, dtype=float):
+    """
+    Parse a comma-separated list of 'key:value' pairs.
+    """
+    if not text:
+        return []
+    pairs = [p.split(":") for p in text.split(",")]
+    return [[dtype(x), dtype(y)] for x, y in pairs]
+
+
 def read_fits(path: Path, slicing=None):
     """
     Read a region in the primary array of a FITS file.
     """
     data = fits.getdata(path)
     return data if slicing is None else data[slicing]
+
+
+def write_fits(data: np.array, path: Path):
+    """
+    Write an SIF file.
+    """
+    fits.PrimaryHDU(data).writeto(path)
 
 
 def write_tiff(rgb: np.ndarray, path: Path):
