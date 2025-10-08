@@ -17,11 +17,13 @@ def add_parser(subparsers):
         description=(
             "Process MER channels: "
             "1. Scale each channel; "
-            "2. Blend IYJH channels into RGB and lightness (L) channels; "
-            "3. Stretch dynamic range using arcsinh function; "
-            "4. Set black and white points; "
-            "5. Boost color saturation; "
-            "6. Inpaint bad pixels."
+            "2. Inpaint dead pixels; "
+            "3. Blend IYJH channels into RGB and lightness (L) channels; "
+            "4. Stretch dynamic range using arcsinh function; "
+            "5. Set black and white points; "
+            "6. Boost color saturation; "
+            "7. Inpaint hot pixels; "
+            "8. Adjust curves."
         ),
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
@@ -78,7 +80,7 @@ def add_parser(subparsers):
     parser.add_argument(
         "--jr",
         type=float,
-        default=0.9,
+        default=0.5,
         metavar="RATE",
         help="J contribution to R, between 0 and 1.",
     )
@@ -112,6 +114,14 @@ def add_parser(subparsers):
         default=1.6,
         metavar="GAIN",
         help="Saturation factor",
+    )
+    parser.add_argument(
+        "--curves",
+        type=str,
+        nargs=3,
+        default=["0.2: 0.15, 0.65: 0.65", "0.15: 0.1, 0.4: 0.4", ""],
+        metavar=("KNOTS_R", "KNOTS_G", "KNOTS_B"),
+        help="Curve spline knots for each channel",
     )
 
     parser.set_defaults(func=run)
@@ -170,6 +180,20 @@ def run(args):
     timer.tic_print()
 
     path = workdir / name.replace("{step}", "inpainted")
+    print(f"Write output: {path.name}")
+    io.write_tiff(res, path)
+    timer.tic_print()
+
+    print(f"Adjust curves")
+    for i in range(len(args.curves)):
+        knots = io.parse_map(args.curves[i])
+        knots.insert(0, [0, 0])
+        knots.append([1, 1])
+        print(f"{np.min(res[i])} - {np.max(res[i])}")  # FIXME rm
+        res[i] = color.adjust_curve(res[i], knots)
+    timer.tic_print()
+
+    path = workdir / name.replace("{step}", "adjusted")
     print(f"Write output: {path.name}")
     io.write_tiff(res, path)
     timer.tic_print()

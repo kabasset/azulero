@@ -5,6 +5,7 @@
 from dataclasses import dataclass
 import numpy as np
 import cv2
+from scipy import interpolate
 
 
 @dataclass
@@ -68,3 +69,10 @@ def normalized_asinh(data: np.ndarray, transform: Transform):
     data = np.arcsinh(data * a)
     black, white = np.arcsinh(transform.bw * a)
     return np.clip((data - black) / (white - black), 0, 1, dtype=np.float32)
+
+
+def adjust_curve(data: np.array, knots: list):
+    x, y = list(map(list, zip(*knots)))
+    k = min(len(knots) - 1, 3)
+    spline = interpolate.make_interp_spline(x, y, k)
+    return spline(data)  # FIXME

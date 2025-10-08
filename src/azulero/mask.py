@@ -70,4 +70,7 @@ def _resaturate(x):
     return 2 * x - 0.8
 
 
-resaturate = np.vectorize(_resaturate)
+def resaturate(data):
+    if len(data) == 0:
+        return data
+    return np.vectorize(_resaturate)(data)
