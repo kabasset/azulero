@@ -189,8 +189,7 @@ def run(args):
         knots = io.parse_map(args.curves[i])
         knots.insert(0, [0, 0])
         knots.append([1, 1])
-        print(f"{np.min(res[i])} - {np.max(res[i])}")  # FIXME rm
-        res[i] = color.adjust_curve(res[i], knots)
+        res[:, :, i] = color.adjust_curve(res[:, :, i], knots)
     timer.tic_print()
 
     path = workdir / name.replace("{step}", "adjusted")
