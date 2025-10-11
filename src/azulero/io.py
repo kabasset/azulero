@@ -45,11 +45,20 @@ def read_fits(path: Path, slicing=None):
     return data if slicing is None else data[slicing]
 
 
+def make_workdir(workspace, tile):
+    workdir = Path(workspace).expanduser() / tile
+    if workdir.is_dir():
+        print("WARNING: Working directory already exists.")
+    else:
+        workdir.mkdir(parents=True)
+    return workdir
+
+
 def write_fits(data: np.array, path: Path):
     """
     Write an SIF file.
     """
-    fits.PrimaryHDU(data).writeto(path)
+    fits.PrimaryHDU(data).writeto(path, overwrite=True)
 
 
 def write_tiff(rgb: np.ndarray, path: Path):

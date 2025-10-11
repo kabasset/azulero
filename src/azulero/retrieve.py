@@ -3,10 +3,9 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import argparse
-from dataclasses import dataclass
-from pathlib import Path
 import requests
 
+from azulero import io
 from azulero.timing import Timer
 
 
@@ -123,15 +122,6 @@ def add_parser(subparsers):
     parser.set_defaults(func=run)
 
 
-def make_workdir(workspace, tile):
-    workdir = Path(workspace).expanduser() / tile
-    if workdir.is_dir():
-        print("WARNING: Working directory already exists.")
-    else:
-        workdir.mkdir(parents=True)
-    return workdir
-
-
 def query_datafiles(retriever, tile, dsr):
 
     print(f"Query datafiles for tile {tile} and dataset release {dsr}:")
@@ -165,7 +155,7 @@ def run(args):
     timer = Timer()
     provider = providers[vars(args)["from"]]()
     for tile in args.tiles:  # TODO parallelize?
-        workdir = make_workdir(args.workspace, tile)
+        workdir = io.make_workdir(args.workspace, tile)
         for dsr in args.dsr.split(","):
             datafiles = query_datafiles(provider, tile, dsr)
             if len(datafiles) > 0:

@@ -57,16 +57,19 @@ def run(args):
         tile, slicing = io.parse_tile(tile)
         workdir = workspace / tile
         patch = io.read_iyjh(workdir, slicing)
+        print(f"- Shape: {patch.shape[1]} x {patch.shape[2]}")
         patches.append(patch)
         timer.tic_print()
 
     print("Assemble")
-    assemblage = np.hstack(patches)
+    assemblage = np.concatenate(patches, axis=2)
+    print(f"- Shape: {assemblage.shape[1]} x {assemblage.shape[2]}")
     timer.tic_print()
 
     print("Write channels")
+    workdir = io.make_workdir(workspace, args.output_dir)
     for name, channel in zip(("VIS", "NIR-Y", "NIR-J", "NIR-H"), assemblage):
-        path = workspace / args.output / f"EUC_{name}_ASSEMBLAGE.fits"
+        path = workdir / f"EUC_{name}_ASSEMBLAGE.fits"
         print(f"- [{name}] {path}")
         io.write_fits(channel, path)
     timer.tic_print()
