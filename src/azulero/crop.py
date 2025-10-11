@@ -32,6 +32,9 @@ def add_parser(subparsers):
         help="Tile index.",
     )
     parser.add_argument(
+        "--white", "-w", type=float, default=1.0, metavar="VALUE", help="White point"
+    )
+    parser.add_argument(
         "--round",
         type=int,
         default=500,
@@ -60,7 +63,7 @@ def run(args):
 
     print(f"Prepare data.")
     h, w = data.shape
-    data = np.clip(data[::10, ::10], 0, 1)
+    data = np.clip(data[::10, ::10], 0, args.white)
     im = plt.imshow(np.flipud(np.asinh(data / 0.7)), extent=[0, w, 0, h])
     timer.tic_print()
 
