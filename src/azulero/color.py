@@ -15,6 +15,7 @@ class Transform(object):
     i_to_b: float
     y_to_g: float
     j_to_r: float
+    hue: float
     saturation: float
     stretch: float
     bw: np.array
@@ -38,6 +39,7 @@ def iyjh_to_rgb(data, transform: Transform):
     del data
 
     hls = cv2.cvtColor(rgb, cv2.COLOR_RGB2HLS)
+    hls[:, :, 0] = (hls[:, :, 0] + transform.hue) % 360
     hls[:, :, 2] = np.clip(hls[:, :, 2] * transform.saturation, 0, 1)
     hls[:, :, 1] = l
 

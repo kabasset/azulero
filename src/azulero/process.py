@@ -109,6 +109,9 @@ def add_parser(subparsers):
         help="White point.",
     )
     parser.add_argument(
+        "--hue", type=float, default=-30, metavar="ANGLE", help="Hue shift"
+    )
+    parser.add_argument(
         "--saturation",
         type=float,
         default=1.6,
@@ -137,6 +140,7 @@ def run(args):
         i_to_b=args.ib,
         y_to_g=args.yg,
         j_to_r=args.jr,
+        hue=args.hue,
         saturation=args.saturation,
         stretch=args.stretch,
         bw=np.array([args.black, args.white]),
