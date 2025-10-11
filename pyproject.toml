@@ -18,6 +18,7 @@ dependencies = [
     "astropy",
     "matplotlib",
     "opencv-python",
+    "pyyaml",
     "requests",
     "scikit-image",
     "tifffile"

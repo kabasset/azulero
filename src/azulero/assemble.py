@@ -5,6 +5,7 @@
 import argparse
 import numpy as np
 from pathlib import Path
+import yaml
 
 from azulero import color, io, mask
 from azulero.timing import Timer
@@ -24,9 +25,8 @@ def add_parser(subparsers):
     parser.add_argument(
         "tiles",
         type=str,
-        nargs="+",
         metavar="SPECS",
-        help="Space-separated list of tile specs",
+        help="Path to the YAML configuration file (list of tile specs), relative to the workspace",
     )
     # parser.add_argument( # FIXME
     #     "--cols", "-c", metaval="COUNT", help="Maximum number of columns"
@@ -52,7 +52,9 @@ def run(args):
 
     print("Read patches")
     patches = []
-    for tile in args.tiles:
+    with open(workspace / args.tiles, "r") as f:
+        tiles = yaml.safe_load(f)
+    for tile in tiles:
         print(f"- {tile}")
         tile, slicing = io.parse_tile(tile)
         workdir = workspace / tile
