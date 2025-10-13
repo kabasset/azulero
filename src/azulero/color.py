@@ -6,11 +6,17 @@ from dataclasses import dataclass
 import numpy as np
 import cv2
 from scipy import interpolate
+from skimage.filters import unsharp_mask as sksharpen
+
+from azulero import io  # FIXME rm
 
 
 @dataclass
 class Transform(object):
+    iyjh_zero_points: np.array
     iyjh_scaling: np.array
+    fwhm: np.array
+    sharpen: float
     nir_to_l: float
     i_to_b: float
     y_to_g: float
@@ -21,22 +27,33 @@ class Transform(object):
     bw: np.array
 
 
+def sharpen(data, radii, strength):  # FIXME to dedicated module
+    if strength == 0:
+        return data
+    for i in range(len(data)):
+        data[i] = sksharpen(data[i], radii[i], strength, True)
+    return data
+
+
 def iyjh_to_rgb(data, transform: Transform):
 
-    data *= transform.iyjh_scaling[:, np.newaxis, np.newaxis]
+    data = sharpen(data, transform.fwhm / 2.355, transform.sharpen)
+    w = 10 ** ((transform.iyjh_zero_points - transform.bw[1]) / 2.5)
+    gains = transform.iyjh_scaling / w
+    print(gains)
+    data *= gains[:, np.newaxis, np.newaxis]
+    io.write_tiff(np.concatenate(data), "normalized.tiff")
+    data = normalized_asinh(data, transform)
+    io.write_tiff(np.concatenate(data), "stretched.tiff")
 
     i, y, j, h = data
-    l = lerp(transform.nir_to_l, np.median(data[1:], axis=0), i)
+    l = lerp(transform.nir_to_l, np.median(data[1:], axis=0), data[0])
 
     rgb = np.zeros((data.shape[1], data.shape[2], 3), dtype=np.float32)
     rgb[:, :, 0] = lerp(transform.j_to_r, j, h)
     rgb[:, :, 1] = lerp(transform.y_to_g, y, j)
     rgb[:, :, 2] = lerp(transform.i_to_b, i, y)
     del i, y, j, h
-
-    rgb = normalized_asinh(rgb, transform)
-    l = normalized_asinh(l, transform)
-    del data
 
     hls = cv2.cvtColor(rgb, cv2.COLOR_RGB2HLS)
     hls[:, :, 0] = (hls[:, :, 0] + transform.hue) % 360
@@ -69,7 +86,8 @@ def channelwise_div(data, factors):
 def normalized_asinh(data: np.ndarray, transform: Transform):
     a = transform.stretch
     data = np.arcsinh(data * a)
-    black, white = np.arcsinh(transform.bw * a)
+    black = np.arcsinh(transform.bw[0] * a)
+    white = np.arcsinh(a)
     return np.clip((data - black) / (white - black), 0, 1, dtype=np.float32)
 
 

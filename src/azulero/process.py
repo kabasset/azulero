@@ -5,7 +5,6 @@
 import argparse
 import numpy as np
 from pathlib import Path
-from skimage.filters import unsharp_mask as sksharpen
 
 from azulero import color, io, mask
 from azulero.timing import Timer
@@ -50,28 +49,31 @@ def add_parser(subparsers):
         ),
     )
     parser.add_argument(
+        "--zero",
+        nargs=4,
+        type=float,
+        default=[24.5, 29.8, 30.1, 30.0],
+        metavar=("ZP_I", "ZP_Y", "ZP_J", "ZP_H"),
+        help="Zero points for each band",
+    )
+    parser.add_argument(
         "--scaling",
         nargs=4,
         type=float,
         default=[
-            316,  # = 158 x 2 = VIS x 2, for white balance
-            1.2,
-            0.9,
-            1,
-        ],  # from zero points, for m_AB = 1 at ZP = 30
+            2.0,
+            1.0,
+            1.0,
+            1.0,
+        ],
         metavar=("GAIN_I", "GAIN_Y", "GAIN_J", "GAIN_H"),
-        help="Scaling factors applied immediately to the IYJH bands",  # FIXME relative to ZP, e.g. [2, 1, 1, 1]
+        help="Scaling factors applied immediately to the IYJH bands for white balance",
     )
     parser.add_argument(
         "--fwhm",
         nargs=4,
         type=float,
-        default=[
-            2.03,
-            4.75,
-            5.04,
-            5.42,
-        ],  # MER estimated FWHM # FIXME native PSF width to prevent overshooting
+        default=[1.6, 3.5, 3.4, 3.5],
         metavar=("FWHM_I", "FWHM_Y", "FWHM_J", "FWHM_H"),
         help="FWHM for each band",
     )
@@ -156,20 +158,15 @@ def add_parser(subparsers):
     parser.set_defaults(func=run)
 
 
-def sharpen(data, radii, strength):  # FIXME to dedicated module
-    if strength == 0:
-        return data
-    for i in range(len(data)):
-        data[i] = sksharpen(data[i], radii[i], strength, True)
-    return data
-
-
 def run(args):
 
     print()
 
     transform = color.Transform(
+        iyjh_zero_points=np.array(args.zero),
         iyjh_scaling=np.array(args.scaling),
+        fwhm=np.array(args.fwhm),
+        sharpen=args.sharpen,
         nir_to_l=args.nirl,
         i_to_b=args.ib,
         y_to_g=args.yg,
@@ -201,12 +198,7 @@ def run(args):
     print(f"Inpaint dead pixels")
     for i in range(len(iyjh)):
         iyjh[i] = mask.inpaint(iyjh[i], dead[i])
-    timer.tic_print()
-
-    print(f"Sharpen channels")
-    iyjh = sharpen(
-        iyjh, np.array(args.fwhm) / 2.355 * 0.8, args.sharpen
-    )  # FIXME use VIS, NIR PSF instead of MER's and remove 0.8
+        iyjh[i][dead[i]] = mask.resaturate(iyjh[i][dead[i]], np.max(iyjh[i]))
     timer.tic_print()
 
     print(f"Transform IYJH to RGB image")
