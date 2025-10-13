@@ -5,6 +5,7 @@
 import argparse
 import numpy as np
 from pathlib import Path
+from skimage.filters import unsharp_mask as sksharpen
 
 from azulero import color, io, mask
 from azulero.timing import Timer
@@ -52,9 +53,34 @@ def add_parser(subparsers):
         "--scaling",
         nargs=4,
         type=float,
-        default=[500, 1.6, 1, 1],  # NIR passbands ~ 0.25, 0.4, 0.5, H = 1 boosts R
+        default=[
+            316,  # = 158 x 2 = VIS x 2, for white balance
+            1.2,
+            0.9,
+            1,
+        ],  # from zero points, for m_AB = 1 at ZP = 30
         metavar=("GAIN_I", "GAIN_Y", "GAIN_J", "GAIN_H"),
-        help="Scaling factors applied immediately to the IYJH bands",
+        help="Scaling factors applied immediately to the IYJH bands",  # FIXME relative to ZP, e.g. [2, 1, 1, 1]
+    )
+    parser.add_argument(
+        "--fwhm",
+        nargs=4,
+        type=float,
+        default=[
+            2.03,
+            4.75,
+            5.04,
+            5.42,
+        ],  # MER estimated FWHM # FIXME native PSF width to prevent overshooting
+        metavar=("FWHM_I", "FWHM_Y", "FWHM_J", "FWHM_H"),
+        help="FWHM for each band",
+    )
+    parser.add_argument(
+        "--sharpen",
+        type=float,
+        default=0.5,
+        metavar="STRENGTH",
+        help="Strength of the sharpening",
     )
     parser.add_argument(
         "--nirl",
@@ -66,21 +92,21 @@ def add_parser(subparsers):
     parser.add_argument(
         "--ib",
         type=float,
-        default=0.5,
+        default=1.0,
         metavar="RATE",
         help="I contribution to B, between 0 and 1.",
     )
     parser.add_argument(
         "--yg",
         type=float,
-        default=0.3,
+        default=0.5,
         metavar="RATE",
         help="Y contribution to G, between 0 and 1.",
     )
     parser.add_argument(
         "--jr",
         type=float,
-        default=0.5,
+        default=0.75,
         metavar="RATE",
         help="J contribution to R, between 0 and 1.",
     )
@@ -104,7 +130,7 @@ def add_parser(subparsers):
         "--white",
         "-w",
         type=float,
-        default=2000.0,
+        default=2000.0,  # FIXME in m_AB?
         metavar="VALUE",
         help="White point.",
     )
@@ -114,7 +140,7 @@ def add_parser(subparsers):
     parser.add_argument(
         "--saturation",
         type=float,
-        default=1.6,
+        default=1.2,
         metavar="GAIN",
         help="Saturation factor",
     )
@@ -128,6 +154,14 @@ def add_parser(subparsers):
     )
 
     parser.set_defaults(func=run)
+
+
+def sharpen(data, radii, strength):  # FIXME to dedicated module
+    if strength == 0:
+        return data
+    for i in range(len(data)):
+        data[i] = sksharpen(data[i], radii[i], strength, True)
+    return data
 
 
 def run(args):
@@ -167,6 +201,12 @@ def run(args):
     print(f"Inpaint dead pixels")
     for i in range(len(iyjh)):
         iyjh[i] = mask.inpaint(iyjh[i], dead[i])
+    timer.tic_print()
+
+    print(f"Sharpen channels")
+    iyjh = sharpen(
+        iyjh, np.array(args.fwhm) / 2.355 * 0.8, args.sharpen
+    )  # FIXME use VIS, NIR PSF instead of MER's and remove 0.8
     timer.tic_print()
 
     print(f"Transform IYJH to RGB image")
