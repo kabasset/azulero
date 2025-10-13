@@ -43,6 +43,11 @@ def add_parser(subparsers):
     parser.set_defaults(func=run)
 
 
+def height(slicing):
+    vertical = slicing[0]
+    return vertical.stop - vertical.start
+
+
 def run(args):
 
     print()
@@ -53,13 +58,16 @@ def run(args):
     print("Read patches")
     patches = []
     with open(workspace / args.tiles, "r") as f:
-        tiles = yaml.safe_load(f)
-    for tile in tiles:
-        print(f"- {tile}")
-        tile, slicing = io.parse_tile(tile)
+        specs = [io.parse_tile(tile) for tile in yaml.safe_load(f)]
+    common_height = height(specs[0][1])
+    print(f"- Height: {common_height}")
+    assert all(
+        height(slicing) == common_height for _, slicing in specs
+    ), "All patches must have the same height."
+    for tile, slicing in specs:
         workdir = workspace / tile
         patch = io.read_iyjh(workdir, slicing)
-        print(f"- Shape: {patch.shape[1]} x {patch.shape[2]}")
+        print(f"- {tile}: {patch.shape[1]} x {patch.shape[2]}")
         patches.append(patch)
         timer.tic_print()
 
