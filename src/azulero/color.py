@@ -77,4 +77,4 @@ def adjust_curve(data: np.array, knots: list):
     x, y = list(map(list, zip(*knots)))
     k = min(len(knots) - 1, 3)
     spline = interpolate.make_interp_spline(x, y, k)
-    return spline(data)
+    return np.clip(spline(data), 0.0, 1.0)

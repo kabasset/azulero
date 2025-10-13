@@ -148,7 +148,7 @@ def add_parser(subparsers):
         "--curves",
         type=str,
         nargs=3,
-        default=["0.2: 0.15, 0.65: 0.65", "0.15: 0.1, 0.4: 0.4", ""],
+        default=["0.2: 0.15, 0.4: 0.4", "0.2: 0.15, 0.4: 0.4", "0.2: 0.1, 0.4: 0.4"],
         metavar=("KNOTS_R", "KNOTS_G", "KNOTS_B"),
         help="Curve spline knots for each channel",
     )
