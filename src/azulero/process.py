@@ -207,6 +207,7 @@ def run(args):
 
     print(f"Stretch dynamic range")
     iyjh = color.stretch_iyjh(iyjh, transform)
+    print(f"- Medians: {', '.join(str(np.median(c)) for c in iyjh)}")
     timer.tic_print()
     # TODO save vstacked iyjh (crop if too high)
 
@@ -239,6 +240,6 @@ def run(args):
     timer.tic_print()
 
     path = workdir / name.replace("{step}", "adjusted")
-    print(f"Write output: {path.name}")
+    print(f"- Write: {path.name}")
     io.write_tiff(rgb, path)
     timer.tic_print()
