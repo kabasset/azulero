@@ -13,10 +13,10 @@ from azulero import io  # FIXME rm
 
 @dataclass
 class Transform(object):
-    iyjh_zero_points: np.array
-    iyjh_scaling: np.array
-    fwhm: np.array
-    sharpen: float
+    iyjh_zero_points: np.ndarray
+    iyjh_scaling: np.ndarray
+    iyjh_fwhm: np.ndarray
+    sharpen_strength: float
     nir_to_l: float
     i_to_b: float
     y_to_g: float
@@ -24,7 +24,7 @@ class Transform(object):
     hue: float
     saturation: float
     stretch: float
-    bw: np.array
+    bw: np.ndarray
 
 
 def sharpen(data, radii, strength):  # FIXME to dedicated module
@@ -39,9 +39,7 @@ def abmag_to_value(mag, zp):
     return 10 ** ((zp - mag) / 2.5)
 
 
-def iyjh_to_rgb(data, transform: Transform):
-
-    data = sharpen(data, transform.fwhm / 2.355, transform.sharpen)
+def stretch_iyjh(data: np.ndarray, transform: Transform):
     blacks = abmag_to_value(np.abs(transform.bw[0]), transform.iyjh_zero_points)
     if transform.bw[0] < 0:
         blacks = -blacks
@@ -50,7 +48,10 @@ def iyjh_to_rgb(data, transform: Transform):
     whites = whites[:, np.newaxis, np.newaxis]
     scaling = transform.iyjh_scaling[:, np.newaxis, np.newaxis]
     data = (data * scaling - blacks) / (whites - blacks)
-    data = normalized_asinh(data, transform.stretch)
+    return asinh(data, transform.stretch)
+
+
+def iyjh_to_rgb(data: np.ndarray, transform: Transform):
 
     i, y, j, h = data
     l = lerp(transform.nir_to_l, np.median(data[1:], axis=0), data[0])
@@ -89,7 +90,7 @@ def channelwise_div(data, factors):
     return data
 
 
-def normalized_asinh(data: np.ndarray, a: float):
+def asinh(data: np.ndarray, a: float):
     return np.clip(
         np.arcsinh(data * a) / np.arcsinh(a),
         0,
@@ -98,7 +99,7 @@ def normalized_asinh(data: np.ndarray, a: float):
     )
 
 
-def adjust_curve(data: np.array, knots: list):
+def adjust_curve(data: np.ndarray, knots: list):
     x, y = list(map(list, zip(*knots)))
     k = min(len(knots) - 1, 3)
     spline = interpolate.make_interp_spline(x, y, k)

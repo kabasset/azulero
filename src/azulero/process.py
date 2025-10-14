@@ -165,8 +165,8 @@ def run(args):
     transform = color.Transform(
         iyjh_zero_points=np.array(args.zero),
         iyjh_scaling=np.array(args.scaling),
-        fwhm=np.array(args.fwhm),
-        sharpen=args.sharpen,
+        iyjh_fwhm=np.array(args.fwhm),
+        sharpen_strength=args.sharpen,
         nir_to_l=args.nirl,
         i_to_b=args.ib,
         y_to_g=args.yg,
@@ -201,34 +201,44 @@ def run(args):
         iyjh[i][dead[i]] = mask.resaturate(iyjh[i][dead[i]], np.max(iyjh[i]))
     timer.tic_print()
 
-    print(f"Transform IYJH to RGB image")
-    res = color.iyjh_to_rgb(iyjh, transform)
+    print(f"Sharpen channels")
+    iyjh = color.sharpen(iyjh, transform.iyjh_fwhm / 2.355, transform.sharpen_strength)
+    timer.tic_print()
+
+    print(f"Stretch dynamic range")
+    iyjh = color.stretch_iyjh(iyjh, transform)
+    timer.tic_print()
+    # TODO save vstacked iyjh (crop if too high)
+
+    print(f"Blend IYJH to RGB")
+    rgb = color.iyjh_to_rgb(iyjh, transform)
     del iyjh
     if "{step}" in name:
         path = workdir / name.replace("{step}", "blended")
-        print(f"- Write intermediate output: {path.name}")
-        io.write_tiff(res, path)
+        print(f"- Write: {path.name}")
+        io.write_tiff(rgb, path)
     timer.tic_print()
 
-    print(f"Inpaint hot pixels")
-    res[dead[0]] = mask.resaturate(res[dead[0]])
-    res = mask.inpaint(res, hot)
-    timer.tic_print()
+    # print(f"Inpaint hot pixels")
+    # rgb[dead[0]] = mask.resaturate(rgb[dead[0]])
+    # rgb = mask.inpaint(rgb, hot)
+    # timer.tic_print()
 
-    path = workdir / name.replace("{step}", "inpainted")
-    print(f"Write output: {path.name}")
-    io.write_tiff(res, path)
-    timer.tic_print()
+    # if "{step}" in name:
+    #     path = workdir / name.replace("{step}", "inpainted")
+    #     print(f"- Write: {path.name}")
+    #     io.write_tiff(rgb, path)
+    #     timer.tic_print()
 
     print(f"Adjust curves")
     for i in range(len(args.curves)):
         knots = io.parse_map(args.curves[i])
         knots.insert(0, [0, 0])
         knots.append([1, 1])
-        res[:, :, i] = color.adjust_curve(res[:, :, i], knots)
+        rgb[:, :, i] = color.adjust_curve(rgb[:, :, i], knots)
     timer.tic_print()
 
     path = workdir / name.replace("{step}", "adjusted")
     print(f"Write output: {path.name}")
-    io.write_tiff(res, path)
+    io.write_tiff(rgb, path)
     timer.tic_print()
