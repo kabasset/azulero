@@ -35,16 +35,22 @@ def sharpen(data, radii, strength):  # FIXME to dedicated module
     return data
 
 
+def abmag_to_value(mag, zp):
+    return 10 ** ((zp - mag) / 2.5)
+
+
 def iyjh_to_rgb(data, transform: Transform):
 
     data = sharpen(data, transform.fwhm / 2.355, transform.sharpen)
-    w = 10 ** ((transform.iyjh_zero_points - transform.bw[1]) / 2.5)
-    gains = transform.iyjh_scaling / w
-    print(gains)
-    data *= gains[:, np.newaxis, np.newaxis]
-    io.write_tiff(np.concatenate(data), "normalized.tiff")
-    data = normalized_asinh(data, transform)
-    io.write_tiff(np.concatenate(data), "stretched.tiff")
+    blacks = abmag_to_value(np.abs(transform.bw[0]), transform.iyjh_zero_points)
+    if transform.bw[0] < 0:
+        blacks = -blacks
+    whites = abmag_to_value(transform.bw[1], transform.iyjh_zero_points)
+    blacks = blacks[:, np.newaxis, np.newaxis]
+    whites = whites[:, np.newaxis, np.newaxis]
+    scaling = transform.iyjh_scaling[:, np.newaxis, np.newaxis]
+    data = (data * scaling - blacks) / (whites - blacks)
+    data = normalized_asinh(data, transform.stretch)
 
     i, y, j, h = data
     l = lerp(transform.nir_to_l, np.median(data[1:], axis=0), data[0])
@@ -83,12 +89,13 @@ def channelwise_div(data, factors):
     return data
 
 
-def normalized_asinh(data: np.ndarray, transform: Transform):
-    a = transform.stretch
-    data = np.arcsinh(data * a)
-    black = np.arcsinh(transform.bw[0] * a)
-    white = np.arcsinh(a)
-    return np.clip((data - black) / (white - black), 0, 1, dtype=np.float32)
+def normalized_asinh(data: np.ndarray, a: float):
+    return np.clip(
+        np.arcsinh(data * a) / np.arcsinh(a),
+        0,
+        1,
+        dtype=np.float32,
+    )
 
 
 def adjust_curve(data: np.array, knots: list):

@@ -61,9 +61,9 @@ def add_parser(subparsers):
         nargs=4,
         type=float,
         default=[
-            2.0,
-            1.0,
-            1.0,
+            2.2,
+            1.3,
+            1.2,
             1.0,
         ],
         metavar=("GAIN_I", "GAIN_Y", "GAIN_J", "GAIN_H"),
@@ -108,7 +108,7 @@ def add_parser(subparsers):
     parser.add_argument(
         "--jr",
         type=float,
-        default=0.75,
+        default=0.25,
         metavar="RATE",
         help="J contribution to R, between 0 and 1.",
     )
@@ -116,15 +116,15 @@ def add_parser(subparsers):
         "--stretch",
         "-a",
         type=float,
-        default=0.5,
+        default=1000,
         metavar="FACTOR",
-        help="Scaling factor `a` in `arcsinh(data * a)`.",
+        help="Stretching factor `a` in `asinh(data * a) / asinh(a)`.",
     )
     parser.add_argument(
         "--black",
         "-b",
         type=float,
-        default=-1.0,
+        default=-31.0,
         metavar="VALUE",
         help="Black point, which may be 0 for background-subtracted inputs.",
     )
@@ -132,7 +132,7 @@ def add_parser(subparsers):
         "--white",
         "-w",
         type=float,
-        default=2000.0,  # FIXME in m_AB?
+        default=22.0,
         metavar="VALUE",
         help="White point.",
     )
@@ -150,7 +150,7 @@ def add_parser(subparsers):
         "--curves",
         type=str,
         nargs=3,
-        default=["0.2: 0.15, 0.4: 0.4", "0.2: 0.15, 0.4: 0.4", "0.2: 0.1, 0.4: 0.4"],
+        default=["", "", "0.5: 0.55"],
         metavar=("KNOTS_R", "KNOTS_G", "KNOTS_B"),
         help="Curve spline knots for each channel",
     )
