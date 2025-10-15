@@ -116,17 +116,17 @@ def add_parser(subparsers):
         "--stretch",
         "-a",
         type=float,
-        default=1000,
+        default=200,
         metavar="FACTOR",
         help="Stretching factor `a` in `asinh(data * a) / asinh(a)`.",
     )
     parser.add_argument(
-        "--black",
+        "--offset",
         "-b",
         type=float,
-        default=-31.0,
+        default=0.25,
         metavar="VALUE",
-        help="Black point, which may be 0 for background-subtracted inputs.",
+        help="Opposite of black point relative to the white point, typically a fraction of 1.",
     )
     parser.add_argument(
         "--white",
@@ -134,10 +134,10 @@ def add_parser(subparsers):
         type=float,
         default=22.0,
         metavar="VALUE",
-        help="White point.",
+        help="White point in AB magnitude.",
     )
     parser.add_argument(
-        "--hue", type=float, default=-30, metavar="ANGLE", help="Hue shift"
+        "--hue", type=float, default=-20, metavar="ANGLE", help="Hue shift"
     )
     parser.add_argument(
         "--saturation",
@@ -174,7 +174,7 @@ def run(args):
         hue=args.hue,
         saturation=args.saturation,
         stretch=args.stretch,
-        bw=np.array([args.black, args.white]),
+        bw=np.array([-args.offset, args.white]),  # FIXME separate
     )
 
     tile, slicing = io.parse_tile(args.tile)
