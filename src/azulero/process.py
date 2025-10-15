@@ -16,14 +16,12 @@ def add_parser(subparsers):
         help="Process MER channels.",
         description=(
             "Process MER channels: "
-            "1. Scale each channel; "
-            "2. Inpaint dead pixels; "
-            "3. Blend IYJH channels into RGB and lightness (L) channels; "
-            "4. Stretch dynamic range using arcsinh function; "
-            "5. Set black and white points; "
-            "6. Boost color saturation; "
-            "7. Inpaint hot pixels; "
-            "8. Adjust curves."
+            "1. Inpaint dead pixels; "
+            "2. Sharpen IYJH channels; "
+            "3. Stretch dynamic range with asinh function; "
+            "4. Blend IYJH channels into RGB and lightness (L) channels; "
+            "5. Shift hue and boost color saturation; "
+            "6. Adjust curves."
         ),
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
@@ -124,7 +122,7 @@ def add_parser(subparsers):
         "--offset",
         "-b",
         type=float,
-        default=0.25,
+        default=0.5,
         metavar="VALUE",
         help="Opposite of black point relative to the white point, typically a fraction of 1.",
     )

@@ -29,15 +29,16 @@ An input channel may contribute to two adjacent output channels, e.g. Y may cont
 Resolution in I is better than in other channels, therefore it has higher weight in the output intensity (more precisely, lightness).
 Different weight parameters control the different contributions.
 
-The dynamic range is arcsinh-scaled, which yields pleasing results for both low- and high-energy regions.
+The dynamic range is asinh-scaled, which yields pleasing results for both low- and high-energy regions.
 The function is linear-like for low values and log-like for high values.
 Scaling is controlled by two bounds -- black and white points -- and a stretching parameter which sets the transition point between linear-like scaling and log-like scaling.
 
-Bad pixels (those with extremely high values or null value in the input bands) are inpainted, either as white points or using biharmonic inpainting.
-Inpainting is adequate for DEEP tiles, but may be ugly in some of the WIDE tiles.
-Relying on bitmasks to decide on the inpainting technique would be better, especially for VIS ghosts, yet I did not find a satisfying selection method, which would work both for WIDE and DEEP tiles...
+Pixels with a null value are inpainted, but many defects remain.
+Relying on bitmasks to detect them and decide on the inpainting technique would be better, especially for VIS ghosts, yet I did not find a satisfying selection method, which would work both for WIDE and DEEP tiles...
 
 ## Blending
+
+⚠️ **This section is outdated but the overall strategy is still the same.** ⚠️
 
 Using:
 

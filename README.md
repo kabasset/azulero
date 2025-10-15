@@ -27,7 +27,7 @@ Install the `azulero` package with:
 pip install azulero
 ```
 
-If you wish to access Euclid-internal data, setup the `~/.netrc` file for `eas-dps-rest-ops.esac.esa.int` and `euclidsoc.esac.esa.int` with your Euclid credentials:
+If you wish to access Euclid-internal data, setup the `~/.netrc` file (or `_netrc` on Windows) for `eas-dps-rest-ops.esac.esa.int` and `euclidsoc.esac.esa.int` with your Euclid credentials:
 
 ```xml
 machine eas-dps-rest-ops.esac.esa.int
@@ -49,7 +49,7 @@ The typical workflow is as follows:
 Usage:
 
 ```xml
-azul [--workspace <workspace>] retrieve [--dsr <dataset_release>] [--from <provider>] <tile_indices>
+azul [--workspace <workspace>] retrieve [--from <provider>] <tile_indices>
 azul [--workspace <workspace>] crop <tile_index>
 azul [--workspace <workspace>] process <tile_slicing>
 ```
@@ -67,30 +67,42 @@ with:
 
 Here is an example output and the commands which produced it below:
 
-![processed](https://raw.githubusercontent.com/kabasset/azulero/develop/102159776.jpg)
+![adjusted](https://raw.githubusercontent.com/kabasset/azulero/develop/102159776_adjusted.jpg)
 
 > Credit: Antoine Basset, CNES/ESA Euclid/Euclid Consortium/NASA/Q1-2025
 
 ```
 azul retrieve 102159776 --from sas
 azul crop 102159776
-azul process 102159776[5500:7500,5000:7000] -w 2000 --nirl 0.1 --jr 0.9 --ib 0.5 -a 0.5 -b -1
+azul process 102159776[6000:7000,5000:7000] --yg 0.75 --jr 0.9 -w 22.5 -b 1
 ```
 I have post-processed the output to my liking:
 
-![postprocessed](https://raw.githubusercontent.com/kabasset/azulero/develop/102159776_post.jpg)
+![post](https://raw.githubusercontent.com/kabasset/azulero/develop/102159776_post.jpg)
 
 > Credit: Antoine Basset, CNES/ESA Euclid/Euclid Consortium/NASA/Q1-2025
 
 > The two thick blue rings 💍 are artifacts of the VIS instrument known as ghosts.
 > To my knowledge, the galaxy in the center has never been resolved this way.
 > Rendering the image allowed me to discover this is a splendid polar-ring 💍 galaxy!
-> The previously unseen golden structure top left may be an Einstein ring 💍 or a collisional ring 💍 -- the question remains open. 
+> The previously unseen golden structure top left may be an Einstein ring 💍, possibly with two deflectors -- the question remains open. 
 
 As you can see, getting a nice image required a bit of parametrization.
-This is because we are using the public Q1 data.
-DR1 data, to be published in 2026, have a much better signal-to-noise ratio, and default parameters give very good results.
+This is because we are using the public Q1 data, and there were prominent artifacts right in the middle of the Einstein ring.
+DR1 data, to be published in 2026, have a much better signal-to-noise ratio, less artifacts, and default parameters give very good results.
 I already rendered the DR1 version of this field; I cannot share it today, but I can already tell you it is mesmerizing 😏
+
+From the same tile, here is an example over a region with less artifacts, processed with default parameters:
+
+![UGC11116](https://raw.githubusercontent.com/kabasset/azulero/develop/UGC11116.jpg)
+
+> Credit: Antoine Basset, CNES/ESA Euclid/Euclid Consortium/NASA/Q1-2025
+
+> [UGC 11116](https://simbad.u-strasbg.fr/simbad/sim-id?Ident=Z%20322-30)
+
+```
+azul process 102159776[11000:12000,7500:9500]
+```
 
 # Advanced usage
 
@@ -108,15 +120,16 @@ azul process -h
 # How to help?
 
 * [Report bugs, request features](https://github.com/kabasset/azulero/issues), tell me what you think of the tool and results...
-* Mention myself (Dr Antoine Basset, CNES) and/or [`azulero`](https://pypi.org/project/azulero/) when you publish images processed with this tool.
+* Mention myself (Antoine Basset, CNES) and/or [`azulero`](https://pypi.org/project/azulero/) when you publish images processed with this tool.
 * Share with me your images, I'm curious!
 
 # Contributors
 
-* Dr Mischa Schirmer (MPIA): Azul's color blending is freely inspired by that Mischa's script `eummy.py`.
-* Téo Bouvard (Thales): drafed `retrieve`.
+* Mischa Schirmer (MPIA): Azul's color blending is freely inspired by that of Mischa's script `eummy.py`.
+* Téo Bouvard (Thales): Drafed `retrieve`.
 * Rollin Gimenez (CNES): Fixed packaging.
 * Kane Nguyen-Kim (IAP): Provided URLs for retrieving public data.
+* Gian Paolo Candini (CSIC): Investigated rendering issues.
 
 # Acknowledgements
 
