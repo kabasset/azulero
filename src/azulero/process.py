@@ -130,7 +130,7 @@ def add_parser(subparsers):
         "--offset",
         "-b",
         type=float,
-        default=28,
+        default=29,
         metavar="VALUE",
         help="Opposite of black point in AB magnitude.",
     )

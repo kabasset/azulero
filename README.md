@@ -74,7 +74,7 @@ Here is an example output and the commands which produced it below:
 ```
 azul retrieve 102159776 --from sas
 azul crop 102159776
-azul process 102159776[6000:7000,5000:7000] --yg 0.75 --jr 0.9 -w 22.5 -b 1
+azul process 102159776[6000:7000,5000:7000] --yg 0.75 --jr 0.9 -w 22.5
 ```
 I have post-processed the output to my liking:
 
