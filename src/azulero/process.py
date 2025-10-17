@@ -111,18 +111,10 @@ def add_parser(subparsers):
         help="J contribution to R, between 0 and 1.",
     )
     parser.add_argument(
-        "--stretch",
-        "-a",
-        type=float,
-        default=200,
-        metavar="FACTOR",
-        help="Stretching factor `a` in `asinh(data * a) / asinh(a)`.",
-    )
-    parser.add_argument(
         "--offset",
         "-b",
         type=float,
-        default=0.5,
+        default=0.001,
         metavar="VALUE",
         help="Opposite of black point relative to the white point, typically a fraction of 1.",
     )
@@ -133,6 +125,14 @@ def add_parser(subparsers):
         default=22.0,
         metavar="VALUE",
         help="White point in AB magnitude.",
+    )
+    parser.add_argument(
+        "--stretch",
+        "-a",
+        type=float,
+        default=27.5,
+        metavar="FACTOR",
+        help="Stretching factor in AB magnitude.",
     )
     parser.add_argument(
         "--hue", type=float, default=-20, metavar="ANGLE", help="Hue shift"

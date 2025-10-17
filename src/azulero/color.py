@@ -42,7 +42,8 @@ def abmag_to_value(mag, zp):
 def stretch_iyjh(data: np.ndarray, transform: Transform):
     whites = abmag_to_value(transform.bw[1], transform.iyjh_zero_points)
     scaling = (transform.iyjh_scaling / whites)[:, np.newaxis, np.newaxis]
-    return asinh(data * scaling, transform.stretch, transform.bw[0])
+    a = abmag_to_value(transform.bw[1], transform.stretch)
+    return asinh(data * scaling, a, transform.bw[0])
 
 
 def iyjh_to_rgb(data: np.ndarray, transform: Transform):
@@ -85,8 +86,9 @@ def channelwise_div(data, factors):
 
 
 def asinh(data: np.ndarray, a: float, black: float):
+    b = np.arcsinh(black * a)
     return np.clip(
-        (np.arcsinh(data * a) - black) / (np.arcsinh(a) - black),
+        (np.arcsinh(data * a) - b) / (np.arcsinh(a) - b),
         0,
         1,
         dtype=np.float32,
