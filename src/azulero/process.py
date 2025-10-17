@@ -111,14 +111,6 @@ def add_parser(subparsers):
         help="J contribution to R, between 0 and 1.",
     )
     parser.add_argument(
-        "--offset",
-        "-b",
-        type=float,
-        default=0.001,
-        metavar="VALUE",
-        help="Opposite of black point relative to the white point, typically a fraction of 1.",
-    )
-    parser.add_argument(
         "--white",
         "-w",
         type=float,
@@ -133,6 +125,14 @@ def add_parser(subparsers):
         default=27.5,
         metavar="FACTOR",
         help="Stretching factor in AB magnitude.",
+    )
+    parser.add_argument(
+        "--offset",
+        "-b",
+        type=float,
+        default=28,
+        metavar="VALUE",
+        help="Opposite of black point in AB magnitude.",
     )
     parser.add_argument(
         "--hue", type=float, default=-20, metavar="ANGLE", help="Hue shift"
@@ -172,7 +172,7 @@ def run(args):
         hue=args.hue,
         saturation=args.saturation,
         stretch=args.stretch,
-        bw=np.array([-args.offset, args.white]),  # FIXME separate
+        bw=np.array([args.offset, args.white]),
     )
 
     tile, slicing = io.parse_tile(args.tile)

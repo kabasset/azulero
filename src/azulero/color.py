@@ -43,7 +43,8 @@ def stretch_iyjh(data: np.ndarray, transform: Transform):
     whites = abmag_to_value(transform.bw[1], transform.iyjh_zero_points)
     scaling = (transform.iyjh_scaling / whites)[:, np.newaxis, np.newaxis]
     a = abmag_to_value(transform.bw[1], transform.stretch)
-    return asinh(data * scaling, a, transform.bw[0])
+    b = -abmag_to_value(transform.bw[0], transform.bw[1])
+    return asinh(data * scaling, a, b)
 
 
 def iyjh_to_rgb(data: np.ndarray, transform: Transform):
