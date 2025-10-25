@@ -4,7 +4,7 @@
 
 import argparse
 
-from azulero import assemble, retrieve, process, crop
+from azulero import assemble, retrieve, crop, tune, process
 
 
 def run():
@@ -22,6 +22,7 @@ def run():
     subparsers = parser.add_subparsers(title="Commands")
     retrieve.add_parser(subparsers)
     crop.add_parser(subparsers)
+    tune.add_parser(subparsers)
     process.add_parser(subparsers)
     assemble.add_parser(subparsers)
 
