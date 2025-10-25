@@ -28,9 +28,6 @@ def add_parser(subparsers):
         metavar="SPECS",
         help="Path to the YAML configuration file (list of tile specs), relative to the workspace",
     )
-    # parser.add_argument( # FIXME
-    #     "--cols", "-c", metaval="COUNT", help="Maximum number of columns"
-    # )
     parser.add_argument(
         "--output-dir",
         "-o",

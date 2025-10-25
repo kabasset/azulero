@@ -56,6 +56,7 @@ class TileBox(object):
             and dec > self.dec_min()
             and dec < self.dec_max()
         )
+        # FIXME bounds
 
     def ra_min(self):
         return self.ra_center - self.ra_radius
