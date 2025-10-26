@@ -48,22 +48,21 @@ def stretch_iyjh(data: np.ndarray, transform: Transform):
     return asinh(data, a, b)
 
 
-def iyjh_to_rgb(data: np.ndarray, transform: Transform):
-
+def iyjh_to_lrgb(data: np.ndarray, transform: Transform):
     i, y, j, h = data
-    l = lerp(transform.nir_to_l, np.median(data[1:], axis=0), data[0])
+    lrgb = np.zeros((data.shape[1], data.shape[2], 4), dtype=np.float32)
+    lrgb[:, :, 0] = lerp(transform.nir_to_l, np.median(data[1:], axis=0), data[0])
+    lrgb[:, :, 1] = lerp(transform.j_to_r, j, h)
+    lrgb[:, :, 2] = lerp(transform.y_to_g, y, j)
+    lrgb[:, :, 3] = lerp(transform.i_to_b, i, y)
+    return lrgb
 
-    rgb = np.zeros((data.shape[1], data.shape[2], 3), dtype=np.float32)
-    rgb[:, :, 0] = lerp(transform.j_to_r, j, h)
-    rgb[:, :, 1] = lerp(transform.y_to_g, y, j)
-    rgb[:, :, 2] = lerp(transform.i_to_b, i, y)
-    del i, y, j, h
 
-    hls = cv2.cvtColor(rgb, cv2.COLOR_RGB2HLS)
+def lrgb_to_rgb(data: np.ndarray, transform: Transform):
+    hls = cv2.cvtColor(data[:, :, 1:], cv2.COLOR_RGB2HLS)
     hls[:, :, 0] = (hls[:, :, 0] + transform.hue) % 360
     hls[:, :, 2] = np.clip(hls[:, :, 2] * transform.saturation, 0, 1)
-    hls[:, :, 1] = l
-
+    hls[:, :, 1] = data[:, :, 0]
     return cv2.cvtColor(hls, cv2.COLOR_HLS2RGB)
 
 

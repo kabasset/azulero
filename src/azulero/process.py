@@ -210,8 +210,10 @@ def run(args):
     # TODO save vstacked iyjh (crop if too high)
 
     print(f"Blend IYJH to RGB")
-    rgb = color.iyjh_to_rgb(iyjh, transform)
+    lrgb = color.iyjh_to_lrgb(iyjh, transform)
     del iyjh
+    rgb = color.lrgb_to_rgb(lrgb, transform)
+    del lrgb
     if "{step}" in name:
         path = workdir / name.replace("{step}", "blended")
         print(f"- Write: {path.name}")
