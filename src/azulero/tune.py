@@ -2,10 +2,12 @@
 # SPDX-PackageSourceInfo: https://github.com/kabasset/azulero
 # SPDX-License-Identifier: Apache-2.0
 
-import numpy as np
-from azulero import stats
-from astropy.io import fits
 import argparse
+from astropy.io import fits
+import numpy as np
+
+from azulero import stats
+from azulero.timing import Timer
 
 
 def add_parser(subparsers):
@@ -34,9 +36,17 @@ def add_parser(subparsers):
 
 
 def run(args):
+
+    timer = Timer()
+
+    print(f"Read input: {args.filename}")
     with fits.open(args.filename) as f:
         data = f[0].data
-    propose_white_point(data, args.zero)
+    print(f"- Shape: {data.shape[0]} x {data.shape[1]}")
+    timer.tic_print()
+
+    propose_white_point(data, args.zero)  # FIXME split
+    timer.tic_print()
 
 
 def propose_white_point(data: np.ndarray, zp: float):
@@ -56,7 +66,7 @@ def propose_white_point(data: np.ndarray, zp: float):
     print(f"- Max: {percentiles[100]}")
     print(f"- Clipping: {clipping}")
     if clipping > 1.0:
-        adj = max(clipping * 0.3, -1.5)
+        adj = -min(clipping * 0.3, 1.5)
         print(f"- Adjustment: {adj}")
         white += adj
 
