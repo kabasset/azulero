@@ -74,7 +74,7 @@ def read_channel(workdir: Path, channel: str, slicing=None):
     Read the region of one channel.
     """
     data_files = list(workdir.glob(f"EUC_*{channel}_*.fits"))
-    assert len(data_files) == 1
+    assert len(data_files) == 1  # FIXME read all of them and return mean, with warning
     return read_fits(data_files[0], slicing)
 
 

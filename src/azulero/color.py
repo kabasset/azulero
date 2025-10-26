@@ -44,7 +44,8 @@ def stretch_iyjh(data: np.ndarray, transform: Transform):
     scaling = (transform.iyjh_scaling / whites)[:, np.newaxis, np.newaxis]
     a = abmag_to_value(transform.bw[1], transform.stretch)
     b = -abmag_to_value(transform.bw[0], transform.bw[1])
-    return asinh(data * scaling, a, b)
+    data *= scaling
+    return asinh(data, a, b)
 
 
 def iyjh_to_rgb(data: np.ndarray, transform: Transform):
@@ -88,16 +89,16 @@ def channelwise_div(data, factors):
 
 def asinh(data: np.ndarray, a: float, black: float):
     b = np.arcsinh(black * a)
-    return np.clip(
-        (np.arcsinh(data * a) - b) / (np.arcsinh(a) - b),
-        0,
-        1,
-        dtype=np.float32,
-    )
+    data *= a
+    np.arcsinh(data, out=data)
+    data -= b
+    data /= np.arcsinh(a) - b
+    np.clip(data, 0, 1, out=data)
+    return data
 
 
 def adjust_curve(data: np.ndarray, knots: list):
     x, y = list(map(list, zip(*knots)))
     k = min(len(knots) - 1, 3)
     spline = interpolate.make_interp_spline(x, y, k)
-    return np.clip(spline(data), 0.0, 1.0)
+    return np.clip(spline(data), 0.0, 1.0, dtype=np.float32)  # FIXME inplace

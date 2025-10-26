@@ -186,11 +186,11 @@ def run(args):
     print(f"- Shape: {iyjh.shape[1]} x {iyjh.shape[2]}")
     timer.tic_print()
 
-    print(f"Detect dead and hot pixels")
+    print(f"Detect bad pixels")
     dead = mask.dead_pixels(iyjh)
-    hot = mask.hot_pixels(*iyjh)
+    # hot = mask.hot_pixels(*iyjh)
     print(f"- Dead: {np.sum(dead[0])}")
-    print(f"- Hot: {np.sum(hot)}")
+    # print(f"- Hot: {np.sum(hot)}")
     timer.tic_print()
 
     print(f"Inpaint dead pixels")
@@ -205,7 +205,7 @@ def run(args):
 
     print(f"Stretch dynamic range")
     iyjh = color.stretch_iyjh(iyjh, transform)
-    print(f"- Medians: {', '.join(str(np.median(c)) for c in iyjh)}")
+    # print(f"- Medians: {', '.join(str(np.median(c)) for c in iyjh)}") # TODO use approximant
     timer.tic_print()
     # TODO save vstacked iyjh (crop if too high)
 
