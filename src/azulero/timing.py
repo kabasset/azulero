@@ -29,5 +29,5 @@ class Timer(object):  # FIXME rename as profiler
 
     def tic_print(self):
         self.tic()
-        print(f"- Elapsed: {self.split:.1f}s [Total: {self.total:.1f}s]")
-        print(f"- Memory usage: {self.size:.1f}GB [Peak: {self.peak:.1f}GB]")
+        print(f"- Elapsed time: {self.split:.1f}s / Total: {self.total:.1f}s")
+        print(f"- Memory usage: {self.size:.1f}GB  / Peak: {self.peak:.1f}GB")

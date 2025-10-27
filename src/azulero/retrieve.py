@@ -3,6 +3,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import argparse
+import gzip
+from io import BytesIO
 import requests
 
 from azulero import io
@@ -35,8 +37,12 @@ class DSS(object):
     def download_datafile(self, name, path):
 
         r = requests.get(f"https://euclidsoc.esac.esa.int/{name}")
+
+        # FIXME download and decompress in free function?
+        with gzip.GzipFile(fileobj=BytesIO(r.content)) as f:
+            content = f.read()
         with open(path, "wb") as f:
-            f.write(r.content)
+            f.write(content)
 
 
 class SAS(object):
@@ -94,7 +100,7 @@ def add_parser(subparsers):
     parser = subparsers.add_parser(
         "retrieve",
         help="Retrieve MER datafiles.",
-        description="TODO",  # FIXME
+        description="Query and download datafiles.",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
 
@@ -117,6 +123,14 @@ def add_parser(subparsers):
         default="dss",
         metavar="PROVIDER",
         help=f"Data provider: {choice(providers.keys())}.",
+    )
+    parser.add_argument(
+        "--files",
+        "-f",
+        type=str,
+        nargs="+",
+        metavar="FILENAMES",
+        help="Names of the files to be downloaded (bypasses query).",
     )
 
     parser.set_defaults(func=run)
@@ -153,18 +167,22 @@ def run(args):
     print()
 
     timer = Timer()
-    provider = providers[vars(args)["from"]]()
+    provider = providers[vars(args)["from"]]()  # from is a Python keyword
+    assert args.files is None or len(args.tiles) == 1
     for tile in args.tiles:  # TODO parallelize?
         workdir = io.make_workdir(args.workspace, tile)
-        for dsr in args.dsr.split(","):
-            datafiles = query_datafiles(provider, tile, dsr)
-            if len(datafiles) > 0:
-                break
-        timer.tic_print()
-        if len(datafiles) < 4:
-            print(f"ERROR: Only {len(datafiles)} files found; Skipping this tile.")
+        if args.files is not None:
+            datafiles = args.files
+        else:
+            for dsr in args.dsr.split(","):
+                datafiles = query_datafiles(provider, tile, dsr)
+                if len(datafiles) > 0:
+                    break
+            timer.tic_print()
+        if args.files is None and len(datafiles) < 4:
+            print(f"ERROR: Only {len(datafiles)} files found; Skip tile: {tile}")
             continue
-        if len(datafiles) > 4:
+        if args.files is None and len(datafiles) > 4:
             print(f"WARNING: More than 4 files found: {len(datafiles)}.")
         download_datafiles(provider, datafiles, workdir)
         timer.tic_print()
