@@ -18,6 +18,7 @@ It detects and inpaints bad pixels (hot and cold pixels, saturated stars...), an
 * The tool is far from perfect and can be frustrating.
 * Error cases are not handled and messages may be cryptic or misleading.
 * Please make sure to read the "How to help?" section below before using this version.
+* If something is not documented, it does not exist!
 
 # Installation and setup
 

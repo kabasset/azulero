@@ -122,7 +122,7 @@ def add_parser(subparsers):
         "--stretch",
         "-a",
         type=float,
-        default=27.5,
+        default=28.0,
         metavar="FACTOR",
         help="Stretching factor in AB magnitude.",
     )
@@ -130,7 +130,7 @@ def add_parser(subparsers):
         "--offset",
         "-b",
         type=float,
-        default=29,
+        default=29.0,
         metavar="VALUE",
         help="Opposite of black point in AB magnitude.",
     )
@@ -196,7 +196,7 @@ def run(args):
     print(f"Inpaint dead pixels")
     for i in range(len(iyjh)):
         iyjh[i] = mask.inpaint(iyjh[i], dead[i])
-        iyjh[i][dead[i]] = mask.resaturate(iyjh[i][dead[i]], np.max(iyjh[i]))
+        # iyjh[i][dead[i]] = mask.resaturate(iyjh[i][dead[i]], np.max(iyjh[i]))
     timer.tic_print()
 
     print(f"Sharpen channels")
