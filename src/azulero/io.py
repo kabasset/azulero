@@ -74,8 +74,20 @@ def read_channel(workdir: Path, channel: str, slicing=None):
     Read the region of one channel.
     """
     data_files = list(workdir.glob(f"EUC_*{channel}_*.fits"))
-    assert len(data_files) == 1  # FIXME read all of them and return mean, with warning
-    return read_fits(data_files[0], slicing)
+
+    if len(data_files) == 1:
+        return read_fits(data_files[0], slicing)
+
+    print(f"WARNING: {len(data_files)} {channel} files found.")
+    return _average([read_fits(f, slicing) for f in data_files])
+
+
+def _average(slices: list):
+    """
+    Average arrays, discarding zeros.
+    """
+    stack = np.stack(slices)
+    return np.nan_to_num(np.nanmean(stack, axis=0, where=(stack != 0)), copy=False)
 
 
 def read_iyjh(workdir: Path, slicing=None):
