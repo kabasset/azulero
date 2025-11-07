@@ -65,9 +65,23 @@ def add_parser(subparsers):
         "--duration",
         "-d",
         type=float,
-        default=5,
+        default=10,
         metavar="SECONDS",
-        help="Duration in seconds.",
+        help="Duration in seconds of the pan.",
+    )
+    parser.add_argument(
+        "--pre",
+        type=float,
+        default=1,
+        metavar="SECONDS",
+        help="Duration in seconds of the initial crop.",
+    )
+    parser.add_argument(
+        "--post",
+        type=float,
+        default=1,
+        metavar="SECONDS",
+        help="Duration in seconds of the final crop.",
     )
 
     parser.set_defaults(func=run)
@@ -120,8 +134,12 @@ def run(args):
     writer = cv2.VideoWriter(
         output, cv2.VideoWriter_fourcc(*"mp4v"), args.fps, video_shape
     )
+    for _ in range(args.pre * args.fps):
+        writer.write(frames[0])
     for frame in frames:
         writer.write(frame)
+    for _ in range(args.post * args.fps):
+        writer.write(frames[-1])
     writer.release()
     timer.tic_print()
 
