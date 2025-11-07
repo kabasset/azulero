@@ -188,9 +188,7 @@ def run(args):
 
     print(f"Detect bad pixels")
     dead = mask.dead_pixels(iyjh)
-    # hot = mask.hot_pixels(*iyjh)
-    print(f"- Dead: {np.sum(dead[0])}")
-    # print(f"- Hot: {np.sum(hot)}")
+    print(f"- Dead pixels: {', '.join(str(np.sum(channel)) for channel in dead)}")
     timer.tic_print()
 
     print(f"Inpaint dead pixels")
