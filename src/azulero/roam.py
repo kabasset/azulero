@@ -96,12 +96,14 @@ def run(args):
     stop = args.to
     print(f"{start} -> {stop}")
     frames = []
-    for alpha in np.linspace(0, 1, num_frames):
+    for alpha in np.sin(np.linspace(0, 1, num_frames) * np.pi - np.pi / 2) / 2 + 0.5:
         rx = stop[0] * alpha + start[0] * (1 - alpha)  # FIXME lerp()
         ry = stop[1] * alpha + start[1] * (1 - alpha)  # FIXME lerp()
         x = int(image_shape[1] * rx)
         y = int(image_shape[0] * ry)
-        zoom = stop[2] * alpha + start[2] * (1 - alpha)  # FIXME lerp()
+        zoom = 1.0 / (
+            1.0 / stop[2] * alpha + 1.0 / start[2] * (1 - alpha)
+        )  # FIXME lerp()
         print(f"- {alpha:0.2f}: {x}, {y}, {zoom}")
         if image_shape[1] / image_shape[0] > video_ratio:
             h = int(video_shape[0] / zoom)
