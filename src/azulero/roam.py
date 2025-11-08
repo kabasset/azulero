@@ -86,6 +86,8 @@ def run(args):
         steps = sequence.parse_sequence(
             yaml.safe_load(f), image_shape, args.fps, args.format
         )
+    for s in steps:
+        print(f"- {s}")
     timer.tic_print()
 
     roamer = Roamer(image, args.fps, args.format)
@@ -94,10 +96,10 @@ def run(args):
     )
 
     for start, stop in zip(steps[:-1], steps[1:]):
-        print(f"Generate frames {start.frame} to {stop.frame}.")
+        print(f"[{start.frame}-{stop.frame}] Generate frames")
         frames = roamer.roam(start, stop)
         timer.tic_print()
-        print(f"Write {len(frames)} frames.")
+        print(f"[{start.frame}-{stop.frame}] Write {len(frames)} frames")
         for f in frames:
             writer.write(f)
         timer.tic_print()
@@ -136,6 +138,7 @@ class Roamer(object):
 
 
 def crop(image, params, shape):
+    # TODO optimize without rotation
     viewport = cv2.RotatedRect(params.center, np.array(shape) / params.z, params.a_deg)
     x, y, w, h = viewport.boundingRect()
     start = np.array([x, y])

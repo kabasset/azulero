@@ -15,6 +15,9 @@ class ControlPoint:
     z: float
     a_deg: float
 
+    def __repr__(self) -> str:
+        return f"{self.frame}: ({self.center[0]:0.1f}, {self.center[1]:0.1f}), {int(self.z * 100+0.5)}%, {self.a_deg}°"
+
 
 def lerp(u, a, b):  # TODO implement ControPoint arithmetics and rely on color.lerp()
     if u == 0:
