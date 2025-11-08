@@ -6,7 +6,9 @@ import argparse
 import numpy as np
 from pathlib import Path
 import cv2
+import yaml
 
+from azulero import sequence
 from azulero.timing import Timer
 
 
@@ -27,6 +29,12 @@ def add_parser(subparsers):
         help="Input image file.",
     )
     parser.add_argument(
+        "sequence",
+        type=str,
+        metavar="FILENAME",
+        help="YAML configuration file which specifies the sequence of control points.",
+    )
+    parser.add_argument(
         "--output",
         "-o",
         type=str,
@@ -43,14 +51,6 @@ def add_parser(subparsers):
         help="Starting center point and zoom.",
     )
     parser.add_argument(
-        "--to",
-        type=float,
-        nargs=3,
-        default=[0.5, 0.5, 1.0],
-        metavar="STOP",
-        help="Starting center point and zoom.",
-    )
-    parser.add_argument(
         "--format",
         type=int,
         nargs=2,
@@ -61,28 +61,6 @@ def add_parser(subparsers):
     parser.add_argument(
         "--fps", type=float, default=25, metavar="FPS", help="Frames per second."
     )
-    parser.add_argument(
-        "--duration",
-        "-d",
-        type=float,
-        default=10,
-        metavar="SECONDS",
-        help="Duration in seconds of the pan.",
-    )
-    parser.add_argument(
-        "--pre",
-        type=float,
-        default=1,
-        metavar="SECONDS",
-        help="Duration in seconds of the initial crop.",
-    )
-    parser.add_argument(
-        "--post",
-        type=float,
-        default=1,
-        metavar="SECONDS",
-        help="Duration in seconds of the final crop.",
-    )
 
     parser.set_defaults(func=run)
 
@@ -92,6 +70,7 @@ def run(args):
     print()
 
     input = Path(args.workspace).expanduser() / args.input
+    config = Path(args.sequence)
     output = Path(args.output)
 
     timer = Timer()
@@ -102,21 +81,27 @@ def run(args):
     print(f"- Format: {image_shape[0]} x {image_shape[1]}")
     timer.tic_print()
 
-    print(f"Generate frames")
-    num_frames = int(args.fps * args.duration)
+    print(f"Read sequence of control points: {config}")
     video_shape = args.format
     video_ratio = video_shape[0] / video_shape[1]
-    start = vars(args)["from"]
-    stop = args.to
-    print(f"{start} -> {stop}")
+    with open(config) as f:
+        steps = sequence.parse_sequence(
+            yaml.load(f), image_shape, args.fps, video_shape
+        )
+    for step in steps:
+        print(step)
+    timer.tic_print()
+
+    num_frames = steps[-1].frame
+    print(f"Generate {num_frames} frames")
+    start = steps[0]  # FIXME
+    stop = steps[2]  # FIXME
     frames = []
     for alpha in np.sin(np.linspace(0, 1, num_frames) * np.pi - np.pi / 2) / 2 + 0.5:
-        rx = stop[0] * alpha + start[0] * (1 - alpha)  # FIXME lerp()
-        ry = stop[1] * alpha + start[1] * (1 - alpha)  # FIXME lerp()
-        x = int(image_shape[1] * rx)
-        y = int(image_shape[0] * ry)
+        x = stop.x * alpha + start.x * (1 - alpha)  # FIXME lerp()
+        y = stop.y * alpha + start.y * (1 - alpha)  # FIXME lerp()
         zoom = 1.0 / (
-            1.0 / stop[2] * alpha + 1.0 / start[2] * (1 - alpha)
+            1.0 / stop.z * alpha + 1.0 / start.z * (1 - alpha)
         )  # FIXME lerp()
         print(f"- {alpha:0.2f}: {x}, {y}, {zoom}")
         if image_shape[1] / image_shape[0] > video_ratio:
@@ -134,17 +119,17 @@ def run(args):
     writer = cv2.VideoWriter(
         output, cv2.VideoWriter_fourcc(*"mp4v"), args.fps, video_shape
     )
-    for _ in range(args.pre * args.fps):
+    for _ in range(args.fps):  # FIXME rm
         writer.write(frames[0])
     for frame in frames:
         writer.write(frame)
-    for _ in range(args.post * args.fps):
+    for _ in range(args.fps):  # FIXME rm
         writer.write(frames[-1])
     writer.release()
     timer.tic_print()
 
 
-def crop(image, x, y, w, h):
-    x0, y0 = max(0, x - w // 2), max(0, y - h // 2)
+def crop(image, x, y, w, h):  # FIXME OpenCV's affinity from ControlPoint
+    x0, y0 = max(0, int(x + 0.5) - w // 2), max(0, int(y + 0.5) - h // 2)
     x1, y1 = x0 + w, y0 + h
     return image[y0:y1, x0:x1]

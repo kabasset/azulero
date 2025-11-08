@@ -16,11 +16,11 @@ class ControlPoint:
     bc: str
 
 
-def parse_sequence(sequence: dict, fps: float):
+def parse_sequence(sequence: dict, image_shape: list, fps: float, video_shape: list):
     res = []
     for step in sequence:
         frame = parse_frame(step, fps)
-        cp = parse_params(frame, sequence[step])
+        cp = parse_params(frame, sequence[step], image_shape, video_shape)
         res.append(cp)
     # FIXME sort by frame
     return res
@@ -34,12 +34,12 @@ def parse_frame(text: str, fps: float):
     raise ValueError(f"Unrecognized time: {text}")
 
 
-def parse_params(frame: int, args: dict):
-    x = parse_coord(args["x"], w)
-    y = parse_coord(args["y"], h)
-    z = parse_zoom(args["z"], w, h)
-    a = parse_a_deg(args["a"])
-    bc = parse_bc(args["bc"])
+def parse_params(frame: int, args: dict, image_shape: list, video_shape: list):
+    x = None if "x" not in args else parse_coord(args["x"], image_shape[0])
+    y = None if "y" not in args else parse_coord(args["y"], image_shape[1])
+    z = None if "z" not in args else parse_zoom(args["z"], image_shape, video_shape)
+    a = None if "a" not in args else parse_a_deg(args["a"])
+    bc = None if "bc" not in args else parse_bc(args["bc"])
     return ControlPoint(frame, x, y, z, a, bc)
 
 
