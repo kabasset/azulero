@@ -7,8 +7,8 @@ from azulero import sequence
 
 def test_coord_parsing():
 
-    assert sequence.parse_coord("10.5", 100) == 10.5
-    assert sequence.parse_coord("-10.5", 100) == 89.5
+    assert sequence.parse_coord("10.5px", 100) == 10.5
+    assert sequence.parse_coord("-10.5px", 100) == 89.5
     assert sequence.parse_coord("10.5%", 200) == 21.0
     assert sequence.parse_coord("-10.5%", 200) == 179.0
 

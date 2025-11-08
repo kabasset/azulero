@@ -75,10 +75,12 @@ def parse_coord(text: str, image_extent: int):
     If last char is "%", coordinate is relative to the image extent.
     If value is negative, index backward.
     """
-    if text[-1] == "%":
+    if text.endswith("px"):
+        px = float(text[:-2])
+    elif text[-1] == "%":
         px = float(text[:-1]) / 100 * image_extent
     else:
-        px = float(text)
+        ValueError(f"Unrecognized coordinate: {text}")
     if px < 0:
         px += image_extent
     return px
