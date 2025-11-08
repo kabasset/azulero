@@ -120,7 +120,7 @@ class Roamer(object):
 
     def roam(self, start: sequence.ControlPoint, stop: sequence.ControlPoint):
         res = []
-        for u in self._sampling(start.frame, stop.frame):
+        for u in self._sin_sampling(start.frame, stop.frame):
             # TODO shortcut if stop == start
             params = sequence.lerp(1 - u, start, stop)
             if self.image_shape[1] / self.image_shape[0] > self.video_ratio:
@@ -133,8 +133,11 @@ class Roamer(object):
             res.append(cropped)
         return res
 
-    def _sampling(self, start, stop):
-        return np.sin(np.linspace(0, 1, stop - start) * np.pi - np.pi / 2) / 2 + 0.5
+    def _lin_sampling(self, start, stop):
+        return np.linspace(0, 1, stop - start)
+
+    def _sin_sampling(self, start, stop):
+        return np.sin(self._lin_sampling(start, stop) * np.pi - np.pi / 2) / 2 + 0.5
 
 
 def crop(image, params, shape):
