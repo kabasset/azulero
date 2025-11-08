@@ -136,11 +136,10 @@ class Roamer(object):
 
 
 def crop(image, params, shape):
-    # FIXME compute viewport bbox
-    rotation = cv2.getRotationMatrix2D(
-        params.center, params.a_deg, params.z
-    )  # FIXME scale != z
-    rotated_image = cv2.warpAffine(
-        image, rotation, (image.shape[1], image.shape[0]), flags=cv2.INTER_LINEAR
-    )  # FIXME rotate only part of the image
-    return cv2.getRectSubPix(rotated_image, shape, params.center)
+    viewport = cv2.RotatedRect(params.center, np.array(shape) / params.z, params.a_deg)
+    x, y, w, h = viewport.boundingRect()
+    start = np.array([x, y])
+    patch = image[y : y + h, x : x + w]
+    rotation = cv2.getRotationMatrix2D(params.center - start, params.a_deg, params.z)
+    rotated_image = cv2.warpAffine(patch, rotation, (w, h), flags=cv2.INTER_LINEAR)
+    return cv2.getRectSubPix(rotated_image, shape, params.center - start)
