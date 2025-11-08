@@ -138,7 +138,20 @@ class Roamer(object):
         return np.sin(np.linspace(0, 1, stop - start) * np.pi - np.pi / 2) / 2 + 0.5
 
 
-def crop(image, params, shape):  # FIXME OpenCV's affinity from ControlPoint
-    x0 = max(0, int(params.center[0] + 0.5) - shape[0] // 2)
-    y0 = max(0, int(params.center[1] + 0.5) - shape[1] // 2)
-    return image[y0 : y0 + shape[1], x0 : x0 + shape[0]]  # FIXME float bounds
+def crop(image, params, shape):
+
+    if params.a_deg != 0:
+        rotation = cv2.getRotationMatrix2D(params.center, params.a_deg, 1.0)
+        rotated_image = cv2.warpAffine(
+            image,
+            rotation,
+            (image.shape[1], image.shape[0]),
+            flags=cv2.INTER_LINEAR,
+            borderMode=cv2.BORDER_CONSTANT,
+        )  # FIXME rotate only part of the image
+    else:
+        rotated_image = image
+
+    x0 = int(params.center[0] - shape[0] / 2 + 0.5)
+    y0 = int(params.center[1] - shape[1] / 2 + 0.5)
+    return rotated_image[y0 : y0 + shape[1], x0 : x0 + shape[0]]
