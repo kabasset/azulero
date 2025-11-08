@@ -70,7 +70,7 @@ Here is an example output and the commands which produced it below:
 
 ![adjusted](https://raw.githubusercontent.com/kabasset/azulero/develop/102159776_adjusted.jpg)
 
-> Credit: Antoine Basset, CNES/ESA Euclid/Euclid Consortium/NASA/Q1-2025
+> Credit: ESA Euclid/Euclid Consortium/NASA/Q1-2025/Antoine Basset (CNES)
 
 ```
 azul retrieve 102159776 --from sas
@@ -81,7 +81,7 @@ I have post-processed the output to my liking:
 
 ![post](https://raw.githubusercontent.com/kabasset/azulero/develop/102159776_post.jpg)
 
-> Credit: Antoine Basset, CNES/ESA Euclid/Euclid Consortium/NASA/Q1-2025
+> Credit: ESA Euclid/Euclid Consortium/NASA/Q1-2025/Antoine Basset (CNES)
 
 > The two thick blue rings 💍 are artifacts of the VIS instrument known as ghosts.
 > To my knowledge, the galaxy in the center has never been resolved this way.
@@ -97,13 +97,19 @@ From the same tile, here is an example over a region with less artifacts, proces
 
 ![UGC11116](https://raw.githubusercontent.com/kabasset/azulero/develop/UGC11116.jpg)
 
-> Credit: Antoine Basset, CNES/ESA Euclid/Euclid Consortium/NASA/Q1-2025
+> Credit: ESA Euclid/Euclid Consortium/NASA/Q1-2025/Antoine Basset (CNES)
 
 > [UGC 11116](https://simbad.u-strasbg.fr/simbad/sim-id?Ident=Z%20322-30)
 
 ```
 azul process 102159776[11000:12000,7500:9500]
 ```
+
+It is now possible to generate pan-and-zoom videos with 🎬 `azul roam`, like this:
+
+[![azul roam](https://img.youtube.com/vi/mgWAo0JwlqM/maxresdefault.jpg)](https://www.youtube.com/watch?v=mgWAo0JwlqM)
+
+> Credit: ESA Euclid/Euclid Consortium/NASA/Q1-2025/Antoine Basset (CNES)
 
 # Advanced usage
 
@@ -116,6 +122,7 @@ azul -h
 azul retrieve -h
 azul crop -h
 azul process -h
+azul roam -h
 ```
 
 # How to help?
