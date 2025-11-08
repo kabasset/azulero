@@ -82,54 +82,64 @@ def run(args):
     timer.tic_print()
 
     print(f"Read sequence of control points: {config}")
-    video_shape = args.format
-    video_ratio = video_shape[0] / video_shape[1]
     with open(config) as f:
         steps = sequence.parse_sequence(
-            yaml.load(f), image_shape, args.fps, video_shape
+            yaml.safe_load(f), image_shape, args.fps, args.format
         )
-    for step in steps:
-        print(step)
     timer.tic_print()
 
-    num_frames = steps[-1].frame
-    print(f"Generate {num_frames} frames")
-    start = steps[0]  # FIXME
-    stop = steps[2]  # FIXME
-    frames = []
-    for alpha in np.sin(np.linspace(0, 1, num_frames) * np.pi - np.pi / 2) / 2 + 0.5:
-        x = stop.x * alpha + start.x * (1 - alpha)  # FIXME lerp()
-        y = stop.y * alpha + start.y * (1 - alpha)  # FIXME lerp()
-        zoom = 1.0 / (
-            1.0 / stop.z * alpha + 1.0 / start.z * (1 - alpha)
-        )  # FIXME lerp()
-        print(f"- {alpha:0.2f}: {x}, {y}, {zoom}")
-        if image_shape[1] / image_shape[0] > video_ratio:
-            h = int(video_shape[0] / zoom)
-            w = int(h * video_ratio)
-        else:
-            w = int(video_shape[1] / zoom)
-            h = int(w / video_ratio)
-        cropped = crop(image, x, y, w, h)
-        scaled = cv2.resize(cropped, dsize=video_shape, interpolation=cv2.INTER_LINEAR)
-        frames.append(scaled)
-    timer.tic_print()
+    roamer = Roamer(image, args.fps, args.format)
+    writer = cv2.VideoWriter(
+        output, cv2.VideoWriter_fourcc(*"mp4v"), args.fps, args.format
+    )
+
+    for start, stop in zip(steps[:-1], steps[1:]):
+        print(f"Generate frames {start.frame} to {stop.frame}.")
+        frames = roamer.roam(start, stop)
+        timer.tic_print()
+        print(f"Write {len(frames)} frames.")
+        for f in frames:
+            writer.write(f)
+        timer.tic_print()
 
     print(f"Write output video: {output}")
-    writer = cv2.VideoWriter(
-        output, cv2.VideoWriter_fourcc(*"mp4v"), args.fps, video_shape
-    )
-    for _ in range(args.fps):  # FIXME rm
-        writer.write(frames[0])
-    for frame in frames:
-        writer.write(frame)
-    for _ in range(args.fps):  # FIXME rm
-        writer.write(frames[-1])
     writer.release()
     timer.tic_print()
 
 
-def crop(image, x, y, w, h):  # FIXME OpenCV's affinity from ControlPoint
-    x0, y0 = max(0, int(x + 0.5) - w // 2), max(0, int(y + 0.5) - h // 2)
-    x1, y1 = x0 + w, y0 + h
-    return image[y0:y1, x0:x1]
+class Roamer(object):
+
+    def __init__(self, image, fps, shape):
+        self.image = image
+        self.image_shape = image.shape[:2]
+        self.fps = fps
+        self.video_shape = shape
+        self.video_ratio = shape[0] / shape[1]
+
+    def roam(self, start: sequence.ControlPoint, stop: sequence.ControlPoint):
+        res = []
+        for u in self._sampling(start.frame, stop.frame):
+            # TODO shortcut if stop == start
+            params = sequence.lerp(1 - u, start, stop)
+            print(f"- {params.center}")
+            if self.image_shape[1] / self.image_shape[0] > self.video_ratio:
+                h = int(self.video_shape[0] / params.z)
+                w = int(h * self.video_ratio)
+            else:
+                w = int(self.video_shape[1] / params.z)
+                h = int(w / self.video_ratio)
+            cropped = crop(self.image, params, [w, h])
+            scaled = cv2.resize(
+                cropped, dsize=self.video_shape, interpolation=cv2.INTER_LINEAR
+            )
+            res.append(scaled)
+        return res
+
+    def _sampling(self, start, stop):
+        return np.sin(np.linspace(0, 1, stop - start) * np.pi - np.pi / 2) / 2 + 0.5
+
+
+def crop(image, params, shape):  # FIXME OpenCV's affinity from ControlPoint
+    x0 = max(0, int(params.center[0] + 0.5) - shape[0] // 2)
+    y0 = max(0, int(params.center[1] + 0.5) - shape[1] // 2)
+    return image[y0 : y0 + shape[1], x0 : x0 + shape[0]]  # FIXME float bounds
