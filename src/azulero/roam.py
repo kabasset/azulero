@@ -121,7 +121,6 @@ class Roamer(object):
         for u in self._sampling(start.frame, stop.frame):
             # TODO shortcut if stop == start
             params = sequence.lerp(1 - u, start, stop)
-            print(f"- {params.center}")
             if self.image_shape[1] / self.image_shape[0] > self.video_ratio:
                 h = int(self.video_shape[0] / params.z)
                 w = int(h * self.video_ratio)

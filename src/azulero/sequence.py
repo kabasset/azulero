@@ -30,8 +30,9 @@ def lerp(u, a, b):  # TODO implement ControPoint arithmetics and rely on color.l
 
 def parse_sequence(sequence: dict, image_shape: list, fps: float, video_shape: list):
     res = []
+    frame = 0
     for step in sequence:
-        frame = parse_frame(step, fps)
+        frame = parse_frame(step, fps, frame)
         cp = parse_params(frame, sequence[step], image_shape, video_shape)
         res.append(cp)
     return _sanitize_sequence(res)
@@ -53,12 +54,14 @@ def _sanitize_sequence(sequence: list):
     return sequence
 
 
-def parse_frame(text: str, fps: float):
+def parse_frame(text: str, fps: float, ref_frame: int):
     if text[-1] == "f":
-        return int(text[:-1])
-    if text[-1] == "s":
-        return int(float(text[:-1]) * fps)
-    raise ValueError(f"Unrecognized time: {text}")
+        value = int(text[:-1])
+    elif text[-1] == "s":
+        value = int(float(text[:-1]) * fps)
+    else:
+        raise ValueError(f"Unrecognized time: {text}")
+    return value + ref_frame if text[0] == "+" else value
 
 
 def parse_params(frame: int, args: dict, image_shape: list, video_shape: list):
