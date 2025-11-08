@@ -127,11 +127,8 @@ class Roamer(object):
             else:
                 w = int(self.video_shape[1] / params.z)
                 h = int(w / self.video_ratio)
-            cropped = crop(self.image, params, [w, h])
-            scaled = cv2.resize(
-                cropped, dsize=self.video_shape, interpolation=cv2.INTER_LINEAR
-            )
-            res.append(scaled)
+            cropped = crop(self.image, params, self.video_shape)
+            res.append(cropped)
         return res
 
     def _sampling(self, start, stop):
@@ -139,19 +136,11 @@ class Roamer(object):
 
 
 def crop(image, params, shape):
-
-    if params.a_deg != 0:
-        rotation = cv2.getRotationMatrix2D(params.center, params.a_deg, 1.0)
-        rotated_image = cv2.warpAffine(
-            image,
-            rotation,
-            (image.shape[1], image.shape[0]),
-            flags=cv2.INTER_LINEAR,
-            borderMode=cv2.BORDER_CONSTANT,
-        )  # FIXME rotate only part of the image
-    else:
-        rotated_image = image
-
-    x0 = int(params.center[0] - shape[0] / 2 + 0.5)
-    y0 = int(params.center[1] - shape[1] / 2 + 0.5)
-    return rotated_image[y0 : y0 + shape[1], x0 : x0 + shape[0]]
+    # FIXME compute viewport bbox
+    rotation = cv2.getRotationMatrix2D(
+        params.center, params.a_deg, params.z
+    )  # FIXME scale != z
+    rotated_image = cv2.warpAffine(
+        image, rotation, (image.shape[1], image.shape[0]), flags=cv2.INTER_LINEAR
+    )  # FIXME rotate only part of the image
+    return cv2.getRectSubPix(rotated_image, shape, params.center)
