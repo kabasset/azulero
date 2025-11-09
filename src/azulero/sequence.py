@@ -9,7 +9,7 @@ from azulero import color  # TODO lerp to interp.py
 
 
 @dataclass
-class ControlPoint:
+class KeyFrame:
     frame: int
     center: np.ndarray
     z: float
@@ -28,7 +28,7 @@ def lerp(u, a, b):  # TODO implement ControPoint arithmetics and rely on color.l
     center = color.lerp(u, a.center, b.center)
     z = 1.0 / color.lerp(u, 1.0 / a.z, 1.0 / b.z)
     a_deg = color.lerp(u, a.a_deg, b.a_deg)
-    return ControlPoint(frame, center, z, a_deg)
+    return KeyFrame(frame, center, z, a_deg)
 
 
 def parse_sequence(sequence: dict, image_shape: list, fps: float, video_shape: list):
@@ -72,7 +72,7 @@ def parse_params(frame: int, args: dict, image_shape: list, video_shape: list):
     y = None if "y" not in args else parse_coord(args["y"], image_shape[1])
     z = None if "z" not in args else parse_zoom(args["z"], image_shape, video_shape)
     a = None if "a" not in args else parse_a_deg(args["a"])
-    return ControlPoint(frame, np.array([x, y]), z, a)
+    return KeyFrame(frame, np.array([x, y]), z, a)
 
 
 def parse_coord(text: str, image_extent: int):

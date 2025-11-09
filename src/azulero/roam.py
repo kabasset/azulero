@@ -118,7 +118,7 @@ class Roamer(object):
         self.video_shape = shape
         self.video_ratio = shape[0] / shape[1]
 
-    def roam(self, start: sequence.ControlPoint, stop: sequence.ControlPoint):
+    def roam(self, start: sequence.KeyFrame, stop: sequence.KeyFrame):
         res = []
         for u in self._sin_sampling(start.frame, stop.frame):
             # TODO shortcut if stop == start
