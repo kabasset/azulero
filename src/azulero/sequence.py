@@ -31,13 +31,13 @@ def lerp(u, a, b):  # TODO implement ControPoint arithmetics and rely on color.l
     return KeyFrame(frame, center, z, a_deg)
 
 
-def parse_sequence(sequence: dict, image_shape: list, fps: float, video_shape: list):
+def parse_sequence(sequence: list, image_shape: list, fps: float, video_shape: list):
     res = []
     frame = 0
     for step in sequence:
-        frame = parse_frame(step, fps, frame)
-        cp = parse_params(frame, sequence[step], image_shape, video_shape)
-        res.append(cp)
+        frame = parse_frame(step["t"], fps, frame)
+        params = parse_params(frame, step, image_shape, video_shape)
+        res.append(params)
     return _sanitize_sequence(res)
 
 

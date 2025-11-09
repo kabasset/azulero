@@ -32,7 +32,7 @@ def add_parser(subparsers):
         "sequence",
         type=str,
         metavar="FILENAME",
-        help="YAML configuration file which specifies the sequence of control points.",
+        help="YAML configuration file which specifies the sequence of key frames.",
     )
     parser.add_argument(
         "--output",
@@ -41,14 +41,6 @@ def add_parser(subparsers):
         default="output.mp4",
         metavar="FILENAME",
         help="Output video file.",
-    )
-    parser.add_argument(
-        "--from",
-        type=float,
-        nargs=3,
-        default=[0.5, 0.5, 1.0],
-        metavar="START",
-        help="Starting center point and zoom.",
     )
     parser.add_argument(
         "--format",
@@ -81,7 +73,7 @@ def run(args):
     print(f"- Format: {image_shape[0]} x {image_shape[1]}")
     timer.tic_print()
 
-    print(f"Read sequence of control points: {config}")
+    print(f"Read sequence of key frames: {config}")
     with open(config) as f:
         steps = sequence.parse_sequence(
             yaml.safe_load(f), image_shape, args.fps, args.format
