@@ -123,12 +123,6 @@ class Roamer(object):
         for u in self._sin_sampling(start.frame, stop.frame):
             # TODO shortcut if stop == start
             params = sequence.lerp(1 - u, start, stop)
-            if self.image_shape[1] / self.image_shape[0] > self.video_ratio:
-                h = int(self.video_shape[0] / params.z)
-                w = int(h * self.video_ratio)
-            else:
-                w = int(self.video_shape[1] / params.z)
-                h = int(w / self.video_ratio)
             cropped = crop(self.image, params, self.video_shape)
             res.append(cropped)
         return res
