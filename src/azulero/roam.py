@@ -75,55 +75,29 @@ def run(args):
 
     print(f"Read sequence of key frames: {config}")
     with open(config) as f:
-        steps = sequence.parse_sequence(
+        params = sequence.load_frames_params(
             yaml.safe_load(f), image_shape, args.fps, args.format
         )
-    for s in steps:
-        print(f"- {s}")
+    centers = sequence.sin_sequence(params.centers)
+    zooms_inv = sequence.sin_sequence(params.zooms_inv)
+    angles_deg = sequence.sin_sequence(params.angles_deg)
     timer.tic_print()
 
-    roamer = Roamer(image, args.fps, args.format)
+    print(f"Generate frames")
     writer = cv2.VideoWriter(
         output, cv2.VideoWriter_fourcc(*"mp4v"), args.fps, args.format
     )
 
-    for start, stop in zip(steps[:-1], steps[1:]):
-        print(f"[{start.frame}-{stop.frame}] Generate frames")
-        frames = roamer.roam(start, stop)
-        timer.tic_print()
-        print(f"[{start.frame}-{stop.frame}] Write {len(frames)} frames")
-        for f in frames:
-            writer.write(f)
-        timer.tic_print()
+    print(f"- Frame\tx\ty\tz\ta")
+    for f, c, z, a in zip(range(len(centers)), centers, zooms_inv, angles_deg):
+        print(f"- {f}\t{c[0]:0.1f}\t{c[1]:0.1f}\t{1.0/z:0.1f}\t{a:0.1f}")
+        p = sequence.KeyFrame(0, c, 1.0 / z, a)
+        frame = crop(image, p, args.format)
+        writer.write(frame)
 
-    print(f"Write output video: {output}")
     writer.release()
+    print(f"- Output written: {output}")
     timer.tic_print()
-
-
-class Roamer(object):
-
-    def __init__(self, image, fps, shape):
-        self.image = image
-        self.image_shape = image.shape[:2]
-        self.fps = fps
-        self.video_shape = shape
-        self.video_ratio = shape[0] / shape[1]
-
-    def roam(self, start: sequence.KeyFrame, stop: sequence.KeyFrame):
-        res = []
-        for u in self._sin_sampling(start.frame, stop.frame):
-            # TODO shortcut if stop == start
-            params = sequence.lerp(1 - u, start, stop)
-            cropped = crop(self.image, params, self.video_shape)
-            res.append(cropped)
-        return res
-
-    def _lin_sampling(self, start, stop):
-        return np.linspace(0, 1, stop - start)
-
-    def _sin_sampling(self, start, stop):
-        return np.sin(self._lin_sampling(start, stop) * np.pi - np.pi / 2) / 2 + 0.5
 
 
 def crop(image, params, shape):

@@ -19,45 +19,83 @@ class KeyFrame:
         return f"{self.frame}: ({self.center[0]:0.1f}, {self.center[1]:0.1f}), {int(self.z * 100+0.5)}%, {self.a_deg}°"
 
 
-def lerp(u, a, b):  # TODO implement ControPoint arithmetics and rely on color.lerp()
-    if u == 0:
-        return b
-    if u == 1:
-        return a
-    frame = int(color.lerp(u, a.frame, b.frame) + 0.5)
-    center = color.lerp(u, a.center, b.center)
-    z = 1.0 / color.lerp(u, 1.0 / a.z, 1.0 / b.z)
-    a_deg = color.lerp(u, a.a_deg, b.a_deg)
-    return KeyFrame(frame, center, z, a_deg)
+@dataclass
+class KeyValue:
+    frame: int
+    value: object
 
 
-def parse_sequence(sequence: list, image_shape: list, fps: float, video_shape: list):
-    res = []
+@dataclass
+class KeyFrames:
+    centers: list
+    zooms_inv: list
+    angles_deg: list
+
+    def append(self, frame, center, zoom, angle):
+        if center[0] is None or center[1] is None:  # FIXME can there be a single None?
+            self.centers.append(KeyValue(frame, self.centers[-1].value))
+        else:
+            self.centers.append(KeyValue(frame, center))
+        if zoom is None:
+            self.zooms_inv.append(KeyValue(frame, self.zooms_inv[-1].value))
+        elif not np.isnan(zoom):
+            self.zooms_inv.append(KeyValue(frame, 1.0 / zoom))
+        if angle is None:
+            self.angles_deg.append(KeyValue(frame, self.angles_deg[-1].value))
+        elif not np.isnan(angle):
+            self.angles_deg.append(KeyValue(frame, angle))
+        return self
+
+
+def load_frames_params(
+    sequence: list, image_shape: list, fps: float, video_shape: list
+):
+    res = KeyFrames([], [], [])
     frame = 0
     for step in sequence:
         frame = parse_frame(step["t"], fps, frame)
-        params = parse_params(frame, step, image_shape, video_shape)
-        res.append(params)
-    return _sanitize_sequence(res)
+        x = None if "x" not in step else parse_coord(step["x"], image_shape[0])
+        y = None if "y" not in step else parse_coord(step["y"], image_shape[1])
+        z = None if "z" not in step else parse_zoom(step["z"], image_shape, video_shape)
+        a = None if "a" not in step else parse_a_deg(step["a"])
+        res.append(frame, np.array([x, y]), z, a)
+    return res
 
 
-def _sanitize_sequence(sequence: list):
-    # FIXME sort by frame
-    for a, b in zip(sequence[:-1], sequence[1:]):
-        if b.frame is None:
-            b.frame = a.frame
-        if b.center[0] is None:
-            b.center[0] = a.center[0]
-        if b.center[1] is None:
-            b.center[1] = a.center[1]
-        if b.z is None:
-            b.z = a.z
-        if b.a_deg is None:
-            b.a_deg = a.a_deg
-    return sequence
+def sin_sequence(keys_values: list):
+    """
+    Extrapolate parameters over a sequence of frames with sin interpolation.
+    """
+    res = []
+    for start, stop in zip(keys_values[:-1], keys_values[1:]):
+        res += sin_step(start, stop)
+    return res
+
+
+def sin_step(start, stop):
+    """
+    Extrapolate parameters between two frames with sin interpolation.
+    """
+    return [
+        color.lerp(1 - u, start.value, stop.value)
+        for u in sin_sampling(start.frame, stop.frame)
+    ]
+
+
+def sin_sampling(start, stop):
+    """
+    Sin sampling between two bounds.
+    """
+    return np.sin(np.linspace(0, 1, stop - start) * np.pi - np.pi / 2) / 2 + 0.5
 
 
 def parse_frame(text: str, fps: float, ref_frame: int):
+    """
+    Parse frame index or time.
+    If last char is "f", return the value.
+    If it is "s", multiply by `fps`.
+    If the first char is "+", add `ref_frame`.
+    """
     if text[-1] == "f":
         value = int(text[:-1])
     elif text[-1] == "s":
@@ -65,14 +103,6 @@ def parse_frame(text: str, fps: float, ref_frame: int):
     else:
         raise ValueError(f"Unrecognized time: {text}")
     return value + ref_frame if text[0] == "+" else value
-
-
-def parse_params(frame: int, args: dict, image_shape: list, video_shape: list):
-    x = None if "x" not in args else parse_coord(args["x"], image_shape[0])
-    y = None if "y" not in args else parse_coord(args["y"], image_shape[1])
-    z = None if "z" not in args else parse_zoom(args["z"], image_shape, video_shape)
-    a = None if "a" not in args else parse_a_deg(args["a"])
-    return KeyFrame(frame, np.array([x, y]), z, a)
 
 
 def parse_coord(text: str, image_extent: int):
@@ -98,6 +128,8 @@ def parse_zoom(text: str, image_shape: list, video_shape: list):
     If last char is "w" (resp. "h"), zoom is relative to the image width (resp. height).
     If last char is "%", zoom is a relative to the pixel size.
     """
+    if text == "...":
+        return np.nan
     if text[-1] == "w":
         z = float(text[:-1]) * video_shape[0] / image_shape[0]
     elif text[-1] == "h":
@@ -115,6 +147,8 @@ def parse_a_deg(text: str):
     If last char is "°", forward the value.
     If text ends with "pi", multiply by 180.
     """
+    if text == "...":
+        return np.nan
     if text[-1] == "°":
         return float(text[:-1])
     elif text.endswith("pi"):
