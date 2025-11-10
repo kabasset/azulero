@@ -51,15 +51,19 @@ class KeyFrames:
 
 
 def load_frames_params(
-    sequence: list, image_shape: list, fps: float, video_shape: list
+    sequence: list, image_shape: list, fps: float, video_format: list
 ):
     res = KeyFrames([], [], [])
     frame = 0
     for step in sequence:
         frame = parse_frame(step["t"], fps, frame)
-        x = None if "x" not in step else parse_coord(step["x"], image_shape[0])
-        y = None if "y" not in step else parse_coord(step["y"], image_shape[1])
-        z = None if "z" not in step else parse_zoom(step["z"], image_shape, video_shape)
+        x = None if "x" not in step else parse_coord(step["x"], image_shape[1])
+        y = None if "y" not in step else parse_coord(step["y"], image_shape[0])
+        z = (
+            None
+            if "z" not in step
+            else parse_zoom(step["z"], image_shape, video_format)
+        )
         a = None if "a" not in step else parse_a_deg(step["a"])
         res.append(frame, np.array([x, y]), z, a)
     return res
@@ -69,7 +73,7 @@ def sin_sequence(keys_values: list):
     """
     Extrapolate parameters over a sequence of frames with sin interpolation.
     """
-    res = []
+    res = []  # FIXME use first value if first frame > 0
     for start, stop in zip(keys_values[:-1], keys_values[1:]):
         res += sin_step(start, stop)
     return res
@@ -125,7 +129,7 @@ def parse_coord(text: str, image_extent: int):
     return px
 
 
-def parse_zoom(text: str, image_shape: list, video_shape: list):
+def parse_zoom(text: str, image_shape: list, video_format: list):
     """
     Parse the zoom.
     If last char is "w" (resp. "h"), zoom is relative to the image width (resp. height).
@@ -134,9 +138,9 @@ def parse_zoom(text: str, image_shape: list, video_shape: list):
     if text == "...":
         return np.nan
     if text[-1] == "w":
-        z = video_shape[0] / image_shape[0] / float(text[:-1])
+        z = video_format[0] / image_shape[1] / float(text[:-1])
     elif text[-1] == "h":
-        z = video_shape[1] / image_shape[1] / float(text[:-1])
+        z = video_format[1] / image_shape[0] / float(text[:-1])
     elif text[-1] == "%":
         z = float(text[:-1]) / 100
     else:

@@ -70,7 +70,7 @@ def run(args):
     print(f"Read input image: {input}")
     image = cv2.imread(input, cv2.IMREAD_COLOR)
     image_shape = image.shape[:2]
-    print(f"- Format: {image_shape[0]} x {image_shape[1]}")
+    print(f"- Shape: {image_shape[0]} x {image_shape[1]}")
     timer.tic_print()
 
     print(f"Read sequence of key frames: {config}")
@@ -102,25 +102,31 @@ def run(args):
     timer.tic_print()
 
 
-def crop(image, params, shape):
-    # TODO optimize without rotation
-    viewport = cv2.RotatedRect(params.center, np.array(shape) / params.z, params.a_deg)
+def crop(image: np.ndarray, params, format):
+    viewport_format = np.array(format, dtype=float) / params.z / 2
+    a = params.a_deg % 360
+    viewport = cv2.RotatedRect(params.center, viewport_format, -a)
     x0, y0, w, h = viewport.boundingRect()
     x1 = x0 + w
     y1 = y0 + h
+    print(f"\t\t\t\t\t{x0}\t{y0}\t{w}\t{h}")
     if x0 < 0:
         print(f"- WARNING: min(x) < 0 ({x0})")
         x0 = 0
     if y0 < 0:
         print(f"- WARNING: max(y) min < 0 ({y0})")
         y0 = 0
-    if x1 > image.shape[0]:
-        print(f"- WARNING: max(x) > {image.shape[0]-1} ({x1-1})")
+    if x1 > image.shape[1]:
+        print(f"- WARNING: max(x) > {image.shape[1]-1} ({x1-1})")
         x1 = image.shape[0]
-    if y1 > image.shape[1]:
-        print(f"- WARNING: max(y) > {image.shape[1]-1} ({y1-1})")
-    start = np.array([x0, y0])
+    if y1 > image.shape[0]:
+        print(f"- WARNING: max(y) > {image.shape[0]-1} ({y1-1})")
+        y1 = image.shape[1]
+    offset = np.array([x0, y0])
     patch = image[y0:y1, x0:x1]
-    rotation = cv2.getRotationMatrix2D(params.center - start, params.a_deg, params.z)
-    rotated_image = cv2.warpAffine(patch, rotation, (w, h), flags=cv2.INTER_LINEAR)
-    return cv2.getRectSubPix(rotated_image, shape, params.center - start)
+    rotation = cv2.getRotationMatrix2D(params.center - offset, a, params.z)
+    rotation_format = (w, h)
+    rotated_image = cv2.warpAffine(
+        patch, rotation, rotation_format, flags=cv2.INTER_LINEAR
+    )
+    return cv2.getRectSubPix(rotated_image, format, params.center - offset)
