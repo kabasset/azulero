@@ -78,9 +78,11 @@ def run(args):
         params = sequence.load_frames_params(
             yaml.safe_load(f), image_shape, args.fps, args.format
         )
+    print(f"- Key frames: {len(params)}")
     centers = sequence.sin_sequence(params.centers)
     zooms_inv = sequence.sin_sequence(params.zooms_inv)
     angles_deg = sequence.sin_sequence(params.angles_deg)
+    print(f"- Total frames: {len(centers)}")
     timer.tic_print()
 
     print(f"Generate frames")
@@ -88,9 +90,9 @@ def run(args):
         output, cv2.VideoWriter_fourcc(*"mp4v"), args.fps, args.format
     )
 
-    print(f"- Frame\tx\ty\tz\ta")
+    print(f"- Frame\tx\ty\tz (%)\ta (°)")
     for f, c, z, a in zip(range(len(centers)), centers, zooms_inv, angles_deg):
-        print(f"- {f}\t{c[0]:0.1f}\t{c[1]:0.1f}\t{1.0/z:0.1f}\t{a:0.1f}")
+        print(f"- {f}\t{c[0]:0.1f}\t{c[1]:0.1f}\t{100.0/z:0.1f}\t{a:0.1f}")
         p = sequence.KeyFrame(0, c, 1.0 / z, a)
         frame = crop(image, p, args.format)
         writer.write(frame)
@@ -103,9 +105,22 @@ def run(args):
 def crop(image, params, shape):
     # TODO optimize without rotation
     viewport = cv2.RotatedRect(params.center, np.array(shape) / params.z, params.a_deg)
-    x, y, w, h = viewport.boundingRect()
-    start = np.array([x, y])
-    patch = image[y : y + h, x : x + w]
+    x0, y0, w, h = viewport.boundingRect()
+    x1 = x0 + w
+    y1 = y0 + h
+    if x0 < 0:
+        print(f"- WARNING: min(x) < 0 ({x0})")
+        x0 = 0
+    if y0 < 0:
+        print(f"- WARNING: max(y) min < 0 ({y0})")
+        y0 = 0
+    if x1 > image.shape[0]:
+        print(f"- WARNING: max(x) > {image.shape[0]-1} ({x1-1})")
+        x1 = image.shape[0]
+    if y1 > image.shape[1]:
+        print(f"- WARNING: max(y) > {image.shape[1]-1} ({y1-1})")
+    start = np.array([x0, y0])
+    patch = image[y0:y1, x0:x1]
     rotation = cv2.getRotationMatrix2D(params.center - start, params.a_deg, params.z)
     rotated_image = cv2.warpAffine(patch, rotation, (w, h), flags=cv2.INTER_LINEAR)
     return cv2.getRectSubPix(rotated_image, shape, params.center - start)

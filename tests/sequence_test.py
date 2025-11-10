@@ -16,8 +16,8 @@ def test_coord_parsing():
 def test_zoom_parsing():
 
     assert sequence.parse_zoom("20%", None, None) == 0.2
-    assert sequence.parse_zoom("0.2w", [160, 180], [16, 9]) == 0.02
-    assert sequence.parse_zoom("0.8h", [160, 180], [16, 9]) == 0.04
+    assert sequence.parse_zoom("0.2w", [160, 180], [16, 9]) == 0.5
+    assert sequence.parse_zoom("0.2h", [160, 180], [16, 9]) == 0.25
 
 
 def test_angle_parsing():

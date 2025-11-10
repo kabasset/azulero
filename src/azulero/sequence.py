@@ -31,6 +31,9 @@ class KeyFrames:
     zooms_inv: list
     angles_deg: list
 
+    def __len__(self):
+        return len(self.centers)
+
     def append(self, frame, center, zoom, angle):
         if center[0] is None or center[1] is None:  # FIXME can there be a single None?
             self.centers.append(KeyValue(frame, self.centers[-1].value))
@@ -131,9 +134,9 @@ def parse_zoom(text: str, image_shape: list, video_shape: list):
     if text == "...":
         return np.nan
     if text[-1] == "w":
-        z = float(text[:-1]) * video_shape[0] / image_shape[0]
+        z = video_shape[0] / image_shape[0] / float(text[:-1])
     elif text[-1] == "h":
-        z = float(text[:-1]) * video_shape[1] / image_shape[1]
+        z = video_shape[1] / image_shape[1] / float(text[:-1])
     elif text[-1] == "%":
         z = float(text[:-1]) / 100
     else:
