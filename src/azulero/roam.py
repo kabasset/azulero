@@ -103,13 +103,20 @@ def run(args):
 
 
 def crop(image: np.ndarray, params, format):
-    viewport_format = np.array(format, dtype=float) / params.z / 2
+    center = params.center
+    viewport_format = np.array(format, dtype=float) / params.z
     a = params.a_deg % 360
     viewport = cv2.RotatedRect(params.center, viewport_format, -a)
     x0, y0, w, h = viewport.boundingRect()
+    vertical = w < h
+    if vertical:
+        # OpenCV unhappy!
+        x0, y0, w, h = y0, x0, h, w
+        image = np.swapaxes(image, 0, 1)
+        a = 90 - a
+        center = np.flip(center)
     x1 = x0 + w
     y1 = y0 + h
-    print(f"\t\t\t\t\t{x0}\t{y0}\t{w}\t{h}")
     if x0 < 0:
         print(f"- WARNING: min(x) < 0 ({x0})")
         x0 = 0
@@ -124,9 +131,12 @@ def crop(image: np.ndarray, params, format):
         y1 = image.shape[1]
     offset = np.array([x0, y0])
     patch = image[y0:y1, x0:x1]
-    rotation = cv2.getRotationMatrix2D(params.center - offset, a, params.z)
+    rotation = cv2.getRotationMatrix2D(center - offset, a, params.z)
     rotation_format = (w, h)
     rotated_image = cv2.warpAffine(
         patch, rotation, rotation_format, flags=cv2.INTER_LINEAR
     )
-    return cv2.getRectSubPix(rotated_image, format, params.center - offset)
+    res = cv2.getRectSubPix(rotated_image, format, center - offset)
+    if vertical:
+        return np.flipud(res)
+    return res
