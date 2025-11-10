@@ -105,11 +105,8 @@ From the same tile, here is an example over a region with less artifacts, proces
 azul process 102159776[11000:12000,7500:9500]
 ```
 
-It is now possible to generate pan-and-zoom videos with 🎬 `azul roam`, like this:
-
-[![azul roam](https://img.youtube.com/vi/mgWAo0JwlqM/maxresdefault.jpg)](https://www.youtube.com/watch?v=mgWAo0JwlqM)
-
-> Credit: ESA Euclid/Euclid Consortium/NASA/Q1-2025/Antoine Basset (CNES)
+It is now possible to generate pan-and-zoom videos with 🎬 `azul roam`, like [this](https://www.youtube.com/watch?v=mgWAo0JwlqM).
+Check the [dedicated documentation](roam.md) for more details.
 
 # Advanced usage
 
