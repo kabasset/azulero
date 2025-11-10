@@ -51,7 +51,7 @@ def add_parser(subparsers):
         help="Video format",
     )
     parser.add_argument(
-        "--fps", type=float, default=25, metavar="FPS", help="Frames per second."
+        "--fps", type=float, default=24, metavar="FPS", help="Frames per second."
     )
 
     parser.set_defaults(func=run)
