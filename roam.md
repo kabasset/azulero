@@ -3,28 +3,29 @@
 ## Basics
 
 Command `azul roam` consists in moving a so-called viewport,
-which is a rectangle from which video frames are extracted.
-The image and viewport can be seen as analogous to a scene and camera.
+a rectangle from which video frames are extracted.
+The image and viewport can be seen as analogous to a scene and camera, respectively.
 
 The viewport has a variable center, scale and rotation angle.
 The parameters evolve smoothly between key frames specified by the user.
 Between them, the viewport geometry is sine-interpolated.
 
-## Configuration
+## Sequence file
 
-`azul roam` is configured by a sequence file in YAML format, which lists key frame parameters.
+The sequence of key frames is provided to `azul roam` as a configuration file in YAML format.
 For each key frame:
 
 - The time is specified either in seconds or in number of frames.
 - The center is specified either in pixels or percentage of the image extents.
-- The viewport size is specified either as a percentage relative to the image pixel size, or relative to the image extents.
+- The viewport size is computeded either from a percentage relative to the image pixel size, or relatively to the image extents.
 - The viewport angle is specified clockwise.
 
 For each key frame but the first one, omitted parameters are copied from the previous key frame.
 
 **Time**
 
-Time is given with key `t` in seconds with suffix `s` or number of frames with suffix `f`.
+The name of the key frame time parameter in the sequence file is `t`.
+It is specified in seconds with suffix `s` or number of frames with suffix `f`.
 Prefix `+` indicates a duration instead of a time point, e.g.:
 `t: 1s` means key frame at 1 second, `t: +24f` means 24 frames after the previous key frame.
 The time of the first frame must be `0s` or `0f`.
@@ -50,7 +51,7 @@ For now, zoom levels higher than 100% are not supported.
 
 The angle parameter has key `a` and is given either in degrees with suffix `°` or in radians with suffix `pi`.
 Its value is arbitrary to allow for multi-turns videos.
-Typically, with `a: 0pi` in a key frame and `a: 4pi` in the next one, the viewport would perform a full turn.
+Typically, with `a: 0pi` in a key frame and `a: 4pi` in the next one, the viewport would perform two full turns.
 Positive values mean clockwise rotation of the viewport, i.e. counterclockwise rotation of the image.
 
 **Zoom and/or angle elision**
@@ -59,7 +60,7 @@ While all parameters can be omitted to denote no change from the previous frame,
 zoom and angle parameters support key frame elision, with the ellipsis syntax: `...`.
 In this case, for the zoom and/or angle parameters, it is like the key frame did not exist.
 This means the interpolation runs from the frame immediately before elipsis until that immediately after ellipsis.
-Several successive key frames can be eluded.
+Several successive key frames can be eluded, as demonstrated in the following example.
 
 **Example**
 
@@ -105,9 +106,9 @@ It consists in eight key frames.
 The video starts with a full-height, centered and horizontal viewport.
 
 For one second, there is only a viewport rotation
--- which will run continuously until the sixth key frame to reach 90° clockwise rotation.
+-- which will run continuously until the sixth key frame to reach 90° clockwise rotation of the image.
 
-Then, in ten seconds, the viewport moves to position (87%, 57%), relative to the image extents,
+Then, in ten seconds, the viewport moves to position (87%, 57%) relative to the image extents,
 and we zoom until we the viewport width reaches 20% of the image width.
 
 For the next five seconds, only the angle parameter continues to evolve.
@@ -116,5 +117,5 @@ For ten seconds, we pan to position (60%, 72%) and zoom to 100% pixel size.
 
 Five seconds later, rotation stops.
 
-In the next five seconds, we go back to the center of the image and dezoom to reach full image height again.
-The viewport is finally fixed for one second.
+In the next five seconds, we go back to the center of the image and zoom out to reach full image height again.
+The viewport finally stays still for one second.
