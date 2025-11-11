@@ -22,6 +22,7 @@ dependencies = [
     "pyyaml",
     "requests",
     "scikit-image",
+    "scipy",
     "tifffile"
 ]
 

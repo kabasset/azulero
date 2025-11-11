@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from dataclasses import dataclass
+import scipy.interpolate as interp
 import numpy as np
 
 from azulero import color  # TODO lerp to interp.py
@@ -56,32 +57,39 @@ def load_frames_params(
     res = KeyFrames([], [], [])
     frame = 0
     for step in sequence:
-        frame = parse_frame(step["t"], fps, frame)
-        x = None if "x" not in step else parse_coord(step["x"], image_shape[1])
-        y = None if "y" not in step else parse_coord(step["y"], image_shape[0])
-        z = (
-            None
-            if "z" not in step
-            else parse_zoom(step["z"], image_shape, video_format)
-        )
-        a = None if "a" not in step else parse_a_deg(step["a"])
-        res.append(frame, np.array([x, y]), z, a)
+        if not "t" in step:
+            pass
+        else:
+            frame = parse_frame(step["t"], fps, frame)
+            x = None if "x" not in step else parse_coord(step["x"], image_shape[1])
+            y = None if "y" not in step else parse_coord(step["y"], image_shape[0])
+            z = (
+                None
+                if "z" not in step
+                else parse_zoom(step["z"], image_shape, video_format)
+            )
+            a = None if "a" not in step else parse_a_deg(step["a"])
+            res.append(frame, np.array([x, y]), z, a)
     return res
 
 
 def sin_sequence(keys_values: list):
     """
-    Extrapolate parameters over a sequence of frames with sin interpolation.
+    Linearly interpolate parameters over a sequence of frames with sine sampling.
     """
-    res = []  # FIXME use first value if first frame > 0
+    res = []
     for start, stop in zip(keys_values[:-1], keys_values[1:]):
-        res += sin_step(start, stop)
+        if isinstance(start.value, list):
+            res += sin_spline(start, stop)
+        else:
+            res += sin_step(start, stop)
+    # FIXME prepend first value if first frame > 0
     return res
 
 
 def sin_step(start, stop):
     """
-    Extrapolate parameters between two frames with sin interpolation.
+    Linearly interpolate parameters between two frames with sine sampling.
     """
     return [
         color.lerp(1 - u, start.value, stop.value)
@@ -89,9 +97,20 @@ def sin_step(start, stop):
     ]
 
 
+def sin_spline(start, stop):
+    """
+    Spline-interpolate trajectory between knots with sine sampling.
+    """
+    knots = start.value
+    knots.append(stop.value)
+    b = interp.make_interp_spline(range(len(knots)), knots, k=min(3, len(knots) - 1))
+    u = sin_sampling(start.frame, stop.frame)
+    return b(u)
+
+
 def sin_sampling(start, stop):
     """
-    Sin sampling between two bounds.
+    Sine sampling between two bounds.
     """
     return np.sin(np.linspace(0, 1, stop - start) * np.pi - np.pi / 2) / 2 + 0.5
 
