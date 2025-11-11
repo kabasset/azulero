@@ -10,9 +10,21 @@ The viewport has a variable center, scale and rotation angle.
 The parameters evolve smoothly between key frames specified by the user.
 Between them, the viewport geometry is sine-interpolated.
 
+Command line synopsis is:
+
+```
+azul roam <image> <sequence> [options]
+```
+
+with:
+
+- `<image>` the path to the input image file;
+- `<sequence>` the path to the sequence configuration file (see next section);
+- `[options]` additional parameters (see below).
+
 ## Sequence file
 
-The sequence of key frames is provided to `azul roam` as a configuration file in YAML format.
+The sequence of key frames is provided to `azul roam` as a configuration file in YAML.
 For each key frame:
 
 - The time is specified either in seconds or in number of frames.
@@ -119,3 +131,14 @@ Five seconds later, rotation stops.
 
 In the next five seconds, we go back to the center of the image and zoom out to reach full image height again.
 The viewport finally stays still for one second.
+
+## Command line options
+
+In addition to the input image file and sequence configuration file,
+static parameters can be adjusted with command line options.
+
+The frame format is specified with `--format`
+and the frame rate with `--fps`.
+For example, a 720p60 video is configured with `--format 1280 720 --fps 60`.
+
+The output file name is given to parameter `-o`.
