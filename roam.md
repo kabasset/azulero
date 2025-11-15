@@ -74,6 +74,34 @@ In this case, for the zoom and/or angle parameters, it is like the key frame did
 This means the interpolation runs from the frame immediately before elipsis until that immediately after ellipsis.
 Several successive key frames can be eluded, as demonstrated in the following example.
 
+**Spline-interpolated center**
+
+It is possible to make the path followed by the center a spline, by defining intermediate knots,
+which are positions the center must pass through.
+They are specified by providing `x` and `y` only (no time or any other parameter).
+The following example is a ten-second circular trajectory with three intermediate knots:
+
+```yaml
+- t: 0s
+  x: 70%
+  y: 50%
+  z: 100%
+  a: 0°
+
+- x: 50%
+  y: 70%
+
+- x: 30%
+  y: 50%
+
+- x: 50%
+  y: 30%
+
+- t: 10s
+  x: 70%
+  y: 50%
+```
+
 **Example**
 
 Consider the following sequence:
