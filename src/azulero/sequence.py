@@ -58,7 +58,9 @@ def load_frames_params(
     frame = 0
     for step in sequence:
         if not "t" in step:
-            pass
+            x = parse_coord(step["x"], image_shape[1])
+            y = parse_coord(step["y"], image_shape[0])
+            add_knot(res, x, y)
         else:
             frame = parse_frame(step["t"], fps, frame)
             x = None if "x" not in step else parse_coord(step["x"], image_shape[1])
@@ -73,14 +75,23 @@ def load_frames_params(
     return res
 
 
+def add_knot(sequence, x, y):
+    knots = sequence.centers[-1].value
+    if knots.ndim == 1:
+        knots = np.stack([knots, [x, y]])
+    else:
+        knots = np.stack([*knots, [x, y]])
+    sequence.centers[-1].value = knots
+
+
 def sin_sequence(keys_values: list):
     """
     Linearly interpolate parameters over a sequence of frames with sine sampling.
     """
     res = []
     for start, stop in zip(keys_values[:-1], keys_values[1:]):
-        if isinstance(start.value, list):
-            res += sin_spline(start, stop)
+        if isinstance(start.value, np.ndarray):
+            res += [*sin_spline(start, stop)]
         else:
             res += sin_step(start, stop)
     # FIXME prepend first value if first frame > 0
@@ -101,9 +112,10 @@ def sin_spline(start, stop):
     """
     Spline-interpolate trajectory between knots with sine sampling.
     """
-    knots = start.value
-    knots.append(stop.value)
-    b = interp.make_interp_spline(range(len(knots)), knots, k=min(3, len(knots) - 1))
+    knots = np.stack([*start.value, stop.value])
+    b = interp.make_interp_spline(
+        np.linspace(0, 1, len(knots)), knots, k=min(3, len(knots) - 1)
+    )
     u = sin_sampling(start.frame, stop.frame)
     return b(u)
 
