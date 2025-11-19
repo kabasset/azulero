@@ -69,16 +69,16 @@ def write_tiff(rgb: np.ndarray, path: Path):
     tifffile.imwrite(path, data)
 
 
-def read_channel(workdir: Path, channel: str, slicing=None):
+def read_channel(workdir: Path, pattern: str, slicing=None):
     """
     Read the region of one channel.
     """
-    data_files = list(workdir.glob(f"EUC_*{channel}_*.fits"))
+    data_files = list(workdir.glob(pattern))
 
     if len(data_files) == 1:
         return read_fits(data_files[0], slicing)
 
-    print(f"WARNING: {len(data_files)} {channel} files found.")
+    print(f"WARNING: {len(data_files)} files found with pattern: {pattern}")
     return _average([read_fits(f, slicing) for f in data_files])
 
 
@@ -87,18 +87,21 @@ def _average(slices: list):
     Average arrays, discarding zeros.
     """
     stack = np.stack(slices)
-    return np.nan_to_num(np.nanmean(stack, axis=0, where=(stack != 0)), copy=False)
+    # FIXME replace 0 with np.nan
+    return np.nan_to_num(
+        np.nanmean(stack, axis=0, where=(stack != 0)), copy=False
+    )  # FIXME nanmedian
 
 
-def read_iyjh(workdir: Path, slicing=None):
+def read_iyjh(workdir: Path, slicing=None, template="{}"):
     """
     Read the region of a VIS- and NIR-covered tile.
     """
     return np.stack(
         (
-            read_channel(workdir, "VIS", slicing),
-            read_channel(workdir, "NIR-Y", slicing),
-            read_channel(workdir, "NIR-J", slicing),
-            read_channel(workdir, "NIR-H", slicing),
+            read_channel(workdir, template.format(channel="VIS"), slicing),
+            read_channel(workdir, template.format(channel="NIR-Y"), slicing),
+            read_channel(workdir, template.format(channel="NIR-J"), slicing),
+            read_channel(workdir, template.format(channel="NIR-H"), slicing),
         )
     )

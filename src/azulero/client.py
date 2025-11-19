@@ -18,6 +18,14 @@ def run():
     parser.add_argument(
         "--workspace", type=str, default=".", metavar="PATH", help="Parent workspace"
     )
+    parser.add_argument(
+        "--input",
+        "-i",
+        type=str,
+        default="*[-_]{channel}[-_]*.fits",
+        metavar="PATTERN",
+        help="Input file pattern, where `{channel}` is replaced with the channel name, e.g. `NIR-Y`",
+    )
 
     subparsers = parser.add_subparsers(title="Commands")
     retrieve.add_parser(subparsers)

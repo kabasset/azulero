@@ -182,7 +182,7 @@ def run(args):
     timer = Timer()
 
     print(f"Read IYJH image from: {workdir}")
-    iyjh = io.read_iyjh(workdir, slicing)
+    iyjh = io.read_iyjh(workdir, slicing, args.input)
     print(f"- Shape: {iyjh.shape[1]} x {iyjh.shape[2]}")
     timer.tic_print()
 

@@ -63,7 +63,7 @@ def run(args):
     ), "All patches must have the same height."
     for tile, slicing in specs:
         workdir = workspace / tile
-        patch = io.read_iyjh(workdir, slicing)
+        patch = io.read_iyjh(workdir, slicing, args.input)
         print(f"- {tile}: {patch.shape[1]} x {patch.shape[2]}")
         patches.append(patch)
         timer.tic_print()
