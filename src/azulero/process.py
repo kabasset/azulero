@@ -189,12 +189,19 @@ def run(args):
     print(f"Detect bad pixels")
     dead = mask.dead_pixels(iyjh)
     print(f"- Dead pixels: {', '.join(str(np.sum(channel)) for channel in dead)}")
+    if "{step}" in name:
+        path = workdir / name.replace("{step}", "mask")
+        print(f"- Write: {path.name}")
+        io.write_mask(dead, path)
     timer.tic_print()
 
     print(f"Inpaint dead pixels")
-    for i in range(len(iyjh)):
-        iyjh[i] = mask.inpaint(iyjh[i], dead[i])
-        # iyjh[i][dead[i]] = mask.resaturate(iyjh[i][dead[i]], np.max(iyjh[i]))
+    iyjh[0] = mask.inpaint(iyjh[0], dead[0])
+    # iyjh[0][dead[0]] = mask.resaturate(iyjh[0][dead[0]], np.max(iyjh[0]))
+    nir_dead = dead[1] | dead[2] | dead[3]
+    for i in range(1, len(iyjh)):
+        print(f"iyjh: {iyjh[i].shape}, dead: {nir_dead.shape}")
+        iyjh[i] = mask.inpaint(iyjh[i], nir_dead)
     timer.tic_print()
 
     print(f"Sharpen channels")

@@ -69,6 +69,18 @@ def write_tiff(rgb: np.ndarray, path: Path):
     tifffile.imwrite(path, data)
 
 
+def write_mask(iyjh: np.ndarray, path: Path):
+    """
+    Write a 4-channel binary mask.
+    """
+    i, y, j, h = iyjh
+    rgb = np.zeros((iyjh.shape[1], iyjh.shape[2], 3), dtype=np.uint8)
+    rgb[:, :, 0] = i * 155 + h * 100
+    rgb[:, :, 1] = i * 155 + j * 100
+    rgb[:, :, 2] = i * 155 + y * 100
+    tifffile.imwrite(path, np.flipud(rgb))
+
+
 def read_channel(workdir: Path, pattern: str, slicing=None):
     """
     Read the region of one channel.

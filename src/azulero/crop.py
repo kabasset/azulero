@@ -58,7 +58,7 @@ def run(args):
     timer = Timer()
 
     print(f"Read VIS channel: {workdir}")
-    data = io.read_channel(workdir, "VIS")
+    data = io.read_channel(workdir, args.input.format("VIS"))
     timer.tic_print()
 
     print(f"Prepare data.")
