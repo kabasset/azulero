@@ -199,9 +199,7 @@ def run(args):
     iyjh[0] = mask.inpaint(iyjh[0], dead[0])
     # iyjh[0][dead[0]] = mask.resaturate(iyjh[0][dead[0]], np.max(iyjh[0]))
     nir_dead = dead[1] | dead[2] | dead[3]
-    for i in range(1, len(iyjh)):
-        print(f"iyjh: {iyjh[i].shape}, dead: {nir_dead.shape}")
-        iyjh[i] = mask.inpaint(iyjh[i], nir_dead)
+    iyjh[1:] = mask.inpaint(iyjh[1:], nir_dead, 0)
     timer.tic_print()
 
     print(f"Sharpen channels")
