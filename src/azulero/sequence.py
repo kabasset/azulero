@@ -90,7 +90,7 @@ def sin_sequence(keys_values: list):
     """
     res = []
     for start, stop in zip(keys_values[:-1], keys_values[1:]):
-        if isinstance(start.value, np.ndarray):
+        if isinstance(start.value, np.ndarray) and start.value.ndim > 1:
             res += [*sin_spline(start, stop)]
         else:
             res += sin_step(start, stop)
