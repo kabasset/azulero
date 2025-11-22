@@ -77,20 +77,19 @@ def load_frames_params(
 
 def add_knot(sequence, x, y):
     knots = sequence.centers[-1].value
-    if knots.ndim == 1:
-        knots = np.stack([knots, [x, y]])
+    if isinstance(knots, list):
+        sequence.centers[-1].value.append(np.array([x, y]))
     else:
-        knots = np.stack([*knots, [x, y]])
-    sequence.centers[-1].value = knots
+        sequence.centers[-1].value = [knots, np.array([x, y])]
 
 
 def sin_sequence(keys_values: list):
     """
-    Linearly interpolate parameters over a sequence of frames with sine sampling.
+    Interpolate parameters over a sequence of frames with sine sampling.
     """
     res = []
     for start, stop in zip(keys_values[:-1], keys_values[1:]):
-        if isinstance(start.value, np.ndarray) and start.value.ndim > 1:
+        if isinstance(start.value, list):
             res += [*sin_spline(start, stop)]
         else:
             res += sin_step(start, stop)
@@ -102,8 +101,9 @@ def sin_step(start, stop):
     """
     Linearly interpolate parameters between two frames with sine sampling.
     """
+    stop_value = stop.value if not isinstance(stop.value, list) else stop.value[0]
     return [
-        color.lerp(1 - u, start.value, stop.value)
+        color.lerp(1 - u, start.value, stop_value)
         for u in sin_sampling(start.frame, stop.frame)
     ]
 
