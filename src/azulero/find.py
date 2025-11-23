@@ -42,6 +42,17 @@ def object_tiles(name: str):
     return radec_tiles(object_radec(name))
 
 
+@dataclass
+class Tile(object):
+    index: int
+    mode: str
+    dsr: str
+    distance: float
+
+    def __str__(self) -> str:
+        return f"{self.mode}: {self.index} ({self.dsr}); distance: {self.distance:.2f}°"
+
+
 class Tiling(object):
 
     def __init__(self, filename):
@@ -51,30 +62,31 @@ class Tiling(object):
         print(f"- {len(self.tiles)} tiles loaded.")
 
     def __call__(self, radec: tuple):
-        res = []
+        matches = {}
         point = geometry.Point(*radec)
         for tile in self.tiles:
             polygon = geometry.shape(tile["geometry"])
             if polygon.contains(point):
+                # FIXME use astropy-region for spherical geometry
                 index = tile["properties"]["TileIndex"]
-                mode = tile["properties"]["UseCase"]
+                mode = tile["properties"]["ProcessingMode"]
+                dsr = tile["properties"]["DatasetRelease"]
                 center = polygon.centroid
                 distance = center.distance(point)
                 if distance < 1:
-                    print(f"- Tile: {index} ({mode})")
-                    print(f"- Distance to center: {distance:.2f}°")
-                    res.append(index)
-                # FIXME type
-                # FIXME distance to center
-        if len(res) == 0:
+                    matches[index] = Tile(index, mode, dsr, distance)
+        if len(matches) == 0:
             print("- WARNING: No tile found.")
-        return res
+            return []
+        return sorted(matches.values(), key=lambda t: t.distance)
 
 
 if __name__ == "__main__":
-    tiling = Tiling("DpdMerTile.geojson")
+    tiling = Tiling("DpdMerFinalCatalog.geojson")
     for arg in sys.argv[1:]:
         print(f"\n{arg}")
         radec = object_radec(arg)
         print(f"- Coordinates: {radec[0]:.2f}, {radec[1]:.2f}")
         tiles = tiling(radec)
+        for t in tiles:
+            print(f"- {t}")
