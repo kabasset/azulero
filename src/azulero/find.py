@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import argparse
-from astroquery.simbad import Simbad
+from astropy.coordinates import SkyCoord
 from dataclasses import dataclass
 import json
 import pathlib
@@ -26,8 +26,16 @@ def add_parser(subparsers):
         "objects",
         type=str,
         nargs="+",
-        metavar="NAMEs",
-        help="Space-separated list of tile indices.",
+        metavar="NAMES",
+        help="Object names.",
+    )
+    parser.add_argument(
+        "--radec",
+        type=str,
+        nargs=2,
+        action="append",
+        metavar=["RA", "DEC"],
+        help="Coordinates (this option can be specified several times).",
     )
     parser.add_argument(
         "--tiling",
@@ -38,39 +46,6 @@ def add_parser(subparsers):
     )
 
     parser.set_defaults(func=run)
-
-
-def object_radec(name: str):
-    # TODO use astropy's from_name()
-    res = Simbad().query_object(name)
-    assert len(res) > 0, f"Object not found: {name}"
-    assert len(res) < 2, f"Several objects found: {name}"
-    return float(res[0]["ra"]), float(res[0]["dec"])
-
-
-def radec_tiles(radec: tuple):
-    epsilon = 1e-8  # FIXME param?
-    query = {
-        "project": "EUCLID",
-        "class_name": "DpdMerBksMosaic",
-        "spatial_query": f"INTERSECT(0.01,101) BOUNDINGBOX({radec[0]-epsilon} {radec[1]-epsilon}, {radec[0]+epsilon} {radec[1]+epsilon})",
-        "fields": "Header.ProductId",  # "Data.TileIndex:Data.RaCen:Data.DecCen",
-    }
-    lines = (
-        requests.get("https://eas-dps-rest-ops.esac.esa.int/REST", params=query)
-        .text.replace('"', "")
-        .split()
-    )
-    print("\n".join(lines))
-    tiles = {}
-    for l in lines[1:]:
-        index, ra, dec = l.split(",")
-        tiles[index] = (ra, dec)
-    return tiles
-
-
-def object_tiles(name: str):
-    return radec_tiles(object_radec(name))
 
 
 @dataclass
@@ -92,9 +67,9 @@ class Tiling(object):
             self.tiles = json.load(f)["features"]
         print(f"- {len(self.tiles)} tiles loaded.")
 
-    def __call__(self, radec: tuple):
+    def __call__(self, coord: SkyCoord):
         matches = {}
-        point = geometry.Point(*radec)
+        point = geometry.Point(coord.ra.degree, coord.dec.degree)
         for tile in self.tiles:
             polygon = geometry.shape(tile["geometry"])
             if polygon.contains(point):
@@ -107,9 +82,6 @@ class Tiling(object):
                 if distance < 1:
                     matches[index] = Tile(index, mode, dsr, distance)
                     # FIXME avoid overwriting dsr
-        if len(matches) == 0:
-            print("- WARNING: No tile found.")
-            return []
         return sorted(matches.values(), key=lambda t: t.distance)
 
 
@@ -122,11 +94,16 @@ def run(args):
     timer.tic_print()
 
     print()
-    for object in args.objects:
-        print(f"{object}")
-        radec = object_radec(object)
-        print(f"- Coordinates: {radec[0]:.2f}, {radec[1]:.2f}")
-        tiles = tiling(radec)
+
+    objects = args.objects + [SkyCoord(*rd, unit="deg") for rd in args.radec]
+    for coord in objects:
+        if isinstance(coord, str):
+            print(coord)
+            coord = SkyCoord.from_name(coord)
+            print(f"- Coordinates: {coord.ra:.2f}, {coord.dec:.2f}")
+        else:
+            print(f"{coord.ra.degree} {coord.dec.degree}")
+        tiles = tiling(coord)
         for t in tiles:
             print(f"- {t}")
         timer.tic_print()
@@ -135,3 +112,5 @@ def run(args):
             print(
                 f"\nazul --workspace {args.workspace} retrieve {' '.join(str(t.index) for t in tiles)}\n"
             )
+        else:
+            print("\nWARNING: No tile found.\n")
