@@ -7,7 +7,6 @@ from astropy.coordinates import SkyCoord
 from dataclasses import dataclass
 import json
 import pathlib
-import requests
 from shapely import geometry
 
 from azulero.timing import Timer
@@ -25,7 +24,7 @@ def add_parser(subparsers):
     parser.add_argument(
         "objects",
         type=str,
-        nargs="+",
+        nargs="*",
         metavar="NAMES",
         help="Object names.",
     )

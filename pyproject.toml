@@ -16,7 +16,6 @@ license-files = ["LICEN[CS]E*"]
 dependencies = [
     "numpy >= 2.0",
     "astropy",
-    "astroquery",
     "matplotlib",
     "opencv-python",
     "pyyaml",
