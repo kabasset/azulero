@@ -2,15 +2,46 @@
 # SPDX-PackageSourceInfo: https://github.com/kabasset/azulero
 # SPDX-License-Identifier: Apache-2.0
 
+import argparse
+from astroquery.simbad import Simbad
 from dataclasses import dataclass
 import json
-from astroquery.simbad import Simbad
+import pathlib
 import requests
 from shapely import geometry
-import sys
+
+from azulero.timing import Timer
+
+
+def add_parser(subparsers):
+
+    parser = subparsers.add_parser(
+        "find",
+        help="Find the tiles which contain objects.",
+        description="Find object coordinates and intersecting tiles.",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    )
+
+    parser.add_argument(
+        "objects",
+        type=str,
+        nargs="+",
+        metavar="NAMEs",
+        help="Space-separated list of tile indices.",
+    )
+    parser.add_argument(
+        "--tiling",
+        type=str,
+        default="DpdMerFinalCatalog.geojson",
+        metavar="FILENAME",
+        help="Geojson file which lists existing tiles and their metadata",
+    )
+
+    parser.set_defaults(func=run)
 
 
 def object_radec(name: str):
+    # TODO use astropy's from_name()
     res = Simbad().query_object(name)
     assert len(res) > 0, f"Object not found: {name}"
     assert len(res) < 2, f"Several objects found: {name}"
@@ -75,18 +106,32 @@ class Tiling(object):
                 distance = center.distance(point)
                 if distance < 1:
                     matches[index] = Tile(index, mode, dsr, distance)
+                    # FIXME avoid overwriting dsr
         if len(matches) == 0:
             print("- WARNING: No tile found.")
             return []
         return sorted(matches.values(), key=lambda t: t.distance)
 
 
-if __name__ == "__main__":
-    tiling = Tiling("DpdMerFinalCatalog.geojson")
-    for arg in sys.argv[1:]:
-        print(f"\n{arg}")
-        radec = object_radec(arg)
+def run(args):
+
+    print()
+
+    timer = Timer()
+    tiling = Tiling(pathlib.Path(args.workspace) / args.tiling)
+    timer.tic_print()
+
+    print()
+    for object in args.objects:
+        print(f"{object}")
+        radec = object_radec(object)
         print(f"- Coordinates: {radec[0]:.2f}, {radec[1]:.2f}")
         tiles = tiling(radec)
         for t in tiles:
             print(f"- {t}")
+        timer.tic_print()
+        if len(tiles) > 0:
+            print(f"\nYou may now run:")
+            print(
+                f"\nazul --workspace {args.workspace} retrieve {' '.join(str(t.index) for t in tiles)}\n"
+            )
