@@ -15,9 +15,10 @@ from azulero.timing import Timer
 def add_parser(subparsers):
     parser = subparsers.add_parser(
         "roam",
-        help="Make a video which pans and zooms between two points.",
+        help="Create a video which pans and zooms in an image.",
         description=(
-            "Supply an image, starting center point and zoom, and stopping center point and zoom."
+            "Supply an image, specify viewport position and parameters at given times."
+            "They will be interpolated to render a smooth roaming video."
         ),
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )

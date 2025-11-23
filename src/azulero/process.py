@@ -13,7 +13,7 @@ from azulero.timing import Timer
 def add_parser(subparsers):
     parser = subparsers.add_parser(
         "process",
-        help="Process MER channels.",
+        help="Process MER channels to render a color image.",
         description=(
             "Process MER channels: "
             "1. Inpaint dead pixels; "

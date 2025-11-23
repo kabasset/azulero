@@ -13,8 +13,8 @@ from azulero.timing import Timer
 def add_parser(subparsers):
     parser = subparsers.add_parser(
         "tune",
-        help="Autotune.",
-        description=("Propose white point."),
+        help="Autotune image rendering parameters.",
+        description=("Analyse image statistics to propose a white point."),
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
 
