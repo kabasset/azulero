@@ -3,12 +3,13 @@
 ## Basics
 
 Command `azul roam` consists in moving a so-called viewport,
-a rectangle from which video frames are extracted.
+that is a rectangle from which video frames are extracted.
 The image and viewport can be seen as analogous to a scene and camera, respectively.
 
 The viewport has a variable center, scale and rotation angle.
 The parameters evolve smoothly between key frames specified by the user.
-Between them, the viewport geometry is sine-interpolated.
+Between them, the viewport geometry is sine-interpolated to ensure smooth transitions.
+The path of the center can also be spline-interpolated to depart from zigzag patterns.
 
 Command line synopsis is:
 
@@ -18,9 +19,9 @@ azul roam <image> <sequence> [options]
 
 with:
 
-- `<image>` the path to the input image file;
-- `<sequence>` the path to the sequence configuration file (see next section);
-- `[options]` additional parameters (see below).
+- `<image>` - The path to the input image file.
+- `<sequence>` - The path to the sequence configuration file (see next section).
+- `[options]` - Additional parameters (see below).
 
 ## Sequence file
 
@@ -40,20 +41,22 @@ The name of the key frame time parameter in the sequence file is `t`.
 It is specified in seconds with suffix `s` or number of frames with suffix `f`.
 Prefix `+` indicates a duration instead of a time point, e.g.:
 `t: 1s` means key frame at 1 second, `t: +24f` means 24 frames after the previous key frame.
+
 The time of the first frame must be `0s` or `0f`.
 
 **Center**
 
-Viewport center is given with keys `x` and `y`.
+The viewport center is given with keys `x` and `y`.
 Suffix `px` indicates absolute coordinates, while suffix `%` indicates percentage relative to the image width or height.
 Negative values are interpreted as backward coordinates, i.e. from the right for `x` or from the bottom for `y`.
-Typically, the viewport can be centered with `x: 50%` and `y: 50%`.
+Typically, the viewport is centered with `x: 50%` and `y: 50%`.
 
 **Zoom**
 
 Zoom is specified with key `z`.
 When suffixed with `%`, the parameter is interpretted as relative to the pixel size,
-such that `z: 100%` means that one pixel in the input image corresponds to one pixel in the output frame.
+such that `z: 100%` (resp. `z: 50%`) means that one pixel in the output frame
+corresponds to one pixel (resp. two pixels) in the input image,
 When suffixed with `w` (resp. `h`), the parameter value is a factor wrt. the image width (resp. height).
 Typically, a full-width viewport is specified as `z: 1w` and a full-height viewport is specified as `z: 1h`.
 
@@ -72,11 +75,11 @@ While all parameters can be omitted to denote no change from the previous frame,
 zoom and angle parameters support key frame elision, with the ellipsis syntax: `...`.
 In this case, for the zoom and/or angle parameters, it is like the key frame did not exist.
 This means the interpolation runs from the frame immediately before elipsis until that immediately after ellipsis.
-Several successive key frames can be eluded, as demonstrated in the following example.
+Several successive key frames can be eluded, as demonstrated in the example below.
 
 **Spline-interpolated center**
 
-It is possible to make the path followed by the center a spline, by defining intermediate knots,
+It is possible to make the path followed by the center a spline, by defining intermediate "knots",
 which are positions the center must pass through.
 They are specified by providing `x` and `y` only (no time or any other parameter).
 The following example is a ten-second circular trajectory with three intermediate knots:
@@ -165,8 +168,9 @@ The viewport finally stays still for one second.
 In addition to the input image file and sequence configuration file,
 static parameters can be adjusted with command line options.
 
-The frame format is specified with `--format`
-and the frame rate with `--fps`.
+The frame format is specified with `--format` and the frame rate with `--fps`.
 For example, a 720p60 video is configured with `--format 1280 720 --fps 60`.
 
 The output file name is given to parameter `-o`.
+
+Check `azul roam -h` for more details.

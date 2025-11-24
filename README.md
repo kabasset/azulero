@@ -2,8 +2,12 @@
 
 # Bring colors to Euclid tiles!
 
-Azul(ero)* downloads and merges VIS and NIR observations over a MER tile.
-It detects and inpaints bad pixels (hot and cold pixels, saturated stars...), and combines the 4 channels (I, Y, J, H) into an sRGB image.
+Azul(ero)* is a toolbox which, among others, provides scripts to download and merge VIS and NIR observations over a MER tile.
+For rendering color images, `azul process` detects and inpaints bad pixels (cold pixels, saturated stars...),
+and combines the 4 channels (I, Y, J, H) into an sRGB image.
+Input data files can be selected with `azul find` and then downloaded with `azul retrieve`,
+which connects to public (SAS) or private (EAS) data archives.
+Last but not least, `azul roam` produces flowing videos by panning and zooming images.
 
 *I started this project when Euclid EROs came out...
 
@@ -28,7 +32,7 @@ Install the `azulero` package with:
 pip install azulero
 ```
 
-If you wish to access Euclid-internal data, setup the `~/.netrc` file (or `_netrc` on Windows) for `eas-dps-rest-ops.esac.esa.int` and `euclidsoc.esac.esa.int` with your Euclid credentials:
+If you wish to access Euclid-internal data with `azul retrieve`, setup the `~/.netrc` file (or `_netrc` on Windows) for `eas-dps-rest-ops.esac.esa.int` and `euclidsoc.esac.esa.int` with your Euclid credentials:
 
 ```xml
 machine eas-dps-rest-ops.esac.esa.int
@@ -39,30 +43,40 @@ machine euclidsoc.esac.esa.int
   password <password>
 ```
 
+For `azul find`, download the geojson file which monitors MER processing, e.g., for DR1:
+https://gitlab.euclid-sgs.uk/sy-tools/ST_SMT_DATA/-/raw/DR1/data/DpdMerFinalCatalog.geojson?ref_type=heads
+
 # Basic usage
 
 The typical workflow is as follows:
 
+* 🎯 Find the tile indices of your objects or coordinates with `azul find`.
 * 📥 Download the MER-processed FITS file of your tiles with `azul retrieve`.
 * ✂️ Optionally select the region to be processed with `azul crop`.
 * 🌟 Blend the channels and inpaint artifacts with `azul process`.
+* 🎬 Generate a video from the image with `azul roam`.
 
 Usage:
 
 ```xml
+azul [--workspace <workspace>] find [<objects>] [--radec <coordinates>]
 azul [--workspace <workspace>] retrieve [--from <provider>] <tile_indices>
 azul [--workspace <workspace>] crop <tile_index>
 azul [--workspace <workspace>] process <tile_slicing>
+azul [--workspace <workspace>] roam <image> <sequence>
 ```
 
 with:
 
 * `<workspace>` - The parent directory to save everything, in which one folder per tile will be created (defaults to the current directory).
-* `<dataset_release>` - The dataset release of the tiles to be downloaded (defaults to a list of known releases).
-* `<provider>` - The data archive name.
-* `<tile_indices>` - The space-separated list of tiles to be downloaded.
+* `<object>` - A space-separated list of object names, e.g. `M82 NGC6536`.
+* `<coordinates>` - RA/dec coordinates in decimal degrees, e.g. `266.9397155 +64.0472200`; Option `--radec` can be specified multiple times.
+* `<provider>` - The data archive name, e.g. `sas` for public releases.
+* `<tile_indices>` - The space-separated list of tiles to be downloaded, typically the result of `azul find`.
 * `<tile_index>` - A single tile index.
-* `<tile_slicing>` - A single tile index, optionally followed by a slicing à-la NumPy.
+* `<tile_slicing>` - A single tile index, optionally followed by a slicing à-la NumPy, typically the result of `azul crop`.
+* `<image>` - The path to an input image (not necessarily produced by Azul).
+* `<sequence>` - The roaming configuration file: see the [format description](roam.md) for details.
 
 # Example
 
@@ -73,6 +87,7 @@ Here is an example output and the commands which produced it below:
 > Credit: ESA Euclid/Euclid Consortium/NASA/Q1-2025/Antoine Basset (CNES)
 
 ```
+azul find 271.1026785 +66.9128392
 azul retrieve 102159776 --from sas
 azul crop 102159776
 azul process 102159776[6000:7000,5000:7000] --yg 0.75 --jr 0.9 -w 22.5
@@ -105,7 +120,7 @@ From the same tile, here is an example over a region with less artifacts, proces
 azul process 102159776[11000:12000,7500:9500]
 ```
 
-It is now possible to generate pan-and-zoom videos with 🎬 `azul roam`, like [this](https://www.youtube.com/watch?v=mgWAo0JwlqM).
+It is now possible to generate pan-and-zoom videos with `azul roam`, like [this](https://www.youtube.com/watch?v=mgWAo0JwlqM).
 Check the [dedicated documentation](roam.md) for more details.
 
 # Advanced usage
@@ -116,6 +131,7 @@ In the meantime, please read [the algorithm description](algo.md) and check help
 
 ```
 azul -h
+azul find -h
 azul retrieve -h
 azul crop -h
 azul process -h
@@ -125,7 +141,8 @@ azul roam -h
 # How to help?
 
 * [Report bugs, request features](https://github.com/kabasset/azulero/issues), tell me what you think of the tool and results...
-* Mention myself (Antoine Basset, CNES) and/or [`azulero`](https://pypi.org/project/azulero/) when you publish images processed with this tool.
+* Mention myself (Antoine Basset, CNES) and/or [`azulero`](https://pypi.org/project/azulero/)
+  when you publish images processed with this tool (see example credits above).
 * Share with me your images, I'm curious!
 
 # Contributors
@@ -134,7 +151,7 @@ azul roam -h
 * Téo Bouvard (Thales): Drafed `retrieve`.
 * Rollin Gimenez (CNES): Fixed packaging.
 * Kane Nguyen-Kim (IAP): Provided URLs for retrieving public data.
-* Gian Paolo Candini (CSIC): Investigated rendering issues.
+* Gian Paolo Candini (CSIC): Investigated rendering issues and improved parametrization.
 
 # Acknowledgements
 
