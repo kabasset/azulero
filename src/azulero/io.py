@@ -3,8 +3,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from astropy.io import fits
+import cv2
 import numpy as np
-import tifffile
 from pathlib import Path
 
 
@@ -61,12 +61,24 @@ def write_fits(data: np.array, path: Path):
     fits.PrimaryHDU(data).writeto(path, overwrite=True)
 
 
-def write_tiff(rgb: np.ndarray, path: Path):
+def write_rgb(rgb: np.array, path: Path, norm_depth: int = None):
     """
-    Write a normalized RGB image.
+    Write an RGB image.
+    Optional `norm_depth` parameter is used to scale normalized images as either 8- or 16-bit integers.
+    By default, for TIFF files, image is scaled by 65563 and for other files, by 255.
+    Setting it to 1 won't apply any normalization.
     """
-    data = np.flipud(rgb * 65535).astype(np.uint16)
-    tifffile.imwrite(path, data)
+    if norm_depth is None:
+        norm_depth = 16 if path.suffix.lower() in (".tif", ".tiff") else 8
+    if norm_depth == 1:
+        data = rgb
+    elif norm_depth == 8:
+        data = np.round(rgb * 255).astype(np.uint8)
+    elif norm_depth == 16:
+        data = np.round(rgb * 65535).astype(np.uint16)
+    else:
+        raise ValueError(f"Parameter `norm_depth` must be one of: None, 1, 8 or 16")
+    cv2.imwrite(path, np.flipud(data)[:, :, ::-1])
 
 
 def write_mask(iyjh: np.ndarray, path: Path):
@@ -78,7 +90,7 @@ def write_mask(iyjh: np.ndarray, path: Path):
     rgb[:, :, 0] = i * 155 + h * 100
     rgb[:, :, 1] = i * 155 + j * 100
     rgb[:, :, 2] = i * 155 + y * 100
-    tifffile.imwrite(path, np.flipud(rgb))
+    write_rgb(rgb, path, 1)
 
 
 def read_channel(workdir: Path, pattern: str, slicing=None):

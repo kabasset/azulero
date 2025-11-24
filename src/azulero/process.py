@@ -58,12 +58,7 @@ def add_parser(subparsers):
         "--scaling",
         nargs=4,
         type=float,
-        default=[
-            2.2,
-            1.3,
-            1.2,
-            1.0,
-        ],
+        default=[2.2, 1.3, 1.2, 1.0],
         metavar=("GAIN_I", "GAIN_Y", "GAIN_J", "GAIN_H"),
         help="Scaling factors applied immediately to the IYJH bands for white balance",
     )
@@ -220,7 +215,7 @@ def run(args):
     if "{step}" in name:
         path = workdir / name.replace("{step}", "blended")
         print(f"- Write: {path.name}")
-        io.write_tiff(rgb, path)
+        io.write_rgb(rgb, path)
     timer.tic_print()
 
     # print(f"Inpaint hot pixels")
@@ -231,7 +226,7 @@ def run(args):
     # if "{step}" in name:
     #     path = workdir / name.replace("{step}", "inpainted")
     #     print(f"- Write: {path.name}")
-    #     io.write_tiff(rgb, path)
+    #     io.write_rgb(rgb, path)
     #     timer.tic_print()
 
     print(f"Adjust curves")
@@ -244,5 +239,5 @@ def run(args):
 
     path = workdir / name.replace("{step}", "adjusted")
     print(f"- Write: {path.name}")
-    io.write_tiff(rgb, path)
+    io.write_rgb(rgb, path)
     timer.tic_print()

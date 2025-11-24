@@ -22,8 +22,7 @@ dependencies = [
     "requests",
     "scikit-image",
     "scipy",
-    "shapely",
-    "tifffile"
+    "shapely"
 ]
 
 [project.urls]
