@@ -87,7 +87,7 @@ Here is an example output and the commands which produced it below:
 > Credit: ESA Euclid/Euclid Consortium/NASA/Q1-2025/Antoine Basset (CNES)
 
 ```
-azul find 271.1026785 +66.9128392
+azul find --radec 271.1026785 +66.9128392
 azul retrieve 102159776 --from sas
 azul crop 102159776
 azul process 102159776[6000:7000,5000:7000] --yg 0.75 --jr 0.9 -w 22.5
