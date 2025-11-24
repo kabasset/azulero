@@ -32,6 +32,7 @@ def add_parser(subparsers):
         "--radec",
         type=str,
         nargs=2,
+        default=[],
         action="append",
         metavar=["RA", "DEC"],
         help="Coordinates (this option can be specified several times).",
