@@ -8,7 +8,7 @@ from pathlib import Path
 import cv2
 import yaml
 
-from azulero import sequence
+from azulero import sequence, widgets
 from azulero.timing import Timer
 
 
@@ -54,6 +54,14 @@ def add_parser(subparsers):
     parser.add_argument(
         "--fps", type=float, default=24, metavar="FPS", help="Frames per second."
     )
+    parser.add_argument(
+        "--scale",
+        type=str,
+        nargs=2,
+        default=["600", "1 arcmin"],
+        metavar=["LENGTH", "TEXT"],
+        help="Scale length in image pixels, and text above",
+    )
 
     parser.set_defaults(func=run)
 
@@ -91,11 +99,15 @@ def run(args):
         output, cv2.VideoWriter_fourcc(*"mp4v"), args.fps, args.format
     )
 
+    scale = widgets.Scale(value=args.scale[1], width=int(args.scale[0]))
+
     print(f"- Frame\tx\ty\tz (%)\ta (°)")
     for f, c, z, a in zip(range(len(centers)), centers, zooms_inv, angles_deg):
         print(f"- {f}\t{c[0]:0.1f}\t{c[1]:0.1f}\t{100.0/z:0.1f}\t{a:0.1f}")
         p = sequence.KeyFrame(0, c, 1.0 / z, a)
         frame = crop(image, p, args.format)
+        if scale.width > 0:
+            scale.draw(frame, 100.0 / z)
         writer.write(frame)
 
     writer.release()
