@@ -95,11 +95,13 @@ def run(args):
     timer.tic_print()
 
     if args.scale is None:
-        scale = widgets.Scale(width=0)
+        scale = widgets.Scale(width=0, text="")
     elif len(args.scale) == 0:
-        scale = widgets.Scale()
+        scale = widgets.Scale(width=600, text="1 arcmin")
+    elif len(args.scale) == 1:
+        scale = widgets.Scale(width=int(args.scale[0]), text="")
     elif len(args.scale) == 2:
-        scale = widgets.Scale(value=args.scale[1], width=int(args.scale[0]))
+        scale = widgets.Scale(width=int(args.scale[0]), text=args.scale[1])
 
     print(f"Generate frames")
     writer = cv2.VideoWriter(
