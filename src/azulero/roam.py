@@ -57,8 +57,8 @@ def add_parser(subparsers):
     parser.add_argument(
         "--scale",
         type=str,
-        nargs=2,
-        default=["600", "1 arcmin"],
+        nargs="*",
+        default=None,
         metavar=["LENGTH", "TEXT"],
         help="Scale length in image pixels, and text above",
     )
@@ -94,12 +94,17 @@ def run(args):
     print(f"- Total frames: {len(centers)}")
     timer.tic_print()
 
+    if args.scale is None:
+        scale = widgets.Scale(width=0)
+    elif len(args.scale) == 0:
+        scale = widgets.Scale()
+    elif len(args.scale) == 2:
+        scale = widgets.Scale(value=args.scale[1], width=int(args.scale[0]))
+
     print(f"Generate frames")
     writer = cv2.VideoWriter(
         output, cv2.VideoWriter_fourcc(*"mp4v"), args.fps, args.format
     )
-
-    scale = widgets.Scale(value=args.scale[1], width=int(args.scale[0]))
 
     print(f"- Frame\tx\ty\tz (%)\ta (°)")
     for f, c, z, a in zip(range(len(centers)), centers, zooms_inv, angles_deg):
