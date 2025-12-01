@@ -1,0 +1,35 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: azulero
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Antoine
+    family-names: Basset
+    email: antoine.basset@cnes.fr
+    affiliation: CNES
+  - given-names: Mischa
+    family-names: Schirmer
+    affiliation: MPIA
+  - given-names: Téo
+    family-names: Bouvard
+    affiliation: Thales SN
+  - given-names: Rollin
+    family-names: Gimenez
+    affiliation: CNES
+  - given-names: Kane
+    family-names: Nguyen-Kim
+    affiliation: IAP
+  - family-names: Candini
+    given-names: Gian Paolo
+    affiliation: CSIC
+identifiers:
+  - type: doi
+    value: 10.24400/815952/Azulero
+repository-code: 'https://github.com/kabasset/azulero'
+repository-artifact: 'https://pypi.org/project/azulero/'
+license: Apache-2.0
