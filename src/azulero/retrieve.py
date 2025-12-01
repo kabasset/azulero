@@ -22,11 +22,11 @@ class DSS(object):
             "Header.DataSetRelease": dsr,
             "fields": "Data.DataStorage.DataContainer.FileName:Data.Filter.Name",
         }
-        lines = (
-            requests.get("https://eas-dps-rest-ops.esac.esa.int/REST", params=query)
-            .text.replace('"', "")
-            .split()
-        )
+
+        r = requests.get("https://eas-dps-rest-ops.esac.esa.int/REST", params=query)
+        r.raise_for_status()
+
+        lines = r.text.replace('"', "").split()
         datafiles = {}
         for l in lines:
             if "VIS" in l or "NIR" in l:
@@ -37,6 +37,7 @@ class DSS(object):
     def download_datafile(self, name, path):
 
         r = requests.get(f"https://euclidsoc.esac.esa.int/{name}")
+        r.raise_for_status()
 
         # FIXME download and decompress in free function?
         with gzip.GzipFile(fileobj=BytesIO(r.content)) as f:
@@ -65,6 +66,7 @@ class SAS(object):
             f"{p}={query[p]}" for p in query
         )
         r = requests.get(url)  # Cannot use params as adql characters would be escaped
+        r.raise_for_status()
 
         lines = r.text.split()
         datafiles = {}
@@ -77,6 +79,8 @@ class SAS(object):
 
         query = {"file_name": name, "release": "sedm", "RETRIEVAL_TYPE": "FILE"}
         r = requests.get(f"https://eas.esac.esa.int/sas-dd/data", query)
+        r.raise_for_status()
+
         with open(path, "wb") as f:
             f.write(r.content)
 
