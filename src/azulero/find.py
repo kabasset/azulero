@@ -62,7 +62,6 @@ class Tile(object):
 class Tiling(object):
 
     def __init__(self, filename):
-        print(f"Load tiling: {filename}")
         with open(filename) as f:
             self.tiles = json.load(f)["features"]
         print(f"- {len(self.tiles)} tiles loaded.")
@@ -90,20 +89,28 @@ def run(args):
     print()
 
     timer = Timer()
-    tiling = Tiling(pathlib.Path(args.workspace) / args.tiling)
-    timer.tic_print()
+    filename = pathlib.Path(args.workspace) / args.tiling
+    print(f"Load tiling: {filename}")
+    if filename.is_file():
+        tiling = Tiling(filename)
+        timer.tic_print()
+    else:
+        print("WARNING: No tiling file found. Will only find coordinates.")
+        tiling = None
 
     print()
 
     objects = args.objects + [SkyCoord(*rd, unit="deg") for rd in args.radec]
-    for coord in objects:
-        if isinstance(coord, str):
-            print(coord)
-            coord = SkyCoord.from_name(coord)
-            print(f"- Coordinates: {coord.ra:.2f}, {coord.dec:.2f}")
+    for o in objects:
+        if isinstance(o, str):
+            print(o)
+            o = SkyCoord.from_name(o)
+            print(f"- Coordinates: {o.ra:.2f}, {o.dec:.2f}")
         else:
-            print(f"{coord.ra.degree} {coord.dec.degree}")
-        tiles = tiling(coord)
+            print(f"{o.ra.degree} {o.dec.degree}")
+        if tiling is None:
+            continue
+        tiles = tiling(o)
         for t in tiles:
             print(f"- {t}")
         timer.tic_print()
