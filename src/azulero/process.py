@@ -142,10 +142,10 @@ def add_parser(subparsers):
     parser.add_argument(
         "--curves",
         type=str,
-        nargs=3,
+        nargs="*",
         default=["", "", "0.5: 0.55"],
-        metavar=("KNOTS_R", "KNOTS_G", "KNOTS_B"),
-        help="Curve spline knots for each channel",
+        metavar="KNOTS",
+        help="Curve spline knots for each channel (leave empty to disable).",
     )
 
     parser.set_defaults(func=run)
@@ -212,7 +212,8 @@ def run(args):
     del iyjh
     rgb = color.lrgb_to_rgb(lrgb, transform)
     del lrgb
-    if "{step}" in name:
+    if "{step}" in name or len(args.curves) == 0:
+        # FIXME implement some Step to handle len(args.curves) == 0 case generically
         path = workdir / name.replace("{step}", "blended")
         print(f"- Write: {path.name}")
         io.write_rgb(rgb, path)
@@ -229,15 +230,14 @@ def run(args):
     #     io.write_rgb(rgb, path)
     #     timer.tic_print()
 
-    print(f"Adjust curves")
-    for i in range(len(args.curves)):
-        knots = io.parse_map(args.curves[i])
-        knots.insert(0, [0, 0])
-        knots.append([1, 1])
-        rgb[:, :, i] = color.adjust_curve(rgb[:, :, i], knots)
-    timer.tic_print()
-
-    path = workdir / name.replace("{step}", "adjusted")
-    print(f"- Write: {path.name}")
-    io.write_rgb(rgb, path)
-    timer.tic_print()
+    if len(args.curves) > 0:
+        print(f"Adjust curves")
+        for i in range(len(args.curves)):
+            knots = io.parse_map(args.curves[i])
+            knots.insert(0, [0, 0])
+            knots.append([1, 1])
+            rgb[:, :, i] = color.adjust_curve(rgb[:, :, i], knots)
+        path = workdir / name.replace("{step}", "adjusted")
+        print(f"- Write: {path.name}")
+        io.write_rgb(rgb, path)
+        timer.tic_print()
