@@ -127,7 +127,7 @@ Check the [dedicated documentation](roam.md) for more details.
 
 One day I'll find some time to write something useful here... 🤔
 
-In the meantime, please read [the algorithm description](algo.md) and check help messages:
+In the meantime, please read [the algorithm description](process.md) and check help messages:
 
 ```
 azul -h
