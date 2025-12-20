@@ -44,17 +44,17 @@ machine euclidsoc.esac.esa.int
 ```
 
 For `azul find`, download the geojson file which monitors MER processing, e.g., for DR1:
-https://gitlab.euclid-sgs.uk/sy-tools/ST_SMT_DATA/-/raw/DR1/data/DpdMerFinalCatalog.geojson?ref_type=heads
+[DpdMerFinalCatalog.geojson](https://gitlab.euclid-sgs.uk/sy-tools/ST_SMT_DATA/-/raw/DR1/data/DpdMerFinalCatalog.geojson?ref_type=heads)
 
 # Basic usage
 
 The typical workflow is as follows:
 
 * 🎯 Find the tile indices of your objects or coordinates with `azul find`.
-* 📥 Download the MER-processed FITS file of your tiles with `azul retrieve`.
+* 📥 Download the individual MER-processed FITS files of your tiles with `azul retrieve`.
 * ✂️ Optionally select the region to be processed with `azul crop`.
-* 🌟 Blend the channels and inpaint artifacts with `azul process`.
-* 🎬 Generate a video from the image with `azul roam`.
+* 🌟 Blend the channels and inpaint artifacts with [`azul process`](process.md).
+* 🎬 Generate a video from the image with [`azul roam`](roam.md).
 
 Usage:
 
