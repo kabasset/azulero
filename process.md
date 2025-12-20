@@ -53,7 +53,7 @@ This step is disabled if the strength is 0.
 ## Output(s)
 
 The script results in a 16-bit TIFF, 8-bit PNG or 8-bit compressed JPG depending on the extension of the file name parameter (`-o`).
-In this parameter, any occurence of `{tile}` will be replaced with the actual tile index.
+In this file name, any occurence of `{tile}` will be replaced with the actual tile index.
 
 Intermediate images are saved when the file name contains `{step}`.
 The latter will be replaced with the name of the intermediate step as follows:
@@ -63,22 +63,25 @@ and grey (resp. blue, green, red) means the I (resp. Y, J, H) channel is bad.
 * `blended` -- The RGB image is saved before curve adjustment.
 * `adjusted` -- This is the final image.
 
+For example, using the default file name `{tile}_{step}.tiff`, the mask of tile 102159776 will be saved as: `102159776_mask.tiff`.
+
 ## Resources and cropping
 
-The script may be very memory-greedy and runs on a single core.
-Here is a typical profiling for DEEP and WIDE tiles.
-Walltime will depend on the CPU while peak RAM usage should be stable across architectures.
+In its current version, the script may be very memory-greedy and runs on a single core.
+Below is a typical profiling for DEEP and WIDE tiles, including elapsed time and peak RAM usage for each step.
+Theses numbers are printed step-by-step during the execution of `azul process`.
+Walltime will depend on the CPU while RAM usage should be stable across architectures.
 
 |            | DEEP         | WIDE         |
 | ---------- | ------------ | ------------ |
 | Shape      | 10k x 10k px | 20k x 20k px |
 | Reading    |  10 s,  3 GB |  10 s,  6 GB |
-| Inpainting |  20 s,  7 GB | 110 s, 28 GB |
+| Inpainting |  25 s,  7 GB | 110 s, 28 GB |
 | Sharpening |   5 s,  3 GB |  70 s, 12 GB |
 | Stretching |   5 s,  2 GB |  25 s,  8 GB |
 | Blending   |  20 s,  6 GB |  70 s, 22 GB |
 | Adjustment |  10 s,  4 GB |  25 s, 12 GB |
-| OVERALL    |  90 s,  7 GB | 350 s, 28 GB |
+| OVERALL    |  75 s,  7 GB | 310 s, 28 GB |
 
 Scalability is roughly linear, such that you should be able to interpolate the needs wrt. the input shape.
 In order to lower the memory consumption, it is possible to crop the image with numpy's syntax, e.g. for the top-left quarter (x < 5000, y >= 5000):
