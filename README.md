@@ -15,15 +15,6 @@ Last but not least, `azul roam` produces flowing videos by panning and zooming i
 
 [Apache-2.0](https://raw.githubusercontent.com/kabasset/azulero/refs/tags/v0.1.0/LICENSE)
 
-# Disclaimer
-
-⚠️ **This is a beta version!** ⚠️
-
-* The tool is far from perfect and can be frustrating.
-* Error cases are not handled and messages may be cryptic or misleading.
-* Please make sure to read the "How to help?" section below before using this version.
-* If something is not documented, it does not exist!
-
 # Installation and setup
 
 Install the `azulero` package with:
@@ -82,7 +73,7 @@ with:
 
 Here is an example output and the commands which produced it below:
 
-![adjusted](https://raw.githubusercontent.com/kabasset/azulero/develop/102159776_adjusted.jpg)
+![PGC 61356](https://raw.githubusercontent.com/kabasset/azulero/develop/102159776_adjusted.jpg)
 
 > Credit: ESA Euclid/Euclid Consortium/NASA/Q1-2025/Antoine Basset (CNES)
 
@@ -90,31 +81,33 @@ Here is an example output and the commands which produced it below:
 azul find --radec 271.1026785 +66.9128392
 azul retrieve 102159776 --from sas
 azul crop 102159776
-azul process 102159776[6000:7000,5000:7000] --yg 0.75 --jr 0.9 -w 22.5
+azul process 102159776[6000:7000,5000:7000]
 ```
 I have post-processed the output to my liking:
 
-![post](https://raw.githubusercontent.com/kabasset/azulero/develop/102159776_post.jpg)
+![PGC 61356 post](https://raw.githubusercontent.com/kabasset/azulero/develop/102159776_post.jpg)
+
+> A field around [PGC 61356](https://simbad.u-strasbg.fr/simbad/sim-basic?Ident=PGC+61356)
+
+> The two thick blue rings 💍 are artifacts of the VIS instrument known as ghosts.
+> To my knowledge, the galaxy in the center -- [PGC 61356](https://simbad.u-strasbg.fr/simbad/sim-basic?Ident=PGC+61356) -- has never been resolved this way.
+> Rendering the image allowed me to discover this is a splendid polar-ring 💍 galaxy!
+> The previously unseen golden structure top left may be an Einstein ring 💍, possibly with two deflectors -- the question remains open.
 
 > Credit: ESA Euclid/Euclid Consortium/NASA/Q1-2025/Antoine Basset (CNES)
 
-> The two thick blue rings 💍 are artifacts of the VIS instrument known as ghosts.
-> To my knowledge, the galaxy in the center has never been resolved this way.
-> Rendering the image allowed me to discover this is a splendid polar-ring 💍 galaxy!
-> The previously unseen golden structure top left may be an Einstein ring 💍, possibly with two deflectors -- the question remains open. 
-
-As you can see, getting a nice image required a bit of parametrization.
+As you can see, getting a nice image required a bit of postprocessing.
 This is because we are using the public Q1 data, and there were prominent artifacts right in the middle of the Einstein ring.
 DR1 data, to be published in 2026, have a much better signal-to-noise ratio, less artifacts, and default parameters give very good results.
 I already rendered the DR1 version of this field; I cannot share it today, but I can already tell you it is mesmerizing 😏
 
 From the same tile, here is an example over a region with less artifacts, processed with default parameters:
 
-![UGC11116](https://raw.githubusercontent.com/kabasset/azulero/develop/UGC11116.jpg)
+![UGC 11116](https://raw.githubusercontent.com/kabasset/azulero/develop/UGC11116.jpg)
+
+> A field around [UGC 11116](https://simbad.u-strasbg.fr/simbad/sim-basic?Ident=UGC+11116)
 
 > Credit: ESA Euclid/Euclid Consortium/NASA/Q1-2025/Antoine Basset (CNES)
-
-> [UGC 11116](https://simbad.u-strasbg.fr/simbad/sim-id?Ident=Z%20322-30)
 
 ```
 azul process 102159776[11000:12000,7500:9500]
@@ -129,7 +122,7 @@ One day I'll find some time to write something useful here... 🤔
 
 In the meantime, please read [the algorithm description](process.md) and check help messages:
 
-```
+```sh
 azul -h
 azul find -h
 azul retrieve -h
@@ -138,11 +131,34 @@ azul process -h
 azul roam -h
 ```
 
+# Citing Azulero
+
+If you use this software for academic publications, please cite as follows (adapt the version number) 💞:
+
+> Basset, A., Schirmer, M., Bouvard, T., Gimenez, R., Nguyen-Kim, K., & Candini, G. P. _Azulero_ (Version 1.0.0) [Computer software]. DOI: 10.24400/815952/Azulero.
+
+BibTeX format:
+
+```BibTeX
+@software{Basset_azulero,
+author = {Basset, Antoine and Schirmer, Mischa and Bouvard, Téo and Gimenez, Rollin and Nguyen-Kim, Kane and Candini, Gian Paolo},
+license = {Apache-2.0},
+title = {{Azulero}},
+version = {1.0.0},
+year = {2025},
+url = {https://github.com/kabasset/azulero},
+doi = {10.24400/815952/Azulero}
+}
+```
+
+More details in [CITATION.cff](CITATION.cff).
+
 # How to help?
 
 * [Report bugs, request features](https://github.com/kabasset/azulero/issues), tell me what you think of the tool and results...
-* Mention myself (Antoine Basset, CNES) and/or [`azulero`](https://pypi.org/project/azulero/)
+* Mention myself (Antoine Basset, CNES) and/or [`Azulero`](https://www.doi.org/10.24400/815952/Azulero)
   when you publish images processed with this tool (see example credits above).
+  Cite the software in academic publications (see previous section).
 * Share with me your images, I'm curious!
 
 # Contributors
@@ -155,5 +171,6 @@ azul roam -h
 
 # Acknowledgements
 
+* 🚀 Thanks to my CNES and LISA project managers, who let me to work a bit on this project on open hours!
 * 🔥 Congratulations to the whole Euclid community; The mosaics are simply unbelievable!
-* 😍 Thank you also for answering my dummy questions on the contents of the images I posted.
+* 😍 Thank you Euclid astronomers, for answering my dummy questions on the contents of the images I posted.
