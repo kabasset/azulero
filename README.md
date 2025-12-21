@@ -71,37 +71,27 @@ with:
 
 # Example
 
-Here is an example output and the commands which produced it below:
+Here is an example output:
 
 ![PGC 61356](https://raw.githubusercontent.com/kabasset/azulero/develop/102159776_adjusted.jpg)
 
-> Credit: ESA Euclid/Euclid Consortium/NASA/Q1-2025/Antoine Basset (CNES)
-
-```
-azul find --radec 271.1026785 +66.9128392
-azul retrieve 102159776 --from sas
-azul crop 102159776
-azul process 102159776[6000:7000,5000:7000]
-```
-I have post-processed the output to my liking:
-
-![PGC 61356 post](https://raw.githubusercontent.com/kabasset/azulero/develop/102159776_post.jpg)
-
 > A field around [PGC 61356](https://simbad.u-strasbg.fr/simbad/sim-basic?Ident=PGC+61356)
 
-> The two thick blue rings 💍 are artifacts of the VIS instrument known as ghosts.
+> The two thick blue rings are artifacts of the VIS instrument known as ghosts.
 > To my knowledge, the galaxy in the center -- [PGC 61356](https://simbad.u-strasbg.fr/simbad/sim-basic?Ident=PGC+61356) -- has never been resolved this way.
-> Rendering the image allowed me to discover this is a splendid polar-ring 💍 galaxy!
-> The previously unseen golden structure top left may be an Einstein ring 💍, possibly with two deflectors -- the question remains open.
+> Rendering the image allowed me to discover this is a splendid polar-ring galaxy!
+> The previously unseen golden structure top left may be an Einstein ring, possibly with two deflectors -- the question remains open.
 
 > Credit: ESA Euclid/Euclid Consortium/NASA/Q1-2025/Antoine Basset (CNES)
 
-As you can see, getting a nice image required a bit of postprocessing.
-This is because we are using the public Q1 data, and there were prominent artifacts right in the middle of the Einstein ring.
-DR1 data, to be published in 2026, have a much better signal-to-noise ratio, less artifacts, and default parameters give very good results.
-I already rendered the DR1 version of this field; I cannot share it today, but I can already tell you it is mesmerizing 😏
+The picture above was produced by the following commands:
 
-From the same tile, here is an example over a region with less artifacts, processed with default parameters:
+```sh
+azul retrieve 102159776 --from sas
+azul process 102159776[6000:7000,5000:7000]
+```
+
+From the same tile, here is an example over a region with less artifacts:
 
 ![UGC 11116](https://raw.githubusercontent.com/kabasset/azulero/develop/UGC11116.jpg)
 
@@ -113,14 +103,11 @@ From the same tile, here is an example over a region with less artifacts, proces
 azul process 102159776[11000:12000,7500:9500]
 ```
 
-It is now possible to generate pan-and-zoom videos with `azul roam`, like [this](https://www.youtube.com/watch?v=mgWAo0JwlqM).
-Check the [dedicated documentation](roam.md) for more details.
-
 # Advanced usage
 
 One day I'll find some time to write something useful here... 🤔
 
-In the meantime, please read [the algorithm description](process.md) and check help messages:
+In the meantime, please read [the algorithm description](process.md), the [roaming configuration documentation](roam.md), and check help messages:
 
 ```sh
 azul -h
@@ -133,7 +120,7 @@ azul roam -h
 
 # Citing Azulero
 
-If you use this software for academic publications, please cite as follows (adapt the version number) 💞:
+💞 If you use this software for academic publications, please cite as follows (adapt the version number):
 
 > Basset, A., Schirmer, M., Bouvard, T., Gimenez, R., Nguyen-Kim, K., & Candini, G. P. _Azulero_ (Version 1.0.0) [Computer software]. DOI: 10.24400/815952/Azulero.
 
@@ -171,6 +158,6 @@ More details in [CITATION.cff](CITATION.cff).
 
 # Acknowledgements
 
-* 🚀 Thanks to my CNES and LISA project managers, who let me to work a bit on this project on open hours!
+* 🚀 Thanks to my CNES and LISA managers, who let me work a bit on this project on open hours!
 * 🔥 Congratulations to the whole Euclid community; The mosaics are simply unbelievable!
-* 😍 Thank you Euclid astronomers, for answering my dummy questions on the contents of the images I posted.
+* 😍 Thank you Euclid astronomers for answering my dummy questions on the contents of the images I posted.
