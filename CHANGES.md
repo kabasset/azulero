@@ -27,23 +27,23 @@
 
 `azul find`
 
-* [#35] Cartesian coordinates are used, which cannot handle positions around RA = 0° = 360° or dec = +/-90° (where there are no Euclid data anyway).
+* kabasset/azulero#35 - Cartesian coordinates are used, which cannot handle positions around RA = 0° = 360° or dec = +/-90° (where there are no Euclid data anyway).
 
 `azul process`
 
-* [#16] Inpainted saturated pixel are rendered too dim.
-* [#19] Missing values are badly handled when multiple inputs are provided for a channel.
+* kabasset/azulero#16 - Inpainted saturated pixel are rendered too dim.
+* kabasset/azulero#19 - Missing values are badly handled when multiple inputs are provided for a channel.
 
 `azul roam`
 
-* [#31] Zoom > 100% is not supported.
+* kabasset/azulero#31 - Zoom > 100% is not supported.
 
 ## Expected features in 1.1.0
 
 `azul find`
 
-* [#35] Enable tile finding from SAS for public data.
+* kabasset/azulero#40 - Enable tile finding from SAS for public data.
 
 `azul roam`
 
-* [#34] Specify angle with respect to motion direction.
+* kabasset/azulero#34 - Specify angle with respect to motion direction.
