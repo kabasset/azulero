@@ -59,7 +59,7 @@ azul [--workspace <workspace>] roam <image> <sequence>
 
 with:
 
-* `<workspace>` - The parent directory to save everything, in which one folder per tile will be created (defaults to the current directory).
+* `<workspace>` - The [parent directory](workspace.md) to save everything, in which one folder per tile will be created (defaults to the current directory).
 * `<object>` - A space-separated list of object names, e.g. `M82 NGC6536`.
 * `<coordinates>` - RA/dec coordinates in decimal degrees, e.g. `266.9397155 +64.0472200`; Option `--radec` can be specified multiple times.
 * `<provider>` - The data archive name, e.g. `sas` for public releases.
