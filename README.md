@@ -105,9 +105,13 @@ azul process 102159776[11000:12000,7500:9500]
 
 # Advanced usage
 
-One day I'll find some time to write something useful here... 🤔
+Refer to the dedicated pages:
 
-In the meantime, please read [the algorithm description](process.md), the [roaming configuration documentation](roam.md), and check help messages:
+* [Retrieve](retrieve.md)
+* [Process](process.md)
+* [Roam](roam.md)
+
+And check the different command help messages:
 
 ```sh
 azul -h

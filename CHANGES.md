@@ -44,6 +44,10 @@
 
 * kabasset/azulero#40 - Enable tile finding from SAS for public data.
 
+`azul process`
+
+* kabasset/azulero#44 - Reduce memory footprint.
+
 `azul roam`
 
 * kabasset/azulero#34 - Specify angle with respect to motion direction.
