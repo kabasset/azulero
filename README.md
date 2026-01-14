@@ -42,7 +42,7 @@ For `azul find`, download the geojson file which monitors MER processing, e.g., 
 The typical workflow is as follows:
 
 * 🎯 Find the tile indices of your objects or coordinates with `azul find`.
-* 📥 Download the individual MER-processed FITS files of your tiles with `azul retrieve`.
+* 📥 Download the individual MER-processed FITS files of your tiles with [`azul retrieve`](retrieve.md).
 * ✂️ Optionally select the region to be processed with `azul crop`.
 * 🌟 Blend the channels and inpaint artifacts with [`azul process`](process.md).
 * 🎬 Generate a video from the image with [`azul roam`](roam.md).
