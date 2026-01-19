@@ -58,7 +58,9 @@ def hot_pixels(i, y, j, h):
 
 def inpaint(data: np.ndarray, mask: np.ndarray, axis: int = -1):
     if data.ndim > 2:
-        return skinpaint.inpaint_biharmonic(data, mask, channel_axis=axis)
+        return skinpaint.inpaint_biharmonic(
+            data, mask, channel_axis=axis, split_into_regions=True
+        )
     return cv2.inpaint(data, mask.astype(np.uint8), 3, cv2.INPAINT_NS)
     # return skinpaint.inpaint_biharmonic(data, mask)
 
