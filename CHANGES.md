@@ -1,3 +1,17 @@
+# 1.1.0
+
+## New features
+
+`azul retrieve`
+
+* New, SAS-based data provider `idr` for internal data releases.
+
+## Optimization
+
+`azul process`
+
+* Inpainting is a bit less memory-greedy.
+
 # 1.0.0
 
 ## Initial features
@@ -43,10 +57,6 @@
 `azul find`
 
 * kabasset/azulero#40 - Enable tile finding from SAS for public data.
-
-`azul process`
-
-* kabasset/azulero#44 - Reduce memory footprint.
 
 `azul roam`
 

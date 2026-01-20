@@ -3,8 +3,10 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import argparse
+from astroquery.esa.euclid import Euclid, EuclidClass
+import contextlib  # intercept astroquery prints
 import gzip
-from io import BytesIO
+from io import BytesIO, StringIO
 import requests
 
 from azulero import io
@@ -29,7 +31,7 @@ class DSS(object):
         lines = r.text.replace('"', "").split()
         datafiles = {}
         for l in lines:
-            if "VIS" in l or "NIR" in l:
+            if "VIS" in l or "NIR" in l:  # FIXME handled by caller
                 file_name, filter_name = l.split(",")
                 datafiles[file_name] = filter_name
         return datafiles
@@ -54,7 +56,7 @@ class SAS(object):
             f" WHERE (release_name='{dsr}')"
             f" AND (category='SCIENCE')"
             f" AND (tile_index={tile})"
-            f" AND (instrument_name IN ('VIS', 'NISP'))"
+            f" AND (instrument_name IN ('VIS', 'NISP'))"  # FIXME handled by caller
         )
         query = {
             "REQUEST": "doQuery",
@@ -85,7 +87,37 @@ class SAS(object):
             f.write(r.content)
 
 
-providers = {"dss": DSS, "sas": SAS}
+class AstroQuery:
+
+    def __init__(self, env="IDR"):
+        self.euclid = EuclidClass(environment=env)
+
+        print("Login: ", end="", flush=True)  # FIXME use configuration file
+        # Intercept stderr, stdout
+        err, out = StringIO(), StringIO()
+        with contextlib.redirect_stderr(err), contextlib.redirect_stdout(out):
+            self.euclid.login()  # FIXME use configuration file
+        if err.getvalue():
+            raise RuntimeError(err.getvalue())
+
+    def __del__(self):
+        self.euclid.logout()
+
+    def query_datafiles(self, tile, dsr):
+        products = self.euclid.get_product_list(
+            tile_index=tile, product_type="DpdMerBksMosaic"
+        )
+        return {
+            str(p["file_name"]): str(p["filter_name"])
+            for p in products
+            if str(p["release_name"]) == dsr
+        }
+
+    def download_datafile(self, name, path):
+        path = self.euclid.get_product(file_name=name, output_file=path)
+
+
+providers = {"dss": DSS, "sas": SAS, "idr": AstroQuery}
 
 
 def enumeration(values, coordination=", "):
@@ -145,6 +177,11 @@ def query_datafiles(retriever, tile, dsr):
     print(f"Query datafiles for tile {tile} and dataset release {dsr}:")
 
     datafiles = retriever.query_datafiles(tile, dsr)
+    datafiles = {
+        file: filter
+        for file, filter in datafiles.items()
+        if "VIS" in filter or "NIR" in filter
+    }
     if len(datafiles) == 0:
         print("- None found.")
 
