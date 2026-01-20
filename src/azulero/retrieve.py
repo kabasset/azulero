@@ -157,7 +157,7 @@ def add_parser(subparsers):
     parser.add_argument(
         "--from",
         type=str,
-        default="dss",
+        default="idr",
         metavar="PROVIDER",
         help=f"Data provider: {choice(providers.keys())}.",
     )
