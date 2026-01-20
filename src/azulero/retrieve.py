@@ -102,7 +102,11 @@ class AstroQuery:
             raise RuntimeError(err.getvalue())
 
     def __del__(self):
-        self.euclid.logout()
+        err, out = StringIO(), StringIO()
+        with contextlib.redirect_stderr(err), contextlib.redirect_stdout(out):
+            self.euclid.logout()
+        if err.getvalue():
+            raise RuntimeError(err.getvalue())
 
     def query_datafiles(self, tile, dsr):
         products = self.euclid.get_product_list(
