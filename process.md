@@ -50,6 +50,12 @@ This step is disabled if the strength is 0.
 1. Shift hue (`--hue`) and boost color saturation (`--saturation`).
 1. Adjust the colorwise response curves by specifying interpolating spline knots (`--curves`).
 
+## Inputs
+
+Input files are discovered according to their names in the [tile folder](workspace.md) and a glob pattern.
+For more details, see help messages of options `--workspace` and `--input` with `azul -h`.
+When several files are given for a single channel, they are stacked as the median image.
+
 ## Output(s)
 
 The script results in a 16-bit TIFF, 8-bit PNG or 8-bit compressed JPG depending on the extension of the file name parameter (`-o`).

@@ -6,6 +6,12 @@
 
 * New, SAS-based data provider `idr` for internal data releases.
 
+## Improvements
+
+`azul process`
+
+* Stacking of multiple inputs per channel relies on median instead of mean.
+
 ## Optimization
 
 `azul process`
