@@ -20,10 +20,20 @@ Last but not least, `azul roam` produces flowing videos by panning and zooming i
 Install the `azulero` package with:
 
 ```
-pip install azulero
+pip3 install azulero
 ```
 
-If you wish to access Euclid-internal data with `azul retrieve`, setup the `~/.netrc` file (or `_netrc` on Windows) for `eas-dps-rest-ops.esac.esa.int` and `euclidsoc.esac.esa.int` with your Euclid credentials:
+If you wish to access Euclid-internal data with `azul retrieve`, setup the `~/.netrc` file (or `_netrc` on Windows).
+
+For using the EAS-SAS, only `easidr.esac.esa.int` authentication is required:
+
+```xml
+machine easidr.esac.esa.int
+  login <login>
+  password <password>
+```
+
+For accessing the EAS-DPS and -DSS (more up-to-date but much slower), set up `eas-dps-rest-ops.esac.esa.int` and `euclidsoc.esac.esa.int`:
 
 ```xml
 machine eas-dps-rest-ops.esac.esa.int

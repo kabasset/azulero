@@ -7,6 +7,7 @@ from astroquery.esa.euclid import Euclid, EuclidClass
 import contextlib  # intercept astroquery prints
 import gzip
 from io import BytesIO, StringIO
+import netrc
 import requests
 
 from azulero import io
@@ -92,11 +93,11 @@ class AstroQuery:
     def __init__(self, env="IDR"):
         self.euclid = EuclidClass(environment=env)
 
-        print("Login: ", end="", flush=True)  # FIXME use configuration file
         # Intercept stderr, stdout
         err, out = StringIO(), StringIO()
         with contextlib.redirect_stderr(err), contextlib.redirect_stdout(out):
-            self.euclid.login()  # FIXME use configuration file
+            auth = netrc.netrc().authenticators("easidr.esac.esa.int")
+            self.euclid.login(user=auth[0], password=auth[2])
         if err.getvalue():
             raise RuntimeError(err.getvalue())
 
