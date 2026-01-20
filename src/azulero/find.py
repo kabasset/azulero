@@ -86,8 +86,6 @@ class Tiling(object):
 
 def run(args):
 
-    print()
-
     timer = Timer()
     filename = pathlib.Path(args.workspace) / args.tiling
     print(f"Load tiling: {filename}")

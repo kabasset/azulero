@@ -68,8 +68,6 @@ def add_parser(subparsers):
 
 def run(args):
 
-    print()
-
     input = Path(args.workspace).expanduser() / args.input
     config = Path(args.sequence)
     output = Path(args.output)

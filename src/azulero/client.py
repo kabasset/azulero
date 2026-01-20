@@ -3,11 +3,19 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import argparse
+from importlib import metadata
 
 from azulero import assemble, find, retrieve, crop, tune, process, roam
 
 
 def run():
+
+    print(
+        f"\n"
+        f"  Azulero v{metadata.version('azulero')}\n"
+        f"  Antoine Basset, CNES\n"
+        f"  http://doi.org/10.24400/815952/Azulero\n"
+    )
 
     parser = argparse.ArgumentParser(
         prog="azul",

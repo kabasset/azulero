@@ -206,8 +206,6 @@ def download_datafiles(retriever, datafiles, workdir):
 
 def run(args):
 
-    print()
-
     timer = Timer()
     provider = providers[vars(args)["from"]]()  # from is a Python keyword
     assert args.files is None or len(args.tiles) == 1

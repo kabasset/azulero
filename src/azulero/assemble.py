@@ -47,8 +47,6 @@ def height(slicing):
 
 def run(args):
 
-    print()
-
     timer = Timer()
     workspace = Path(args.workspace).expanduser()
 

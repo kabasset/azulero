@@ -153,8 +153,6 @@ def add_parser(subparsers):
 
 def run(args):
 
-    print()
-
     transform = color.Transform(
         iyjh_zero_points=np.array(args.zero),
         iyjh_scaling=np.array(args.scaling),

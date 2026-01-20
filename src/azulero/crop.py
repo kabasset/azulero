@@ -51,8 +51,6 @@ def add_parser(subparsers):
 
 def run(args):
 
-    print()
-
     workdir = Path(args.workspace).expanduser() / args.tile
 
     timer = Timer()
