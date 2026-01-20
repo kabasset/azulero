@@ -111,10 +111,8 @@ def _average(slices: list):
     Average arrays, discarding zeros.
     """
     stack = np.stack(slices)
-    # FIXME replace 0 with np.nan
-    return np.nan_to_num(
-        np.nanmean(stack, axis=0, where=(stack != 0)), copy=False
-    )  # FIXME nanmedian
+    stack[stack == 0] = np.nan
+    return np.nan_to_num(np.nanmedian(stack, axis=0))
 
 
 def read_iyjh(workdir: Path, slicing=None, template="{}"):
