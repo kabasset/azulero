@@ -8,9 +8,12 @@ The files are downloaded in the [workspace](workspace.md), in a folder named aft
 
 ## Data providers
 
-There are currently two data providers:
+The data provider is specified with option `--from`.
+The available providers are:
 
-* `dps` for Euclid-internal data and
-* `sas` for public data.
-
-We intend to add support to the internal SAS instance soon.
+* `sas` for public data. No account is needed.
+* `idr` for internal data releases.
+  An EAS-SAS account is needed and [must be set up](README.md).
+* `dps` to get Euclid-internal data before they reach the internal SAS.
+  An EAS-DPS account is needed and [must be set up](README.md).
+  This provider is much slower than `idr`.
