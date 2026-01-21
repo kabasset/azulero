@@ -152,15 +152,8 @@ def add_parser(subparsers):
     parser.set_defaults(func=run)
 
 
-def render(template, **context):
-    res = template
-    for placeholder in context:
-        res = res.replace("{" + placeholder + "}", context[placeholder])
-    return res
-
-
 def render_path_for_step(template, step):
-    return Path(render(template, step=step))
+    return Path(template.format(step=step))
 
 
 def run(args):
@@ -182,7 +175,7 @@ def run(args):
 
     tile, slicing = io.parse_tile(args.tile)
     workdir = Path(args.workspace).expanduser() / tile
-    template = render(args.output, workspace=args.workspace, tile=tile)
+    template = args.output.format(workspace=args.workspace, tile=tile)
 
     timer = Timer()
 
