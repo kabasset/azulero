@@ -28,7 +28,7 @@ machine easidr.esac.esa.int
 ## DPS
 
 Before they reach the SAS, products and datafiles are stored in the EAS-DPS and an EAS-DSS, respectively.
-To reach them, an EAS account and authentication must be configured in `~/.netrc` (or `_netrc` on Windows):
+To reach them, an EAS account is needed and authentication must be configured in `~/.netrc` (or `_netrc` on Windows):
 
 ```xml
 machine eas-dps-rest-ops.esac.esa.int
