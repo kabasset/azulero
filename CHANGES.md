@@ -1,16 +1,23 @@
 # 1.1.0
 
+## Bug fixes
+
+`azul crop`
+
+* Command did crash when reading the image.
+
 ## New features
 
 `azul retrieve`
 
-* New, SAS-based data provider `idr` for internal data releases.
+* New, SAS-based data provider `idr` for Internal Data Releases.
 
 ## Improvements
 
 `azul process`
 
 * Stacking of multiple inputs per channel relies on median instead of mean.
+* Ouput(s) can be written anywhere, not only in the tile folder.
 
 ## Optimization
 
@@ -57,13 +64,3 @@
 `azul roam`
 
 * kabasset/azulero#31 - Zoom > 100% is not supported.
-
-## Expected features in 1.1.0
-
-`azul find`
-
-* kabasset/azulero#40 - Enable tile finding from SAS for public data.
-
-`azul roam`
-
-* kabasset/azulero#34 - Specify angle with respect to motion direction.
