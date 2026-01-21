@@ -10,7 +10,7 @@
 
 `azul retrieve`
 
-* New, SAS-based data provider `idr` for Internal Data Releases.
+* New, SAS-based data provider for Internal Data Releases (default provider).
 
 ## Improvements
 
