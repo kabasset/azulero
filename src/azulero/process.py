@@ -36,11 +36,12 @@ def add_parser(subparsers):
         "--output",
         "-o",
         type=str,
-        default="{tile}_{step}.tiff",
+        default="{workspace}/{tile}/{tile}_{step}.tiff",
         metavar="TEMPLATE",
         help=(
-            "Output filename or template, relative to the tile folder. "
-            "Placeholder {tile} is replaced by the tile index, "
+            "Output path template. "
+            "Placeholder {workspace} is replace by the workspace folder, "
+            "{tile} is replaced by the tile index, "
             "and {step} is replaced by the processing step. "
             "If {step} is not present in the template, "
             "intermediate steps are not saved."
@@ -151,6 +152,17 @@ def add_parser(subparsers):
     parser.set_defaults(func=run)
 
 
+def render(template, **context):
+    res = template
+    for placeholder in context:
+        res = res.replace("{" + placeholder + "}", context[placeholder])
+    return res
+
+
+def render_path_for_step(template, step):
+    return Path(render(template, step=step))
+
+
 def run(args):
 
     transform = color.Transform(
@@ -170,7 +182,7 @@ def run(args):
 
     tile, slicing = io.parse_tile(args.tile)
     workdir = Path(args.workspace).expanduser() / tile
-    name = args.output.replace("{tile}", tile)
+    template = render(args.output, workspace=args.workspace, tile=tile)
 
     timer = Timer()
 
@@ -182,8 +194,8 @@ def run(args):
     print(f"Detect bad pixels")
     dead = mask.dead_pixels(iyjh)
     print(f"- Dead pixels: {', '.join(str(np.sum(channel)) for channel in dead)}")
-    if "{step}" in name:
-        path = workdir / name.replace("{step}", "mask")
+    if "{step}" in template:
+        path = render_path_for_step(template, "mask")
         print(f"- Write: {path.name}")
         io.write_mask(dead, path)
     timer.tic_print()
@@ -210,9 +222,9 @@ def run(args):
     del iyjh
     rgb = color.lrgb_to_rgb(lrgb, transform)
     del lrgb
-    if "{step}" in name or len(args.curves) == 0:
+    if "{step}" in template or len(args.curves) == 0:
         # FIXME implement some Step to handle len(args.curves) == 0 case generically
-        path = workdir / name.replace("{step}", "blended")
+        path = render_path_for_step(template, "blended")
         print(f"- Write: {path.name}")
         io.write_rgb(rgb, path)
     timer.tic_print()
@@ -223,7 +235,7 @@ def run(args):
     # timer.tic_print()
 
     # if "{step}" in name:
-    #     path = workdir / name.replace("{step}", "inpainted")
+    #     path = render_path_for_step(template, "inpainted")
     #     print(f"- Write: {path.name}")
     #     io.write_rgb(rgb, path)
     #     timer.tic_print()
@@ -235,7 +247,7 @@ def run(args):
             knots.insert(0, [0, 0])
             knots.append([1, 1])
             rgb[:, :, i] = color.adjust_curve(rgb[:, :, i], knots)
-        path = workdir / name.replace("{step}", "adjusted")
+        path = render_path_for_step(template, "adjusted")
         print(f"- Write: {path.name}")
         io.write_rgb(rgb, path)
         timer.tic_print()

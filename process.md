@@ -59,7 +59,7 @@ When several files are given for a single channel, they are stacked as the media
 ## Output(s)
 
 The script results in a 16-bit TIFF, 8-bit PNG or 8-bit compressed JPG depending on the extension of the file name parameter (`-o`).
-In this file name, any occurence of `{tile}` will be replaced with the actual tile index.
+In this file name, any occurence of `{workspace}` (resp. `{tile}`) will be replaced with the workspace path (resp. the actual tile index).
 
 Intermediate images are saved when the file name contains `{step}`.
 The latter will be replaced with the name of the intermediate step as follows:
@@ -69,7 +69,9 @@ and grey (resp. blue, green, red) means the I (resp. Y, J, H) channel is bad.
 * `blended` -- The RGB image is saved before curve adjustment.
 * `adjusted` -- This is the final image.
 
-For example, using the default file name `{tile}_{step}.tiff`, the mask of tile 102159776 will be saved as: `102159776_mask.tiff`.
+For example, using the default template `{workspace}/{tile}/{tile}_{step}.tiff`,
+the mask of tile 102159776 will be saved as `102159776_mask.tiff` in the tile folder.
+If, instead, `-o {workspace}/{tile}.jpg` is used, then the output will be a simple JPG file in the workspace and no intermediate steps will be saved.
 
 ## Resources and cropping
 
