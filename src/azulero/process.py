@@ -175,7 +175,7 @@ def run(args):
 
     tile, slicing = io.parse_tile(args.tile)
     workdir = Path(args.workspace).expanduser() / tile
-    template = args.output.format(workspace=args.workspace, tile=tile)
+    template = args.output.format(workspace=args.workspace, tile=tile, step="{step}")
 
     timer = Timer()
 

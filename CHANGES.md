@@ -1,3 +1,11 @@
+# 1.1.1
+
+## Bug fixes
+
+`azul process`
+
+* Command did crash when output template contained `{step}`.
+
 # 1.1.0
 
 ## Bug fixes
