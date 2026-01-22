@@ -84,18 +84,24 @@ Walltime will depend on the CPU while RAM usage should be stable across architec
 | ---------- | ------------ | ------------ |
 | Shape      | 10k x 10k px | 20k x 20k px |
 | Reading    |  10 s,  3 GB |  10 s,  6 GB |
-| Inpainting |  25 s,  7 GB | 110 s, 28 GB |
+| Inpainting |  25 s,  6 GB | 110 s, 21 GB |
 | Sharpening |   5 s,  3 GB |  70 s, 12 GB |
 | Stretching |   5 s,  2 GB |  25 s,  8 GB |
 | Blending   |  20 s,  6 GB |  70 s, 22 GB |
 | Adjustment |  10 s,  4 GB |  25 s, 12 GB |
-| OVERALL    |  75 s,  7 GB | 310 s, 28 GB |
+| OVERALL    |  75 s,  6 GB | 310 s, 22 GB |
 
 Scalability is roughly linear, such that you should be able to interpolate the needs wrt. the input shape.
 In order to lower the memory consumption, it is possible to crop the image with numpy's syntax, e.g. for the top-left quarter (x < 5000, y >= 5000):
 
 ```
 azul process 102159776[5000:,:5000]
+```
+
+Depending on your system, it may be necessary to add quotes:
+
+```
+azul process "102159776[5000:,:5000]"
 ```
 
 The region to be rendered can also be selected graphically with `azul crop`.
