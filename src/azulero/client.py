@@ -5,7 +5,7 @@
 import argparse
 from importlib import metadata
 
-from azulero import assemble, find, retrieve, crop, tune, process, roam
+from azulero import assemble, find, overlay, retrieve, crop, tune, process, roam
 
 
 def run():
@@ -43,6 +43,7 @@ def run():
     process.add_parser(subparsers)
     assemble.add_parser(subparsers)
     roam.add_parser(subparsers)
+    overlay.add_parser(subparsers)
 
     args = parser.parse_args()
     args.func(args)

@@ -2,9 +2,19 @@
 # SPDX-PackageSourceInfo: https://github.com/kabasset/azulero
 # SPDX-License-Identifier: Apache-2.0
 
+import argparse
+from email.policy import default
+from gettext import Catalog
+from pathlib import Path
+from astropy.coordinates import SkyCoord
+from astropy.io import fits
+from astropy import wcs
 import cv2
 from dataclasses import dataclass
 import numpy as np
+
+from azulero import io
+from azulero.timing import Timer
 
 
 @dataclass
@@ -54,3 +64,99 @@ class Scale:
             2,
         )
         image[:] = tmp[:]
+
+
+class Footprints:
+
+    def __init__(self, wcs, catalog):
+        self.wcs = wcs
+        # FIXME select magnitude
+        self.ra = self._read_column(catalog, "RIGHT_ASCENSION")
+        self.dec = self._read_column(catalog, "DECLINATION")
+        self.half_a = self._read_column(catalog, "SEMIMAJOR_AXIS")
+        self.e = self._read_column(catalog, "ELLIPTICITY")
+        self.angle = self._read_column(catalog, "POSITION_ANGLE")
+        self.color = (255, 255, 255)
+        self.thickness = 5
+
+    def _read_column(self, catalog, name):
+        return np.array(catalog[name].data, dtype=float)
+
+    def draw(self, image):
+        tmp = np.ascontiguousarray(image, dtype=np.uint8)
+        coords = SkyCoord(ra=self.ra, dec=self.dec, unit="deg", frame="icrs")
+        x, y = self.wcs.world_to_pixel(coords)
+        a = 2 * self.half_a  # FIXME scale factor
+        b = a * (1 - self.e)
+        angle = self.angle
+        for params in zip(x, y, a, b, angle):
+            if not np.isnan(params).any():
+                self._draw_ellipse(tmp, *params)
+        image[:] = tmp[:]
+
+    def _draw_ellipse(self, image, x, y, a, b, angle):
+        cv2.ellipse(image, (x, y), (a, b), angle, 0, 360, self.color, self.thickness)
+
+
+def read_wcs(path):
+    with fits.open(path) as hdul:
+        header = hdul[0].header
+    return wcs.WCS(header)
+
+
+def read_catalog(path):
+    with fits.open(path) as hdul:
+        data = hdul[1].data
+    return data  # FIXME keep only useful columns
+
+
+def add_parser(subparsers):
+
+    parser = subparsers.add_parser(
+        "overlay",
+        help="Overlay image with source detections.",
+        description="Take an image as input and generate an overlay mask.",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    )
+
+    parser.add_argument(
+        "tile",
+        type=str,
+        metavar="INDEX",
+        help="Tile index.",
+    )
+    parser.add_argument(
+        "--output",
+        "-o",
+        metavar="FILENAME",
+        default="{workspace}/{tile}_overlay.png",
+        help="Output filename",
+    )
+
+    parser.set_defaults(func=run)
+
+
+def run(args):
+
+    timer = Timer()
+    workdir = Path(args.workspace) / args.tile
+    image_path = next(workdir.glob("*VIS*.fits"))
+    catalog_path = next(workdir.glob("*CAT*.fits"))
+    output_path = Path(args.output.format(workspace=args.workspace, tile=args.tile))
+
+    print("Read inputs")
+    print(f"- Image: {image_path.name}")
+    image = np.atleast_3d(io.read_fits(image_path))
+    print(f"- WCS: {image_path.name}")
+    wcs = read_wcs(image_path)
+    print(f"- Catalog: {catalog_path.name}")
+    catalog = read_catalog(catalog_path)
+    timer.tic_print()
+
+    print("Draw ellipses")
+    footprints = Footprints(wcs, catalog)
+    footprints.draw(image)
+    timer.tic_print()
+    print(f"- Save output: {output_path.name}")
+    io.write_rgb(image, output_path)
+    timer.tic_print()
