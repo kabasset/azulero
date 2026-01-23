@@ -76,6 +76,7 @@ class Footprints:
         self.half_a = self._read_column(catalog, "SEMIMAJOR_AXIS")
         self.e = self._read_column(catalog, "ELLIPTICITY")
         self.angle = self._read_column(catalog, "POSITION_ANGLE")
+        self.factor = 1.5  # Corresponds to SExtractor
         self.color = (255, 255, 255)
         self.thickness = 5
 
@@ -86,7 +87,7 @@ class Footprints:
         tmp = np.ascontiguousarray(image, dtype=np.uint8)
         coords = SkyCoord(ra=self.ra, dec=self.dec, unit="deg", frame="icrs")
         x, y = self.wcs.world_to_pixel(coords)
-        a = 2 * self.half_a  # FIXME scale factor
+        a = 2 * self.half_a * self.factor
         b = a * (1 - self.e)
         angle = self.angle
         for params in zip(x, y, a, b, angle):
@@ -95,7 +96,21 @@ class Footprints:
         image[:] = tmp[:]
 
     def _draw_ellipse(self, image, x, y, a, b, angle):
-        cv2.ellipse(image, (x, y), (a, b), angle, 0, 360, self.color, self.thickness)
+        shift = 3  # Decimal precision as power of 2
+        center = (int(round(x * 2**shift)), int(round(y * 2**shift)))
+        axes = (int(round(a * 2**shift)), int(round(b * 2**shift)))
+        cv2.ellipse(
+            image,
+            center,
+            axes,
+            angle,
+            0,
+            360,
+            self.color,
+            self.thickness,
+            cv2.LINE_AA,
+            shift,
+        )
 
 
 def read_wcs(path):
@@ -129,7 +144,7 @@ def add_parser(subparsers):
         "--output",
         "-o",
         metavar="FILENAME",
-        default="{workspace}/{tile}_overlay.png",
+        default="{workspace}/{tile}/{tile}_overlay.png",
         help="Output filename",
     )
 
@@ -141,14 +156,14 @@ def run(args):
     timer = Timer()
     workdir = Path(args.workspace) / args.tile
     image_path = next(workdir.glob("*VIS*.fits"))
-    catalog_path = next(workdir.glob("*CAT*.fits"))
+    catalog_path = next(workdir.glob("*FINAL-CAT*.fits"))
     output_path = Path(args.output.format(workspace=args.workspace, tile=args.tile))
 
     print("Read inputs")
-    print(f"- Image: {image_path.name}")
-    image = np.atleast_3d(io.read_fits(image_path))
     print(f"- WCS: {image_path.name}")
     wcs = read_wcs(image_path)
+    print(f"- Image: {image_path.name}")
+    image = np.zeros((wcs.array_shape[1], wcs.array_shape[0], 3), dtype=np.uint8)
     print(f"- Catalog: {catalog_path.name}")
     catalog = read_catalog(catalog_path)
     timer.tic_print()
@@ -158,5 +173,5 @@ def run(args):
     footprints.draw(image)
     timer.tic_print()
     print(f"- Save output: {output_path.name}")
-    io.write_rgb(image, output_path)
+    io.write_rgb(image, output_path, 1)
     timer.tic_print()
