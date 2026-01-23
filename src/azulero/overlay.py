@@ -3,8 +3,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import argparse
-from email.policy import default
-from gettext import Catalog
 from pathlib import Path
 from astropy.coordinates import SkyCoord
 from astropy.io import fits
@@ -68,17 +66,19 @@ class Scale:
 
 class Footprints:
 
-    def __init__(self, wcs, catalog):
+    def __init__(self, wcs, catalog, pfa=0.01):
         self.wcs = wcs
-        # FIXME select magnitude
-        self.ra = self._read_column(catalog, "RIGHT_ASCENSION")
-        self.dec = self._read_column(catalog, "DECLINATION")
-        self.half_a = self._read_column(catalog, "SEMIMAJOR_AXIS")
-        self.e = self._read_column(catalog, "ELLIPTICITY")
-        self.angle = self._read_column(catalog, "POSITION_ANGLE")
+        filtered = catalog[
+            (catalog["SPURIOUS_FLAG"] == 0) & (catalog["POINT_LIKE_PROB"] < pfa)
+        ]
+        self.ra = self._read_column(filtered, "RIGHT_ASCENSION")
+        self.dec = self._read_column(filtered, "DECLINATION")
+        self.half_a = self._read_column(filtered, "SEMIMAJOR_AXIS")
+        self.e = self._read_column(filtered, "ELLIPTICITY")
+        self.angle = self._read_column(filtered, "POSITION_ANGLE")
         self.factor = 1.5  # Corresponds to SExtractor
         self.color = (255, 255, 255)
-        self.thickness = 5
+        self.thickness = 3
 
     def _read_column(self, catalog, name):
         return np.array(catalog[name].data, dtype=float)
@@ -90,10 +90,13 @@ class Footprints:
         a = 2 * self.half_a * self.factor
         b = a * (1 - self.e)
         angle = self.angle
+        count = 0
         for params in zip(x, y, a, b, angle):
             if not np.isnan(params).any():
                 self._draw_ellipse(tmp, *params)
+                count += 1
         image[:] = tmp[:]
+        return count
 
     def _draw_ellipse(self, image, x, y, a, b, angle):
         shift = 3  # Decimal precision as power of 2
@@ -103,7 +106,7 @@ class Footprints:
             image,
             center,
             axes,
-            angle,
+            angle + 90,
             0,
             360,
             self.color,
@@ -122,7 +125,7 @@ def read_wcs(path):
 def read_catalog(path):
     with fits.open(path) as hdul:
         data = hdul[1].data
-    return data  # FIXME keep only useful columns
+    return data
 
 
 def add_parser(subparsers):
@@ -139,6 +142,13 @@ def add_parser(subparsers):
         type=str,
         metavar="INDEX",
         help="Tile index.",
+    )
+    parser.add_argument(
+        "--pfa",
+        type=float,
+        default=0.01,
+        metavar="PROBABILITY",
+        help="Probability of false alarm.",
     )
     parser.add_argument(
         "--output",
@@ -169,8 +179,9 @@ def run(args):
     timer.tic_print()
 
     print("Draw ellipses")
-    footprints = Footprints(wcs, catalog)
-    footprints.draw(image)
+    footprints = Footprints(wcs, catalog, args.pfa)
+    count = footprints.draw(image)
+    print(f"- Objects: {count}")
     timer.tic_print()
     print(f"- Save output: {output_path.name}")
     io.write_rgb(image, output_path, 1)
