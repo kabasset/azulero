@@ -24,7 +24,7 @@ def add_parser(subparsers):
     )
 
     parser.add_argument(
-        "input",
+        "image",
         type=str,
         metavar="FILENAME",
         help="Input image file.",
@@ -39,9 +39,9 @@ def add_parser(subparsers):
         "--output",
         "-o",
         type=str,
-        default="output.mp4",
+        default="{image}_{sequence}.mp4",
         metavar="FILENAME",
-        help="Output video file.",
+        help="Output video file template.",
     )
     parser.add_argument(
         "--format",
@@ -68,19 +68,19 @@ def add_parser(subparsers):
 
 def run(args):
 
-    input = Path(args.workspace).expanduser() / args.input
+    input = Path(args.workspace).expanduser() / args.image
     config = Path(args.sequence)
-    output = Path(args.output)
+    output = Path(args.output.format(image=input.stem, sequence=config.stem))
 
     timer = Timer()
 
-    print(f"Read input image: {input}")
+    print(f"Read input image: {input.name}")
     image = cv2.imread(input, cv2.IMREAD_COLOR)
     image_shape = image.shape[:2]
     print(f"- Shape: {image_shape[0]} x {image_shape[1]}")
     timer.tic_print()
 
-    print(f"Read sequence of key frames: {config}")
+    print(f"Read sequence of key frames: {config.name}")
     with open(config) as f:
         params = sequence.load_frames_params(
             yaml.safe_load(f), image_shape, args.fps, args.format
@@ -136,16 +136,16 @@ def crop(image: np.ndarray, params, format):
     x1 = x0 + w
     y1 = y0 + h
     if x0 < 0:
-        print(f"- WARNING: min(x) < 0 ({x0})")
+        print(f"WARNING: min(x) < 0 ({x0})")
         x0 = 0
     if y0 < 0:
-        print(f"- WARNING: max(y) min < 0 ({y0})")
+        print(f"WARNING: max(y) min < 0 ({y0})")
         y0 = 0
     if x1 > image.shape[1]:
-        print(f"- WARNING: max(x) > {image.shape[1]-1} ({x1-1})")
+        print(f"WARNING: max(x) > {image.shape[1]-1} ({x1-1})")
         x1 = image.shape[0]
     if y1 > image.shape[0]:
-        print(f"- WARNING: max(y) > {image.shape[0]-1} ({y1-1})")
+        print(f"WARNING: max(y) > {image.shape[0]-1} ({y1-1})")
         y1 = image.shape[1]
     offset = np.array([x0, y0])
     patch = image[y0:y1, x0:x1]
