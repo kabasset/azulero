@@ -25,7 +25,7 @@ machine easidr.esac.esa.int
   password <password>
 ```
 
-## DPS
+## DSS
 
 Before they reach the SAS, products and datafiles are stored in the EAS-DPS and an EAS-DSS, respectively.
 To reach them, an EAS account is needed and authentication must be configured in `~/.netrc` (or `_netrc` on Windows):
@@ -40,4 +40,4 @@ machine euclidsoc.esac.esa.int
 ```
 
 Note that this provider is much slower than `idr`.
-It is enabled with `--from dps`.
+It is enabled with `--from dss`.
