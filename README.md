@@ -94,6 +94,13 @@ From the same tile, here is an example over a region with less artifacts:
 azul process 102159776[11000:12000,7500:9500]
 ```
 
+The following video was made with `azul roam` (click to play on Youtube):
+
+<a href="https://www.youtube.com/watch?v=z1-V0zz4p_s" alt="This is tile 102159776">
+    <img src="play_button.png" border="0" width=100%
+         style="background: url(https://img.youtube.com/vi/z1-V0zz4p_s/maxresdefault.jpg) center center black; background-size: contain;"/>
+</a>
+
 # Advanced usage
 
 Refer to the dedicated pages:
