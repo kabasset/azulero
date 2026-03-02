@@ -154,7 +154,7 @@ def parse_coord(text: str, image_extent: int):
     elif text[-1] == "%":
         px = float(text[:-1]) / 100 * image_extent
     else:
-        ValueError(f"Unrecognized coordinate: {text}")
+        raise ValueError(f"Unrecognized coordinate: {text}")
     if px < 0:
         px += image_extent
     return px
@@ -164,7 +164,8 @@ def parse_zoom(text: str, image_shape: list, video_format: list):
     """
     Parse the zoom.
     If last char is "w" (resp. "h"), zoom is relative to the image width (resp. height).
-    If last char is "%", zoom is a relative to the pixel size.
+    If last char is "%", zoom is relative to the pixel size.
+    If last char is "°", zoom is a horizontal field of view of an equirectangular input.
     """
     if text == "...":
         return np.nan
@@ -174,6 +175,8 @@ def parse_zoom(text: str, image_shape: list, video_format: list):
         z = video_format[1] / image_shape[0] / float(text[:-1])
     elif text[-1] == "%":
         z = float(text[:-1]) / 100
+    elif text[-1] == "°":
+        z = -1 / float(text[:-1])
     else:
         raise ValueError(f"Unrecognized zoom: {text}")
     return z

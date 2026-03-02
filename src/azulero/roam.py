@@ -9,6 +9,7 @@ import cv2
 import yaml
 
 from azulero import overlay, sequence
+from azulero.equirectangular import Projection
 from azulero.timing import Timer
 
 
@@ -110,7 +111,11 @@ def run(args):
     for f, c, z, a in zip(range(len(centers)), centers, zooms_inv, angles_deg):
         print(f"- {f}\t{c[0]:0.1f}\t{c[1]:0.1f}\t{100.0/z:0.1f}\t{a:0.1f}")
         p = sequence.KeyFrame(0, c, 1.0 / z, a)
-        frame = crop(image, p, args.format)
+        frame = (
+            crop(image, p, args.format)
+            if z > 0
+            else crop_equirectangular(image, p, args.format)
+        )
         if scale.width > 0:
             scale.draw(frame, 100.0 / z)
         writer.write(frame)
@@ -120,7 +125,7 @@ def run(args):
     timer.tic_print()
 
 
-def crop(image: np.ndarray, params, format):
+def crop(image: np.ndarray, params: sequence.KeyFrame, format: tuple):
     center = params.center
     viewport_format = np.array(format, dtype=float) / params.z
     a = params.a_deg % 360
@@ -158,3 +163,29 @@ def crop(image: np.ndarray, params, format):
     if vertical:
         return np.flipud(res)
     return res
+
+
+def crop_equirectangular(image: np.ndarray, params: sequence.KeyFrame, format: tuple):
+    """
+    Project equirectangular image, adapted from py360convert.
+    """
+    h, w = image.shape[:2]
+    h_fov = np.deg2rad(-1 / params.z)
+    v_fov = 2 * np.atan(np.tan(h_fov / 2) * h / w)
+    u = -float(np.deg2rad(params.center[0]))
+    v = float(np.deg2rad(params.center[1]))
+    a = float(np.deg2rad(params.a_deg))
+    proj = Projection.from_perspective(
+        h_fov,
+        v_fov,
+        u,
+        v,
+        a,
+        h,
+        w,
+        format[1],
+        format[0],
+    )
+    return np.stack(
+        [proj(image[..., i]).astype(np.uint8) for i in range(image.shape[2])], axis=-1
+    )
