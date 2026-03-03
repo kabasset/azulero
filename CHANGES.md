@@ -1,12 +1,19 @@
 # 1.2.0
 
+## New features
+
+`azul roam`
+
+* Handle equirectangular images with `z` specified as a horizontal field of view.
+
+## Improvements
+
 `process`
 
 * Enable arbitrary output path, add placeholder `{workspace}`.
 
 `azul roam`
 
-* Handle equirectangular images with `z` specified as a horizontal field of view.
 * Build output name from input names.
 
 # 1.1.1
