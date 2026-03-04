@@ -4,17 +4,19 @@
 
 `azul roam`
 
-* Handle equirectangular images with `z` specified as a horizontal field of view.
+* Equirectangular images are supported with `z` specified as a horizontal field of view.
+* RA/dec coordinates are supported for equirectangular images.
 
 ## Improvements
 
 `process`
 
-* Enable arbitrary output path, add placeholder `{workspace}`.
+* Arbitrary output paths can be configured with new placeholder `{workspace}`.
 
 `azul roam`
 
-* Build output name from input names.
+* Output name is built from input names.
+* Default FPS is 25.
 
 # 1.1.1
 

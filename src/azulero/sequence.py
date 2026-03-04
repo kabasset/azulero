@@ -58,13 +58,13 @@ def load_frames_params(
     frame = 0
     for step in sequence:
         if not "t" in step:
-            x = parse_coord(step["x"], image_shape[1])
-            y = parse_coord(step["y"], image_shape[0])
+            x = parse_coord(step["x"], image_shape, 1)
+            y = parse_coord(step["y"], image_shape, 0)
             add_knot(res, x, y)
         else:
             frame = parse_frame(step["t"], fps, frame)
-            x = None if "x" not in step else parse_coord(step["x"], image_shape[1])
-            y = None if "y" not in step else parse_coord(step["y"], image_shape[0])
+            x = None if "x" not in step else parse_coord(step["x"], image_shape, 1)
+            y = None if "y" not in step else parse_coord(step["y"], image_shape, 0)
             z = (
                 None
                 if "z" not in step
@@ -143,16 +143,23 @@ def parse_frame(text: str, fps: float, ref_frame: int):
     return value + ref_frame if text[0] == "+" else value
 
 
-def parse_coord(text: str, image_extent: int):
+def parse_coord(text: str, image_shape: tuple, index):
     """
     Parse a coordinate.
     If last char is "%", coordinate is relative to the image extent.
     If value is negative, index backward.
     """
+    # FIXME assert index is 0 or 1
+    image_extent = image_shape[index]
     if text.endswith("px"):
         px = float(text[:-2])
     elif text[-1] == "%":
         px = float(text[:-1]) / 100 * image_extent
+    elif text.endswith("°"):
+        if index == 1:
+            px = (-float(text[:-1]) + 180) / 360 * image_extent
+        elif index == 0:
+            px = (float(text[:-1]) + 90) / 180 * image_extent
     else:
         raise ValueError(f"Unrecognized coordinate: {text}")
     if px < 0:
