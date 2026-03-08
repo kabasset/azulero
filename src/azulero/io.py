@@ -3,9 +3,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from astropy.io import fits
+from astropy.wcs import WCS
 import cv2
 import numpy as np
 from pathlib import Path
+import yaml
 
 
 def parse_tile(text: str):
@@ -35,6 +37,20 @@ def parse_map(text: str, dtype=float):
         return []
     pairs = [p.split(":") for p in text.split(",")]
     return [[dtype(x), dtype(y)] for x, y in pairs]
+
+
+def read_wcs(workdir: Path, pattern: str):
+    """
+    Read the WCS from a FITS or YAML file.
+    """
+    file = list(workdir.glob(pattern.format(channel="VIS")))[0]
+    ext = file.suffix.lower()
+    if ext == ".fits":
+        with fits.open(file) as f:
+            return WCS(f[0])
+    else:
+        with open(file) as f:
+            return WCS(yaml.safe_load(f))
 
 
 def read_fits(path: Path, slicing=None):
@@ -91,6 +107,15 @@ def write_mask(iyjh: np.ndarray, path: Path):
     rgb[:, :, 1] = i * 155 + j * 100
     rgb[:, :, 2] = i * 155 + y * 100
     write_rgb(rgb, path, 1)
+
+
+def write_wcs(wcs: WCS, path: Path):
+    """
+    Write a WCS object to a YAML file.
+    """
+    h = dict(wcs.to_header())
+    with open(path, "w") as f:
+        yaml.safe_dump(h, f)
 
 
 def read_channel(workdir: Path, pattern: str, slicing=None):

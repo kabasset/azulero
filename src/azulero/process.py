@@ -48,6 +48,13 @@ def add_parser(subparsers):
         ),
     )
     parser.add_argument(
+        "--wcs",
+        type=str,
+        default="{workspace}/{tile}/{tile}_wcs.yaml",
+        metavar="TEMPLATE",
+        help="WCS path template. Use empty string to disable saving.",
+    )
+    parser.add_argument(
         "--zero",
         nargs=4,
         type=float,
@@ -182,6 +189,12 @@ def run(args):
     print(f"Read IYJH image from: {workdir}")
     iyjh = io.read_iyjh(workdir, slicing, args.input)
     print(f"- Shape: {iyjh.shape[1]} x {iyjh.shape[2]}")
+    if args.wcs:
+        # FIXME assert slicing is disabled or handle it!
+        wcs = io.read_wcs(workdir, args.input)
+        path = Path(args.wcs.format(workspace=args.workspace, tile=tile, step="wcs"))
+        io.write_wcs(wcs, path)
+        print(f"- Write WCS: {path.name}")
     timer.tic_print()
 
     print(f"Detect bad pixels")
