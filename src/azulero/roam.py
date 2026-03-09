@@ -8,7 +8,7 @@ from pathlib import Path
 import cv2
 import yaml
 
-from azulero import overlay, sequence
+from azulero import io, overlay, sequence
 from azulero.equirectangular import Projection
 from azulero.timing import Timer
 
@@ -37,10 +37,17 @@ def add_parser(subparsers):
         help="YAML configuration file which specifies the sequence of key frames.",
     )
     parser.add_argument(
+        "--wcs",
+        type=str,
+        default=None,
+        metavar="PATH",
+        help="Path to the WCS parameters as a YAML file.",
+    )
+    parser.add_argument(
         "--output",
         "-o",
         type=str,
-        default="{image}_{sequence}.mp4",
+        default="{workspace}/{image}_{sequence}.mp4",
         metavar="FILENAME",
         help="Output video file template.",
     )
@@ -71,7 +78,11 @@ def run(args):
 
     input = Path(args.workspace).expanduser() / args.image
     config = Path(args.sequence)
-    output = Path(args.output.format(image=input.stem, sequence=config.stem))
+    output = Path(
+        args.output.format(
+            workspace=args.workspace, image=input.with_suffix(""), sequence=config.stem
+        )
+    )
 
     timer = Timer()
 
@@ -82,9 +93,10 @@ def run(args):
     timer.tic_print()
 
     print(f"Read sequence of key frames: {config.name}")
+    wcs = None if args.wcs is None else io.read_wcs(Path(args.workspace), args.wcs)
     with open(config) as f:
         params = sequence.load_frames_params(
-            yaml.safe_load(f), image_shape, args.fps, args.format
+            yaml.safe_load(f), image_shape, args.fps, args.format, wcs
         )
     print(f"- Key frames: {len(params)}")
     centers = sequence.sin_sequence(params.centers)

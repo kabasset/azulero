@@ -2,10 +2,14 @@
 
 ## New features
 
+`azul process`
+
+* WCS can be saved with option `--wcs`.
+
 `azul roam`
 
 * Equirectangular images are supported with `z` specified as a horizontal field of view.
-* RA/dec coordinates are supported for equirectangular images.
+* RA/dec coordinates are supported for equirectangular images or with option `--wcs`.
 
 ## Improvements
 

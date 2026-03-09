@@ -9,17 +9,18 @@ from azulero import sequence
 
 def test_coord_parsing():
 
-    assert sequence.parse_coord("10.5px", 100) == 10.5
-    assert sequence.parse_coord("-10.5px", 100) == 89.5
-    assert sequence.parse_coord("10.5%", 200) == 21.0
-    assert sequence.parse_coord("-10.5%", 200) == 179.0
+    assert sequence.parse_coords(["10.5px", "-10.5px"], [100, 100], None) == (
+        10.5,
+        89.5,
+    )
+    assert sequence.parse_coords(["10.5%", "-10.5%"], [200, 200], None) == (21.0, 179.0)
 
 
 def test_zoom_parsing():
 
     assert sequence.parse_zoom("20%", None, None) == 0.2
-    assert sequence.parse_zoom("0.2w", [160, 180], [16, 9]) == 0.5
-    assert sequence.parse_zoom("0.2h", [160, 180], [16, 9]) == 0.25
+    assert sequence.parse_zoom("0.2w", [160, 180], [16, 9]) == 16 / (0.2 * 180)
+    assert sequence.parse_zoom("0.2h", [160, 180], [16, 9]) == 9 / (0.2 * 160)
 
 
 def test_angle_parsing():

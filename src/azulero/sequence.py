@@ -2,6 +2,9 @@
 # SPDX-PackageSourceInfo: https://github.com/kabasset/azulero
 # SPDX-License-Identifier: Apache-2.0
 
+from astropy import units as u
+from astropy.coordinates import SkyCoord
+from astropy.wcs import WCS
 from dataclasses import dataclass
 import scipy.interpolate as interp
 import numpy as np
@@ -52,19 +55,20 @@ class KeyFrames:
 
 
 def load_frames_params(
-    sequence: list, image_shape: list, fps: float, video_format: list
+    sequence: list, image_shape: list, fps: float, video_format: list, wcs: WCS | None
 ):
     res = KeyFrames([], [], [])
     frame = 0
     for step in sequence:
         if not "t" in step:
-            x = parse_coord(step["x"], image_shape, 1)
-            y = parse_coord(step["y"], image_shape, 0)
+            x, y = parse_coords((step["x"], step["y"]), image_shape, wcs)
             add_knot(res, x, y)
         else:
             frame = parse_frame(step["t"], fps, frame)
-            x = None if "x" not in step else parse_coord(step["x"], image_shape, 1)
-            y = None if "y" not in step else parse_coord(step["y"], image_shape, 0)
+            if "x" not in step and "y" not in step:
+                x, y = None, None
+            else:
+                x, y = parse_coords((step["x"], step["y"]), image_shape, wcs)
             z = (
                 None
                 if "z" not in step
@@ -127,6 +131,12 @@ def sin_sampling(start, stop):
     return np.sin(np.linspace(0, 1, stop - start) * np.pi - np.pi / 2) / 2 + 0.5
 
 
+def match_suffix(suffix: str, text: str):
+    if text.endswith(suffix):
+        return text[: -len(suffix)]
+    return None
+
+
 def parse_frame(text: str, fps: float, ref_frame: int):
     """
     Parse frame index or time.
@@ -134,32 +144,46 @@ def parse_frame(text: str, fps: float, ref_frame: int):
     If it is "s", multiply by `fps`.
     If the first char is "+", add `ref_frame`.
     """
-    if text[-1] == "f":
-        value = int(text[:-1])
-    elif text[-1] == "s":
-        value = int(float(text[:-1]) * fps)
+    if match := match_suffix("f", text):
+        value = int(match)
+    elif match := match_suffix("s", text):
+        value = int(float(match) * fps)
     else:
         raise ValueError(f"Unrecognized time: {text}")
     return value + ref_frame if text[0] == "+" else value
 
 
-def parse_coord(text: str, image_shape: tuple, index):
+def parse_coords(text_xy: tuple, image_shape: tuple, wcs: WCS | None):
+    if (match_x := match_suffix("°", text_xy[0])) and (
+        match_y := match_suffix("°", text_xy[1])
+    ):
+        if wcs is None:
+            x = (-float(match_x) + 180) / 360 * image_shape[1]
+            y = (float(match_y) + 90) / 180 * image_shape[0]
+            return x, y
+        else:
+            coords = SkyCoord(
+                ra=float(match_x) * u.degree,
+                dec=float(match_y) * u.degree,
+                frame="icrs",
+            )
+            x, y = wcs.world_to_pixel(coords)
+            return x, image_shape[0] - y
+    x = _parse_planar_coord(text_xy[0], image_shape[1])
+    y = _parse_planar_coord(text_xy[1], image_shape[0])
+    return x, y
+
+
+def _parse_planar_coord(text: str, image_extent):
     """
     Parse a coordinate.
     If last char is "%", coordinate is relative to the image extent.
     If value is negative, index backward.
     """
-    # FIXME assert index is 0 or 1
-    image_extent = image_shape[index]
-    if text.endswith("px"):
-        px = float(text[:-2])
-    elif text[-1] == "%":
-        px = float(text[:-1]) / 100 * image_extent
-    elif text.endswith("°"):
-        if index == 1:
-            px = (-float(text[:-1]) + 180) / 360 * image_extent
-        elif index == 0:
-            px = (float(text[:-1]) + 90) / 180 * image_extent
+    if value := match_suffix("px", text):
+        px = float(value)
+    elif value := match_suffix("%", text):
+        px = float(value) / 100 * image_extent
     else:
         raise ValueError(f"Unrecognized coordinate: {text}")
     if px < 0:
@@ -176,14 +200,14 @@ def parse_zoom(text: str, image_shape: list, video_format: list):
     """
     if text == "...":
         return np.nan
-    if text[-1] == "w":
-        z = video_format[0] / image_shape[1] / float(text[:-1])
-    elif text[-1] == "h":
-        z = video_format[1] / image_shape[0] / float(text[:-1])
-    elif text[-1] == "%":
-        z = float(text[:-1]) / 100
-    elif text[-1] == "°":
-        z = -1 / float(text[:-1])
+    if match := match_suffix("w", text):
+        z = video_format[0] / image_shape[1] / float(match)
+    elif match := match_suffix("h", text):
+        z = video_format[1] / image_shape[0] / float(match)
+    elif match := match_suffix("%", text):
+        z = float(match) / 100
+    elif match := match_suffix("°", text):  # FIXME adapt to WCS?
+        z = -1 / float(match)
     else:
         raise ValueError(f"Unrecognized zoom: {text}")
     return z
@@ -197,8 +221,8 @@ def parse_a_deg(text: str):
     """
     if text == "...":
         return np.nan
-    if text[-1] == "°":
-        return float(text[:-1])
-    elif text.endswith("pi"):
-        return float(text[:-2]) * 180
+    if match := match_suffix("°", text):  # FIXME adapt to WCS (wrt North)?
+        return float(match)
+    elif match := match_suffix("pi", text):
+        return float(match) * 180
     raise ValueError(f"Unrecognized angle: {text}")
