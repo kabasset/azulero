@@ -18,7 +18,7 @@ def add_parser(subparsers):
         "roam",
         help="Create a video which pans and zooms in an image.",
         description=(
-            "Supply an image, specify viewport position and parameters at given times."
+            "Supply an image, specify viewport position and parameters at given times. "
             "They will be interpolated to render a smooth roaming video."
         ),
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
@@ -36,12 +36,24 @@ def add_parser(subparsers):
         metavar="FILENAME",
         help="YAML configuration file which specifies the sequence of key frames.",
     )
-    parser.add_argument(
+    group = parser.add_mutually_exclusive_group(required=False)
+    group.add_argument(
+        "--equirectangular",
+        "-e",
+        action="store_true",
+        help="Enable equirectangular to planar projection.",
+    )
+    group.add_argument(
         "--wcs",
         type=str,
         default=None,
         metavar="PATH",
-        help="Path to the WCS parameters as a YAML file.",
+        help=(
+            "Path to the WCS parameters as a YAML file. "
+            "This is needed to specify the center as RA/dec coordinates "
+            "or the zoom as an angular field of view, "
+            "unless the input has equirectangular projection."
+        ),
     )
     parser.add_argument(
         "--output",
@@ -124,9 +136,9 @@ def run(args):
         print(f"- {f}\t{c[0]:0.1f}\t{c[1]:0.1f}\t{100.0/z:0.1f}\t{a:0.1f}")
         p = sequence.KeyFrame(0, c, 1.0 / z, a)
         frame = (
-            crop(image, p, args.format)
-            if z > 0
-            else crop_equirectangular(image, p, args.format)
+            crop_equirectangular(image, p, args.format)
+            if args.equirectangular
+            else crop(image, p, args.format)
         )
         if scale.width > 0:
             scale.draw(frame, 100.0 / z)
