@@ -6,7 +6,6 @@ import argparse
 import numpy as np
 from pathlib import Path
 import cv2
-import yaml
 
 from azulero import io, overlay, sequence
 from azulero.equirectangular import Projection
@@ -106,21 +105,18 @@ def run(args):
 
     print(f"Read sequence of key frames: {config.name}")
     wcs = None if args.wcs is None else io.read_wcs(Path(args.workspace), args.wcs)
-    with open(config) as f:
-        params = sequence.load_frames_params(
-            yaml.safe_load(f), image_shape, args.fps, args.format, wcs
-        )
+    params = sequence.read_key_frames(config, image_shape, args.fps, args.format)
     print(f"- Key frames: {len(params)}")
     centers = sequence.sin_sequence(params.centers)
-    zooms_inv = sequence.sin_sequence(params.zooms_inv)
-    angles_deg = sequence.sin_sequence(params.angles_deg)
+    hfovs = sequence.sin_sequence(params.hfovs)
+    orientations = sequence.sin_sequence(params.orientations)
     print(f"- Total frames: {len(centers)}")
     timer.tic_print()
 
     if args.scale is None:
         scale = overlay.Scale(width=0, text="")
     elif len(args.scale) == 0:
-        scale = overlay.Scale(width=600, text="1 arcmin")
+        scale = overlay.Scale(width=600, text="1 arcmin")  # FIXME from WCS
     elif len(args.scale) == 1:
         scale = overlay.Scale(width=int(args.scale[0]), text="")
     elif len(args.scale) == 2:
@@ -131,14 +127,13 @@ def run(args):
         output, cv2.VideoWriter_fourcc(*"mp4v"), args.fps, args.format
     )
 
-    print(f"- Frame\tx\ty\tz (%)\ta (°)")
-    for f, c, z, a in zip(range(len(centers)), centers, zooms_inv, angles_deg):
-        print(f"- {f}\t{c[0]:0.1f}\t{c[1]:0.1f}\t{100.0/z:0.1f}\t{a:0.1f}")
-        p = sequence.Frame(0, c, 1.0 / z, a)
+    for i, c, z, a in zip(range(len(centers)), centers, hfovs, orientations):
+        p = sequence.Frame(i, c, z, a)
+        print(f"- {p}")
         if args.equirectangular:
             frame = crop_equirectangular(image, p, args.format)
         else:
-            frame = crop(image, p.projected(wcs), args.format)
+            frame = crop_planar(image, p.planar(wcs, image_shape), args.format)
         if scale.width > 0:
             scale.draw(frame, 100.0 / z)
         writer.write(frame)
@@ -148,18 +143,27 @@ def run(args):
     timer.tic_print()
 
 
-def crop(image: np.ndarray, params: sequence.Frame, format: tuple):
+def crop_planar(
+    image: np.ndarray,
+    params: sequence.Frame,
+    video_format: tuple[int, int],
+):
+    """
+    Crop a planar image according to planar parameters.
+    """
     center = params.center
-    viewport_format = np.array(format, dtype=float) / params.zoom
-    a = params.angle % 360
-    viewport = cv2.RotatedRect(params.center, viewport_format, -a)
+    scaling = video_format[0] / params.hfov
+    viewport_format = np.array([params.hfov, video_format[1] / scaling])
+    orientation = params.orientation_in_degrees() % 360
+    viewport = cv2.RotatedRect(params.center, viewport_format, -orientation)
     x0, y0, w, h = viewport.boundingRect()
+    # FIXME if bbox outside image, return black frame
     vertical = w < h
     if vertical:
         # OpenCV unhappy!
         x0, y0, w, h = y0, x0, h, w
         image = np.swapaxes(image, 0, 1)
-        a = 90 - a
+        orientation = 90 - orientation
         center = np.flip(center)
     x1 = x0 + w
     y1 = y0 + h
@@ -177,37 +181,39 @@ def crop(image: np.ndarray, params: sequence.Frame, format: tuple):
         y1 = image.shape[1]
     offset = np.array([x0, y0])
     patch = image[y0:y1, x0:x1]
-    rotation = cv2.getRotationMatrix2D(center - offset, a, params.zoom)
+    rotation = cv2.getRotationMatrix2D(center - offset, orientation, scaling)
     rotation_format = (w, h)
     rotated_image = cv2.warpAffine(
         patch, rotation, rotation_format, flags=cv2.INTER_LINEAR
     )
-    res = cv2.getRectSubPix(rotated_image, format, center - offset)
+    res = cv2.getRectSubPix(rotated_image, video_format, center - offset)
     if vertical:
         return np.flipud(res)
     return res
 
 
-def crop_equirectangular(image: np.ndarray, params: sequence.Frame, format: tuple):
+def crop_equirectangular(
+    image: np.ndarray, params: sequence.Frame, video_format: tuple
+):
     """
     Project equirectangular image, adapted from py360convert.
     """
     h, w = image.shape[:2]
-    h_fov = np.deg2rad(-1 / params.zoom)
-    v_fov = 2 * np.atan(np.tan(h_fov / 2) * h / w)
-    u = -float(np.deg2rad(params.center[0] / w * 360 - 180))
-    v = float(np.deg2rad(params.center[1] / h * 180 - 90))
-    a = float(np.deg2rad(params.angle))
+    hfov = np.deg2rad(params.hfov_in_degrees())
+    vfov = 2 * np.atan(np.tan(hfov / 2) * h / w)
+    u = -float(np.deg2rad(params.center.ra / w * 360 - 180))
+    v = float(np.deg2rad(params.center.dec / h * 180 - 90))
+    a = float(np.deg2rad(params.orientation_in_degrees()))
     proj = Projection.from_perspective(
-        h_fov,
-        v_fov,
+        hfov,
+        vfov,
         u,
         v,
         a,
         h,
         w,
-        format[1],
-        format[0],
+        video_format[1],
+        video_format[0],
     )
     return np.stack(
         [proj(image[..., i]).astype(np.uint8) for i in range(image.shape[2])], axis=-1
