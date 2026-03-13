@@ -2,14 +2,15 @@
 # SPDX-PackageSourceInfo: https://github.com/kabasset/azulero
 # SPDX-License-Identifier: Apache-2.0
 
-from collections import OrderedDict
-from turtle import right
+from typing import Any
 from astropy import units as u
 from astropy.coordinates import SkyCoord
 from astropy.wcs import WCS
 from dataclasses import dataclass
-import scipy.interpolate as interp
 import numpy as np
+from pathlib import Path
+import scipy.interpolate as interp
+import yaml
 
 from azulero import color  # TODO lerp to interp.py
 
@@ -21,23 +22,22 @@ class Frame:
     """
 
     index: int  #: Frame index
-    center: np.ndarray | SkyCoord  #: Viewport center in pixels or sky coordinates
-    zoom: float | u.Quantity  #: Viewport zoom as ratio or horizontal field of view
-    angle: u.Quantity  #: Viewport angle
+    center: np.ndarray | SkyCoord  #: Center in pixels or sky coordinates
+    hfov: float | u.Quantity  #: Horizontal field of view in pixels or solid angle
+    orientation: u.Quantity  #: Viewport orientation angle
 
-    def planar(self, wcs: WCS, video_format):
+    def planar(self, wcs: WCS):
         """
         Convert to planar parameters.
         """
-        if self.zoom_is_hfov():
+        if self.hfov_is_solid_angle():
             left = self.center.copy()
-            left.ra -= self._hfov_in_degrees() / 2
+            left.ra -= self.hfov_in_degrees() / 2
             right = self.center.copy()
-            right.ra += self._hfov_in_degrees() / 2
+            right.ra += self.hfov_in_degrees() / 2
             min = wcs.world_to_pixel(left)[0]
             max = wcs.world_to_pixel(right)[0]
-            fov = max - min
-            self.zoom = fov / video_format[0]
+            self.hfov = max - min
         if self.center_is_sky_coord():
             self.center = wcs.world_to_pixel(self.center)
         return self
@@ -48,21 +48,28 @@ class Frame:
         """
         return isinstance(self.center, SkyCoord)
 
-    def zoom_is_hfov(self):
+    def center_in_radec_degrees(self):
         """
-        Test whether the zoom is specified as a horizontal field of view.
+        Get the RA and dec coordinates in degrees.
         """
-        if isinstance(self.zoom, u.Quantity):
-            assert (self.zoom / u.deg).is_unity()
+        assert self.center_is_sky_coord()
+        return float(self.center.ra / u.deg), float(self.center.dec / u.deg)
+
+    def hfov_is_solid_angle(self):
+        """
+        Test whether the field of view is specified as a horizontal field of view.
+        """
+        if isinstance(self.hfov, u.Quantity):
+            assert (self.hfov / u.deg).is_unity()
             return True
         return False
 
-    def _hfov_in_degrees(self):
+    def hfov_in_degrees(self):
         """
-        Get the zoom in degrees.
+        Get the field of view in degrees.
         """
-        assert self.zoom_is_hfov()
-        return float(self.zoom / u.deg)
+        assert self.hfov_is_solid_angle()
+        return float(self.hfov / u.deg)
 
     def __repr__(self) -> str:
         res = f"{self.index}: "
@@ -70,12 +77,18 @@ class Frame:
             res += f"({self.center.ra}°, {self.center.dec}°), "
         else:
             res += f"({self.center[0]}, {self.center[1]}), "
-        if self.zoom_is_hfov():
-            res += f"{self._hfov_in_degrees()}°, "
+        if self.hfov_is_solid_angle():
+            res += f"{self.hfov_in_degrees()}°, "
         else:
-            res += f"{int(self.zoom * 100+0.5)}%, "
+            res += f"{int(self.hfov * 100+0.5)}%, "
         res += f"{float(self.angle / u.deg)}°"
         return res
+
+
+@dataclass
+class FrameParam:
+    index: int  #: Frame index
+    value: Any  #: Parameter value
 
 
 @dataclass
@@ -84,9 +97,9 @@ class KeyFrames:
     Viewport parameters for key frames.
     """
 
-    centers: OrderedDict
-    zooms: OrderedDict
-    angles_deg: OrderedDict
+    centers: list[FrameParam]
+    hfovs: list[FrameParam]
+    orientation: list[FrameParam]
 
     def __len__(self):
         return len(self.centers)
@@ -96,34 +109,42 @@ class KeyFrames:
         Append a key frame.
         """
 
-        def _last_value(param):
-            return next(reversed(param.values()))
-
         def _repeat(param):
-            param[frame] = _last_value(param)
+            param.append(FrameParam(frame, param[-1]))
 
         center = frame.center
         if center is None:
             _repeat(self.centers)
         else:
-            self.centers[frame] = center  # TODO test compatibility
+            self.centers[frame] = center
 
-        zoom = frame.zoom
-        if zoom is None:
-            _repeat(self.zooms)
-        elif not np.isnan(zoom):
-            self.zooms[frame] = zoom
+        hfov = frame.hfov
+        if hfov is None:
+            _repeat(self.hfovs)
+        elif not np.isnan(hfov):
+            self.hfovs[frame] = hfov
 
-        angle = frame.angle
-        if angle is None:
-            _repeat(self.angles_deg)
-        elif not np.isnan(angle):
-            self.angles_deg[frame] = angle
+        orientation = frame.orientation
+        if orientation is None:
+            _repeat(self.orientation)
+        elif not np.isnan(orientation):
+            self.orientation[frame] = orientation
 
         return self
 
 
-def read_key_frames(sequence: list, image_shape: list, fps: float, video_format: list):
+def read_key_frames(config: Path, image_shape: list, fps: float, video_format: list):
+    """
+    Read the key frames from a configuration file.
+    """
+    with open(config) as f:
+        return parse_key_frames(yaml.safe_load(f), image_shape, fps, video_format)
+
+
+def parse_key_frames(sequence: dict, image_shape: list, fps: float, video_format: list):
+    """
+    Parse the key frames in a dictionary.
+    """
     res = KeyFrames({}, {}, {})
     frame = 0
     for step in sequence:
@@ -136,13 +157,13 @@ def read_key_frames(sequence: list, image_shape: list, fps: float, video_format:
                 center = None
             else:
                 center = parse_center((step["x"], step["y"]), image_shape)
-            z = (
+            hfov = (
                 None
                 if "z" not in step
-                else parse_zoom(step["z"], image_shape, video_format)
+                else parse_hfov(step["z"], image_shape, video_format)
             )
-            a = None if "a" not in step else parse_angle(step["a"])
-            res.append(frame, center, z, a)
+            orientation = None if "a" not in step else parse_angle(step["a"])
+            res.append(frame, center, hfov, orientation)
     return res
 
 
@@ -157,12 +178,12 @@ def add_knot(sequence, center):
         sequence.centers[-1].value = [knots, center]
 
 
-def sin_sequence(keys_values: list):
+def sin_sequence(key_frames: list[FrameParam]):
     """
     Interpolate parameters over a sequence of frames with sine sampling.
     """
     res = []
-    for start, stop in zip(keys_values[:-1], keys_values[1:]):
+    for start, stop in zip(key_frames[:-1], key_frames[1:]):
         if isinstance(start.value, list):
             res += [*sin_spline(start, stop)]
         else:
@@ -171,18 +192,18 @@ def sin_sequence(keys_values: list):
     return res
 
 
-def sin_step(start, stop):
+def sin_step(start: FrameParam, stop: FrameParam):
     """
     Linearly interpolate parameters between two frames with sine sampling.
     """
-    stop_value = stop.value if not isinstance(stop.value, list) else stop.value[0]
+    stop_value = stop.value[0] if isinstance(stop.value, list) else stop.value
     return [
         color.lerp(1 - u, start.value, stop_value)
-        for u in sin_sampling(start.frame, stop.frame)
+        for u in sin_sampling(start.index, stop.index)
     ]
 
 
-def sin_spline(start, stop):
+def sin_spline(start: FrameParam, stop: FrameParam):
     """
     Spline-interpolate trajectory between knots with sine sampling.
     """
@@ -190,13 +211,20 @@ def sin_spline(start, stop):
     b = interp.make_interp_spline(
         np.linspace(0, 1, len(knots)), knots, k=min(3, len(knots) - 1)
     )
-    u = sin_sampling(start.frame, stop.frame)
+    u = sin_sampling(start.index, stop.index)
     return b(u)
 
 
 def sin_sampling(start, stop):
     """
     Sine sampling between two bounds.
+
+    Args:
+        start: Start frame index.
+        stop: Stop frame index.
+
+    Returns:
+        An array of sine-spaced values between 0 and 1.
     """
     return np.sin(np.linspace(0, 1, stop - start) * np.pi - np.pi / 2) / 2 + 0.5
 
@@ -269,7 +297,7 @@ def _parse_planar_coord(text: str, image_extent):
     return px
 
 
-def parse_zoom(text: str, image_shape: list, video_format: list):
+def parse_hfov(text: str, image_shape: list, video_format: list):
     """
     Parse the zoom.
     If last char is "w" (resp. "h"), zoom is relative to the image width (resp. height).

@@ -18,12 +18,12 @@ def test_center_parsing():
     )
 
 
-def test_zoom_parsing():
+def test_hfov_parsing():
 
-    assert sequence.parse_zoom("20%", None, None) == 0.2
-    assert sequence.parse_zoom("0.2w", [160, 180], [16, 9]) == 16 / (0.2 * 180)
-    assert sequence.parse_zoom("0.2h", [160, 180], [16, 9]) == 9 / (0.2 * 160)
-    assert sequence.parse_zoom("20°", None, None) == 20 * u.deg
+    assert sequence.parse_hfov("20%", None, None) == 0.2
+    assert sequence.parse_hfov("0.2w", [160, 180], [16, 9]) == 16 / (0.2 * 180)
+    assert sequence.parse_hfov("0.2h", [160, 180], [16, 9]) == 9 / (0.2 * 160)
+    assert sequence.parse_hfov("20°", None, None) == 20 * u.deg
 
 
 def test_angle_parsing():
@@ -38,7 +38,10 @@ def test_trajectory_sampling():
     stop_frame = 17
     start_centers = [[0, 1], [1, 2], [2, 3]]
     stop_center = [3, 4]
-    centers = sequence.sin_spline({start_frame: start_centers, stop_frame: stop_center})
+    centers = sequence.sin_spline(
+        sequence.FrameParam(start_frame, start_centers),
+        sequence.FrameParam(stop_frame, stop_center),
+    )
     assert np.allclose([c[1] for c in centers], [c[0] + 1 for c in centers])
     for c0, c1 in zip(centers[:-1], centers[1:]):
         assert c1[0] > c0[0]
