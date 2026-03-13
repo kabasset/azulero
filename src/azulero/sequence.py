@@ -59,7 +59,7 @@ class Frame:
         Test whether the field of view is specified as a horizontal field of view.
         """
         if isinstance(self.hfov, u.Quantity):
-            assert (self.hfov / u.deg).is_unity()
+            assert (self.hfov / u.deg).unit.is_unity()
             return True
         return False
 
