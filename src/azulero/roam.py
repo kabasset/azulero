@@ -201,19 +201,15 @@ def crop_equirectangular(
     h, w = image.shape[:2]
     hfov = np.deg2rad(params.hfov_in_degrees())
     vfov = 2 * np.atan(np.tan(hfov / 2) * h / w)
-    u = -float(np.deg2rad(params.center.ra / w * 360 - 180))
-    v = float(np.deg2rad(params.center.dec / h * 180 - 90))
+    u = float(np.deg2rad(params.center.ra.value))
+    v = float(np.deg2rad(params.center.dec.value))
     a = float(np.deg2rad(params.orientation_in_degrees()))
     proj = Projection.from_perspective(
-        hfov,
-        vfov,
-        u,
-        v,
+        [hfov, vfov],
+        [u, v],
         a,
-        h,
-        w,
-        video_format[1],
-        video_format[0],
+        [h, w],
+        video_format,
     )
     return np.stack(
         [proj(image[..., i]).astype(np.uint8) for i in range(image.shape[2])], axis=-1

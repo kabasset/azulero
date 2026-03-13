@@ -79,14 +79,14 @@ class Frame:
     def __repr__(self) -> str:
         res = f"{self.index}: "
         if self.center_is_sky_coord():
-            res += f"({self.center.ra}°, {self.center.dec}°), "
+            res += f"({self.center.ra.value:0.2f}°, {self.center.dec.value:0.2f}°), "
         else:
-            res += f"({self.center[0]}, {self.center[1]}), "
+            res += f"({self.center[0]:0.2f}, {self.center[1]:0.2f}), "
         if self.hfov_is_solid_angle():
-            res += f"{self.hfov_in_degrees()}°, "
+            res += f"{self.hfov_in_degrees():0.2f}°, "
         else:
-            res += f"{self.hfov}, "
-        res += f"{self.orientation_in_degrees()}°"
+            res += f"{self.hfov:0.2f}, "
+        res += f"{self.orientation_in_degrees():0.2f}°"
         return res
 
 

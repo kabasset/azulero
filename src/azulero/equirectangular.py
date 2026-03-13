@@ -39,19 +39,15 @@ class Projection:
     @classmethod
     def from_perspective(
         cls,
-        h_fov: float,
-        v_fov: float,
-        u,
-        v,
-        in_rot: float,
-        in_h: int,
-        in_w: int,
-        out_h,
-        out_w,
+        fov: tuple[float, float],
+        center: tuple[float, float],
+        orientation: float,
+        image_shape: tuple[int, int],
+        video_format: tuple[int, int],
     ):
-        xyz = _xyzpers(h_fov, v_fov, u, v, (out_h, out_w), in_rot)
+        xyz = _xyzpers(*fov, *center, list(reversed(video_format)), orientation)
         u, v = _xyz2uv(xyz)
-        x, y = uv2coor(u, v, in_h, in_w)
+        x, y = uv2coor(u, v, *image_shape)
         return cls(x, y)
 
 
