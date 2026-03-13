@@ -12,8 +12,6 @@ from pathlib import Path
 import scipy.interpolate as interp
 import yaml
 
-from azulero import color  # TODO lerp to interp.py
-
 
 @dataclass
 class Frame:
@@ -26,7 +24,7 @@ class Frame:
     hfov: float | u.Quantity  #: Horizontal field of view in pixels or solid angle
     orientation: u.Quantity  #: Viewport orientation angle
 
-    def planar(self, wcs: WCS):
+    def planar(self, wcs: WCS, image_shape: tuple[int, int]):
         """
         Convert to planar parameters.
         """
@@ -39,7 +37,8 @@ class Frame:
             max = wcs.world_to_pixel(right)[0]
             self.hfov = max - min
         if self.center_is_sky_coord():
-            self.center = wcs.world_to_pixel(self.center)
+            x, y = wcs.world_to_pixel(self.center)
+            self.center = np.array([x, image_shape[0] - y])
         return self
 
     def center_is_sky_coord(self):
@@ -53,7 +52,7 @@ class Frame:
         Get the RA and dec coordinates in degrees.
         """
         assert self.center_is_sky_coord()
-        return float(self.center.ra / u.deg), float(self.center.dec / u.deg)
+        return np.array([float(self.center.ra / u.deg), float(self.center.dec / u.deg)])
 
     def hfov_is_solid_angle(self):
         """
@@ -71,6 +70,12 @@ class Frame:
         assert self.hfov_is_solid_angle()
         return float(self.hfov / u.deg)
 
+    def orientation_in_degrees(self):
+        """
+        Get the orientation in degrees.
+        """
+        return float(self.orientation / u.deg)
+
     def __repr__(self) -> str:
         res = f"{self.index}: "
         if self.center_is_sky_coord():
@@ -80,8 +85,8 @@ class Frame:
         if self.hfov_is_solid_angle():
             res += f"{self.hfov_in_degrees()}°, "
         else:
-            res += f"{int(self.hfov * 100+0.5)}%, "
-        res += f"{float(self.angle / u.deg)}°"
+            res += f"{self.hfov}, "
+        res += f"{self.orientation_in_degrees()}°"
         return res
 
 
@@ -99,36 +104,36 @@ class KeyFrames:
 
     centers: list[FrameParam]
     hfovs: list[FrameParam]
-    orientation: list[FrameParam]
+    orientations: list[FrameParam]
 
     def __len__(self):
         return len(self.centers)
 
-    def __iadd__(self, frame):
+    def append(self, frame, center, hfov, orientation):
         """
         Append a key frame.
         """
 
         def _repeat(param):
-            param.append(FrameParam(frame, param[-1]))
+            param.append(FrameParam(frame, param[-1].value))
 
-        center = frame.center
+        def _append(param, value):
+            param.append(FrameParam(frame, value))
+
         if center is None:
             _repeat(self.centers)
         else:
-            self.centers[frame] = center
+            _append(self.centers, center)
 
-        hfov = frame.hfov
         if hfov is None:
             _repeat(self.hfovs)
         elif not np.isnan(hfov):
-            self.hfovs[frame] = hfov
+            _append(self.hfovs, hfov)
 
-        orientation = frame.orientation
         if orientation is None:
-            _repeat(self.orientation)
+            _repeat(self.orientations)
         elif not np.isnan(orientation):
-            self.orientation[frame] = orientation
+            _append(self.orientations, orientation)
 
         return self
 
@@ -145,7 +150,7 @@ def parse_key_frames(sequence: dict, image_shape: list, fps: float, video_format
     """
     Parse the key frames in a dictionary.
     """
-    res = KeyFrames({}, {}, {})
+    res = KeyFrames([], [], [])
     frame = 0
     for step in sequence:
         if not "t" in step:
@@ -188,7 +193,7 @@ def sin_sequence(key_frames: list[FrameParam]):
             res += [*sin_spline(start, stop)]
         else:
             res += sin_step(start, stop)
-    # FIXME prepend first value if first frame > 0
+    # TODO prepend first value if first frame > 0
     return res
 
 
@@ -198,9 +203,19 @@ def sin_step(start: FrameParam, stop: FrameParam):
     """
     stop_value = stop.value[0] if isinstance(stop.value, list) else stop.value
     return [
-        color.lerp(1 - u, start.value, stop_value)
+        lerp(1 - u, start.value, stop_value)
         for u in sin_sampling(start.index, stop.index)
     ]
+
+
+def lerp(x, a, b):  # FIXME to interp.py
+    if x == 0:
+        return b
+    if x == 1:
+        return a
+    if isinstance(a, SkyCoord) or isinstance(b, SkyCoord):
+        return SkyCoord(lerp(x, a.ra, b.ra), lerp(x, a.dec, b.dec), frame="icrs")
+    return x * a + (1 - x) * b
 
 
 def sin_spline(start: FrameParam, stop: FrameParam):
@@ -263,21 +278,14 @@ def parse_center(text_xy: tuple, image_shape: tuple):
     Otherwise, each of them is parsed as a planar coordinate.
     """
     if (x := match_suffix("°", text_xy[0])) and (y := match_suffix("°", text_xy[1])):
-        # if wcs is None:
-        #     x = (-float(x) + 180) / 360 * image_shape[1]
-        #     y = (float(y) + 90) / 180 * image_shape[0]
-        #     return x, y
-        # else:
         return SkyCoord(
             ra=float(x) * u.degree,
             dec=float(y) * u.degree,
             frame="icrs",
         )
-        # x, y = wcs.world_to_pixel(coords)
-        # return x, image_shape[0] - y
     x = _parse_planar_coord(text_xy[0], image_shape[1])
     y = _parse_planar_coord(text_xy[1], image_shape[0])
-    return x, y
+    return np.array([x, y])
 
 
 def _parse_planar_coord(text: str, image_extent):
@@ -307,16 +315,15 @@ def parse_hfov(text: str, image_shape: list, video_format: list):
     if text == "...":
         return np.nan
     if match := match_suffix("w", text):
-        z = video_format[0] / image_shape[1] / float(match)
-    elif match := match_suffix("h", text):
-        z = video_format[1] / image_shape[0] / float(match)
-    elif match := match_suffix("%", text):
-        z = float(match) / 100
-    elif match := match_suffix("°", text):
-        z = float(match) * u.deg
-    else:
-        raise ValueError(f"Unrecognized zoom: {text}")
-    return z
+        return float(match) * image_shape[1]
+    if match := match_suffix("h", text):
+        vfov = float(match) * image_shape[0]
+        return vfov * video_format[0] / video_format[1]
+    if match := match_suffix("%", text):
+        return float(match) / 100 * video_format[0]
+    if match := match_suffix("°", text):
+        return float(match) * u.deg
+    raise ValueError(f"Unrecognized zoom: {text}")
 
 
 def parse_angle(text: str):
