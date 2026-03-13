@@ -22,8 +22,8 @@ class Frame:
 
     index: int  #: Frame index
     center: np.ndarray | SkyCoord  #: Viewport center in pixels or sky coordinates
-    zoom: float | u.Quatity  #: Viewport zoom as ratio or horizontal field of view
-    angle: u.Quatity  #: Viewport angle
+    zoom: float | u.Quantity  #: Viewport zoom as ratio or horizontal field of view
+    angle: u.Quantity  #: Viewport angle
 
     def planar(self, wcs: WCS, video_format):
         """
@@ -53,7 +53,7 @@ class Frame:
         Test whether the zoom is specified as a horizontal field of view.
         """
         if isinstance(self.zoom, u.Quantity):
-            assert (self.zoom / u.degrees).is_unity()
+            assert (self.zoom / u.deg).is_unity()
             return True
         return False
 
@@ -62,7 +62,7 @@ class Frame:
         Get the zoom in degrees.
         """
         assert self.zoom_is_hfov()
-        return float(self.zoom / u.degrees)
+        return float(self.zoom / u.deg)
 
     def __repr__(self) -> str:
         res = f"{self.index}: "
@@ -74,7 +74,7 @@ class Frame:
             res += f"{self._hfov_in_degrees()}°, "
         else:
             res += f"{int(self.zoom * 100+0.5)}%, "
-        res += f"{self.angle.value}°"
+        res += f"{float(self.angle / u.deg)}°"
         return res
 
 
@@ -85,13 +85,16 @@ class KeyFrames:
     """
 
     centers: OrderedDict
-    zooms_inv: OrderedDict
+    zooms: OrderedDict
     angles_deg: OrderedDict
 
     def __len__(self):
         return len(self.centers)
 
     def __iadd__(self, frame):
+        """
+        Append a key frame.
+        """
 
         def _last_value(param):
             return next(reversed(param.values()))
@@ -107,9 +110,9 @@ class KeyFrames:
 
         zoom = frame.zoom
         if zoom is None:
-            _repeat(self.zooms_inv)
+            _repeat(self.zooms)
         elif not np.isnan(zoom):
-            self.zooms_inv[frame] = 1.0 / zoom
+            self.zooms[frame] = zoom
 
         angle = frame.angle
         if angle is None:
@@ -120,21 +123,19 @@ class KeyFrames:
         return self
 
 
-def load_frames_params(
-    sequence: list, image_shape: list, fps: float, video_format: list, wcs: WCS | None
-):
+def read_key_frames(sequence: list, image_shape: list, fps: float, video_format: list):
     res = KeyFrames({}, {}, {})
     frame = 0
     for step in sequence:
         if not "t" in step:
-            center = parse_center((step["x"], step["y"]), image_shape, wcs)
+            center = parse_center((step["x"], step["y"]), image_shape)
             add_knot(res, center)
         else:
             frame = parse_frame(step["t"], fps, frame)
             if "x" not in step and "y" not in step:
                 center = None
             else:
-                center = parse_center((step["x"], step["y"]), image_shape, wcs)
+                center = parse_center((step["x"], step["y"]), image_shape)
             z = (
                 None
                 if "z" not in step
@@ -146,6 +147,9 @@ def load_frames_params(
 
 
 def add_knot(sequence, center):
+    """
+    Add a spline not to the center trajectory.
+    """
     knots = sequence.centers[-1].value
     if isinstance(knots, list):
         sequence.centers[-1].value.append(center)
@@ -198,6 +202,11 @@ def sin_sampling(start, stop):
 
 
 def match_suffix(suffix: str, text: str):
+    """
+    Test whether a string ends with some suffix.
+    If it does, return the beginning of the string.
+    Otherwise, return `None`.
+    """
     if text.endswith(suffix):
         return text[: -len(suffix)]
     return None
@@ -219,22 +228,25 @@ def parse_frame(text: str, fps: float, ref_frame: int):
     return value + ref_frame if text[0] == "+" else value
 
 
-def parse_center(text_xy: tuple, image_shape: tuple, wcs: WCS | None):
-    if (match_x := match_suffix("°", text_xy[0])) and (
-        match_y := match_suffix("°", text_xy[1])
-    ):
-        if wcs is None:
-            x = (-float(match_x) + 180) / 360 * image_shape[1]
-            y = (float(match_y) + 90) / 180 * image_shape[0]
-            return x, y
-        else:
-            coords = SkyCoord(
-                ra=float(match_x) * u.degree,
-                dec=float(match_y) * u.degree,
-                frame="icrs",
-            )
-            x, y = wcs.world_to_pixel(coords)
-            return x, image_shape[0] - y
+def parse_center(text_xy: tuple, image_shape: tuple):
+    """
+    Parse the center as sky or pixel coordinates.
+    If the values of both `x` and `y` end with "°", they are considered sky coordinates.
+    Otherwise, each of them is parsed as a planar coordinate.
+    """
+    if (x := match_suffix("°", text_xy[0])) and (y := match_suffix("°", text_xy[1])):
+        # if wcs is None:
+        #     x = (-float(x) + 180) / 360 * image_shape[1]
+        #     y = (float(y) + 90) / 180 * image_shape[0]
+        #     return x, y
+        # else:
+        return SkyCoord(
+            ra=float(x) * u.degree,
+            dec=float(y) * u.degree,
+            frame="icrs",
+        )
+        # x, y = wcs.world_to_pixel(coords)
+        # return x, image_shape[0] - y
     x = _parse_planar_coord(text_xy[0], image_shape[1])
     y = _parse_planar_coord(text_xy[1], image_shape[0])
     return x, y
@@ -242,7 +254,7 @@ def parse_center(text_xy: tuple, image_shape: tuple, wcs: WCS | None):
 
 def _parse_planar_coord(text: str, image_extent):
     """
-    Parse a coordinate.
+    Parse a planar coordinate.
     If last char is "%", coordinate is relative to the image extent.
     If value is negative, index backward.
     """
@@ -273,7 +285,7 @@ def parse_zoom(text: str, image_shape: list, video_format: list):
     elif match := match_suffix("%", text):
         z = float(match) / 100
     elif match := match_suffix("°", text):
-        z = float(match) * u.degrees
+        z = float(match) * u.deg
     else:
         raise ValueError(f"Unrecognized zoom: {text}")
     return z
@@ -288,7 +300,7 @@ def parse_angle(text: str):
     if text == "...":
         return np.nan
     if match := match_suffix("°", text):
-        return float(match) * u.degrees
+        return float(match) * u.deg
     elif match := match_suffix("pi", text):
-        return float(match) * 180 * u.degrees
+        return float(match) * 180 * u.deg
     raise ValueError(f"Unrecognized angle: {text}")
