@@ -8,12 +8,13 @@
 
 `azul roam`
 
-* Equirectangular images are supported with `z` specified as a horizontal field of view.
-* RA/dec coordinates are supported for equirectangular images or with option `--wcs`.
+* Equirectangular images are supported.
+* RA/dec coordinates and zoom specified as a horizontal field of view
+  are supported for equirectangular images or with option `--wcs`.
 
 ## Improvements
 
-`process`
+`azul process`
 
 * Arbitrary output paths can be configured with new placeholder `{workspace}`.
 

@@ -134,12 +134,11 @@ def run(args):
     print(f"- Frame\tx\ty\tz (%)\ta (°)")
     for f, c, z, a in zip(range(len(centers)), centers, zooms_inv, angles_deg):
         print(f"- {f}\t{c[0]:0.1f}\t{c[1]:0.1f}\t{100.0/z:0.1f}\t{a:0.1f}")
-        p = sequence.KeyFrame(0, c, 1.0 / z, a)
-        frame = (
-            crop_equirectangular(image, p, args.format)
-            if args.equirectangular
-            else crop(image, p, args.format)
-        )
+        p = sequence.Frame(0, c, 1.0 / z, a)
+        if args.equirectangular:
+            frame = crop_equirectangular(image, p, args.format)
+        else:
+            frame = crop(image, p.projected(wcs), args.format)
         if scale.width > 0:
             scale.draw(frame, 100.0 / z)
         writer.write(frame)
@@ -149,10 +148,10 @@ def run(args):
     timer.tic_print()
 
 
-def crop(image: np.ndarray, params: sequence.KeyFrame, format: tuple):
+def crop(image: np.ndarray, params: sequence.Frame, format: tuple):
     center = params.center
-    viewport_format = np.array(format, dtype=float) / params.z
-    a = params.a_deg % 360
+    viewport_format = np.array(format, dtype=float) / params.zoom
+    a = params.angle % 360
     viewport = cv2.RotatedRect(params.center, viewport_format, -a)
     x0, y0, w, h = viewport.boundingRect()
     vertical = w < h
@@ -178,7 +177,7 @@ def crop(image: np.ndarray, params: sequence.KeyFrame, format: tuple):
         y1 = image.shape[1]
     offset = np.array([x0, y0])
     patch = image[y0:y1, x0:x1]
-    rotation = cv2.getRotationMatrix2D(center - offset, a, params.z)
+    rotation = cv2.getRotationMatrix2D(center - offset, a, params.zoom)
     rotation_format = (w, h)
     rotated_image = cv2.warpAffine(
         patch, rotation, rotation_format, flags=cv2.INTER_LINEAR
@@ -189,16 +188,16 @@ def crop(image: np.ndarray, params: sequence.KeyFrame, format: tuple):
     return res
 
 
-def crop_equirectangular(image: np.ndarray, params: sequence.KeyFrame, format: tuple):
+def crop_equirectangular(image: np.ndarray, params: sequence.Frame, format: tuple):
     """
     Project equirectangular image, adapted from py360convert.
     """
     h, w = image.shape[:2]
-    h_fov = np.deg2rad(-1 / params.z)
+    h_fov = np.deg2rad(-1 / params.zoom)
     v_fov = 2 * np.atan(np.tan(h_fov / 2) * h / w)
     u = -float(np.deg2rad(params.center[0] / w * 360 - 180))
     v = float(np.deg2rad(params.center[1] / h * 180 - 90))
-    a = float(np.deg2rad(params.a_deg))
+    a = float(np.deg2rad(params.angle))
     proj = Projection.from_perspective(
         h_fov,
         v_fov,

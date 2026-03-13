@@ -2,6 +2,8 @@
 # SPDX-PackageSourceInfo: https://github.com/kabasset/azulero
 # SPDX-License-Identifier: Apache-2.0
 
+from collections import OrderedDict
+from turtle import right
 from astropy import units as u
 from astropy.coordinates import SkyCoord
 from astropy.wcs import WCS
@@ -13,78 +15,142 @@ from azulero import color  # TODO lerp to interp.py
 
 
 @dataclass
-class KeyFrame:
-    frame: int
-    center: np.ndarray
-    z: float
-    a_deg: float
+class Frame:
+    """
+    Viewport parameters for a single frame.
+    """
+
+    index: int  #: Frame index
+    center: np.ndarray | SkyCoord  #: Viewport center in pixels or sky coordinates
+    zoom: float | u.Quatity  #: Viewport zoom as ratio or horizontal field of view
+    angle: u.Quatity  #: Viewport angle
+
+    def planar(self, wcs: WCS, video_format):
+        """
+        Convert to planar parameters.
+        """
+        if self.zoom_is_hfov():
+            left = self.center.copy()
+            left.ra -= self._hfov_in_degrees() / 2
+            right = self.center.copy()
+            right.ra += self._hfov_in_degrees() / 2
+            min = wcs.world_to_pixel(left)[0]
+            max = wcs.world_to_pixel(right)[0]
+            fov = max - min
+            self.zoom = fov / video_format[0]
+        if self.center_is_sky_coord():
+            self.center = wcs.world_to_pixel(self.center)
+        return self
+
+    def center_is_sky_coord(self):
+        """
+        Test whether the center is specified as sky coordinates.
+        """
+        return isinstance(self.center, SkyCoord)
+
+    def zoom_is_hfov(self):
+        """
+        Test whether the zoom is specified as a horizontal field of view.
+        """
+        if isinstance(self.zoom, u.Quantity):
+            assert (self.zoom / u.degrees).is_unity()
+            return True
+        return False
+
+    def _hfov_in_degrees(self):
+        """
+        Get the zoom in degrees.
+        """
+        assert self.zoom_is_hfov()
+        return float(self.zoom / u.degrees)
 
     def __repr__(self) -> str:
-        return f"{self.frame}: ({self.center[0]:0.1f}, {self.center[1]:0.1f}), {int(self.z * 100+0.5)}%, {self.a_deg}°"
-
-
-@dataclass
-class KeyValue:
-    frame: int
-    value: object
+        res = f"{self.index}: "
+        if self.center_is_sky_coord():
+            res += f"({self.center.ra}°, {self.center.dec}°), "
+        else:
+            res += f"({self.center[0]}, {self.center[1]}), "
+        if self.zoom_is_hfov():
+            res += f"{self._hfov_in_degrees()}°, "
+        else:
+            res += f"{int(self.zoom * 100+0.5)}%, "
+        res += f"{self.angle.value}°"
+        return res
 
 
 @dataclass
 class KeyFrames:
-    centers: list
-    zooms_inv: list
-    angles_deg: list
+    """
+    Viewport parameters for key frames.
+    """
+
+    centers: OrderedDict
+    zooms_inv: OrderedDict
+    angles_deg: OrderedDict
 
     def __len__(self):
         return len(self.centers)
 
-    def append(self, frame, center, zoom, angle):
-        if center[0] is None or center[1] is None:  # FIXME can there be a single None?
-            self.centers.append(KeyValue(frame, self.centers[-1].value))
+    def __iadd__(self, frame):
+
+        def _last_value(param):
+            return next(reversed(param.values()))
+
+        def _repeat(param):
+            param[frame] = _last_value(param)
+
+        center = frame.center
+        if center is None:
+            _repeat(self.centers)
         else:
-            self.centers.append(KeyValue(frame, center))
+            self.centers[frame] = center  # TODO test compatibility
+
+        zoom = frame.zoom
         if zoom is None:
-            self.zooms_inv.append(KeyValue(frame, self.zooms_inv[-1].value))
+            _repeat(self.zooms_inv)
         elif not np.isnan(zoom):
-            self.zooms_inv.append(KeyValue(frame, 1.0 / zoom))
+            self.zooms_inv[frame] = 1.0 / zoom
+
+        angle = frame.angle
         if angle is None:
-            self.angles_deg.append(KeyValue(frame, self.angles_deg[-1].value))
+            _repeat(self.angles_deg)
         elif not np.isnan(angle):
-            self.angles_deg.append(KeyValue(frame, angle))
+            self.angles_deg[frame] = angle
+
         return self
 
 
 def load_frames_params(
     sequence: list, image_shape: list, fps: float, video_format: list, wcs: WCS | None
 ):
-    res = KeyFrames([], [], [])
+    res = KeyFrames({}, {}, {})
     frame = 0
     for step in sequence:
         if not "t" in step:
-            x, y = parse_coords((step["x"], step["y"]), image_shape, wcs)
-            add_knot(res, x, y)
+            center = parse_center((step["x"], step["y"]), image_shape, wcs)
+            add_knot(res, center)
         else:
             frame = parse_frame(step["t"], fps, frame)
             if "x" not in step and "y" not in step:
-                x, y = None, None
+                center = None
             else:
-                x, y = parse_coords((step["x"], step["y"]), image_shape, wcs)
+                center = parse_center((step["x"], step["y"]), image_shape, wcs)
             z = (
                 None
                 if "z" not in step
                 else parse_zoom(step["z"], image_shape, video_format)
             )
-            a = None if "a" not in step else parse_a_deg(step["a"])
-            res.append(frame, np.array([x, y]), z, a)
+            a = None if "a" not in step else parse_angle(step["a"])
+            res.append(frame, center, z, a)
     return res
 
 
-def add_knot(sequence, x, y):
+def add_knot(sequence, center):
     knots = sequence.centers[-1].value
     if isinstance(knots, list):
-        sequence.centers[-1].value.append(np.array([x, y]))
+        sequence.centers[-1].value.append(center)
     else:
-        sequence.centers[-1].value = [knots, np.array([x, y])]
+        sequence.centers[-1].value = [knots, center]
 
 
 def sin_sequence(keys_values: list):
@@ -153,7 +219,7 @@ def parse_frame(text: str, fps: float, ref_frame: int):
     return value + ref_frame if text[0] == "+" else value
 
 
-def parse_coords(text_xy: tuple, image_shape: tuple, wcs: WCS | None):
+def parse_center(text_xy: tuple, image_shape: tuple, wcs: WCS | None):
     if (match_x := match_suffix("°", text_xy[0])) and (
         match_y := match_suffix("°", text_xy[1])
     ):
@@ -206,14 +272,14 @@ def parse_zoom(text: str, image_shape: list, video_format: list):
         z = video_format[1] / image_shape[0] / float(match)
     elif match := match_suffix("%", text):
         z = float(match) / 100
-    elif match := match_suffix("°", text):  # FIXME adapt to WCS?
-        z = -1 / float(match)
+    elif match := match_suffix("°", text):
+        z = float(match) * u.degrees
     else:
         raise ValueError(f"Unrecognized zoom: {text}")
     return z
 
 
-def parse_a_deg(text: str):
+def parse_angle(text: str):
     """
     Parse the angle in degrees.
     If last char is "°", forward the value.
@@ -221,8 +287,8 @@ def parse_a_deg(text: str):
     """
     if text == "...":
         return np.nan
-    if match := match_suffix("°", text):  # FIXME adapt to WCS (wrt North)?
-        return float(match)
+    if match := match_suffix("°", text):
+        return float(match) * u.degrees
     elif match := match_suffix("pi", text):
-        return float(match) * 180
+        return float(match) * 180 * u.degrees
     raise ValueError(f"Unrecognized angle: {text}")
