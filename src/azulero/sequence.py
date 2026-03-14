@@ -29,12 +29,11 @@ class Frame:
         Convert to planar parameters.
         """
         if self.hfov_is_solid_angle():
-            left = self.center.copy()
-            left.ra -= self.hfov_in_degrees() / 2
-            right = self.center.copy()
-            right.ra += self.hfov_in_degrees() / 2
-            min = wcs.world_to_pixel(left)[0]
-            max = wcs.world_to_pixel(right)[0]
+            left = self.center.ra - self.hfov / 2
+            right = self.center.ra + self.hfov / 2
+            dec = self.center.dec
+            min = wcs.world_to_pixel(SkyCoord(ra=left, dec=dec, frame="icrs"))[0]
+            max = wcs.world_to_pixel(SkyCoord(ra=right, dec=dec, frame="icrs"))[0]
             self.hfov = max - min
         if self.center_is_sky_coord():
             x, y = wcs.world_to_pixel(self.center)
