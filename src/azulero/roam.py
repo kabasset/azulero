@@ -74,6 +74,20 @@ def add_parser(subparsers):
         "--fps", type=float, default=25, metavar="FPS", help="Frames per second."
     )
     parser.add_argument(
+        "--start",
+        type=int,
+        default=None,
+        metavar="FRAME",
+        help="Index of the first frame to be rendered.",
+    )
+    parser.add_argument(
+        "--stop",
+        type=int,
+        default=None,
+        metavar="FRAME",
+        help="Index of the last frame to be rendered.",
+    )
+    parser.add_argument(
         "--scale",
         type=str,
         nargs="*",
@@ -127,9 +141,12 @@ def run(args):
         output, cv2.VideoWriter_fourcc(*"mp4v"), args.fps, args.format
     )
 
-    for i, c, z, a in zip(range(len(centers)), centers, hfovs, orientations):
-        p = sequence.Frame(i, c, z, a)
-        print(f"- {p}")
+    params = [
+        sequence.Frame(i, c, z, a)
+        for i, c, z, a in zip(range(len(centers)), centers, hfovs, orientations)
+    ][args.start : args.stop]
+    for i, p in enumerate(params):
+        print(f"- {p} [{i+1}/{len(params)}]")
         if args.equirectangular:
             frame = crop_equirectangular(image, p, args.format)
         else:
