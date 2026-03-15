@@ -2,14 +2,18 @@
 
 ## Basics
 
-Command `azul roam` consists in moving a so-called viewport,
-that is a rectangle from which video frames are extracted.
+Command `azul roam` consists in moving a so-called viewport
+-- a rectangular region from which video frames are extracted --
+over an input image.
 The image and viewport can be seen as analogous to a scene and camera, respectively.
 
 The viewport has a variable center, scale and rotation angle.
-The parameters evolve smoothly between key frames specified by the user.
+The parameters at key frames are specified by the user.
 Between them, the viewport geometry is sine-interpolated to ensure smooth transitions.
 The path of the center can also be spline-interpolated to depart from zigzag patterns.
+
+The script also supports equirectangular-to-planar projection,
+such that full sky maps are suitable inputs.
 
 Command line synopsis is:
 
@@ -28,18 +32,26 @@ with:
 The sequence of key frames is provided to `azul roam` as a configuration file in YAML.
 For each key frame:
 
-- The time is specified either in seconds or in number of frames.
-- The center is specified either in pixels or percentage of the image extents.
-- The viewport size is computeded either from a percentage relative to the image pixel size, or relatively to the image extents.
-- The viewport angle is specified clockwise.
+* The time is specified either in seconds or in number of frames.
+* The center is specified either in sky coordinates, pixels or percentage of the image extents.
+* The viewport size is computed either from a solid angle,
+  from a scale relative to the image pixel size, or relatively to the image extents.
+* The viewport orientation angle is specified clockwise in degrees or radians.
 
 For each key frame but the first one, omitted parameters are copied from the previous key frame.
+
+Sky coordinates are enabled with options `--wcs` or `--equirectangular` (see dedicated section below).
+
+For planar images, sky coordinates and solid angles require a WCS file.
+
+For equirectangular images, coordinate are assumed to range from -180° on the left to 180° on the right,
+and from -90° at the bottom to 90° at the top.
 
 **Time**
 
 The name of the key frame time parameter in the sequence file is `t`.
 It is specified in seconds with suffix `s` or number of frames with suffix `f`.
-Prefix `+` indicates a duration instead of a time point, e.g.:
+Prefix `+` indicates a duration from previous key frame instead of a time point, e.g.:
 `t: 1s` means key frame at 1 second, `t: +24f` means 24 frames after the previous key frame.
 
 The time of the first frame must be `0s` or `0f`.
@@ -47,9 +59,19 @@ The time of the first frame must be `0s` or `0f`.
 **Center**
 
 The viewport center is given with keys `x` and `y`.
-Suffix `px` indicates absolute coordinates, while suffix `%` indicates percentage relative to the image width or height.
+Both image and sky coordinates are supported.
+
+Image coordinates:
+
+Suffix `px` indicates absolute image coordinates, while suffix `%` indicates percentage relative to the image width or height.
 Negative values are interpreted as backward coordinates, i.e. from the right for `x` or from the bottom for `y`.
 Typically, the viewport is centered with `x: 50%` and `y: 50%`.
+
+Sky coordinates:
+
+Suffix `°` indicates RA/dec coordinates in ICRS frame when `--wcs` is enabled,
+or position in the map if `--equirectangular` is enabled
+(see options description below).
 
 **Zoom**
 
@@ -59,6 +81,9 @@ such that `z: 100%` (resp. `z: 50%`) means that one pixel in the output frame
 corresponds to one pixel (resp. two pixels) in the input image,
 When suffixed with `w` (resp. `h`), the parameter value is a factor wrt. the image width (resp. height).
 Typically, a full-width viewport is specified as `z: 1w` and a full-height viewport is specified as `z: 1h`.
+
+Suffix `°` indicates a horizontal field of view as a solid angle.
+This is available for equirectangular images and inputs with WCS.
 
 For now, zoom levels higher than 100% are not supported.
 
@@ -170,6 +195,11 @@ static parameters can be adjusted with command line options.
 
 The frame format is specified with `--format` and the frame rate with `--fps`.
 For example, a 720p60 video is configured with `--format 1280 720 --fps 60`.
+
+For working with sky coordinates, exactly one of the following options must be set:
+
+* `--equirectangular` for 360° equirectangular images;
+* `--wcs <wcs>` for other images with WCS parameters stored in a YAML file `<wcs>`.
 
 The output file name is given to parameter `-o`.
 
