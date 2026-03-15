@@ -115,6 +115,8 @@ def run(args):
     image = cv2.imread(input, cv2.IMREAD_COLOR)
     image_shape = image.shape[:2]
     print(f"- Shape: {image_shape[0]} x {image_shape[1]}")
+    pyramid = Pyramid(image, 8)
+    print(f"- Pyramid levels: {len(pyramid)}")
     timer.tic_print()
 
     print(f"Read sequence of key frames: {config.name}")
@@ -150,7 +152,7 @@ def run(args):
         if args.equirectangular:
             frame = crop_equirectangular(image, p, args.format)
         else:
-            frame = crop_planar(image, p.planar(wcs, image_shape), args.format)
+            frame = crop_pyramid(pyramid, p.planar(wcs, image_shape), args.format)
         if scale.width > 0:
             scale.draw(frame, 100.0 / z)
         writer.write(frame)
@@ -158,6 +160,49 @@ def run(args):
     writer.release()
     print(f"- Output written: {output}")
     timer.tic_print()
+
+
+class Pyramid:
+
+    def __init__(self, image: np.ndarray, factor: int):
+        current = 1
+        self.images = {current: image}
+        w = image.shape[1]
+        h = image.shape[0]
+        while current < factor:
+            previous = self.images[current]
+            current *= 2
+            self.images[current] = cv2.pyrDown(
+                previous, dstsize=(w // current, h // current)
+            )
+
+    def __len__(self):
+        return len(self.images)
+
+    def __getitem__(self, factor):
+        return self.images[factor]
+
+    def atleast_wide(self, extent):
+        res = 1
+        for factor in self.images:
+            if self.images[factor].shape[1] > extent:
+                res = factor
+        return res
+
+
+def crop_pyramid(
+    pyramid: Pyramid, params: sequence.Frame, video_format: tuple[int, int]
+):
+    factor = pyramid.atleast_wide(
+        pyramid[1].shape[1] / params.hfov * video_format[0] * 2
+    )  # FIXME handle rotation
+    print(
+        f"- Reduction factor: {params.hfov / pyramid[1].shape[1]} -> {factor}"
+    )  # FIXME rm
+    scaled_params = sequence.Frame(
+        params.index, params.center / factor, params.hfov / factor, params.orientation
+    )
+    return crop_planar(pyramid[factor], scaled_params, video_format)
 
 
 def crop_planar(
