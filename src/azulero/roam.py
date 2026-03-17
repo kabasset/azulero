@@ -58,9 +58,9 @@ def add_parser(subparsers):
         "--output",
         "-o",
         type=str,
-        default="{workspace}/{image}_{sequence}.mp4",
+        default="{workspace}/{image}_{sequence}.mkv",
         metavar="FILENAME",
-        help="Output video file template.",
+        help="Output video file template (mkv compression is lossless, mp4 compression is lossy).",
     )
     parser.add_argument(
         "--format",
@@ -139,9 +139,7 @@ def run(args):
         scale = overlay.Scale(width=int(args.scale[0]), text=args.scale[1])
 
     print(f"Generate frames")
-    writer = cv2.VideoWriter(
-        output, cv2.VideoWriter_fourcc(*"mp4v"), args.fps, args.format
-    )
+    writer = cv2.VideoWriter(output, fourcc(output), args.fps, args.format)
 
     params = [
         sequence.Frame(i, c, z, a)
@@ -188,6 +186,12 @@ class Pyramid:
             if self.images[factor].shape[1] > extent:
                 res = factor
         return res
+
+
+def fourcc(path: Path):
+    ext = path.suffix.lower()
+    codecs = {".mp4": "mp4v", ".avi": "xvid", ".mkv": "ffv1"}
+    return cv2.VideoWriter_fourcc(*codecs[ext])
 
 
 def crop_pyramid(
