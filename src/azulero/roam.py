@@ -245,6 +245,8 @@ def crop_planar(
     if y1 > image.shape[0]:
         print(f"WARNING: max(y) > {image.shape[0]-1} ({y1-1})")
         y1 = image.shape[1]
+    if x0 >= image.shape[1] or y0 >= image.shape[0] or x1 <= 0 or y1 <= 0:
+        return np.zeros([video_format[1], video_format[0], 3], dtype=image.dtype)
     offset = np.array([x0, y0])
     patch = image[y0:y1, x0:x1]
     rotation = cv2.getRotationMatrix2D(center - offset, orientation, scaling)
