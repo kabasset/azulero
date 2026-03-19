@@ -9,6 +9,7 @@ import cv2
 
 from azulero import io, overlay, sequence
 from azulero.equirectangular import Projection
+from azulero.gaiasky import roam_gaiasky
 from azulero.timing import Timer
 
 
@@ -41,6 +42,12 @@ def add_parser(subparsers):
         "-e",
         action="store_true",
         help="Enable equirectangular to planar projection.",
+    )
+    group.add_argument(
+        "--gaiasky",
+        "-g",
+        action="store_true",
+        help="Render Gaiasky frames.",
     )
     group.add_argument(
         "--wcs",
@@ -127,6 +134,11 @@ def run(args):
     hfovs = sequence.sin_sequence(params.hfovs)
     orientations = sequence.sin_sequence(params.orientations)
     print(f"- Total frames: {len(centers)}")
+    params = [
+        sequence.Frame(i, c, z, a)
+        for i, c, z, a in zip(range(len(centers)), centers, hfovs, orientations)
+    ][args.start : args.stop]
+    print(f"- Rendering range: [{args.start}, {args.stop})")
     timer.tic_print()
 
     if args.scale is None:
@@ -139,12 +151,11 @@ def run(args):
         scale = overlay.Scale(width=int(args.scale[0]), text=args.scale[1])
 
     print(f"Generate frames")
-    writer = cv2.VideoWriter(output, fourcc(output), args.fps, args.format)
+    if args.gaiasky:
+        roam_gaiasky(params, args.fps, args.format, output)
+        return
 
-    params = [
-        sequence.Frame(i, c, z, a)
-        for i, c, z, a in zip(range(len(centers)), centers, hfovs, orientations)
-    ][args.start : args.stop]
+    writer = cv2.VideoWriter(output, fourcc(output), args.fps, args.format)
     for i, p in enumerate(params):
         print(f"- {p} [{i+1}/{len(params)}]")
         if args.equirectangular:
@@ -152,7 +163,7 @@ def run(args):
         else:
             frame = crop_pyramid(pyramid, p.planar(wcs, image_shape), args.format)
         if scale.width > 0:
-            scale.draw(frame, 100.0 / z)
+            scale.draw(frame, 100.0 * params.hfov)
         writer.write(frame)
 
     writer.release()
