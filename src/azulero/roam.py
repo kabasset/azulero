@@ -150,9 +150,11 @@ def run(args):
         if args.equirectangular:
             frame = crop_equirectangular(image, p, args.format)
         else:
-            frame = crop_pyramid(pyramid, p.planar(wcs, image_shape), args.format)
+            frame = crop_pyramid(
+                pyramid, p.planar(wcs, image_shape), args.format
+            )  # FIXME this transforms p inplace
         if scale.width > 0:
-            scale.draw(frame, 100.0 / z)
+            scale.draw(frame, 100.0 * p.hfov)
         writer.write(frame)
 
     writer.release()

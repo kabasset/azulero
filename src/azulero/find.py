@@ -6,9 +6,10 @@ import argparse
 from astropy.coordinates import SkyCoord
 from dataclasses import dataclass
 import json
-import pathlib
+from pathlib import Path
 from shapely import geometry
 
+from azulero import io
 from azulero.timing import Timer
 
 
@@ -37,12 +38,20 @@ def add_parser(subparsers):
         metavar=["RA", "DEC"],
         help="Coordinates (this option can be specified several times).",
     )
-    parser.add_argument(
+    group = parser.add_mutually_exclusive_group(required=False)
+    group.add_argument(
         "--tiling",
         type=str,
-        default="DpdMerFinalCatalog.geojson",
+        default=None,
         metavar="FILENAME",
         help="Geojson file which lists existing tiles and their metadata",
+    )
+    group.add_argument(
+        "--wcs",
+        type=str,
+        default=None,
+        metavar="FILENAME",
+        help="Path to the WCS parameters as a YAML file.",
     )
 
     parser.set_defaults(func=run)
@@ -87,14 +96,18 @@ class Tiling(object):
 def run(args):
 
     timer = Timer()
-    filename = pathlib.Path(args.workspace) / args.tiling
-    print(f"Load tiling: {filename}")
-    if filename.is_file():
+    tiling = None
+    wcs = None
+    if args.tiling:
+        filename = Path(args.workspace) / args.tiling
+        print(f"Load tiling: {args.tiling}")
         tiling = Tiling(filename)
         timer.tic_print()
+    elif args.wcs:
+        print(f"Load WCS: {args.wcs}")
+        wcs = io.read_wcs(Path(args.workspace), args.wcs)
     else:
-        print("WARNING: No tiling file found. Will only find coordinates.")
-        tiling = None
+        print("WARNING: No tiling or WCS file given; will only find coordinates.")
 
     print()
 
@@ -106,16 +119,31 @@ def run(args):
             print(f"- Coordinates: {o.ra:.2f}, {o.dec:.2f}")
         else:
             print(f"{o.ra.degree} {o.dec.degree}")
-        if tiling is None:
-            continue
-        tiles = tiling(o)
-        for t in tiles:
-            print(f"- {t}")
-        timer.tic_print()
-        if len(tiles) > 0:
+        if tiling is not None:
+            tiles = tiling(o)
+            for t in tiles:
+                print(f"- {t}")
+            timer.tic_print()
+            if len(tiles) > 0:
+                print(f"\nYou may now run:")
+                print(
+                    f"\nazul --workspace {args.workspace} retrieve {' '.join(str(t.index) for t in tiles)}\n"
+                )
+            else:
+                print("\nWARNING: No tile found.\n")
+        elif wcs is not None:
+            x, y = wcs.world_to_pixel(o)
+            print(f"- x = {x:.1f} px (0-based from left)")
+            print(f"- y = {y:.1f} px (0-based from bottom)")
             print(f"\nYou may now run:")
+            wcs_file = Path(args.workspace) / args.wcs
+            tiledir = wcs_file.parent
+            workspace = tiledir.parent
+            tile = tiledir.name
+            radius = 100  # FIXME option
             print(
-                f"\nazul --workspace {args.workspace} retrieve {' '.join(str(t.index) for t in tiles)}\n"
+                f"\nazul --workspace {workspace} process "
+                f"{tile}[{int(y)-radius}:{int(y)+radius},{int(x)-radius}:{int(x)+radius}]"
+                f"\n"
             )
-        else:
-            print("\nWARNING: No tile found.\n")
+            pass
