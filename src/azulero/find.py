@@ -17,8 +17,12 @@ def add_parser(subparsers):
 
     parser = subparsers.add_parser(
         "find",
-        help="Find the tiles which contain objects.",
-        description="Find object coordinates and intersecting tiles.",
+        help="Find the tiles which contain objects or the image coordinates of objects.",
+        description=(
+            "Find object coordinates and "
+            "(a) intersecting tiles from a Geojson catalog of tiles, or "
+            "(b) image coordinates in pixels from a WCS file."
+        ),
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
 
@@ -52,6 +56,13 @@ def add_parser(subparsers):
         default=None,
         metavar="FILENAME",
         help="Path to the WCS parameters as a YAML file.",
+    )
+    parser.add_argument(
+        "--radius",
+        type=int,
+        default=100,
+        metavar="RADIUS",
+        help="To define an image crop, with option --wcs, the radius of the crop region.",
     )
 
     parser.set_defaults(func=run)
