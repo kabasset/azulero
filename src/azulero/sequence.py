@@ -319,7 +319,9 @@ def parse_hfov(text: str, image_shape: list, video_format: list):
         vfov = float(match) * image_shape[0]
         return vfov * video_format[0] / video_format[1]
     if match := match_suffix("%", text):
-        return float(match) / 100 * video_format[0]
+        return 100 / float(match) * video_format[0]
+    if match := match_suffix("px", text):
+        return float(match)
     if match := match_suffix("°", text):
         return float(match) * u.deg
     raise ValueError(f"Unrecognized zoom: {text}")
