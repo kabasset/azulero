@@ -191,7 +191,7 @@ def run(args):
     print(f"- Shape: {iyjh.shape[1]} x {iyjh.shape[2]}")
     if args.wcs:
         # FIXME assert slicing is disabled or handle it!
-        wcs = io.read_wcs(workdir, args.input)
+        wcs = io.read_wcs(workdir, args.input).slice(slicing)
         path = Path(args.wcs.format(workspace=args.workspace, tile=tile, step="wcs"))
         io.write_wcs(wcs, path)
         print(f"- Write WCS: {path.name}")
@@ -232,7 +232,7 @@ def run(args):
         # FIXME implement some Step to handle len(args.curves) == 0 case generically
         path = render_path_for_step(template, "blended")
         print(f"- Write: {path.name}")
-        io.write_rgb(rgb, path)
+        io.write_rgb(rgb, path, wcs=wcs)
     timer.tic_print()
 
     # print(f"Inpaint hot pixels")
@@ -243,7 +243,7 @@ def run(args):
     # if "{step}" in name:
     #     path = render_path_for_step(template, "inpainted")
     #     print(f"- Write: {path.name}")
-    #     io.write_rgb(rgb, path)
+    #     io.write_rgb(rgb, path, wcs=wcs)
     #     timer.tic_print()
 
     if len(args.curves) > 0:
@@ -255,5 +255,5 @@ def run(args):
             rgb[:, :, i] = color.adjust_curve(rgb[:, :, i], knots)
         path = render_path_for_step(template, "adjusted")
         print(f"- Write: {path.name}")
-        io.write_rgb(rgb, path)
+        io.write_rgb(rgb, path, wcs=wcs)
         timer.tic_print()

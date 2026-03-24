@@ -70,14 +70,15 @@ def make_workdir(workspace, tile):
     return workdir
 
 
-def write_fits(data: np.array, path: Path):
+def write_fits(data: np.array, path: Path, wcs: WCS = None):
     """
     Write an SIF file.
     """
-    fits.PrimaryHDU(data).writeto(path, overwrite=True)
+    h = None if wcs is None else wcs.to_header()
+    fits.PrimaryHDU(data, header=h).writeto(path, overwrite=True)
 
 
-def write_rgb(rgb: np.array, path: Path, norm_depth: int = None):
+def write_rgb(rgb: np.array, path: Path, norm_depth: int = None, wcs: WCS = None):
     """
     Write an RGB image.
     Optional `norm_depth` parameter is used to scale normalized images as either 8- or 16-bit integers.
@@ -94,7 +95,10 @@ def write_rgb(rgb: np.array, path: Path, norm_depth: int = None):
         data = np.round(rgb * 65535).astype(np.uint16)
     else:
         raise ValueError(f"Parameter `norm_depth` must be one of: None, 1, 8 or 16")
-    cv2.imwrite(path, np.flipud(data)[:, :, ::-1])
+    if path.suffix.lower() in [".fits", ".fit" ".fts"]:
+        write_fits(np.stack((rgb[:, :, 0], rgb[:, :, 1], rgb[:, :, 2])), path, wcs)
+    else:
+        cv2.imwrite(path, np.flipud(data)[:, :, ::-1])
 
 
 def write_mask(iyjh: np.ndarray, path: Path):
@@ -106,7 +110,7 @@ def write_mask(iyjh: np.ndarray, path: Path):
     rgb[:, :, 0] = i * 155 + h * 100
     rgb[:, :, 1] = i * 155 + j * 100
     rgb[:, :, 2] = i * 155 + y * 100
-    write_rgb(rgb, path, 1)
+    write_rgb(rgb, path, norm_depth=1)
 
 
 def write_wcs(wcs: WCS, path: Path):

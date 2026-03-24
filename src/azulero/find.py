@@ -55,7 +55,7 @@ def add_parser(subparsers):
         type=str,
         default=None,
         metavar="FILENAME",
-        help="Path to the WCS parameters as a YAML file.",
+        help="Path to the WCS parameters as a FITS or YAML file.",
     )
     parser.add_argument(
         "--radius",

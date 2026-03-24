@@ -184,5 +184,5 @@ def run(args):
     print(f"- Objects: {count}")
     timer.tic_print()
     print(f"- Save output: {output_path.name}")
-    io.write_rgb(image, output_path, 1)
+    io.write_rgb(image, output_path, norm_depth=1)
     timer.tic_print()
