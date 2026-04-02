@@ -2,15 +2,25 @@
 
 ## New features
 
+`azul find`
+
+* FITS files and WCS files are supported as input with option `--wcs`,
+  in which case the location is returned in pixel coordinates,
+  and an `azul process` command is proposed to process the region around the location.
+
 `azul process`
 
-* WCS can be saved with option `--wcs`.
+* Outputs can be saved as FITS files, in which case WCS records are written to the header.
+* For all output formats, a WCS file can be saved with option `--wcs`.
 
 `azul roam`
 
-* Equirectangular images are supported.
-* RA/dec coordinates and zoom specified as a horizontal field of view
-  are supported for equirectangular images or with option `--wcs`.
+* A FITS file or WCS file can be passed to option `--wcs`.
+* Equirectangular images are supported as input.
+* Gaia Sky is supported as input.
+* RA/dec coordinates are supported for equirectangular images, Gaia Sky, or with option `--wcs`.
+* Zoom can be specified as a horizontal field of view for equirectangular images, Gaia Sky, or with option `--wcs`.
+* Low-pass filter is applied for wide fields of view to prevent aliasing.
 
 ## Improvements
 
@@ -22,6 +32,18 @@
 
 * Output name is built from input names.
 * Default FPS is 25.
+
+## Optimization
+
+`azul roam`
+
+* Image pyramids are built to speed up rendering of frames with wide fields of view.
+
+## Known issues
+
+`azul roam`
+
+* kabasset/azulero/#55 Zoom < 1° is not supported.
 
 # 1.1.1
 
