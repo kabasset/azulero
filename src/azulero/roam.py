@@ -150,13 +150,15 @@ def run(args):
 
     print(f"Generate frames")
     if args.gaiasky:
-        roam_gaiasky(params, args.fps, args.format, output)
-        return
+        print("Run Gaia Sky")
+        gaia_frames = roam_gaiasky(params, args.fps, args.format, output)
 
     writer = cv2.VideoWriter(output, fourcc(output), args.fps, args.format)
     for i, p in enumerate(params):
         print(f"- {p} [{i+1}/{len(params)}]")
-        if args.equirectangular:
+        if args.gaiasky:
+            frame = cv2.imread(gaia_frames[i], cv2.IMREAD_COLOR)
+        elif args.equirectangular:
             frame = crop_equirectangular(image, p, args.format)
         else:
             frame = crop_pyramid(
