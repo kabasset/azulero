@@ -253,7 +253,7 @@ def crop_planar(
         print(f"WARNING: min(x) < 0 ({x0})")
         x0 = 0
     if y0 < 0:
-        print(f"WARNING: max(y) min < 0 ({y0})")
+        print(f"WARNING: min(y) < 0 ({y0})")
         y0 = 0
     if x1 > image.shape[1]:
         print(f"WARNING: max(x) > {image.shape[1]-1} ({x1-1})")
