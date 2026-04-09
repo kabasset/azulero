@@ -80,7 +80,7 @@ def roam_gaiasky(params, fps, video_format, output):
     # api.output.frame_output(True)
     while runnable.frame < len(params):
         time.sleep(0.01)
-    print("Please close Gaia Sky")
+    print("\nPlease close Gaia Sky!\n")
     api.base.remove_runnable("azul")
     api.camera.stop()
     api.input.enable()

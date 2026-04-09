@@ -116,13 +116,16 @@ def run(args):
 
     timer = Timer()
 
-    print(f"Read input image: {input.name}")
-    image = cv2.imread(input, cv2.IMREAD_COLOR)
-    image_shape = image.shape[:2]
-    print(f"- Shape: {image_shape[0]} x {image_shape[1]}")
-    pyramid = Pyramid(image, 8)
-    print(f"- Pyramid levels: {len(pyramid)}")
-    timer.tic_print()
+    if args.gaiasky:
+        image_shape = [0, 0]
+    else:
+        print(f"Read input image: {input.name}")
+        image = cv2.imread(input, cv2.IMREAD_COLOR)
+        image_shape = image.shape[:2]
+        print(f"- Shape: {image_shape[0]} x {image_shape[1]}")
+        pyramid = Pyramid(image, 8)
+        print(f"- Pyramid levels: {len(pyramid)}")
+        timer.tic_print()
 
     print(f"Read sequence of key frames: {config.name}")
     wcs = None if args.wcs is None else io.read_wcs(Path(args.workspace), args.wcs)
@@ -150,7 +153,7 @@ def run(args):
 
     print(f"Generate frames")
     if args.gaiasky:
-        print("Run Gaia Sky")
+        print("- Run Gaia Sky")
         gaia_frames = roam_gaiasky(params, args.fps, args.format, output)
 
     writer = cv2.VideoWriter(output, fourcc(output), args.fps, args.format)
