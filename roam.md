@@ -198,9 +198,25 @@ For example, a 720p60 video is configured with `--format 1280 720 --fps 60`.
 
 For working with sky coordinates, exactly one of the following options must be set:
 
+* `--wcs <wcs>` for other images with WCS parameters stored in a FITS or YAML file `<wcs>`;
 * `--equirectangular` for 360° equirectangular images;
-* `--wcs <wcs>` for other images with WCS parameters stored in a YAML file `<wcs>`.
+* `--gaiasky`: see next section.
 
 The output file name is given to parameter `-o`.
 
 Check `azul roam -h` for more details.
+
+## Gaia Sky
+
+Gaia Sky is a planetarium software able to render very nice frames down to a few square-degrees of field-of-view.
+`azul roam` can interface with a locally-running instance of Gaia Sky and produce videos from those frames.
+To do so, follow these steps:
+
+1. Open and configure Gaia Sky -- enable or disable labels, add datasets, tune rendering parameters...
+2. Run `azul roam <name> <sequence> --gaiasky [options]` where
+  `<name>` is only used to build the output filename,
+  sequence is the sequence file as described above, and
+  `[options]` are the options described in the previous section.
+3. When asked to quit Gaia Sky in the terminal... quit Gaia Sky 😎
+
+Execution will resume and the frames will be compiled into a video as usual.
