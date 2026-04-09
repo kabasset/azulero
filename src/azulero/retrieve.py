@@ -149,13 +149,13 @@ def add_parser(subparsers):
         "tiles",
         type=str,
         nargs="+",
-        metavar="INDICES",
         help="Space-separated list of tile indices.",
     )
     parser.add_argument(
         "--dsr",
         type=str,
         default="DR1_R2,DR1_R1,Q1_R1",
+        metavar="LIST",
         help="Comma-separated list of data set releases.",
     )
     parser.add_argument(

@@ -27,13 +27,11 @@ def add_parser(subparsers):
     parser.add_argument(
         "image",
         type=str,
-        metavar="FILENAME",
         help="Input image file.",
     )
     parser.add_argument(
         "sequence",
         type=str,
-        metavar="FILENAME",
         help="YAML configuration file which specifies the sequence of key frames.",
     )
     group = parser.add_mutually_exclusive_group(required=False)
@@ -66,7 +64,7 @@ def add_parser(subparsers):
         "-o",
         type=str,
         default="{workspace}/{image}_{sequence}.mkv",
-        metavar="FILENAME",
+        metavar="TEMPLATE",
         help="Output video file template (mkv compression is lossless, mp4 compression is lossy).",
     )
     parser.add_argument(
@@ -74,7 +72,7 @@ def add_parser(subparsers):
         type=int,
         nargs=2,
         default=[1920, 1080],
-        metavar=["WIDTH", "HEIGHT"],
+        metavar=("WIDTH", "HEIGHT"),
         help="Video format",
     )
     parser.add_argument(
@@ -99,7 +97,7 @@ def add_parser(subparsers):
         type=str,
         nargs="*",
         default=None,
-        metavar=["LENGTH", "TEXT"],
+        metavar=("LENGTH", "TEXT"),
         help="Scale length in image pixels, and text above",
     )
 

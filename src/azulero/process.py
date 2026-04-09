@@ -29,7 +29,6 @@ def add_parser(subparsers):
     parser.add_argument(
         "tile",
         type=str,
-        metavar="SPEC",
         help="Tile index and optional slicing à-la NumPy, e.g. 102160611[1500:7500,11500:17500]",
     )
     parser.add_argument(
@@ -118,7 +117,7 @@ def add_parser(subparsers):
         "-w",
         type=float,
         default=22.0,
-        metavar="VALUE",
+        metavar="AB_MAG",
         help="White point in AB magnitude.",
     )
     parser.add_argument(
@@ -126,7 +125,7 @@ def add_parser(subparsers):
         "-a",
         type=float,
         default=28.0,
-        metavar="FACTOR",
+        metavar="AB_MAG",
         help="Stretching factor in AB magnitude.",
     )
     parser.add_argument(
@@ -134,7 +133,7 @@ def add_parser(subparsers):
         "-b",
         type=float,
         default=29.0,
-        metavar="VALUE",
+        metavar="AB_MAG",
         help="Opposite of black point in AB magnitude.",
     )
     parser.add_argument(

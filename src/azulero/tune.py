@@ -14,14 +14,13 @@ def add_parser(subparsers):
     parser = subparsers.add_parser(
         "tune",
         help="Autotune image rendering parameters.",
-        description=("Analyse image statistics to propose a white point."),
+        description=("Analyze image statistics to propose a white point."),
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
 
     parser.add_argument(
-        "filename",
+        "image",
         type=str,
-        metavar="PATH",
         help="Path to the input data",
     )
     parser.add_argument(
@@ -39,8 +38,8 @@ def run(args):
 
     timer = Timer()
 
-    print(f"Read input: {args.filename}")
-    with fits.open(args.filename) as f:
+    print(f"Read input: {args.image}")
+    with fits.open(args.image) as f:
         data = f[0].data
     print(f"- Shape: {data.shape[0]} x {data.shape[1]}")
     timer.tic_print()

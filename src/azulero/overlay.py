@@ -153,7 +153,7 @@ def add_parser(subparsers):
     parser.add_argument(
         "--output",
         "-o",
-        metavar="FILENAME",
+        metavar="TEMPLATE",
         default="{workspace}/{tile}/{tile}_overlay.png",
         help="Output filename",
     )

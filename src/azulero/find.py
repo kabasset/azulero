@@ -30,7 +30,6 @@ def add_parser(subparsers):
         "objects",
         type=str,
         nargs="*",
-        metavar="NAMES",
         help="Object names.",
     )
     parser.add_argument(
@@ -39,7 +38,7 @@ def add_parser(subparsers):
         nargs=2,
         default=[],
         action="append",
-        metavar=["RA", "DEC"],
+        metavar=("RA", "DEC"),
         help="Coordinates (this option can be specified several times).",
     )
     group = parser.add_mutually_exclusive_group(required=False)
@@ -47,21 +46,21 @@ def add_parser(subparsers):
         "--tiling",
         type=str,
         default=None,
-        metavar="FILENAME",
+        metavar="PATH",
         help="Geojson file which lists existing tiles and their metadata",
     )
     group.add_argument(
         "--wcs",
         type=str,
         default=None,
-        metavar="FILENAME",
+        metavar="PATH",
         help="Path to the WCS parameters as a FITS or YAML file.",
     )
     parser.add_argument(
         "--radius",
         type=int,
         default=100,
-        metavar="RADIUS",
+        metavar="PIXELS",
         help="To define an image crop, with option --wcs, the radius of the crop region.",
     )
 

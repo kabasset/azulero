@@ -38,7 +38,7 @@ def add_parser(subparsers):
         "--round",
         type=int,
         default=500,
-        metavar="INC",
+        metavar="PIXELS",
         help=(
             "Image region rounding increment. "
             "The returned region is the smallest region which contains the selected region, "
