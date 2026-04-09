@@ -4,7 +4,7 @@
 
 from typing import Any
 from astropy import units as u
-from astropy.coordinates import SkyCoord
+from astropy.coordinates import SkyCoord, Angle
 from astropy.wcs import WCS
 from dataclasses import dataclass
 import numpy as np
@@ -20,23 +20,25 @@ class Frame:
     """
 
     index: int  #: Frame index
-    center: np.ndarray | SkyCoord  #: Center in pixels or sky coordinates
-    hfov: float | u.Quantity  #: Horizontal field of view in pixels or solid angle
-    orientation: u.Quantity  #: Viewport orientation angle
+    center: np.ndarray | Angle  #: Center in pixels or sky coordinates
+    hfov: float | Angle  #: Horizontal field of view in pixels or solid angle
+    orientation: Angle  #: Viewport orientation angle
 
     def planar(self, wcs: WCS, image_shape: tuple[int, int]):
         """
         Convert to planar parameters.
         """
         if self.hfov_is_solid_angle():
-            left = self.center.ra + self.hfov / 2
-            right = self.center.ra - self.hfov / 2
-            dec = self.center.dec
+            left = self.center[0] + self.hfov / 2
+            right = self.center[0] - self.hfov / 2
+            dec = self.center[1]
             min = wcs.world_to_pixel(SkyCoord(ra=left, dec=dec, frame="icrs"))[0]
             max = wcs.world_to_pixel(SkyCoord(ra=right, dec=dec, frame="icrs"))[0]
             self.hfov = max - min
         if self.center_is_sky_coord():
-            x, y = wcs.world_to_pixel(self.center)
+            x, y = wcs.world_to_pixel(
+                SkyCoord(ra=self.center[0], dec=self.center[1], frame="icrs")
+            )
             self.center = np.array([x, image_shape[0] - y])
         return self
 
@@ -44,23 +46,20 @@ class Frame:
         """
         Test whether the center is specified as sky coordinates.
         """
-        return isinstance(self.center, SkyCoord)
+        return isinstance(self.center, Angle)
 
     def center_in_radec_degrees(self):
         """
         Get the RA and dec coordinates in degrees.
         """
         assert self.center_is_sky_coord()
-        return np.array([float(self.center.ra / u.deg), float(self.center.dec / u.deg)])
+        return np.array([float(self.center[0] / u.deg), float(self.center[1] / u.deg)])
 
     def hfov_is_solid_angle(self):
         """
         Test whether the field of view is specified as a horizontal field of view.
         """
-        if isinstance(self.hfov, u.Quantity):
-            assert (self.hfov / u.deg).unit.is_unity()
-            return True
-        return False
+        return isinstance(self.hfov, Angle)
 
     def hfov_in_degrees(self):
         """
@@ -78,7 +77,7 @@ class Frame:
     def __repr__(self) -> str:
         res = f"{self.index}: "
         if self.center_is_sky_coord():
-            res += f"({self.center.ra.value:0.2f}°, {self.center.dec.value:0.2f}°), "
+            res += f"({self.center[0] / u.deg:0.2f}°, {self.center[1] / u.deg:0.2f}°), "
         else:
             res += f"({self.center[0]:0.2f}, {self.center[1]:0.2f}), "
         if self.hfov_is_solid_angle():
@@ -212,8 +211,8 @@ def lerp(x, a, b):  # FIXME to interp.py
         return b
     if x == 1:
         return a
-    if isinstance(a, SkyCoord) or isinstance(b, SkyCoord):
-        return SkyCoord(lerp(x, a.ra, b.ra), lerp(x, a.dec, b.dec), frame="icrs")
+    # if isinstance(a, Angle) or isinstance(b, Angle):
+    #     return Angle(lerp(x, a[0], b[0]), lerp(x, a[1], b[1]), frame="icrs")
     return x * a + (1 - x) * b
 
 
@@ -277,11 +276,7 @@ def parse_center(text_xy: tuple, image_shape: tuple):
     Otherwise, each of them is parsed as a planar coordinate.
     """
     if (x := match_suffix("°", text_xy[0])) and (y := match_suffix("°", text_xy[1])):
-        return SkyCoord(
-            ra=float(x) * u.degree,
-            dec=float(y) * u.degree,
-            frame="icrs",
-        )
+        return Angle([float(x) * u.deg, float(y) * u.deg])
     x = _parse_planar_coord(text_xy[0], image_shape[1])
     y = _parse_planar_coord(text_xy[1], image_shape[0])
     return np.array([x, y])
@@ -323,7 +318,7 @@ def parse_hfov(text: str, image_shape: list, video_format: list):
     if match := match_suffix("px", text):
         return float(match)
     if match := match_suffix("°", text):
-        return float(match) * u.deg
+        return Angle(float(match) * u.deg)
     raise ValueError(f"Unrecognized zoom: {text}")
 
 
@@ -336,7 +331,7 @@ def parse_angle(text: str):
     if text == "...":
         return np.nan
     if match := match_suffix("°", text):
-        return float(match) * u.deg
+        return Angle(float(match) * u.deg)
     elif match := match_suffix("pi", text):
-        return float(match) * 180 * u.deg
+        return Angle(float(match) * 180 * u.deg)
     raise ValueError(f"Unrecognized angle: {text}")

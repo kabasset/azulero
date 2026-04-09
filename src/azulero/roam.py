@@ -280,8 +280,8 @@ def crop_equirectangular(
     h, w = image.shape[:2]
     hfov = np.deg2rad(params.hfov_in_degrees())
     vfov = 2 * np.atan(np.tan(hfov / 2) * h / w)
-    u = float(np.deg2rad(params.center.ra.value))
-    v = float(np.deg2rad(params.center.dec.value))
+    u = float(np.deg2rad(params.center[0].value))
+    v = float(np.deg2rad(params.center[1].value))
     a = float(np.deg2rad(params.orientation_in_degrees()))
     proj = Projection.from_perspective(
         [hfov, vfov],

@@ -20,8 +20,8 @@ class CameraRunnable:
             [
                 float(v)
                 for v in (
-                    p.center.ra.value,
-                    p.center.dec.value,
+                    p.center[0].value,  # FIXME always in degrees?
+                    p.center[1].value,
                     p.hfov.value,
                     p.orientation.value,
                 )
