@@ -11,7 +11,7 @@ from azulero.timing import Timer
 
 
 providers = {
-    "dss": lambda: dss.DSS(),
+    "dss": lambda: dss.DSS(),  # TODO enable DSS selection
     "pdr": lambda: sas.SAS("PDR"),
     "idr": lambda: sas.SAS("IDR"),
     "otf": lambda: sas.SAS("OTF"),
@@ -129,7 +129,7 @@ def parse_tiles(provider, dsrs: list[str], text: str):
 def run(args):
 
     timer = Timer()
-    provider = providers[vars(args)["from"]]()  # from is a Python keyword
+    provider = providers[vars(args)["from"].lower()]()  # from is a Python keyword
     dsrs = args.dsr.split(",")
     assert args.files is None or len(args.tiles) == 1
 
