@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import argparse
+from astropy.coordinates import SkyCoord
 
 from azulero import io
 from azulero.providers import astroq, dss, sas
@@ -33,10 +34,10 @@ def add_parser(subparsers):
     )
 
     parser.add_argument(
-        "tiles",
+        "targets",
         type=str,
         nargs="+",
-        help="Space-separated list of tile indices.",
+        help="Space-separated list of tile indices, parenthesized coordinates or object names.",
     )
     parser.add_argument(
         "--dsr",
@@ -62,6 +63,13 @@ def add_parser(subparsers):
     )
 
     parser.set_defaults(func=run)
+
+
+def query_tiles(provider, radec: SkyCoord, dsrs: list[str]):
+    tiles = provider.query_tiles(radec, dsrs)
+    for t in tiles:
+        print(f"- Tile: {t}")
+    return [t.index for t in tiles]
 
 
 def query_datafiles(retriever, tile, dsr):
@@ -95,17 +103,41 @@ def download_datafiles(retriever, datafiles, workdir):
         print(f"- {path}")
 
 
+def parse_tiles(provider, dsrs: list[str], text: str):
+    if text.isdigit():
+        print(f"Tile: {text}")
+        return [text]
+    if "," in text:
+        print(f"Coordinates: {text}")
+        ra, dec = text.split(",")
+        radec = SkyCoord(ra, dec, unit="deg")
+    else:
+        print(f"Named object: {text}")
+        radec = SkyCoord.from_name(text)
+        print(f"- Coordinates: {radec.ra.value:.2f}° {radec.dec.value:.2f}°")
+    tiles = query_tiles(provider, radec, dsrs)
+    if len(tiles) == 0:
+        print("WARNING: No tile found!")
+    return tiles
+
+
 def run(args):
 
     timer = Timer()
     provider = providers[vars(args)["from"]]()  # from is a Python keyword
+    dsrs = args.dsr.split(",")
     assert args.files is None or len(args.tiles) == 1
-    for tile in args.tiles:  # TODO parallelize?
+
+    tiles = []
+    for t in args.targets:
+        tiles += parse_tiles(provider, dsrs, t)
+
+    for tile in tiles:
         workdir = io.make_workdir(args.workspace, tile)
         if args.files is not None:
             datafiles = args.files
         else:
-            for dsr in args.dsr.split(","):
+            for dsr in dsrs:
                 datafiles = query_datafiles(provider, tile, dsr)
                 if len(datafiles) > 0:
                     break
@@ -115,8 +147,10 @@ def run(args):
             continue
         if args.files is None and len(datafiles) > 4:
             print(f"WARNING: More than 4 files found: {len(datafiles)}.")
+
         download_datafiles(provider, datafiles, workdir)
         timer.tic_print()
+
         print(f"\nYou may now run:")
         print(f"\nazul --workspace {args.workspace} crop {tile}\n")
         print(f"or:")

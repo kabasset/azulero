@@ -2,15 +2,40 @@
 # SPDX-PackageSourceInfo: https://github.com/kabasset/azulero
 # SPDX-License-Identifier: Apache-2.0
 
-from astroquery.esa.euclid import Euclid, EuclidClass
+from astropy.coordinates import SkyCoord
+from astroquery.esa.euclid import EuclidClass
 import contextlib  # intercept astroquery prints
+from dataclasses import dataclass
 from io import StringIO
 import netrc
+
+
+@dataclass(frozen=True)
+class Tile(object):
+    index: str
+    mode: str
+    dsr: str
+    distance: float
+
+    def __str__(self) -> str:
+        return f"{self.mode}: {self.index} ({self.dsr}); distance: {self.distance:.2f}°"
+
+
+def tile(res, target):
+    center = SkyCoord(res["ra"], res["dec"], unit="deg", frame="icrs")
+    distance = center.separation(target).value
+    return Tile(
+        str(res["tile_index"]),
+        res["processing_mode"],
+        res["data_set_release"],
+        distance,
+    )
 
 
 class AstroQuery:
 
     def __init__(self, env="IDR"):
+
         self.euclid = EuclidClass(environment=env)
 
         # Intercept stderr, stdout
@@ -28,7 +53,16 @@ class AstroQuery:
         if err.getvalue():
             raise RuntimeError(err.getvalue())
 
-    def query_datafiles(self, tile, dsr):
+    def query_tiles(self, radec: SkyCoord, dsrs: list[str]):
+        dsrs_text = ",".join("'" + d + "'" for d in dsrs)
+        q = f"SELECT tile_index, ra, dec, data_set_release, processing_mode FROM sedm.mosaic_product WHERE (mosaic_product.data_set_release IN ({dsrs_text})) AND INTERSECTS(CIRCLE({radec.ra.value},{radec.dec.value},0),fov)=1"
+        res = self.euclid.launch_job(q).get_results()
+        return sorted(
+            set(tile(r, radec) for r in res),
+            key=lambda t: t.distance,
+        )
+
+    def query_datafiles(self, tile: str, dsr: str):
         products = self.euclid.get_product_list(
             tile_index=tile, product_type="DpdMerBksMosaic"
         )

@@ -64,7 +64,7 @@ def read_fits(path: Path, slicing=None):
 def make_workdir(workspace, tile):
     workdir = Path(workspace).expanduser() / tile
     if workdir.is_dir():
-        print("WARNING: Working directory already exists.")
+        print(f"WARNING: Working directory already exists: {workdir}")
     else:
         workdir.mkdir(parents=True)
     return workdir
