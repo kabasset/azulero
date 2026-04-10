@@ -41,9 +41,20 @@
 
 ## Known issues
 
+`azul find`
+
+* kabasset/azulero#35 - Cartesian coordinates are used,
+  which cannot handle positions around RA = 0° = 360° or dec = +/-90°
+  (where there are no Euclid data anyway).
+
+`azul process`
+
+* kabasset/azulero#16 - Inpainted saturated pixel are rendered too dim.
+
 `azul roam`
 
-* kabasset/azulero/#55 Zoom < 1° is not supported.
+* kabasset/azulero#55 - Zoom < 1° is not supported for Gaia Sky.
+* kabasset/azulero#31 - Zoom > 100% is not supported.
 
 # 1.1.1
 
