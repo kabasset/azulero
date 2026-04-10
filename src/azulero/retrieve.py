@@ -11,30 +11,30 @@ from azulero.timing import Timer
 
 
 providers = {
-    "dss": lambda: dss.DSS(),  # TODO enable DSS selection
-    "pdr": lambda: sas.SAS("PDR"),
+    "public": lambda: sas.SAS("PDR"),
     "idr": lambda: sas.SAS("IDR"),
     "otf": lambda: sas.SAS("OTF"),
+    "dss": lambda: dss.DSS(),  # TODO enable DSS selection
 }
 
 
-def enumeration(values, coordination=", "):
+def help_enumeration(values, coordination=", "):
     l = [str(v) for v in values]
     if len(l) == 1:
         return l[0]
     return ", ".join(list(l)[:-1]) + coordination + list(l)[-1]
 
 
-def choice(values):
-    return enumeration(values, " or ")
+def help_choice(values):
+    return help_enumeration(values, " or ")
 
 
 def add_parser(subparsers):
 
     parser = subparsers.add_parser(
         "retrieve",
-        help="Retrieve MER datafiles.",
-        description="Query and download datafiles.",
+        help="Retrieve datafiles.",
+        description="Query and download various datafiles at given positions or tile indices.",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
 
@@ -42,21 +42,24 @@ def add_parser(subparsers):
         "targets",
         type=str,
         nargs="+",
-        help="Space-separated list of tile indices, parenthesized coordinates or object names.",
+        help=(
+            "Space-separated list of tile indices (e.g. 102159776), ",
+            "coordinates (e.g. 270.93°,67.05°), and/or object names (e.g. UGC11116).",
+        ),
     )
     parser.add_argument(
         "--dsr",
         type=str,
         default="DR1_R2,DR1_R1,Q1_R1",
         metavar="LIST",
-        help="Comma-separated list of data set releases.",
+        help="Comma-separated list of data set releases in order of preferrence.",
     )
     parser.add_argument(
         "--from",
         type=str,
         default="idr",
         metavar="PROVIDER",
-        help=f"Data provider: {choice(providers.keys())}.",
+        help=f"Data provider: {help_choice(providers.keys())}.",
     )
     parser.add_argument(
         "--files",
@@ -65,6 +68,12 @@ def add_parser(subparsers):
         nargs="+",
         metavar="FILENAMES",
         help="Names of the files to be downloaded (bypasses query).",
+    )
+    parser.add_argument(
+        "--query-only",
+        "-q",
+        action="store_true",
+        help="Only query the filenames without downloading.",
     )
 
     parser.set_defaults(func=run)
@@ -108,10 +117,12 @@ def download_datafiles(retriever, datafiles, workdir):
         print(f"- {path}")
 
 
-def parse_tiles(provider, dsrs: list[str], text: str):
+def query_tiles(provider, dsrs: list[str], text: str):
+
     if text.isdigit():
         print(f"Tile: {text}")
         return [text]
+
     if "," in text:
         print(f"Coordinates: {text}")
         ra, dec = text.split(",")
@@ -120,10 +131,14 @@ def parse_tiles(provider, dsrs: list[str], text: str):
         print(f"Named object: {text}")
         radec = SkyCoord.from_name(text)
         print(f"- Coordinates: {radec.ra.value:.2f}° {radec.dec.value:.2f}°")
-    tiles = query_tiles(provider, radec, dsrs)
-    if len(tiles) == 0:
+
+    tiles = provider.query_tiles(radec, dsrs)
+    for t in tiles:
+        print(f"- Tile: {t}")
+    indices = [t.index for t in tiles]
+    if len(indices) == 0:
         print("WARNING: No tile found!")
-    return tiles
+    return indices
 
 
 def run(args):
@@ -135,10 +150,9 @@ def run(args):
 
     tiles = []
     for t in args.targets:
-        tiles += parse_tiles(provider, dsrs, t)
+        tiles += query_tiles(provider, dsrs, t)
 
     for tile in tiles:
-        workdir = io.make_workdir(args.workspace, tile)
         if args.files is not None:
             datafiles = args.files
         else:
@@ -153,8 +167,10 @@ def run(args):
         if args.files is None and len(datafiles) > 4:
             print(f"WARNING: More than 4 files found: {len(datafiles)}.")
 
-        download_datafiles(provider, datafiles, workdir)
-        timer.tic_print()
+        if not args.query_only:
+            workdir = io.make_workdir(args.workspace, tile)
+            download_datafiles(provider, datafiles, workdir)
+            timer.tic_print()
 
         print(f"\nYou may now run:")
         print(f"\nazul --workspace {args.workspace} crop {tile}\n")
