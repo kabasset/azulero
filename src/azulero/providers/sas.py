@@ -2,43 +2,75 @@
 # SPDX-PackageSourceInfo: https://github.com/kabasset/azulero
 # SPDX-License-Identifier: Apache-2.0
 
-import requests
+from astropy.coordinates import SkyCoord
+from astroquery.esa.euclid import EuclidClass
+import contextlib  # intercept astroquery prints
+from dataclasses import dataclass
+from io import StringIO
+import netrc
 
 
-class SAS(object):
+@dataclass(frozen=True)
+class Tile(object):
+    index: str
+    mode: str
+    dsr: str
+    distance: float
 
-    def query_datafiles(self, tile, dsr):
-        adql = (
-            f"SELECT TOP 50 file_name, filter_name FROM sedm.mosaic_product"
-            f" WHERE (release_name='{dsr}')"
-            f" AND (category='SCIENCE')"
-            f" AND (tile_index={tile})"
-            f" AND (instrument_name IN ('VIS', 'NISP'))"  # FIXME handled by caller
+    def __str__(self) -> str:
+        return f"{self.mode}: {self.index} ({self.dsr}); distance: {self.distance:.2f}°"
+
+
+def tile(res, target):
+    center = SkyCoord(res["ra"], res["dec"], unit="deg", frame="icrs")
+    distance = center.separation(target).value
+    return Tile(
+        str(res["tile_index"]),
+        res["processing_mode"],
+        res["data_set_release"],
+        distance,
+    )
+
+
+class SAS:
+
+    def __init__(self, env):
+
+        self.euclid = EuclidClass(environment=env)
+
+        # Intercept stderr, stdout
+        err, out = StringIO(), StringIO()
+        with contextlib.redirect_stderr(err), contextlib.redirect_stdout(out):
+            auth = netrc.netrc().authenticators("easidr.esac.esa.int")
+            self.euclid.login(user=auth[0], password=auth[2])
+        if err.getvalue():
+            raise RuntimeError(err.getvalue())
+
+    def __del__(self):
+        err, out = StringIO(), StringIO()
+        with contextlib.redirect_stderr(err), contextlib.redirect_stdout(out):
+            self.euclid.logout()
+        if err.getvalue():
+            raise RuntimeError(err.getvalue())
+
+    def query_tiles(self, radec: SkyCoord, dsrs: list[str]):
+        dsrs_text = ",".join("'" + d + "'" for d in dsrs)
+        q = f"SELECT tile_index, ra, dec, data_set_release, processing_mode FROM sedm.mosaic_product WHERE (mosaic_product.data_set_release IN ({dsrs_text})) AND INTERSECTS(CIRCLE({radec.ra.value},{radec.dec.value},0),fov)=1"
+        res = self.euclid.launch_job(q).get_results()
+        return sorted(
+            set(tile(r, radec) for r in res),
+            key=lambda t: t.distance,
         )
-        query = {
-            "REQUEST": "doQuery",
-            "LANG": "ADQL",
-            "FORMAT": "csv",
-            "QUERY": adql.replace(" ", "+"),
+
+    def query_datafiles(self, tile: str, dsr: str):
+        products = self.euclid.get_product_list(
+            tile_index=tile, product_type="DpdMerBksMosaic"
+        )
+        return {
+            str(p["file_name"]): str(p["filter_name"])
+            for p in products
+            if str(p["release_name"]) == dsr
         }
-        url = "https://eas.esac.esa.int/tap-server/tap/sync?" + "&".join(
-            f"{p}={query[p]}" for p in query
-        )
-        r = requests.get(url)  # Cannot use params as adql characters would be escaped
-        r.raise_for_status()
-
-        lines = r.text.split()
-        datafiles = {}
-        for l in lines[1:]:
-            file_name, filter_name = l.split(",")
-            datafiles[file_name] = filter_name
-        return datafiles
 
     def download_datafile(self, name, path):
-
-        query = {"file_name": name, "release": "sedm", "RETRIEVAL_TYPE": "FILE"}
-        r = requests.get(f"https://eas.esac.esa.int/sas-dd/data", query)
-        r.raise_for_status()
-
-        with open(path, "wb") as f:
-            f.write(r.content)
+        path = self.euclid.get_product(file_name=name, output_file=path)

@@ -6,11 +6,16 @@ import argparse
 from astropy.coordinates import SkyCoord
 
 from azulero import io
-from azulero.providers import astroq, dss, sas
+from azulero.providers import dss, sas
 from azulero.timing import Timer
 
 
-providers = {"dss": dss.DSS, "sas": sas.SAS, "idr": astroq.AstroQuery}
+providers = {
+    "dss": lambda: dss.DSS(),
+    "pdr": lambda: sas.SAS("PDR"),
+    "idr": lambda: sas.SAS("IDR"),
+    "otf": lambda: sas.SAS("OTF"),
+}
 
 
 def enumeration(values, coordination=", "):
