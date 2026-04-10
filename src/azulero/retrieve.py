@@ -3,126 +3,13 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import argparse
-from astroquery.esa.euclid import Euclid, EuclidClass
-import contextlib  # intercept astroquery prints
-import gzip
-from io import BytesIO, StringIO
-import netrc
-import requests
 
 from azulero import io
+from azulero.providers import astroq, dss, sas
 from azulero.timing import Timer
 
 
-class DSS(object):
-
-    def query_datafiles(self, tile, dsr):
-
-        query = {
-            "project": "EUCLID",
-            "class_name": "DpdMerBksMosaic",
-            "Data.TileIndex": tile,
-            "Header.DataSetRelease": dsr,
-            "fields": "Data.DataStorage.DataContainer.FileName:Data.Filter.Name",
-        }
-
-        r = requests.get("https://eas-dps-rest-ops.esac.esa.int/REST", params=query)
-        r.raise_for_status()
-
-        lines = r.text.replace('"', "").split()
-        datafiles = {}
-        for l in lines:
-            if "VIS" in l or "NIR" in l:  # FIXME handled by caller
-                file_name, filter_name = l.split(",")
-                datafiles[file_name] = filter_name
-        return datafiles
-
-    def download_datafile(self, name, path):
-
-        r = requests.get(f"https://euclidsoc.esac.esa.int/{name}")
-        r.raise_for_status()
-
-        # FIXME download and decompress in free function?
-        with gzip.GzipFile(fileobj=BytesIO(r.content)) as f:
-            content = f.read()
-        with open(path, "wb") as f:
-            f.write(content)
-
-
-class SAS(object):
-
-    def query_datafiles(self, tile, dsr):
-        adql = (
-            f"SELECT TOP 50 file_name, filter_name FROM sedm.mosaic_product"
-            f" WHERE (release_name='{dsr}')"
-            f" AND (category='SCIENCE')"
-            f" AND (tile_index={tile})"
-            f" AND (instrument_name IN ('VIS', 'NISP'))"  # FIXME handled by caller
-        )
-        query = {
-            "REQUEST": "doQuery",
-            "LANG": "ADQL",
-            "FORMAT": "csv",
-            "QUERY": adql.replace(" ", "+"),
-        }
-        url = "https://eas.esac.esa.int/tap-server/tap/sync?" + "&".join(
-            f"{p}={query[p]}" for p in query
-        )
-        r = requests.get(url)  # Cannot use params as adql characters would be escaped
-        r.raise_for_status()
-
-        lines = r.text.split()
-        datafiles = {}
-        for l in lines[1:]:
-            file_name, filter_name = l.split(",")
-            datafiles[file_name] = filter_name
-        return datafiles
-
-    def download_datafile(self, name, path):
-
-        query = {"file_name": name, "release": "sedm", "RETRIEVAL_TYPE": "FILE"}
-        r = requests.get(f"https://eas.esac.esa.int/sas-dd/data", query)
-        r.raise_for_status()
-
-        with open(path, "wb") as f:
-            f.write(r.content)
-
-
-class AstroQuery:
-
-    def __init__(self, env="IDR"):
-        self.euclid = EuclidClass(environment=env)
-
-        # Intercept stderr, stdout
-        err, out = StringIO(), StringIO()
-        with contextlib.redirect_stderr(err), contextlib.redirect_stdout(out):
-            auth = netrc.netrc().authenticators("easidr.esac.esa.int")
-            self.euclid.login(user=auth[0], password=auth[2])
-        if err.getvalue():
-            raise RuntimeError(err.getvalue())
-
-    def __del__(self):
-        err, out = StringIO(), StringIO()
-        with contextlib.redirect_stderr(err), contextlib.redirect_stdout(out):
-            self.euclid.logout()
-        if err.getvalue():
-            raise RuntimeError(err.getvalue())
-
-    def query_datafiles(self, tile, dsr):
-        products = self.euclid.get_product_list(
-            tile_index=tile, product_type="DpdMerBksMosaic"
-        )
-        return {
-            str(p["file_name"]): str(p["filter_name"])
-            for p in products
-            if str(p["release_name"]) == dsr
-        }
-
-    def download_datafile(self, name, path):
-        path = self.euclid.get_product(file_name=name, output_file=path)
-
-
-providers = {"dss": DSS, "sas": SAS, "idr": AstroQuery}
+providers = {"dss": dss.DSS, "sas": sas.SAS, "idr": astroq.AstroQuery}
 
 
 def enumeration(values, coordination=", "):
