@@ -26,8 +26,8 @@ def tile(res, target):
     distance = center.separation(target).value
     return Tile(
         str(res["tile_index"]),
-        res["processing_mode"],
-        res["data_set_release"],
+        res.get("processing_mode", "UNKNOWN"),
+        res.get("data_set_release", "UNKNOWN"),
         distance,
     )
 
@@ -36,6 +36,7 @@ class SAS:
 
     def __init__(self, env):
 
+        self.env = env
         self.euclid = EuclidClass(environment=env)
 
         # Intercept stderr, stdout
@@ -55,11 +56,17 @@ class SAS:
 
     def query_tiles(self, radec: SkyCoord, dsrs: list[str]):
         dsrs_text = ",".join("'" + d + "'" for d in dsrs)
-        q = f"SELECT tile_index, ra, dec, data_set_release, processing_mode FROM sedm.mosaic_product WHERE (mosaic_product.data_set_release IN ({dsrs_text})) AND INTERSECTS(CIRCLE({radec.ra.value},{radec.dec.value},0),fov)=1"
+        select_text = "tile_index,ra,dec,data_set_release"
+        if self.env != "PDR":
+            select_text += ",processing_mode"
+        q = f"SELECT {select_text} FROM sedm.mosaic_product WHERE (mosaic_product.data_set_release IN ({dsrs_text})) AND INTERSECTS(CIRCLE({radec.ra.value},{radec.dec.value},0),fov)=1"
         res = self.euclid.launch_job(q).get_results()
         return sorted(
-            set(tile(r, radec) for r in res),
-            key=lambda t: t.distance,
+            sorted(
+                set(tile(r, radec) for r in res),
+                key=lambda t: t.distance,
+            ),
+            key=lambda t: t.mode,
         )
 
     def query_datafiles(self, tile: str, dsr: str):
