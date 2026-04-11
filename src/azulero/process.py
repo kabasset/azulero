@@ -7,7 +7,7 @@ import numpy as np
 from pathlib import Path
 
 from azulero import color, io, mask
-from azulero.timing import Timer
+from azulero.tools.timing import Timer
 
 
 def add_parser(subparsers):
@@ -194,7 +194,7 @@ def run(args):
         path = Path(args.wcs.format(workspace=args.workspace, tile=tile, step="wcs"))
         io.write_wcs(wcs, path)
         print(f"- Write WCS: {path.name}")
-    timer.tic_print()
+    timer.tic_log()
 
     print(f"Detect bad pixels")
     dead = mask.dead_pixels(iyjh)
@@ -203,23 +203,23 @@ def run(args):
         path = render_path_for_step(template, "mask")
         print(f"- Write: {path.name}")
         io.write_mask(dead, path)
-    timer.tic_print()
+    timer.tic_log()
 
     print(f"Inpaint dead pixels")
     iyjh[0] = mask.inpaint(iyjh[0], dead[0])
     # iyjh[0][dead[0]] = mask.resaturate(iyjh[0][dead[0]], np.max(iyjh[0]))
     nir_dead = dead[1] | dead[2] | dead[3]
     iyjh[1:] = mask.inpaint(iyjh[1:], nir_dead, 0)
-    timer.tic_print()
+    timer.tic_log()
 
     print(f"Sharpen channels")
     iyjh = color.sharpen(iyjh, transform.iyjh_fwhm / 2.355, transform.sharpen_strength)
-    timer.tic_print()
+    timer.tic_log()
 
     print(f"Stretch dynamic range")
     iyjh = color.stretch_iyjh(iyjh, transform)
     # print(f"- Medians: {', '.join(str(np.median(c)) for c in iyjh)}") # TODO use approximant
-    timer.tic_print()
+    timer.tic_log()
     # TODO save vstacked iyjh (crop if too high)
 
     print(f"Blend IYJH to RGB")
@@ -232,18 +232,18 @@ def run(args):
         path = render_path_for_step(template, "blended")
         print(f"- Write: {path.name}")
         io.write_rgb(rgb, path, wcs=wcs)
-    timer.tic_print()
+    timer.tic_log()
 
     # print(f"Inpaint hot pixels")
     # rgb[dead[0]] = mask.resaturate(rgb[dead[0]])
     # rgb = mask.inpaint(rgb, hot)
-    # timer.tic_print()
+    # timer.tic_log()
 
     # if "{step}" in name:
     #     path = render_path_for_step(template, "inpainted")
     #     print(f"- Write: {path.name}")
     #     io.write_rgb(rgb, path, wcs=wcs)
-    #     timer.tic_print()
+    #     timer.tic_log()
 
     if len(args.curves) > 0:
         print(f"Adjust curves")
@@ -255,4 +255,4 @@ def run(args):
         path = render_path_for_step(template, "adjusted")
         print(f"- Write: {path.name}")
         io.write_rgb(rgb, path, wcs=wcs)
-        timer.tic_print()
+        timer.tic_log()

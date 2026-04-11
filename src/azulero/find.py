@@ -10,7 +10,7 @@ from pathlib import Path
 from shapely import geometry
 
 from azulero import io
-from azulero.timing import Timer
+from azulero.tools.timing import Timer
 
 
 def add_parser(subparsers):
@@ -112,7 +112,7 @@ def run(args):
         filename = Path(args.workspace) / args.tiling
         print(f"Load tiling: {args.tiling}")
         tiling = Tiling(filename)
-        timer.tic_print()
+        timer.tic_log()
     elif args.wcs:
         print(f"Load WCS: {args.wcs}")
         wcs = io.read_wcs(Path(args.workspace), args.wcs)
@@ -133,7 +133,7 @@ def run(args):
             tiles = tiling(o)
             for t in tiles:
                 print(f"- {t}")
-            timer.tic_print()
+            timer.tic_log()
             if len(tiles) > 0:
                 print(f"\nYou may now run:")
                 print(

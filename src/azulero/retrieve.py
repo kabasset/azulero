@@ -7,7 +7,8 @@ from astropy.coordinates import SkyCoord
 
 from azulero import io
 from azulero.providers import dss, sas
-from azulero.timing import Timer
+from azulero.tools.messaging import logger
+from azulero.tools.timing import Timer
 
 
 providers = {
@@ -82,30 +83,30 @@ def add_parser(subparsers):
 def query_tiles(provider, dsrs: list[str], text: str):
 
     if text.isdigit():
-        print(f"Tile: {text}")
+        logger.info(f"Tile: {text}")
         return [text]
 
     if "," in text:
-        print(f"Coordinates: {text}")
+        logger.info(f"Coordinates: {text}")
         ra, dec = text.split(",")
         radec = SkyCoord(ra, dec, unit="deg")
     else:
-        print(f"Named object: {text}")
+        logger.info(f"Named object: {text}")
         radec = SkyCoord.from_name(text)
-        print(f"- Coordinates: {radec.ra.value:.2f}° {radec.dec.value:.2f}°")
+        logger.info(f"- Coordinates: {radec.ra.value:.2f}° {radec.dec.value:.2f}°")
 
     tiles = provider.query_tiles(radec, dsrs)
     for t in tiles:
-        print(f"- Tile: {t}")
+        logger.info(f"- Tile: {t}")
     indices = [t.index for t in tiles]
     if len(indices) == 0:
-        print("WARNING: No tile found!")
+        logger.warning("WARNING: No tile found!")
     return indices
 
 
 def query_datafiles(retriever, tile, dsr):
 
-    print(f"Query datafiles for tile {tile} and dataset release {dsr}:")
+    logger.info(f"Query datafiles for tile {tile} and dataset release {dsr}:")
 
     datafiles = retriever.query_datafiles(tile, dsr)
     datafiles = {
@@ -114,24 +115,24 @@ def query_datafiles(retriever, tile, dsr):
         if "VIS" in filter or "NIR" in filter
     }
     if len(datafiles) == 0:
-        print("- None found.")
+        logger.warning("No datafile found.")
 
     for f in datafiles:
-        print(f"- [{datafiles[f]}] {f}")
+        logger.info(f"- [{datafiles[f]}] {f}")
     return datafiles
 
 
 def download_datafiles(retriever, datafiles, workdir):
 
-    print(f"Download and extract datafiles to: {workdir}")
+    logger.info(f"Download and extract datafiles to: {workdir}")
 
     for name in datafiles:  # TODO parallelize?
         path = workdir / name.removesuffix(".gz")
         if path.is_file():
-            print(f"WARNING: File exists; skip: {path.name}")
-            continue
-        retriever.download_datafile(name, path)
-        print(f"- {path}")
+            logger.warning(f"File exists; skip: {path.name}")
+        else:
+            retriever.download_datafile(name, path)
+            logger.info(f"- {path}")
 
 
 def run(args):
@@ -153,19 +154,24 @@ def run(args):
                 datafiles = query_datafiles(provider, tile, dsr)
                 if len(datafiles) > 0:
                     break
-            timer.tic_print()
+            timer.tic_log()
         if args.files is None and len(datafiles) < 4:
-            print(f"ERROR: Only {len(datafiles)} files found; Skip tile: {tile}")
+            logger.error(f"Only {len(datafiles)} files found; Skip tile: {tile}")
             continue
         if args.files is None and len(datafiles) > 4:
-            print(f"WARNING: More than 4 files found: {len(datafiles)}.")
+            logger.warning(f"More than 4 files found: {len(datafiles)}.")
 
         if not args.query_only:
             workdir = io.make_workdir(args.workspace, tile)
             download_datafiles(provider, datafiles, workdir)
-            timer.tic_print()
+            timer.tic_log()
 
-        print(f"\nYou may now run:")
-        print(f"\nazul --workspace {args.workspace} crop {tile}\n")
-        print(f"or:")
-        print(f"\nazul --workspace {args.workspace} process {tile}\n")
+        logger.info("")
+        logger.info(f"You may now run:")
+        logger.info("")
+        logger.info(f"azul --workspace {args.workspace} crop {tile}")
+        logger.info("")
+        logger.info(f"or:")
+        logger.info("")
+        logger.info(f"azul --workspace {args.workspace} process {tile}")
+        logger.info("")

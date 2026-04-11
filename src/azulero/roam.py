@@ -10,7 +10,7 @@ import cv2
 from azulero import io, overlay, sequence
 from azulero.equirectangular import Projection
 from azulero.gaiasky import roam_gaiasky
-from azulero.timing import Timer
+from azulero.tools.timing import Timer
 
 
 def add_parser(subparsers):
@@ -125,7 +125,7 @@ def run(args):
         print(f"- Shape: {image_shape[0]} x {image_shape[1]}")
         pyramid = Pyramid(image, 8)
         print(f"- Pyramid levels: {len(pyramid)}")
-        timer.tic_print()
+        timer.tic_log()
 
     print(f"Read sequence of key frames: {config.name}")
     wcs = None if args.wcs is None else io.read_wcs(Path(args.workspace), args.wcs)
@@ -140,7 +140,7 @@ def run(args):
         for i, c, z, a in zip(range(len(centers)), centers, hfovs, orientations)
     ][args.start : args.stop]
     print(f"- Rendering range: [{args.start}, {args.stop})")
-    timer.tic_print()
+    timer.tic_log()
 
     if args.scale is None:
         scale = overlay.Scale(width=0, text="")
@@ -173,7 +173,7 @@ def run(args):
 
     writer.release()
     print(f"- Output written: {output}")
-    timer.tic_print()
+    timer.tic_log()
 
 
 class Pyramid:

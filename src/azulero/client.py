@@ -6,16 +6,10 @@ import argparse
 from importlib import metadata
 
 from azulero import assemble, find, overlay, retrieve, crop, tune, process, roam
+from azulero.tools import messaging
 
 
 def run():
-
-    print(
-        f"\n"
-        f"  Azulero v{metadata.version('azulero')}\n"
-        f"  Antoine Basset, CNES\n"
-        f"  http://doi.org/10.24400/815952/Azulero\n"
-    )
 
     parser = argparse.ArgumentParser(
         prog="azul",
@@ -34,6 +28,13 @@ def run():
         metavar="PATTERN",
         help="Input file pattern, where `{channel}` is replaced with the channel name, e.g. `NIR-Y`",
     )
+    parser.add_argument(
+        "--log",
+        type=str,
+        default="INFO",
+        metavar="LEVEL",
+        help=f"Log level.",
+    )
 
     subparsers = parser.add_subparsers(title="Commands")
     find.add_parser(subparsers)
@@ -46,6 +47,14 @@ def run():
     overlay.add_parser(subparsers)
 
     args = parser.parse_args()
+
+    logger = messaging.setup_logger(args.log)
+    logger.info("")
+    logger.info(f"  Azulero v{metadata.version('azulero')}")
+    logger.info(f"  Antoine Basset, CNES")
+    logger.info(f"  http://doi.org/10.24400/815952/Azulero")
+    logger.info("")
+
     args.func(args)
 
 

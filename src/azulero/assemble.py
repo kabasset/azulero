@@ -7,8 +7,8 @@ import numpy as np
 from pathlib import Path
 import yaml
 
-from azulero import color, io, mask
-from azulero.timing import Timer
+from azulero import io
+from azulero.tools.timing import Timer
 
 
 def add_parser(subparsers):
@@ -64,12 +64,12 @@ def run(args):
         patch = io.read_iyjh(workdir, slicing, args.input)
         print(f"- {tile}: {patch.shape[1]} x {patch.shape[2]}")
         patches.append(patch)
-        timer.tic_print()
+        timer.tic_log()
 
     print("Assemble")
     assemblage = np.concatenate(patches, axis=2)
     print(f"- Shape: {assemblage.shape[1]} x {assemblage.shape[2]}")
-    timer.tic_print()
+    timer.tic_log()
 
     print("Write channels")
     workdir = io.make_workdir(workspace, args.output_dir)
@@ -77,4 +77,4 @@ def run(args):
         path = workdir / f"EUC_{name}_ASSEMBLAGE.fits"
         print(f"- [{name}] {path}")
         io.write_fits(channel, path)
-    timer.tic_print()
+    timer.tic_log()

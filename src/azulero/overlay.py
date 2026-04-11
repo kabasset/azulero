@@ -12,7 +12,7 @@ from dataclasses import dataclass
 import numpy as np
 
 from azulero import io
-from azulero.timing import Timer
+from azulero.tools.timing import Timer
 
 
 @dataclass
@@ -176,13 +176,13 @@ def run(args):
     image = np.zeros((wcs.array_shape[1], wcs.array_shape[0], 3), dtype=np.uint8)
     print(f"- Catalog: {catalog_path.name}")
     catalog = read_catalog(catalog_path)
-    timer.tic_print()
+    timer.tic_log()
 
     print("Draw ellipses")
     footprints = Footprints(wcs, catalog, args.pfa)
     count = footprints.draw(image)
     print(f"- Objects: {count}")
-    timer.tic_print()
+    timer.tic_log()
     print(f"- Save output: {output_path.name}")
     io.write_rgb(image, output_path, norm_depth=1)
-    timer.tic_print()
+    timer.tic_log()

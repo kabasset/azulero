@@ -5,6 +5,8 @@
 import time
 import tracemalloc
 
+from azulero.tools.messaging import logger
+
 
 class Timer(object):  # FIXME rename as profiler
 
@@ -27,7 +29,7 @@ class Timer(object):  # FIXME rename as profiler
         self.peak /= 1024**3
         tracemalloc.reset_peak()
 
-    def tic_print(self):
+    def tic_log(self):
         self.tic()
-        print(f"- Elapsed time: {self.split:.1f}s / Total: {self.total:.1f}s")
-        print(f"- Memory usage: {self.size:.1f}GB / Peak: {self.peak:.1f}GB")
+        logger.info(f"- Elapsed time: {self.split:.1f}s / Total: {self.total:.1f}s")
+        logger.info(f"- Memory usage: {self.size:.1f}GB / Peak: {self.peak:.1f}GB")

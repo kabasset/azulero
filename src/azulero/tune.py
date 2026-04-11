@@ -7,7 +7,7 @@ from astropy.io import fits
 import numpy as np
 
 from azulero import stats
-from azulero.timing import Timer
+from azulero.tools.timing import Timer
 
 
 def add_parser(subparsers):
@@ -42,10 +42,10 @@ def run(args):
     with fits.open(args.image) as f:
         data = f[0].data
     print(f"- Shape: {data.shape[0]} x {data.shape[1]}")
-    timer.tic_print()
+    timer.tic_log()
 
     propose_white_point(data, args.zero)  # FIXME split
-    timer.tic_print()
+    timer.tic_log()
 
 
 def propose_white_point(data: np.ndarray, zp: float):

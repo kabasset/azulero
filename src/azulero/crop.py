@@ -9,7 +9,7 @@ import numpy as np
 from pathlib import Path
 
 from azulero import io
-from azulero.timing import Timer
+from azulero.tools.timing import Timer
 
 
 def add_parser(subparsers):
@@ -57,13 +57,13 @@ def run(args):
 
     print(f"Read VIS channel: {workdir}")
     data = io.read_channel(workdir, args.input.format(channel="VIS"))
-    timer.tic_print()
+    timer.tic_log()
 
     print(f"Prepare data.")
     h, w = data.shape
     data = np.clip(data[::10, ::10], 0, args.white)
     im = plt.imshow(np.flipud(np.asinh(data / 0.7)), extent=[0, w, 0, h])
-    timer.tic_print()
+    timer.tic_log()
 
     plt.title("Zoom to select a region, then close the window.")
     plt.show()
