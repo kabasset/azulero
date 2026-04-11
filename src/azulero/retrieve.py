@@ -79,11 +79,28 @@ def add_parser(subparsers):
     parser.set_defaults(func=run)
 
 
-def query_tiles(provider, radec: SkyCoord, dsrs: list[str]):
+def query_tiles(provider, dsrs: list[str], text: str):
+
+    if text.isdigit():
+        print(f"Tile: {text}")
+        return [text]
+
+    if "," in text:
+        print(f"Coordinates: {text}")
+        ra, dec = text.split(",")
+        radec = SkyCoord(ra, dec, unit="deg")
+    else:
+        print(f"Named object: {text}")
+        radec = SkyCoord.from_name(text)
+        print(f"- Coordinates: {radec.ra.value:.2f}° {radec.dec.value:.2f}°")
+
     tiles = provider.query_tiles(radec, dsrs)
     for t in tiles:
         print(f"- Tile: {t}")
-    return [t.index for t in tiles]
+    indices = [t.index for t in tiles]
+    if len(indices) == 0:
+        print("WARNING: No tile found!")
+    return indices
 
 
 def query_datafiles(retriever, tile, dsr):
@@ -115,30 +132,6 @@ def download_datafiles(retriever, datafiles, workdir):
             continue
         retriever.download_datafile(name, path)
         print(f"- {path}")
-
-
-def query_tiles(provider, dsrs: list[str], text: str):
-
-    if text.isdigit():
-        print(f"Tile: {text}")
-        return [text]
-
-    if "," in text:
-        print(f"Coordinates: {text}")
-        ra, dec = text.split(",")
-        radec = SkyCoord(ra, dec, unit="deg")
-    else:
-        print(f"Named object: {text}")
-        radec = SkyCoord.from_name(text)
-        print(f"- Coordinates: {radec.ra.value:.2f}° {radec.dec.value:.2f}°")
-
-    tiles = provider.query_tiles(radec, dsrs)
-    for t in tiles:
-        print(f"- Tile: {t}")
-    indices = [t.index for t in tiles]
-    if len(indices) == 0:
-        print("WARNING: No tile found!")
-    return indices
 
 
 def run(args):
