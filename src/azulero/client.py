@@ -6,7 +6,7 @@ import argparse
 from importlib import metadata
 
 from azulero import assemble, find, overlay, retrieve, crop, tune, process, roam
-from azulero.tools import messaging
+from azulero.tools.messaging import logger, colorize
 
 
 def run():
@@ -48,11 +48,11 @@ def run():
 
     args = parser.parse_args()
 
-    logger = messaging.setup_logger(args.log)
+    logger.setLevel(args.log)
     logger.info("")
-    logger.info(f"  Azulero v{metadata.version('azulero')}")
-    logger.info(f"  Antoine Basset, CNES")
-    logger.info(f"  http://doi.org/10.24400/815952/Azulero")
+    logger.info(colorize("92;1", f"  Azulero v{metadata.version('azulero')}"))
+    logger.info(colorize("96;1", f"  Antoine Basset, CNES"))
+    logger.info(colorize("94;1", f"  http://doi.org/10.24400/815952/Azulero"))
     logger.info("")
 
     args.func(args)
