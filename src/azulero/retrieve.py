@@ -7,7 +7,7 @@ from astropy.coordinates import SkyCoord
 
 from azulero import io
 from azulero.providers import dss, sas
-from azulero.tools.messaging import logger, parse_envargs
+from azulero.tools.messaging import logger, parse_envargs, write_pipe_args
 from azulero.tools.timing import Timer
 
 
@@ -44,8 +44,8 @@ def add_parser(subparsers):
         type=str,
         nargs="+",
         help=(
-            "Space-separated list of tile indices (e.g. 102159776), ",
-            "coordinates (e.g. 270.93°,67.05°), and/or object names (e.g. UGC11116).",
+            "Space-separated list of tile indices (e.g. 102159776), "
+            "coordinates (e.g. 270.93°,67.05°), and/or object names (e.g. UGC11116)."
         ),
     )
     parser.add_argument(
@@ -77,28 +77,28 @@ def add_parser(subparsers):
         help="Only query the filenames without downloading.",
     )
 
-    parser.set_defaults(**parse_envargs("RETRIEVE"), func=run)
+    parser.set_defaults(**parse_envargs("retrieve"), func=run)
 
 
-def query_tiles(provider, dsrs: list[str], text: str):
+def query_tiles(provider, dsrs: list[str], target: str):
 
-    if text.isdigit():
-        logger.info(f"Tile: {text}")
-        return [text]
+    if target.isdigit():
+        logger.info(f"Tile: {target}")
+        return [(target, None)]
 
-    if "," in text:
-        logger.info(f"Coordinates: {text}")
-        ra, dec = text.split(",")
+    if "," in target:
+        logger.info(f"Coordinates: {target}")
+        ra, dec = target.split(",")
         radec = SkyCoord(ra, dec, unit="deg")
     else:
-        logger.info(f"Named object: {text}")
-        radec = SkyCoord.from_name(text)
+        logger.info(f"Named object: {target}")
+        radec = SkyCoord.from_name(target)
         logger.info(f"- Coordinates: {radec.ra.value:.2f}° {radec.dec.value:.2f}°")
 
     tiles = provider.query_tiles(radec, dsrs)
     for t in tiles:
         logger.info(f"- Tile: {t}")
-    indices = [t.index for t in tiles]
+    indices = [(t.index, target) for t in tiles]
     if len(indices) == 0:
         logger.warning("WARNING: No tile found!")
     return indices
@@ -142,11 +142,11 @@ def run(args):
     dsrs = args.dsr.split(",")
     assert args.files is None or len(args.tiles) == 1
 
-    tiles = []
+    targets = []
     for t in args.targets:
-        tiles += query_tiles(provider, dsrs, t)
+        targets += query_tiles(provider, dsrs, t)
 
-    for tile in tiles:
+    for tile, _ in targets:
         if args.files is not None:
             datafiles = args.files
         else:
@@ -166,12 +166,11 @@ def run(args):
             download_datafiles(provider, datafiles, workdir)
             timer.tic_log()
 
+    res = map(lambda t: t[0] if t[1] is None else "/".join(t), targets)
+    if not write_pipe_args(res):
+        res = " ".join(res)
         logger.info("")
         logger.info(f"You may now run:")
         logger.info("")
-        logger.info(f"azul --workspace {args.workspace} crop {tile}")
-        logger.info("")
-        logger.info(f"or:")
-        logger.info("")
-        logger.info(f"azul --workspace {args.workspace} process {tile}")
+        logger.info(f"azul --workspace {args.workspace} process {res}")
         logger.info("")

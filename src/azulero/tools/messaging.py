@@ -20,6 +20,19 @@ def parse_envargs(command=None, prefix=os.environ.get("AZULERO_PREFIX", "AZUL"))
     return args
 
 
+def read_pipe_args():
+    if not sys.stdin.isatty():
+        return sys.stdin.readlines().split()
+    return None
+
+
+def write_pipe_args(args):
+    if not sys.stdout.isatty():
+        print("\n".join(args))
+        return True
+    return False
+
+
 def supports_color():
     # Inspired from Django https://github.com/django/django/blob/main/django/core/management/color.py
     return sys.stderr.isatty() and (
