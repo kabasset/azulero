@@ -36,7 +36,7 @@ def run():
         help=f"Log level.",
     )
 
-    subparsers = parser.add_subparsers(title="Commands")
+    subparsers = parser.add_subparsers(title="Commands", dest="cmd")
     find.add_parser(subparsers)
     retrieve.add_parser(subparsers)
     crop.add_parser(subparsers)
@@ -56,8 +56,9 @@ def run():
     logger.info(colorize("94;1", f"  http://doi.org/10.24400/815952/Azulero"))
     logger.info("")
 
+    logger.info(f"Command: {args.cmd}")
     for k in vars(args):
-        if k != "func":
+        if k not in ["func", "cmd"]:
             logger.info(f"  {k}: {vars(args)[k]}")
     logger.info("")
 
