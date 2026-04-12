@@ -56,6 +56,11 @@ def run():
     logger.info(colorize("94;1", f"  http://doi.org/10.24400/815952/Azulero"))
     logger.info("")
 
+    for k in vars(args):
+        if k != "func":
+            logger.info(f"  {k}: {vars(args)[k]}")
+    logger.info("")
+
     args.func(args)
 
 
