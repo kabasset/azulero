@@ -7,7 +7,7 @@ from astropy.coordinates import SkyCoord
 
 from azulero import io
 from azulero.providers import dss, sas
-from azulero.tools.messaging import logger
+from azulero.tools.messaging import logger, parse_envargs
 from azulero.tools.timing import Timer
 
 
@@ -77,7 +77,7 @@ def add_parser(subparsers):
         help="Only query the filenames without downloading.",
     )
 
-    parser.set_defaults(func=run)
+    parser.set_defaults(**parse_envargs("RETRIEVE"), func=run)
 
 
 def query_tiles(provider, dsrs: list[str], text: str):

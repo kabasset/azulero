@@ -6,7 +6,7 @@ import argparse
 from importlib import metadata
 
 from azulero import assemble, find, overlay, retrieve, crop, tune, process, roam
-from azulero.tools.messaging import logger, colorize
+from azulero.tools.messaging import logger, colorize, parse_envargs
 
 
 def run():
@@ -46,6 +46,7 @@ def run():
     roam.add_parser(subparsers)
     overlay.add_parser(subparsers)
 
+    parser.set_defaults(**parse_envargs())
     args = parser.parse_args()
 
     logger.setLevel(args.log)

@@ -7,6 +7,19 @@ import os
 import sys
 
 
+def parse_envargs(command=None, prefix=os.environ.get("AZULERO_PREFIX", "AZUL")):
+    if command is None:
+        prefix += "_"
+    else:
+        prefix += command.upper() + "_"
+    args = {
+        var.removeprefix(prefix).lower(): os.environ[var]
+        for var in os.environ
+        if var.startswith(prefix)
+    }
+    return args
+
+
 def supports_color():
     # Inspired from Django https://github.com/django/django/blob/main/django/core/management/color.py
     return sys.stderr.isatty() and (
