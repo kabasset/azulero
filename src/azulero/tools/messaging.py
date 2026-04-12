@@ -22,7 +22,7 @@ def parse_envargs(command=None, prefix=os.environ.get("AZULERO_PREFIX", "AZUL"))
 
 def read_pipe_args():
     if not sys.stdin.isatty():
-        return sys.stdin.readlines().split()
+        return sys.stdin.read().split()
     return None
 
 

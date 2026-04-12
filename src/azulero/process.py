@@ -27,9 +27,13 @@ def add_parser(subparsers):
     )
 
     parser.add_argument(
-        "tile",
+        "targets",
         type=str,
-        help="Tile index and optional slicing à-la NumPy, e.g. 102160611[1500:7500,11500:17500]",
+        nargs="*",
+        help=(
+            "Space separated list of targets, "
+            "optionally with slicing à-la NumPy, e.g. 102160611[1500:7500,11500:17500]"
+        ),
     )
     parser.add_argument(
         "--output",
@@ -179,7 +183,7 @@ def run(args):
         bw=np.array([args.offset, args.white]),
     )
 
-    tile, slicing = io.parse_tile(args.tile)
+    tile, slicing = io.parse_targets(args.targets)[0]  # FIXME process all
     workdir = Path(args.workspace).expanduser() / tile
     template = args.output.format(workspace=args.workspace, tile=tile, step="{step}")
 

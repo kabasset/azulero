@@ -9,16 +9,25 @@ import numpy as np
 from pathlib import Path
 import yaml
 
-from azulero.tools.messaging import logger
+from azulero.tools.messaging import logger, read_pipe_args
 
 
-def parse_tile(text: str):
-    if "/" in text:
+def parse_targets(targets: list[str]):
+    if not targets:
+        targets = read_pipe_args()
+        print(targets)
+    if len(targets) != 1:
+        logger.error("Only single-target processing is supported yet.")
+    return [_parse_target(t) for t in targets]
+
+
+def _parse_target(target: str):
+    if "/" in target:
         logger.warning(
             "Support for in-tile target is not yet implemented; Processing the whole tile."
         )
-        return text.split("/")[0], None
-    tile_slicing = text.split("[")
+        return target.split("/")[0], None  # TODO support subfolders
+    tile_slicing = target.split("[")
     if len(tile_slicing) == 1:
         return tile_slicing[0], None
     return tile_slicing[0], parse_slice(tile_slicing[1][:-1])
