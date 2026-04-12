@@ -9,8 +9,15 @@ import numpy as np
 from pathlib import Path
 import yaml
 
+from azulero.tools.messaging import logger
+
 
 def parse_tile(text: str):
+    if "/" in text:
+        logger.warning(
+            "Support for in-tile target is not yet implemented; Processing the whole tile."
+        )
+        return text.split("/")[0], None
     tile_slicing = text.split("[")
     if len(tile_slicing) == 1:
         return tile_slicing[0], None
