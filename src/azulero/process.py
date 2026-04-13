@@ -32,6 +32,7 @@ def add_parser(subparsers):
         "targets",
         type=str,
         nargs="*",
+        default=read_pipe_args(),
         help=(
             "Space separated list of targets, "
             "optionally with slicing à-la NumPy, e.g. 102160611[1500:7500,11500:17500]"
@@ -208,7 +209,7 @@ def run(args):
         output_template=args.output,
     )
 
-    for target in args.targets + read_pipe_args():
+    for target in args.targets:
         process_target(ios, target, transform)
 
 
