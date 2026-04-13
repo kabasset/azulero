@@ -42,12 +42,13 @@ def add_parser(subparsers):
         "--output",
         "-o",
         type=str,
-        default="{workspace}/{tile}/{tile}_{step}.tiff",
+        default="{workspace}/{tile}/{name}_{step}.tiff",
         metavar="TEMPLATE",
         help=(
             "Output path template. "
             "Placeholder {workspace} is replace by the workspace folder, "
-            "{tile} is replaced by the tile index, "
+            "{tile} is replaced by the input target tile and name, "
+            "{name} is replaced by the input target name, "
             "and {step} is replaced by the processing step. "
             "If {step} is not present in the template, "
             "intermediate steps are not saved."
@@ -56,7 +57,7 @@ def add_parser(subparsers):
     parser.add_argument(
         "--wcs",
         type=str,
-        default="{workspace}/{tile}/{tile}_wcs.yaml",
+        default="{workspace}/{tile}/{name}_{step}.yaml",
         metavar="TEMPLATE",
         help="WCS path template. Use empty string to disable saving.",
     )
@@ -218,13 +219,18 @@ def process_target(ios, target, transform):
     logger.header(1, f"Target: {target}", linebreaks=[1, 0])
 
     tile, slicing = io.parse_target(target)
+    name = Path(tile).parts[-1]
     if slicing:
         slicing_str = f"{slicing[0].start or ''}:{slicing[0].stop or ''},{slicing[1].start or ''}:{slicing[1].stop or ''}"
     else:
         slicing_str = ""
     workdir = Path(ios.workspace).expanduser() / tile
     template = ios.output_template.format(
-        workspace=ios.workspace, tile=tile, slicing=slicing_str, step="{step}"
+        workspace=ios.workspace,
+        tile=tile,
+        name=name,
+        slicing=slicing_str,
+        step="{step}",
     )
 
     timer = Timer()
@@ -238,7 +244,11 @@ def process_target(ios, target, transform):
     if ios.wcs_template:
         path = Path(
             ios.wcs_template.format(
-                workspace=ios.workspace, tile=tile, slicing=slicing_str, step="wcs"
+                workspace=ios.workspace,
+                tile=tile,
+                name=name,
+                slicing=slicing_str,
+                step="wcs",
             )
         )
         io.write_wcs(wcs, path)
