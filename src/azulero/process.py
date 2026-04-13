@@ -3,10 +3,12 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import argparse
+from dataclasses import dataclass
 import numpy as np
 from pathlib import Path
 
 from azulero import color, io, mask
+from azulero.tools.messaging import logger, read_pipe_args, write_pipe_args
 from azulero.tools.timing import Timer
 
 
@@ -166,7 +168,22 @@ def render_path_for_step(template, step):
     return Path(template.format(step=step))
 
 
+@dataclass
+class IOs:
+    workspace: Path
+    input_pattern: str
+    wcs_template: str
+    output_template: str
+
+
 def run(args):
+
+    curves = []
+    for i in range(len(args.curves)):
+        knots = io.parse_map(args.curves[i])
+        knots.insert(0, [0, 0])
+        knots.append([1, 1])
+        curves.append(knots)
 
     transform = color.Transform(
         iyjh_zero_points=np.array(args.zero),
@@ -181,83 +198,108 @@ def run(args):
         saturation=args.saturation,
         stretch=args.stretch,
         bw=np.array([args.offset, args.white]),
+        curves=curves,
     )
 
-    tile, slicing = io.parse_targets(args.targets)[0]  # FIXME process all
-    workdir = Path(args.workspace).expanduser() / tile
-    template = args.output.format(workspace=args.workspace, tile=tile, step="{step}")
+    ios = IOs(
+        workspace=args.workspace,
+        input_pattern=args.input,
+        wcs_template=args.wcs,
+        output_template=args.output,
+    )
+
+    for target in args.targets + read_pipe_args():
+        process_target(ios, target, transform)
+
+
+def process_target(ios, target, transform):
+
+    logger.header(1, f"Target: {target}", linebreaks=[1, 0])
+
+    tile, slicing = io.parse_target(target)
+    if slicing:
+        slicing_str = f"{slicing[0].start or ''}:{slicing[0].stop or ''},{slicing[1].start or ''}:{slicing[1].stop or ''}"
+    else:
+        slicing_str = ""
+    workdir = Path(ios.workspace).expanduser() / tile
+    template = ios.output_template.format(
+        workspace=ios.workspace, tile=tile, slicing=slicing_str, step="{step}"
+    )
 
     timer = Timer()
 
-    print(f"Read IYJH image from: {workdir}")
-    iyjh = io.read_iyjh(workdir, slicing, args.input)
-    print(f"- Shape: {iyjh.shape[1]} x {iyjh.shape[2]}")
-    wcs = io.read_wcs(workdir, args.input)
+    logger.header(2, f"Read IYJH image from: {workdir}")
+    iyjh = io.read_iyjh(workdir, slicing, ios.input_pattern)
+    logger.info(f"- Shape: {iyjh.shape[1]} x {iyjh.shape[2]}")
+    wcs = io.read_wcs(workdir, ios.input_pattern)
     if slicing is not None:
         wcs = wcs.slice(slicing)
-    if args.wcs:
-        path = Path(args.wcs.format(workspace=args.workspace, tile=tile, step="wcs"))
+    if ios.wcs_template:
+        path = Path(
+            ios.wcs_template.format(
+                workspace=ios.workspace, tile=tile, slicing=slicing_str, step="wcs"
+            )
+        )
         io.write_wcs(wcs, path)
-        print(f"- Write WCS: {path.name}")
+        logger.info(f"- Write WCS: {path.name}")
     timer.tic_log()
 
-    print(f"Detect bad pixels")
+    logger.header(2, f"Detect bad pixels")
     dead = mask.dead_pixels(iyjh)
-    print(f"- Dead pixels: {', '.join(str(np.sum(channel)) for channel in dead)}")
+    logger.info(f"- Dead pixels: {', '.join(str(np.sum(channel)) for channel in dead)}")
     if "{step}" in template:
         path = render_path_for_step(template, "mask")
-        print(f"- Write: {path.name}")
+        logger.info(f"- Write: {path.name}")
         io.write_mask(dead, path)
     timer.tic_log()
 
-    print(f"Inpaint dead pixels")
+    logger.header(2, f"Inpaint dead pixels")
     iyjh[0] = mask.inpaint(iyjh[0], dead[0])
     # iyjh[0][dead[0]] = mask.resaturate(iyjh[0][dead[0]], np.max(iyjh[0]))
     nir_dead = dead[1] | dead[2] | dead[3]
     iyjh[1:] = mask.inpaint(iyjh[1:], nir_dead, 0)
     timer.tic_log()
 
-    print(f"Sharpen channels")
+    logger.header(2, f"Sharpen channels")
     iyjh = color.sharpen(iyjh, transform.iyjh_fwhm / 2.355, transform.sharpen_strength)
     timer.tic_log()
 
-    print(f"Stretch dynamic range")
+    logger.header(2, f"Stretch dynamic range")
     iyjh = color.stretch_iyjh(iyjh, transform)
-    # print(f"- Medians: {', '.join(str(np.median(c)) for c in iyjh)}") # TODO use approximant
+    # logger.info(f"- Medians: {', '.join(str(np.median(c)) for c in iyjh)}") # TODO use approximant
     timer.tic_log()
     # TODO save vstacked iyjh (crop if too high)
 
-    print(f"Blend IYJH to RGB")
+    logger.header(2, f"Blend IYJH to RGB")
     lrgb = color.iyjh_to_lrgb(iyjh, transform)
     del iyjh
     rgb = color.lrgb_to_rgb(lrgb, transform)
     del lrgb
-    if "{step}" in template or len(args.curves) == 0:
+    if "{step}" in template or len(transform.curves) == 0:
         # FIXME implement some Step to handle len(args.curves) == 0 case generically
         path = render_path_for_step(template, "blended")
-        print(f"- Write: {path.name}")
+        logger.info(f"- Write: {path.name}")
         io.write_rgb(rgb, path, wcs=wcs)
     timer.tic_log()
 
-    # print(f"Inpaint hot pixels")
+    # logger.header(2, f"Inpaint hot pixels")
     # rgb[dead[0]] = mask.resaturate(rgb[dead[0]])
     # rgb = mask.inpaint(rgb, hot)
     # timer.tic_log()
 
     # if "{step}" in name:
     #     path = render_path_for_step(template, "inpainted")
-    #     print(f"- Write: {path.name}")
+    #     logger.info(f"- Write: {path.name}")
     #     io.write_rgb(rgb, path, wcs=wcs)
     #     timer.tic_log()
 
-    if len(args.curves) > 0:
-        print(f"Adjust curves")
-        for i in range(len(args.curves)):
-            knots = io.parse_map(args.curves[i])
-            knots.insert(0, [0, 0])
-            knots.append([1, 1])
-            rgb[:, :, i] = color.adjust_curve(rgb[:, :, i], knots)
+    if len(transform.curves) > 0:
+        logger.header(2, f"Adjust curves")
+        for i in range(len(transform.curves)):
+            rgb[:, :, i] = color.adjust_curve(rgb[:, :, i], transform.curves[i])
         path = render_path_for_step(template, "adjusted")
-        print(f"- Write: {path.name}")
+        logger.info(f"- Write: {path.name}")
         io.write_rgb(rgb, path, wcs=wcs)
         timer.tic_log()
+
+    write_pipe_args([path])

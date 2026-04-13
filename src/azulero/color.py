@@ -25,6 +25,7 @@ class Transform(object):
     saturation: float
     stretch: float
     bw: np.ndarray
+    curves: list
 
 
 def sharpen(data, radii, strength):  # FIXME to dedicated module

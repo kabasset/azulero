@@ -12,16 +12,7 @@ import yaml
 from azulero.tools.messaging import logger, read_pipe_args
 
 
-def parse_targets(targets: list[str]):
-    if not targets:
-        targets = read_pipe_args()
-        print(targets)
-    if len(targets) != 1:
-        logger.error("Only single-target processing is supported yet.")
-    return [_parse_target(t) for t in targets]
-
-
-def _parse_target(target: str):
+def parse_target(target: str):
     if "/" in target:
         logger.warning(
             "Support for in-tile target is not yet implemented; Processing the whole tile."

@@ -23,12 +23,12 @@ def parse_envargs(command=None, prefix=os.environ.get("AZULERO_PREFIX", "AZUL"))
 def read_pipe_args():
     if not sys.stdin.isatty():
         return sys.stdin.read().split()
-    return None
+    return []
 
 
 def write_pipe_args(args):
     if not sys.stdout.isatty():
-        print("\n".join(args))
+        print("\n".join(str(a) for a in args))
         return True
     return False
 
@@ -78,9 +78,13 @@ class _LogFormatter(logging.Formatter):
         return message
 
 
-def _log_header(self, message, level=1):
+def _log_header(self, level, message, linebreaks=[1]):
     codes = {1: "92;1", 2: "96;1", 3: "94;1"}
-    self.info(colorize(codes[level], message))
+    for _ in range(linebreaks[0]):
+        self.info("")
+    self.info(colorize(codes.get(level, "0"), message))
+    for _ in range(linebreaks[-1]):
+        self.info("")
 
 
 def _setup_logger():

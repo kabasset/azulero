@@ -50,17 +50,14 @@ def run():
     args = parser.parse_args()
 
     logger.setLevel(args.log)
-    logger.info("")
-    logger.header(f"  Azulero v{metadata.version('azulero')}", 1)
-    logger.header(f"  Antoine Basset, CNES", 2)
-    logger.header(f"  http://doi.org/10.24400/815952/Azulero", 3)
-    logger.info("")
+    logger.header(1, f"  Azulero v{metadata.version('azulero')}", linebreaks=[1, 0])
+    logger.header(2, f"  Antoine Basset, CNES", linebreaks=[0])
+    logger.header(3, f"  http://doi.org/10.24400/815952/Azulero", linebreaks=[0, 1])
 
     logger.info(f"Command: {args.cmd}")
     for k in vars(args):
         if k not in ["func", "cmd"]:
             logger.info(f"  {k}: {vars(args)[k]}")
-    logger.info("")
 
     args.func(args)
 
