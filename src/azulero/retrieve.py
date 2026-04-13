@@ -98,10 +98,10 @@ def query_tiles(provider, dsrs: list[str], target: str):
     tiles = provider.query_tiles(radec, dsrs)
     for t in tiles:
         logger.info(f"- Tile: {t}")
-    indices = [(t.index, target) for t in tiles]
+    indices = set((t.index, target) for t in tiles)
     if len(indices) == 0:
         logger.warning("WARNING: No tile found!")
-    return indices
+    return list(indices)
 
 
 def query_datafiles(retriever, tile, dsr):
@@ -162,15 +162,13 @@ def run(args):
             logger.warning(f"More than 4 files found: {len(datafiles)}.")
 
         if not args.query_only:
-            workdir = io.make_workdir(args.workspace, tile)
+            workdir = io.make_workdir(
+                args.workspace, tile
+            )  # FIXME download to targetdir
             download_datafiles(provider, datafiles, workdir)
             timer.tic_log()
 
     res = map(lambda t: t[0] if t[1] is None else "/".join(t), targets)
     if not write_pipe_args(res):
         res = " ".join(res)
-        logger.info("")
-        logger.info(f"You may now run:")
-        logger.info("")
-        logger.info(f"azul --workspace {args.workspace} process {res}")
-        logger.info("")
+        logger.command(f"azul --workspace {args.workspace} process {res}")

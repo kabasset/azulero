@@ -13,11 +13,6 @@ from azulero.tools.messaging import logger, read_pipe_args
 
 
 def parse_target(target: str):
-    if "/" in target:
-        logger.warning(
-            "Support for in-tile target is not yet implemented; Processing the whole tile."
-        )
-        return target.split("/")[0], None  # TODO support subfolders
     tile_slicing = target.split("[")
     if len(tile_slicing) == 1:
         return tile_slicing[0], None

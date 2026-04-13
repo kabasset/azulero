@@ -87,6 +87,14 @@ def _log_header(self, level, message, linebreaks=[1]):
         self.info("")
 
 
+def _log_command(self, command):
+    self.info("")
+    self.info("You may now run:")
+    self.info("")
+    self.info(command)
+    self.info("")
+
+
 def _setup_logger():
     global logger
     logger = logging.getLogger("azulero")
@@ -94,6 +102,7 @@ def _setup_logger():
     handler.setFormatter(_LogFormatter())
     logger.addHandler(handler)
     setattr(logging.getLoggerClass(), "header", _log_header)
+    setattr(logging.getLoggerClass(), "command", _log_command)
     return logger
 
 
