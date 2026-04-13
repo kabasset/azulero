@@ -9,6 +9,8 @@ import numpy as np
 from pathlib import Path
 import yaml
 
+from azulero.tools.messaging import logger
+
 
 def parse_target(target: str):
     tile_slicing = target.split("[")
@@ -64,7 +66,7 @@ def read_fits(path: Path, slicing=None):
 def make_workdir(workspace, tile):
     workdir = Path(workspace).expanduser() / tile
     if workdir.is_dir():
-        print(f"WARNING: Working directory already exists: {workdir}")
+        logger.warning(f"Working directory already exists: {workdir}")
     else:
         workdir.mkdir(parents=True)
     return workdir
@@ -131,7 +133,7 @@ def read_channel(workdir: Path, pattern: str, slicing=None):
     if len(data_files) == 1:
         return read_fits(data_files[0], slicing)
 
-    print(f"WARNING: {len(data_files)} files found with pattern: {pattern}")
+    logger.warning(f"{len(data_files)} files found with pattern: {pattern}")
     return _average([read_fits(f, slicing) for f in data_files])
 
 

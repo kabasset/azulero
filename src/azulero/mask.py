@@ -14,7 +14,6 @@ class Flag(enum.Enum):
     def valid(cls, value):
         for flag in cls:
             if value & 2**flag.value:
-                # print(f"{value} & {flag.value} ({flag.name})")
                 return False
         return True
 
