@@ -6,7 +6,7 @@ import argparse
 from importlib import metadata
 
 from azulero import assemble, find, overlay, retrieve, crop, tune, process, roam
-from azulero.tools.messaging import logger, colorize, parse_envargs
+from azulero.tools.messaging import logger, parse_envargs
 
 
 def run():
