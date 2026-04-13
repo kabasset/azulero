@@ -78,12 +78,18 @@ class _LogFormatter(logging.Formatter):
         return message
 
 
+def _log_header(self, message, level=1):
+    codes = {1: "92;1", 2: "96;1", 3: "94;1"}
+    self.info(colorize(codes[level], message))
+
+
 def _setup_logger():
     global logger
     logger = logging.getLogger("azulero")
     handler = logging.StreamHandler(sys.stderr)
     handler.setFormatter(_LogFormatter())
     logger.addHandler(handler)
+    setattr(logging.getLoggerClass(), "header", _log_header)
     return logger
 
 

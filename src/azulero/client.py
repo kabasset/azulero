@@ -51,9 +51,9 @@ def run():
 
     logger.setLevel(args.log)
     logger.info("")
-    logger.info(colorize("92;1", f"  Azulero v{metadata.version('azulero')}"))
-    logger.info(colorize("96;1", f"  Antoine Basset, CNES"))
-    logger.info(colorize("94;1", f"  http://doi.org/10.24400/815952/Azulero"))
+    logger.header(f"  Azulero v{metadata.version('azulero')}", 1)
+    logger.header(f"  Antoine Basset, CNES", 2)
+    logger.header(f"  http://doi.org/10.24400/815952/Azulero", 3)
     logger.info("")
 
     logger.info(f"Command: {args.cmd}")
