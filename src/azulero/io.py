@@ -9,8 +9,6 @@ import numpy as np
 from pathlib import Path
 import yaml
 
-from azulero.tools.messaging import logger, read_pipe_args
-
 
 def parse_target(target: str):
     tile_slicing = target.split("[")
