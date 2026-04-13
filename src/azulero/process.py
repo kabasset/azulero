@@ -192,9 +192,10 @@ def run(args):
     print(f"Read IYJH image from: {workdir}")
     iyjh = io.read_iyjh(workdir, slicing, args.input)
     print(f"- Shape: {iyjh.shape[1]} x {iyjh.shape[2]}")
+    wcs = io.read_wcs(workdir, args.input)
+    if slicing is not None:
+        wcs = wcs.slice(slicing)
     if args.wcs:
-        # FIXME assert slicing is disabled or handle it!
-        wcs = io.read_wcs(workdir, args.input).slice(slicing)
         path = Path(args.wcs.format(workspace=args.workspace, tile=tile, step="wcs"))
         io.write_wcs(wcs, path)
         print(f"- Write WCS: {path.name}")
