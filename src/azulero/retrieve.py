@@ -3,7 +3,9 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import argparse
-from astropy.coordinates import SkyCoord
+from dataclasses import dataclass, field
+from pathlib import Path
+from astropy.coordinates import Angle, SkyCoord
 
 from azulero import io
 from azulero.providers import dss, sas
@@ -69,6 +71,13 @@ def add_parser(subparsers):
         help=f"Data provider: {help_choice(providers.keys())}.",
     )
     parser.add_argument(
+        "--radius",
+        type=Angle,
+        default=None,
+        metavar="ANGLE",
+        help="Cone search angle (if set, will retrieve cutouts instead of tiles).",
+    )
+    parser.add_argument(
         "--files",
         "-f",
         type=str,
@@ -86,11 +95,27 @@ def add_parser(subparsers):
     parser.set_defaults(**parse_envargs("retrieve"), func=run)
 
 
+@dataclass(frozen=True)
+class Target:
+
+    name: str
+    index: str
+    coord: SkyCoord | None = field(default=None, compare=False)
+
+    def workdir(self):
+        if self.name == self.index:
+            return self.index
+        return str(Path(self.index) / self.name)
+
+
 def query_tiles(provider, dsrs: list[str], target: str):
+    """
+    Query the list of tiles for a given target, which may be a tile index, coordinates or object name.
+    """
 
     if target.isdigit():
         logger.info(f"Tile: {target}")
-        return [(target, None)]
+        return [Target(target, target, None)]
 
     if "," in target:
         logger.info(f"Coordinates: {target}")
@@ -104,15 +129,15 @@ def query_tiles(provider, dsrs: list[str], target: str):
     tiles = provider.query_tiles(radec, dsrs)
     for t in tiles:
         logger.info(f"- Tile: {t}")
-    indices = set((t.index, target) for t in tiles)
-    if len(indices) == 0:
+    targets = set(Target(target, t.index, radec) for t in tiles)
+    if len(targets) == 0:
         logger.warning("WARNING: No tile found!")
-    return list(indices)
+    return list(targets)
 
 
 def query_datafiles(retriever, tile, dsr):
 
-    logger.info(f"Query datafiles for tile {tile} and dataset release {dsr}:")
+    logger.header(2, f"Query datafiles for tile {tile} and dataset release {dsr}:")
 
     datafiles = retriever.query_datafiles(tile, dsr)
     datafiles = {
@@ -128,16 +153,17 @@ def query_datafiles(retriever, tile, dsr):
     return datafiles
 
 
-def download_datafiles(retriever, datafiles, workdir):
+def download_datafiles(retriever, datafiles, workdir, target, radius):
 
-    logger.info(f"Download and extract datafiles to: {workdir}")
+    logger.header(2, f"Download and extract datafiles to: {workdir}")
 
     for name in datafiles:  # TODO parallelize?
         path = workdir / name.removesuffix(".gz")
         if path.is_file():
             logger.warning(f"File exists; skip: {path.name}")
         else:
-            retriever.download_datafile(name, path)
+            args = [] if radius is None else [target, radius]
+            retriever.download_datafile(name, path, *args)
             logger.info(f"- {path}")
 
 
@@ -148,33 +174,35 @@ def run(args):
     dsrs = args.dsr.split(",")
     assert args.files is None or len(args.tiles) == 1
 
+    logger.header(1, "Resolve targets")
+
     targets = []
     for t in args.targets:
         targets += query_tiles(provider, dsrs, t)
 
-    for tile, _ in targets:
+    logger.header(1, "Retrieve targets", linebreaks=[1, 0])
+
+    for t in targets:
         if args.files is not None:
             datafiles = args.files
         else:
             for dsr in dsrs:
-                datafiles = query_datafiles(provider, tile, dsr)
+                datafiles = query_datafiles(provider, t.index, dsr)
                 if len(datafiles) > 0:
                     break
             timer.tic_log()
         if args.files is None and len(datafiles) < 4:
-            logger.error(f"Only {len(datafiles)} files found; Skip tile: {tile}")
+            logger.error(f"Only {len(datafiles)} files found; Skip tile: {t.index}")
             continue
         if args.files is None and len(datafiles) > 4:
             logger.warning(f"More than 4 files found: {len(datafiles)}.")
 
         if not args.query_only:
-            workdir = io.make_workdir(
-                args.workspace, tile
-            )  # FIXME download to targetdir
-            download_datafiles(provider, datafiles, workdir)
+            workdir = io.make_workdir(args.workspace, t.workdir())
+            download_datafiles(provider, datafiles, workdir, t, args.radius)
             timer.tic_log()
 
-    res = map(lambda t: t[0] if t[1] is None else "/".join(t), targets)
+    res = [t.workdir() for t in targets]
     if not write_pipe_args(res):
         res = " ".join(res)
         logger.command(f"azul --workspace {args.workspace} process {res}")

@@ -2,7 +2,8 @@
 # SPDX-PackageSourceInfo: https://github.com/kabasset/azulero
 # SPDX-License-Identifier: Apache-2.0
 
-from astropy.coordinates import SkyCoord
+from pathlib import Path
+from astropy.coordinates import Angle, SkyCoord
 from astroquery.esa.euclid import EuclidClass
 import contextlib  # intercept astroquery prints
 from dataclasses import dataclass
@@ -79,5 +80,19 @@ class SAS:
             if str(p["release_name"]) == dsr
         }
 
-    def download_datafile(self, name, path):
-        path = self.euclid.get_product(file_name=name, output_file=path)
+    def download_datafile(
+        self, name: str, path: Path, target=None, radius: Angle = None
+    ):
+        if radius is None:
+            path = self.euclid.get_product(file_name=name, output_file=path)
+        else:
+            q = f"SELECT file_path, instrument_name FROM sedm.mosaic_product WHERE file_name='{name}'"
+            res = self.euclid.launch_job(q).get_results()[0]
+            path = self.euclid.get_cutout(
+                file_path=Path(res["file_path"]) / name,
+                instrument=res["instrument_name"],
+                id=target.index,
+                coordinate=target.coord,
+                radius=radius,
+                output_file=path,
+            )
