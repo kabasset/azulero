@@ -7,7 +7,12 @@ from astropy.coordinates import SkyCoord
 
 from azulero import io
 from azulero.providers import dss, sas
-from azulero.tools.messaging import logger, parse_envargs, write_pipe_args
+from azulero.tools.messaging import (
+    logger,
+    parse_envargs,
+    read_pipe_args,
+    write_pipe_args,
+)
 from azulero.tools.timing import Timer
 
 
@@ -42,7 +47,8 @@ def add_parser(subparsers):
     parser.add_argument(
         "targets",
         type=str,
-        nargs="+",
+        nargs="*",
+        default=read_pipe_args(),
         help=(
             "Space-separated list of tile indices (e.g. 102159776), "
             "coordinates (e.g. 270.93°,67.05°), and/or object names (e.g. UGC11116)."
