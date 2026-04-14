@@ -53,7 +53,7 @@ def run():
     logger.setLevel(args.log)
     logger.header(1, f"  Azulero v{_version.__version__}", linebreaks=[1, 0])
     logger.header(2, f"  Antoine Basset, CNES", linebreaks=[0])
-    logger.header(3, f"  http://doi.org/10.24400/815952/Azulero", linebreaks=[0, 1])
+    logger.header(3, f"  {_version.__url__}", linebreaks=[0, 1])
 
     logger.info(f"Command: {args.cmd}")
     for k in vars(args):
@@ -62,12 +62,14 @@ def run():
 
     args.func(args)
 
-    logger.header(1, "Acknowledgement", linebreaks=[1, 0])
+    logger.header(1, "Citation", linebreaks=[1, 0])
 
     logger.header(
         2, "If you publish images rendered with this software, please credit:"
     )
-    logger.info(f"Image processing with Azulero v{_version.__version__} (CNES)")
+    logger.info(
+        f"Image processing with Azulero v{_version.__version__} (Antoine Basset, CNES)"
+    )
 
     logger.header(
         2, "If you use this software for academic publications, please cite as follows:"
