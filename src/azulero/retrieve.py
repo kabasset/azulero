@@ -19,7 +19,7 @@ from azulero.tools.timing import Timer
 
 
 providers = {
-    "public": lambda: sas.SAS("PDR"),
+    "pdr": lambda: sas.SAS("PDR"),
     "idr": lambda: sas.SAS("IDR"),
     "otf": lambda: sas.SAS("OTF"),
     "dss": lambda: dss.DSS(),  # TODO enable DSS selection
