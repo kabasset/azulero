@@ -78,6 +78,14 @@ def add_parser(subparsers):
         help="Cone search angle (if set, will retrieve cutouts instead of tiles).",
     )
     parser.add_argument(
+        "--limit",
+        "-n",
+        type=int,
+        default=None,
+        metavar="COUNT",
+        help="Maximum number of tiles to be retrieved per target.",
+    )
+    parser.add_argument(
         "--files",
         "-f",
         type=str,
@@ -178,7 +186,7 @@ def run(args):
 
     targets = []
     for t in args.targets:
-        targets += query_tiles(provider, dsrs, t)
+        targets += query_tiles(provider, dsrs, t)[: args.limit]
 
     logger.header(1, "Retrieve targets", linebreaks=[1, 0])
 
