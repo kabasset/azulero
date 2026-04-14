@@ -2,11 +2,17 @@
 name = "azulero"
 version = "2.0"
 authors = [
-  { name="Antoine Basset", email="antoine.basset@cnes.fr" },
+  {name="Basset, Antoine", email = "antoine.basset@cnes.fr"},
+  {name="Schirmer, Mischa"},
+  {name="Bouvard, Téo"},
+  {name="Gimenez, Rollin"},
+  {name="Nguyen-Kim, Kane"},
+  {name="Candini, Gian Paolo"},
+  {name="Malapert, Jean-Christophe"}
 ]
 description = "Bring colors to Euclid tiles!"
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 classifiers = [
     "Programming Language :: Python :: 3",
     "Operating System :: OS Independent",
@@ -28,14 +34,11 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/kabasset/azulero"
-Issues = "https://github.com/kabasset/azulero/issues"
+homepage = "https://doi.org/10.24400/815952/Azulero"
 
 [build-system]
-requires = [
-    "hatchling >= 1.26"
-]
-build-backend = "hatchling.build"
+requires = ["uv_build>=0.10.0,<0.11.0"]
+build-backend = "uv_build"
 
 [project.scripts]
 azul = "azulero.client:run"

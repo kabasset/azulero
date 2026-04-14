@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (C) 2025, Antoine Basset
+# SPDX-FileCopyrightText: Copyright (C) 2025-2026, Antoine Basset
 # SPDX-PackageSourceInfo: https://github.com/kabasset/azulero
 # SPDX-License-Identifier: Apache-2.0
 
