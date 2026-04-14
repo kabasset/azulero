@@ -86,12 +86,16 @@ def add_parser(subparsers):
         help="Maximum number of tiles to be retrieved per target.",
     )
     parser.add_argument(
-        "--files",
+        "--force",
         "-f",
         type=str,
-        nargs="+",
+        nargs="*",
+        default=None,
         metavar="FILENAMES",
-        help="Names of the files to be downloaded (bypasses query).",
+        help=(
+            "Force file download, overwriting existing files. "
+            "A list of filenames can be specified, in which case the query step is bypassed."
+        ),
     )
     parser.add_argument(
         "--query-only",
@@ -138,6 +142,7 @@ def query_tiles(provider, dsrs: list[str], target: str):
     for t in tiles:
         logger.info(f"- Tile: {t}")
     targets = set(Target(target, t.index, radec) for t in tiles)
+    # FIXME sort DEEP first, then by tileindex?
     if len(targets) == 0:
         logger.warning("WARNING: No tile found!")
     return list(targets)
@@ -161,15 +166,18 @@ def query_datafiles(retriever, tile, dsr):
     return datafiles
 
 
-def download_datafiles(retriever, datafiles, workdir, target, radius):
+def download_datafiles(retriever, datafiles, workdir, target, radius, overwrite):
 
     logger.header(2, f"Download and extract datafiles to: {workdir}")
 
     for name in datafiles:  # TODO parallelize?
         path = workdir / name.removesuffix(".gz")
-        if path.is_file():
-            logger.warning(f"File exists; skip: {path.name}")
+        if path.is_file() and not overwrite:
+            logger.info(f"- File already exists; skip: {path.name}")
         else:
+            print(f"{path.is_file()=} {overwrite=}")
+            if path.is_file():
+                logger.warning(f"Existing file will be overwritten: {path.name}")
             args = [] if radius is None else [target, radius]
             retriever.download_datafile(name, path, *args)
             logger.info(f"- {path}")
@@ -180,7 +188,7 @@ def run(args):
     timer = Timer()
     provider = providers[vars(args)["from"].lower()]()  # from is a Python keyword
     dsrs = args.dsr.split(",")
-    assert args.files is None or len(args.tiles) == 1
+    assert args.force is None or len(args.targets) == 1
 
     logger.header(1, "Resolve targets")
 
@@ -191,23 +199,25 @@ def run(args):
     logger.header(1, "Retrieve targets", linebreaks=[1, 0])
 
     for t in targets:
-        if args.files is not None:
-            datafiles = args.files
+        if args.force is not None and len(args.force) > 0:
+            datafiles = args.force
         else:
             for dsr in dsrs:
                 datafiles = query_datafiles(provider, t.index, dsr)
                 if len(datafiles) > 0:
                     break
             timer.tic_log()
-        if args.files is None and len(datafiles) < 4:
+        if args.force is None and len(datafiles) < 4:
             logger.error(f"Only {len(datafiles)} files found; Skip tile: {t.index}")
             continue
-        if args.files is None and len(datafiles) > 4:
+        if args.force is None and len(datafiles) > 4:
             logger.warning(f"More than 4 files found: {len(datafiles)}.")
 
         if not args.query_only:
             workdir = io.make_workdir(args.workspace, t.workdir())
-            download_datafiles(provider, datafiles, workdir, t, args.radius)
+            download_datafiles(
+                provider, datafiles, workdir, t, args.radius, args.force is not None
+            )
             timer.tic_log()
 
     res = [t.workdir() for t in targets]
