@@ -1,7 +1,6 @@
 from importlib.metadata import metadata
 
 pkg_metadata = metadata("azulero")
-print(list(pkg_metadata))
 
 _split_every_other_comma = lambda text: [
     l + ", " + r for l, r in zip(*[iter(text.split(", "))] * 2)
