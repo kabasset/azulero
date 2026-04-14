@@ -68,7 +68,7 @@ class SAS:
                 key=lambda t: t.distance,
             ),
             key=lambda t: t.mode,
-        )
+        )  # FIXME sorting to retrieve.py to be applied to all providers
 
     def query_datafiles(self, tile: str, dsr: str):
         products = self.euclid.get_product_list(

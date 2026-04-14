@@ -141,8 +141,7 @@ def query_tiles(provider, dsrs: list[str], target: str):
     tiles = provider.query_tiles(radec, dsrs)
     for t in tiles:
         logger.info(f"- Tile: {t}")
-    targets = set(Target(target, t.index, radec) for t in tiles)
-    # FIXME sort DEEP first, then by tileindex?
+    targets = [Target(target, t.index, radec) for t in tiles]
     if len(targets) == 0:
         logger.warning("WARNING: No tile found!")
     return list(targets)
