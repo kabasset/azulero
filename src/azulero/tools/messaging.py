@@ -51,7 +51,7 @@ def colorize(code, message):
 
 class _LogFormatter(logging.Formatter):
 
-    def __init__(self, sep=" | "):
+    def __init__(self, sep=" - "):
         super().__init__()
         self.sep = sep
 
