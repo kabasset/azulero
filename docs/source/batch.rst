@@ -5,22 +5,26 @@ Introduction
 ------------
 
 Starting from version 2.0, when executed as part of a Unix or Windows pipeline,
-Azulero commands can read their arguments from the standard input stream (``stdin``),
+Azulero commands can read their positional arguments from the standard input stream (``stdin``),
 and write their results to the standard output stream (``stdout``),
 while logs are written to the standard error stream (``stderr``).
 Moreover, the commands now accept multiple inputs,
 which make them suitable for batch processing.
 
-For example, the following Unix pipeline will find and download MER data for a collection of targets,
-render color images for each target, and display them:
+For example, the following pipeline will find and download MER data for a collection of (two) targets,
+and then render color images for each target:
 
 .. prompt:: bash
 
-   azul retrieve NGC6505 UGC11116 --radius 1m | azul process | xargs open
+   azul retrieve NGC6505 UGC11116 --radius 1m | azul process
 
-Note that several tiles may contain each source, such that more than two images may be rendered.
+Note that several MER tiles may contain each of the targets,
+such that more than two images may be rendered.
 
-In this page, we'll dissect this example line and explain the message flow.
+Next section dissects this example line to explain the communication flow,
+and following sections show related features for even more fun with pipelines!
+Basic knowledge on pipelines and standard streams
+-- specifically, knowing operators ``|``, ``<`` and ``>`` -- is required.
 For the sake of simplicity (and sanity), we'll illustrate the features for Unix systems only.
 Translation to Windows is left as an exercise!
 
@@ -29,31 +33,45 @@ Workdirs
 
 The output of ``azul retrieve`` and the input of ``azul process``
 is a list of workdir paths relative to the parent workspace.
-If they are not provided to the ``process`` command line, they will be read from ``stdin``.
+If they are not provided to the ``azul process`` command line, they will be read from ``stdin``.
 
-Let's decompose the example command as:
+If we decompose the example by introducing an intermediate file with:
 
 .. prompt:: bash
 
    azul retrieve NGC6505 UGC11116 --radius 1m > workdirs.txt
-   azul process < workdirs.txt
 
-Typically, ``workdirs.txt`` would contain something like::
+the said intermediate file will contain one workdir per line::
 
    102158889/NGC6505
    102159776/UGC11116
+
+Each of them is then taken as input by ``azul process`` in:
+
+.. prompt:: bash
+
+   azul process < workdirs.txt
 
 
 Renders
 -------
 
-The paths to images rendered by the last step of ``azul process`` are forwarded to ``stdout``.
+The paths to images rendered by ``azul process`` are forwarded to ``stdout``.
 They are relative to the workspace.
 
-For example, ``azul process 102158889/NGC6505 102159776/UGC11116`` would output::
+For example:
+
+.. prompt:: bash
+
+   azul process 102158889/NGC6505 102159776/UGC11116 > renders.txt
+
+would write::
 
    102158889/NGC6505/NGC6505_102158889_adjusted.tiff
    102159776/UGC11116/UGC11116_102159776_adjusted.tiff
+
+Generally, ``azul process`` creates several files per workdir: one per active step.
+Only the path to the last step output (by default, ``adjusted``) is returned.
 
 
 Catalogs
@@ -61,9 +79,9 @@ Catalogs
 
 Let us now go further!
 In the introduction, ``azul retrieve`` took its targets from the command line.
-If no target is provided this way, however, the command will read ``stdin``.
+If no targets were provided this way, however, the command would have read ``stdin``.
 
-For example, consider a file ``target.txt`` containing::
+Consider a file ``target.txt`` containing::
 
    NGC6505
    UGC11116
@@ -74,11 +92,11 @@ Then:
 
    azul retrieve --radius 1m < targets.txt
 
-will consider each word of ``targets.txt`` as a target
+will treat each word of ``targets.txt`` as a target
 and retrieve the corresponding data.
 
-A more realistic example would be the use of a catalog file.
-For simplicity, let us assume the targets are stored in some CSV file ``catalog.csv``,
+A more realistic (and useful) example would be to rely on a catalog file.
+Let us assume the target coordinates are stored in some CSV file ``catalog.csv``,
 which starts as follows:
 
 ====== ====== ======
@@ -91,7 +109,7 @@ ra     dec    NGC
 
 We will select a range of rows (say, 2 and 3) with ``sed``,
 and the ``ra`` and ``dec`` columns with ``cut``,
-and pass the result to Azulero:
+and finally pass the result to Azulero:
 
 .. prompt:: bash
 
@@ -102,6 +120,15 @@ Named options
 -------------
 
 Named options like ``--workspace`` are not forwarded through pipelines.
+Typically, the following pipeline would break:
+
+.. prompt:: bash
+
+   azul --workspace /tmp retrieve NGC6505 | azul process
+
+because ``azul process`` would use the default workspace (``.``)
+instead of the custom workspace given to ``azul retrieve``.
+
 Therefore, we have implemented an environment-level mechanism in order to avoid repeating them from command to command.
 Each named option can be read from an environment variable named as follows:
 
@@ -127,7 +154,7 @@ sets the log level to ``DEBUG`` for all commands,
 and sets the data provider to ``pdr`` and crop radius to 1 arcmin for ``azul retrieve``.
 These parameters are overloaded by command line arguments.
 
-With this context, the following lines are equivalent:
+Within this context, the following lines are equivalent:
 
 .. prompt:: bash
 
