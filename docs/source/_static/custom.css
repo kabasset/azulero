@@ -29,6 +29,10 @@ body {
     padding: 0 20px 0 20px;
 }
 
+pre {
+    padding: 7px 14px;
+}
+
 div.document {
     margin: 0 auto 0 auto;
 }

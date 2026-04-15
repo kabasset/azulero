@@ -14,9 +14,9 @@ which make them suitable for batch processing.
 For example, the following Unix pipeline will find and download MER data for a collection of targets,
 render color images for each target, and display them:
 
-.. code-block:: sh
+.. prompt:: bash
 
-   $ azul retrieve NGC6505 UGC11116 --radius 1m | azul process | xargs open
+   azul retrieve NGC6505 UGC11116 --radius 1m | azul process | xargs open
 
 Note that several tiles may contain each source, such that more than two images may be rendered.
 
@@ -33,10 +33,10 @@ If they are not provided to the ``process`` command line, they will be read from
 
 Let's decompose the example command as:
 
-.. code-block:: sh
+.. prompt:: bash
 
-   $ azul retrieve NGC6505 UGC11116 --radius 1m > workdirs.txt
-   $ azul process < workdirs.txt
+   azul retrieve NGC6505 UGC11116 --radius 1m > workdirs.txt
+   azul process < workdirs.txt
 
 Typically, ``workdirs.txt`` would contain something like::
 
@@ -70,9 +70,9 @@ For example, consider a file ``target.txt`` containing::
 
 Then:
 
-.. code-block:: sh
+.. prompt:: bash
 
-   $ azul retrieve --radius 1m < targets.txt
+   azul retrieve --radius 1m < targets.txt
 
 will consider each word of ``targets.txt`` as a target
 and retrieve the corresponding data.
@@ -93,9 +93,9 @@ We will select a range of rows (say, 2 and 3) with ``sed``,
 and the ``ra`` and ``dec`` columns with ``cut``,
 and pass the result to Azulero:
 
-.. code-block:: sh
+.. prompt:: bash
 
-   $ sed -n '2,3p' catalog.csv | cut -d ',' -f 1,2 | azul retrieve
+   sed -n '2,3p' catalog.csv | cut -d ',' -f 1,2 | azul retrieve
 
 
 Named options
@@ -117,11 +117,11 @@ where:
 
 For example:
 
-.. code-block:: sh
+.. prompt:: bash
 
-   $ export AZUL_LOG=DEBUG
-   $ export AZULRETRIEVE_FROM=pdr
-   $ export AZULRETRIEVE_RADIUS=1m
+   export AZUL_LOG=DEBUG
+   export AZULRETRIEVE_FROM=pdr
+   export AZULRETRIEVE_RADIUS=1m
 
 sets the log level to ``DEBUG`` for all commands,
 and sets the data provider to ``pdr`` and crop radius to 1 arcmin for ``azul retrieve``.
@@ -129,7 +129,7 @@ These parameters are overloaded by command line arguments.
 
 With this context, the following lines are equivalent:
 
-.. code-block:: sh
+.. prompt:: bash
 
-   $ azul retrieve NGC6505 UGC11116 | azul process
-   $ azul --log DEBUG retrieve NGC6505 UGC11116 --radius 1m --from pdr -f | azul --log DEBUG process
+   azul retrieve NGC6505 UGC11116 | azul process
+   azul --log DEBUG retrieve NGC6505 UGC11116 --radius 1m --from pdr -f | azul --log DEBUG process
