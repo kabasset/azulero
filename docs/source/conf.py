@@ -34,6 +34,7 @@ html_static_path = ["_static"]
 
 html_theme_path = ["_themes"]
 html_logo = "_static/logo.png"
+html_title = _version.__title__ + " v" + _version.__version__
 # html_favicon = "favicon.png"
 html_css_files = ["custom.css"]
 
