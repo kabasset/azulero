@@ -1,0 +1,40 @@
+table.docutils, table.docutils td, table.docutils th, table.docutils tr {
+    border: none;
+    box-shadow: none;
+}
+
+table.docutils th {
+    border-bottom: thin solid;
+}
+
+table.docutils td {
+    border-bottom: thin dotted;
+}
+
+div.sphinxsidebarwrapper p.logo {
+    text-align: left;
+}
+
+html {
+    background-image: url(102158585_NGC6536_pano.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+}
+
+body {
+    max-width: 940px;
+    background-color: white;
+    margin: 0 auto 0 auto;
+    padding: 0 20px 0 20px;
+}
+
+div.document {
+    margin: 0 auto 0 auto;
+}
+
+div.footer {
+    margin-bottom: 0;
+    padding-bottom: 20px;
+    background-color: white;
+}
