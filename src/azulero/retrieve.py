@@ -174,7 +174,6 @@ def download_datafiles(retriever, datafiles, workdir, target, radius, overwrite)
         if path.is_file() and not overwrite:
             logger.info(f"- File already exists; skip: {path.name}")
         else:
-            print(f"{path.is_file()=} {overwrite=}")
             if path.is_file():
                 logger.warning(f"Existing file will be overwritten: {path.name}")
             args = [] if radius is None else [target, radius]
@@ -187,7 +186,7 @@ def run(args):
     timer = Timer()
     provider = providers[vars(args)["from"].lower()]()  # from is a Python keyword
     dsrs = args.dsr.split(",")
-    assert args.force is None or len(args.targets) == 1
+    assert not args.force or len(args.targets) == 1
 
     logger.header(1, "Resolve targets")
 
