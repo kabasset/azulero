@@ -27,6 +27,9 @@ authors:
   - family-names: Candini
     given-names: Gian Paolo
     affiliation: CSIC
+  - family-names: Malapert
+    given-names: Jean-Christophe
+    affiliation: CNES
 identifiers:
   - type: doi
     value: 10.24400/815952/Azulero
