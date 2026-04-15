@@ -5,7 +5,7 @@
 import argparse
 
 from azulero import assemble, find, overlay, retrieve, crop, tune, process, roam
-from azulero.tools.messaging import logger, parse_envargs
+from azulero.tools.messaging import logger, parse_envargs, write_pipe_args
 
 from azulero import _version
 
@@ -46,22 +46,40 @@ def run():
     assemble.add_parser(subparsers)
     roam.add_parser(subparsers)
     overlay.add_parser(subparsers)
+    subparsers.add_parser("cite", description="Print citation instructions.")
 
     parser.set_defaults(**parse_envargs())
     args = parser.parse_args()
 
     logger.setLevel(args.log)
+
+    log_title()
+
+    if args.cmd != "cite":
+        log_args(args)
+        args.func(args)
+
+    citation = log_citation()
+    if args.cmd == "cite":
+        write_pipe_args(citation)
+
+    logger.info("")
+
+
+def log_title():
     logger.header(1, f"  Azulero v{_version.__version__}", linebreaks=[1, 0])
     logger.header(2, f"  Antoine Basset, CNES", linebreaks=[0])
     logger.header(3, f"  {_version.__url__}", linebreaks=[0, 1])
 
+
+def log_args(args):
     logger.info(f"Command: {args.cmd}")
     for k in vars(args):
         if k not in ["func", "cmd"]:
             logger.info(f"  {k}: {vars(args)[k]}")
 
-    args.func(args)
 
+def log_citation():
     logger.header(1, "Citation", linebreaks=[1, 0])
 
     logger.header(
@@ -81,24 +99,21 @@ def run():
         "title": capitalize(_version.__name_soft__),
         "version": _version.__version__,
         "year": "2026",
-        "url": _version.__url__,
         "doi": _version.__url__.split("doi.org/")[-1],
     }
-    log_citation("software", "Basset_Azulero", citation)
+    lines = bibtex_citation("software", "Basset_Azulero", citation)
+    for l in lines:
+        logger.info(l)
+    return lines
 
-    logger.info("")
 
-
-def log_citation(type, name, fields):
+def bibtex_citation(type, name, fields):
     enumeration = lambda e: " and ".join(e)
     line = lambda n, v: (
         n + " = {" + (enumeration(v) if isinstance(v, list) else v) + "}"
     )
-    logger.info("@" + type + "{" + name + ",")
     lines = ",\n".join(f"  {line(f, fields[f])}" for f in fields).split("\n")
-    for l in lines:
-        logger.info(l)
-    logger.info("}")
+    return ["@" + type + "{" + name + ","] + lines + ["}"]
 
 
 if __name__ == "__main__":

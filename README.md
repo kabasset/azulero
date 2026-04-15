@@ -119,23 +119,7 @@ azul roam -h
 
 # Citing Azulero
 
-💞 If you use this software for academic publications, please cite as follows (adapt the version number):
-
-> Basset, A., Schirmer, M., Bouvard, T., Gimenez, R., Nguyen-Kim, K., & Candini, G. P. _Azulero_ (Version 1.0.0) [Computer software]. DOI: 10.24400/815952/Azulero.
-
-BibTeX format:
-
-```BibTeX
-@software{Basset_azulero,
-author = {Basset, Antoine and Schirmer, Mischa and Bouvard, Téo and Gimenez, Rollin and Nguyen-Kim, Kane and Candini, Gian Paolo},
-license = {Apache-2.0},
-title = {{Azulero}},
-version = {1.0.0},
-year = {2025},
-url = {https://github.com/kabasset/azulero},
-doi = {10.24400/815952/Azulero}
-}
-```
+💞 If you use this software for academic publications, please cite as reported by `azul cite`.
 
 More details in [CITATION.cff](CITATION.cff).
 
@@ -151,9 +135,10 @@ More details in [CITATION.cff](CITATION.cff).
 
 * Mischa Schirmer (MPIA): Azul's color blending is freely inspired by that of Mischa's script `eummy.py`.
 * Téo Bouvard (Thales): Drafed `retrieve`.
-* Rollin Gimenez (CNES): Fixed packaging.
-* Kane Nguyen-Kim (IAP): Provided URLs for retrieving public data.
+* Rollin Gimenez (CNES): Fixed packaging, early and long-term beta-tester.
+* Kane Nguyen-Kim (IAP): Provided URLs for retrieving public data, early and long-term beta-tester.
 * Gian Paolo Candini (CSIC): Investigated rendering issues and improved parametrization.
+* Jean-Christophe Malapert (CNES): Implemented spatial operations on the sphere.
 
 # Acknowledgements
 
