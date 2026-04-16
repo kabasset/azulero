@@ -19,7 +19,7 @@ author = _version.__author__[0]
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
-extensions = ["sphinx.ext.githubpages", "sphinx_prompt"]
+extensions = ["sphinx.ext.githubpages", "sphinx_prompt", "sphinx_copybutton"]
 source_suffix = ".rst"
 templates_path = ["_templates"]
 master_doc = "index"
