@@ -160,3 +160,37 @@ Within this context, the following lines are equivalent:
 
    azul retrieve NGC6505 UGC11116 | azul process
    azul --log DEBUG retrieve NGC6505 UGC11116 --radius 1m --from pdr -f | azul --log DEBUG process
+
+
+All-in-one pipeline
+-------------------
+
+In one command line, we are now able to:
+
+* Read a catalog;
+* Retrieve MER cutouts;
+* Render color images for each cutout.
+
+We will now:
+
+* Render in parallel;
+* Open the color images as they come out.
+
+with targets in the command line:
+
+.. prompt:: bash
+
+   azul retrieve NGC6505 UGC11116 --radius 1m | \
+     xargs -n1 -P0 azul process | \
+     xargs -n1 open
+
+or with targets from a catalog:
+
+.. prompt:: bash
+
+   sed -n '2,3p' catalog.csv | cut -d ',' -f 1,2 | \
+     azul retrieve --radius 1m | \
+     xargs -n1 -P0 azul process | \
+     xargs -n1 open
+ 
+Voilà!
