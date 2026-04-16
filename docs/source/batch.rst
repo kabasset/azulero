@@ -116,6 +116,8 @@ and finally pass the result to Azulero:
    sed -n '2,3p' catalog.csv | cut -d ',' -f 1,2 | azul retrieve
 
 
+..  _named_options:
+
 Named options
 -------------
 

@@ -8,5 +8,6 @@ TODO
    :maxdepth: 2
    :caption: Contents:
 
+   retrieve
    batch
 
