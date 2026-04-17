@@ -28,11 +28,14 @@ Basic knowledge on pipelines and standard streams
 For the sake of simplicity (and sanity), we'll illustrate the features for Unix systems only.
 Translation to Windows is left as an exercise!
 
+
+..  _workspace:
+
 Workdirs
 --------
 
 The output of ``azul retrieve`` and the input of ``azul process``
-is a list of workdir paths relative to the parent workspace.
+is a list of workdir paths relative to some parent workspace.
 If they are not provided to the ``azul process`` command line, they will be read from ``stdin``.
 
 If we decompose the example by introducing an intermediate file with:
