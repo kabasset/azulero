@@ -1,7 +1,5 @@
-Azulero
-=======
-
-  Bring colors to Euclid tiles!
+Bring colors to Euclid tiles!
+=============================
 
 Azul(ero) [#]_ is a toolbox which, among others, provides scripts to download and process Euclid observations over a MER tile.
 
