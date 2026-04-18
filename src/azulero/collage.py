@@ -111,4 +111,8 @@ def run(args):
 
 
 def crop(image, format):
-    return image[0 : format[1], 0 : format[0], :]  # FIXME center
+    shape = np.array([format[1], format[0], 3], dtype=int)
+    start = (np.array(image.shape, dtype=int) - shape) // 2
+    stop = start + shape
+    return image[start[0] : stop[0], start[1] : stop[1], :]
+    # FIXME allow out of bounds with bg color
