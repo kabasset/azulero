@@ -107,6 +107,8 @@ def run(args):
     cv2.imwrite(args.output, canvas)
     timer.tic_log()
 
+    write_pipe_args([args.output])
+
 
 def crop(image, format):
     return image[0 : format[1], 0 : format[0], :]  # FIXME center
