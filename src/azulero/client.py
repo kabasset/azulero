@@ -4,7 +4,17 @@
 
 import argparse
 
-from azulero import assemble, find, overlay, retrieve, crop, tune, process, roam
+from azulero import (
+    assemble,
+    collage,
+    find,
+    overlay,
+    retrieve,
+    crop,
+    tune,
+    process,
+    roam,
+)
 from azulero.tools.messaging import logger, parse_envargs, write_pipe_args
 
 from azulero import _version
@@ -38,11 +48,12 @@ def run():
     )
 
     subparsers = parser.add_subparsers(title="Commands", dest="cmd")
-    find.add_parser(subparsers)
     retrieve.add_parser(subparsers)
+    process.add_parser(subparsers)
+    collage.add_parser(subparsers)
+    find.add_parser(subparsers)
     crop.add_parser(subparsers)
     tune.add_parser(subparsers)
-    process.add_parser(subparsers)
     assemble.add_parser(subparsers)
     roam.add_parser(subparsers)
     overlay.add_parser(subparsers)
