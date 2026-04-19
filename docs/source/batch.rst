@@ -197,5 +197,21 @@ or with targets from a catalog:
      azul retrieve --radius 1m | \
      xargs -n1 -P0 azul process | \
      xargs -n1 open
+
+TODO:
+
+* Copy target names from clipboard and remove spaces;
+* For each target, retrieve one 1' x 1' cutout from the public data releases;
+* Render one color image per cutout;
+* Arrange the color images in a grid of 7 columns;
+* Open the collage!
+
+.. prompt:: bash
+
+   xclip -o | sed 's/ //g' | \
+     azul retrieve --from pdr -n 1 --radius 30s | \
+     azul process | \
+     azul arrange -n 7 -o collage.jpg | \
+     xargs open
  
 Voilà!
