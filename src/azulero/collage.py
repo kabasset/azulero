@@ -97,9 +97,8 @@ def run(args):
             logger.info(f"- {r}, {c}: {filenames[i]}")
             x = args.margin * (c + 1) + args.format[0] * c
             y = args.margin * (r + 1) + args.format[1] * r
-            logger.info(f"- to: {x}, {y}")
-            canvas[y : y + args.format[1], x : x + args.format[0], :] = crop(
-                images[i], args.format
+            blit_centered(
+                canvas[y : y + args.format[1], x : x + args.format[0], :], images[i]
             )
     timer.tic_log()
 
@@ -110,9 +109,13 @@ def run(args):
     write_pipe_args([args.output])
 
 
-def crop(image, format):
-    shape = np.array([format[1], format[0], 3], dtype=int)
-    start = (np.array(image.shape, dtype=int) - shape) // 2
-    stop = start + shape
-    return image[start[0] : stop[0], start[1] : stop[1], :]
-    # FIXME allow out of bounds with bg color
+def blit_centered(canvas, image):
+    shape = [min(bg, fg) for bg, fg in zip(canvas.shape, image.shape)]
+    bg_slice = slice_centered(canvas.shape, shape)
+    fg_slice = slice_centered(image.shape, shape)
+    canvas[bg_slice] = image[fg_slice]
+
+
+def slice_centered(outer_shape, inner_shape):
+    margin = (np.array(outer_shape) - inner_shape) // 2
+    return tuple(slice(m, m + s) for m, s in zip(margin, inner_shape))
