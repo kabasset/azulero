@@ -5,8 +5,8 @@
 import argparse
 
 from azulero import (
+    arrange,
     assemble,
-    collage,
     find,
     overlay,
     retrieve,
@@ -50,7 +50,7 @@ def run():
     subparsers = parser.add_subparsers(title="Commands", dest="cmd")
     retrieve.add_parser(subparsers)
     process.add_parser(subparsers)
-    collage.add_parser(subparsers)
+    arrange.add_parser(subparsers)
     find.add_parser(subparsers)
     crop.add_parser(subparsers)
     tune.add_parser(subparsers)

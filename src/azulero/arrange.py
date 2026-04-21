@@ -13,9 +13,9 @@ from azulero.tools.messaging import logger, read_pipe_args, write_pipe_args
 
 def add_parser(subparsers):
     parser = subparsers.add_parser(
-        "collage",
+        "arrange",
         help="Assemble a grid of images.",
-        description=("Assemble a grid of images of same shapes."),
+        description=("Crop or pad images and assemble them into a grid."),
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
 
