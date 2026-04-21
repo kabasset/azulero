@@ -35,10 +35,9 @@ def add_parser(subparsers):
     )
     parser.add_argument(
         "--format",
-        type=int,
-        nargs=2,
-        default=[600, 600],
-        metavar=("WIDTH", "HEIGHT"),
+        type=str,
+        default="min,min",
+        metavar=("WIDTH,HEIGHT"),
         help="Format of each image in the grid.",
     )
     parser.add_argument(
@@ -77,12 +76,13 @@ def run(args):
     filenames = [workspace / n for n in args.images]
     logger.header(1, f"Read {len(filenames)} image{'s' if len(filenames) > 1 else ''}")
     images = [cv2.imread(f) for f in filenames]
-    logger.info(f"- Crop: {args.format[0]} x {args.format[1]}")
+    w, h = parse_format(args.format, images)
+    logger.info(f"- Crop: {w} x {h}")
     timer.tic_log()
 
     logger.header(1, f"Prepare canvas")
-    width = args.margin * (columns + 1) + args.format[0] * columns
-    height = args.margin * (rows + 1) + args.format[1] * rows
+    width = args.margin * (columns + 1) + w * columns
+    height = args.margin * (rows + 1) + h * rows
     logger.info(f"- Format: {width} x {height}")
     canvas = np.zeros([height, width, 3], dtype=np.uint8)  # FIXME adapt dtype?
     # FIXME fill color
@@ -95,11 +95,9 @@ def run(args):
             if i >= len(filenames):
                 break
             logger.info(f"- {r}, {c}: {filenames[i]}")
-            x = args.margin * (c + 1) + args.format[0] * c
-            y = args.margin * (r + 1) + args.format[1] * r
-            blit_centered(
-                canvas[y : y + args.format[1], x : x + args.format[0], :], images[i]
-            )
+            x = args.margin * (c + 1) + w * c
+            y = args.margin * (r + 1) + h * r
+            blit_centered(canvas[y : y + h, x : x + w, :], images[i])
     timer.tic_log()
 
     logger.header(1, f"Save collage: {args.output}")
@@ -107,6 +105,28 @@ def run(args):
     timer.tic_log()
 
     write_pipe_args([args.output])
+
+
+def parse_format(arg, images):
+    aggs = {"min": min, "max": max, "median": lambda l: int(np.median(l))}
+    widths = [i.shape[1] for i in images]
+    heights = [i.shape[0] for i in images]
+    format = arg.split(",")
+    if len(format) == 1:
+        if format[0].isdigit():
+            w = h = int(format[0])
+        else:
+            w = h = aggs[format[0]](widths + heights)
+    else:
+        if format[0].isdigit():
+            w = int(format[0])
+        else:
+            w = aggs[format[0]](widths)
+        if format[1].isdigit():
+            h = int(format[1])
+        else:
+            h = aggs[format[1]](heights)
+    return w, h
 
 
 def blit_centered(canvas, image):
