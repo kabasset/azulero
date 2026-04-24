@@ -5,15 +5,15 @@
 import argparse
 
 from azulero import (
-    arrange,
-    assemble,
-    find,
-    overlay,
     retrieve,
-    crop,
-    tune,
     process,
+    arrange,
+    overlay,
     roam,
+    crop,
+    find,
+    assemble,
+    tune,
 )
 from azulero.tools.messaging import logger, parse_envargs, write_pipe_args
 
@@ -51,13 +51,15 @@ def run():
     retrieve.add_parser(subparsers)
     process.add_parser(subparsers)
     arrange.add_parser(subparsers)
+    roam.add_parser(subparsers)
+    subparsers.add_parser("cite", description="Print citation instructions.")
+
+    # FIXME Deprecate
     find.add_parser(subparsers)
     crop.add_parser(subparsers)
-    tune.add_parser(subparsers)
     assemble.add_parser(subparsers)
-    roam.add_parser(subparsers)
-    overlay.add_parser(subparsers)
-    subparsers.add_parser("cite", description="Print citation instructions.")
+    tune.add_parser(subparsers)
+    overlay.add_parser(subparsers)  # FIXME rework
 
     parser.set_defaults(**parse_envargs())
     args = parser.parse_args()
