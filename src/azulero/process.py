@@ -29,12 +29,12 @@ def add_parser(subparsers):
     )
 
     parser.add_argument(
-        "targets",
+        "workdirs",
         type=str,
         nargs="*",
         default=read_pipe_args(),
         help=(
-            "Space separated list of targets, "
+            "Space separated list of workdirs relative to the workspace, "
             "optionally with slicing à-la NumPy, e.g. 102160611[1500:7500,11500:17500]"
         ),
     )
@@ -42,24 +42,19 @@ def add_parser(subparsers):
         "--output",
         "-o",
         type=str,
-        default="{workspace}/{tile}/{name}_{step}.tiff",
+        default="{workspace}/{workdir}/{target}_{tile}_azul_{step}.tiff",
         metavar="TEMPLATE",
         help=(
-            "Output path template. "
-            "Placeholder {workspace} is replace by the workspace folder, "
-            "{tile} is replaced by the input target tile and name, "
-            "{name} is replaced by the input target name, "
-            "and {step} is replaced by the processing step. "
+            "Output path template, where: "
+            "{workspace} is replaced with the workspace folder; "
+            "{wordir} is replaced with the workdir folder relative to the workspace; "
+            "{target} is replaced with the last part of the workdir; "
+            " or with 'Tile' if there is only one part; "
+            "{tile} is replaced with the first part of the workdir; "
+            "and {step} is replaced with the processing step. "
             "If {step} is not present in the template, "
-            "intermediate steps are not saved."
+            "then intermediate steps are not saved."
         ),
-    )
-    parser.add_argument(
-        "--wcs",
-        type=str,
-        default="{workspace}/{tile}/{name}_{step}.yaml",
-        metavar="TEMPLATE",
-        help="WCS path template. Use empty string to disable saving.",
     )
     parser.add_argument(
         "--zero",
@@ -174,7 +169,6 @@ def render_path_for_step(template, step):
 class IOs:
     workspace: Path
     input_pattern: str
-    wcs_template: str
     output_template: str
 
 
@@ -206,11 +200,10 @@ def run(args):
     ios = IOs(
         workspace=args.workspace,
         input_pattern=args.input,
-        wcs_template=args.wcs,
         output_template=args.output,
     )
 
-    for target in args.targets:
+    for target in args.workdirs:
         process_target(ios, target, transform)
 
 
@@ -218,17 +211,20 @@ def process_target(ios, target, transform):
 
     logger.header(1, f"Target: {target}", linebreaks=[1, 0])
 
-    tile, slicing = io.parse_target(target)
-    name = Path(tile).parts[-1]
+    target, slicing = io.parse_target(target)
+    parts = Path(target).parts
+    tile = parts[0] if len(parts) > 1 else "Tile"
+    name = parts[-1]
     if slicing:
         slicing_str = f"{slicing[0].start or ''}:{slicing[0].stop or ''},{slicing[1].start or ''}:{slicing[1].stop or ''}"
     else:
         slicing_str = ""
-    workdir = Path(ios.workspace).expanduser() / tile
+    workdir = Path(ios.workspace).expanduser() / target
     template = ios.output_template.format(
         workspace=ios.workspace,
+        workdir=target,
+        target=name,
         tile=tile,
-        name=name,
         slicing=slicing_str,
         step="{step}",
     )
@@ -241,18 +237,10 @@ def process_target(ios, target, transform):
     wcs = io.read_wcs(workdir, ios.input_pattern)
     if slicing is not None:
         wcs = wcs.slice(slicing)
-    if ios.wcs_template:
-        path = Path(
-            ios.wcs_template.format(
-                workspace=ios.workspace,
-                tile=tile,
-                name=name,
-                slicing=slicing_str,
-                step="wcs",
-            )
-        )
-        io.write_wcs(wcs, path)
-        logger.bullet(f"Write WCS: {path.name}")
+    # FIXME write WCS to metadata only
+    path = render_path_for_step(template, "wcs").with_suffix(".yaml")
+    io.write_wcs(wcs, path)
+    logger.bullet(f"Write WCS: {path.name}")
     timer.tic_log()
 
     logger.header(2, f"Detect bad pixels")

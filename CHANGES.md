@@ -12,6 +12,10 @@
 
 * Data provider `sas` was replaced with `pdr`.
 
+`azul process`
+
+* Option `--wcs` was removed (WCS parameters are always witten following the output name).
+
 ## Bug fixes
 
 `azul process`
