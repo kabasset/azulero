@@ -30,6 +30,10 @@ def read_pipe_args():
 
 
 def write_pipe_args(args):
+    if args:
+        logger.header(1, "Output")
+        for a in args:
+            logger.bullet(str(a))
     if not sys.stdout.isatty():
         print("\n".join(str(a) for a in args))
         return True
@@ -90,6 +94,10 @@ def _log_header(self, level, message, linebreaks=[1]):
         self.info("")
 
 
+def _log_bullet(self, message, symbol="•"):
+    self.info(f"{symbol} {message}")
+
+
 def _log_command(self, command):
     self.info("")
     self.info("You may now run:")
@@ -106,6 +114,7 @@ def _setup_logger():
     logger.addHandler(handler)
     setattr(logging.getLoggerClass(), "header", _log_header)
     setattr(logging.getLoggerClass(), "command", _log_command)
+    setattr(logging.getLoggerClass(), "bullet", _log_bullet)
     return logger
 
 

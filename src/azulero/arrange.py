@@ -82,13 +82,13 @@ def run(args):
     logger.header(1, f"Read {len(filenames)} image{'s' if len(filenames) > 1 else ''}")
     images = [cv2.imread(f) for f in filenames]
     w, h = parse_format(args.format, images)
-    logger.info(f"- Crop: {w} x {h}")
+    logger.bullet(f"Crop: {w} x {h}")
     timer.tic_log()
 
     logger.header(1, f"Prepare canvas")
     width = args.margin * (columns + 1) + w * columns
     height = args.margin * (rows + 1) + h * rows
-    logger.info(f"- Format: {width} x {height}")
+    logger.bullet(f"Format: {width} x {height}")
     canvas = np.full([height, width, 3], args.background, dtype=np.uint8)
     # FIXME support RGBA
     timer.tic_log()
@@ -99,16 +99,14 @@ def run(args):
             i = c + r * columns
             if i >= len(filenames):
                 break
-            logger.info(f"- {r}, {c}: {filenames[i]}")
+            logger.bullet(f"{r}, {c}: {filenames[i]}")
             x = args.margin * (c + 1) + w * c
             y = args.margin * (r + 1) + h * r
             blit_centered(canvas[y : y + h, x : x + w, :], images[i])
-    timer.tic_log()
-
     output = args.output.format(
         workspace=args.workspace, first=filenames[0].stem, last=filenames[0].stem
     )
-    logger.header(1, f"Save collage: {output}")
+    logger.bullet(1, f"Save collage: {output}")
     cv2.imwrite(output, canvas)
     timer.tic_log()
 

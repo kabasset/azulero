@@ -31,5 +31,5 @@ class Timer(object):  # FIXME rename as profiler
 
     def tic_log(self):
         self.tic()
-        logger.info(f"- Elapsed time: {self.split:.1f}s / Total: {self.total:.1f}s")
-        logger.info(f"- Memory usage: {self.size:.1f}GB / Peak: {self.peak:.1f}GB")
+        logger.bullet(f"Elapsed time: {self.split:.1f}s / Total: {self.total:.1f}s")
+        logger.bullet(f"Memory usage: {self.size:.1f}GB / Peak: {self.peak:.1f}GB")

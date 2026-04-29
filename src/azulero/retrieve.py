@@ -136,11 +136,11 @@ def query_tiles(provider, dsrs: list[str], target: str):
     else:
         logger.info(f"Named object: {target}")
         radec = SkyCoord.from_name(target)
-        logger.info(f"- Coordinates: {radec.ra.value:.2f}° {radec.dec.value:.2f}°")
+        logger.bullet(f"Coordinates: {radec.ra.value:.2f}° {radec.dec.value:.2f}°")
 
     tiles = provider.query_tiles(radec, dsrs)
     for t in tiles:
-        logger.info(f"- Tile: {t}")
+        logger.bullet(f"Tile: {t}")
     targets = [Target(target, t.index, radec) for t in tiles]
     if len(targets) == 0:
         logger.warning("WARNING: No tile found!")
@@ -161,7 +161,7 @@ def query_datafiles(retriever, tile, dsr):
         logger.warning("No datafile found.")
 
     for f in datafiles:
-        logger.info(f"- [{datafiles[f]}] {f}")
+        logger.bullet(f"[{datafiles[f]}] {f}")
     return datafiles
 
 
@@ -172,13 +172,13 @@ def download_datafiles(retriever, datafiles, workdir, target, radius, overwrite)
     for name in datafiles:  # TODO parallelize?
         path = workdir / name.removesuffix(".gz")
         if path.is_file() and not overwrite:
-            logger.info(f"- File already exists; skip: {path.name}")
+            logger.bullet(f"File already exists; skip: {path.name}")
         else:
             if path.is_file():
                 logger.warning(f"Existing file will be overwritten: {path.name}")
             args = [] if radius is None else [target, radius]
             retriever.download_datafile(name, path, *args)
-            logger.info(f"- {path}")
+            logger.bullet(f"{path}")
 
 
 def run(args):

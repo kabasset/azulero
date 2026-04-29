@@ -237,7 +237,7 @@ def process_target(ios, target, transform):
 
     logger.header(2, f"Read IYJH image from: {workdir}")
     iyjh = io.read_iyjh(workdir, slicing, ios.input_pattern)
-    logger.info(f"- Shape: {iyjh.shape[1]} x {iyjh.shape[2]}")
+    logger.bullet(f"Shape: {iyjh.shape[1]} x {iyjh.shape[2]}")
     wcs = io.read_wcs(workdir, ios.input_pattern)
     if slicing is not None:
         wcs = wcs.slice(slicing)
@@ -252,15 +252,15 @@ def process_target(ios, target, transform):
             )
         )
         io.write_wcs(wcs, path)
-        logger.info(f"- Write WCS: {path.name}")
+        logger.bullet(f"Write WCS: {path.name}")
     timer.tic_log()
 
     logger.header(2, f"Detect bad pixels")
     dead = mask.dead_pixels(iyjh)
-    logger.info(f"- Dead pixels: {', '.join(str(np.sum(channel)) for channel in dead)}")
+    logger.bullet(f"Dead pixels: {', '.join(str(np.sum(channel)) for channel in dead)}")
     if "{step}" in template:
         path = render_path_for_step(template, "mask")
-        logger.info(f"- Write: {path.name}")
+        logger.bullet(f"Write: {path.name}")
         io.write_mask(dead, path)
     timer.tic_log()
 
@@ -277,7 +277,7 @@ def process_target(ios, target, transform):
 
     logger.header(2, f"Stretch dynamic range")
     iyjh = color.stretch_iyjh(iyjh, transform)
-    # logger.info(f"- Medians: {', '.join(str(np.median(c)) for c in iyjh)}") # TODO use approximant
+    # logger.bullet(f"Medians: {', '.join(str(np.median(c)) for c in iyjh)}") # TODO use approximant
     timer.tic_log()
     # TODO save vstacked iyjh (crop if too high)
 
@@ -289,7 +289,7 @@ def process_target(ios, target, transform):
     if "{step}" in template or len(transform.curves) == 0:
         # FIXME implement some Step to handle len(args.curves) == 0 case generically
         path = render_path_for_step(template, "blended")
-        logger.info(f"- Write: {path.name}")
+        logger.bullet(f"Write: {path.name}")
         io.write_rgb(rgb, path, wcs=wcs)
     timer.tic_log()
 
@@ -300,7 +300,7 @@ def process_target(ios, target, transform):
 
     # if "{step}" in name:
     #     path = render_path_for_step(template, "inpainted")
-    #     logger.info(f"- Write: {path.name}")
+    #     logger.bullet(f"Write: {path.name}")
     #     io.write_rgb(rgb, path, wcs=wcs)
     #     timer.tic_log()
 
@@ -309,7 +309,7 @@ def process_target(ios, target, transform):
         for i in range(len(transform.curves)):
             rgb[:, :, i] = color.adjust_curve(rgb[:, :, i], transform.curves[i])
         path = render_path_for_step(template, "adjusted")
-        logger.info(f"- Write: {path.name}")
+        logger.bullet(f"Write: {path.name}")
         io.write_rgb(rgb, path, wcs=wcs)
         timer.tic_log()
 
