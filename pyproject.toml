@@ -23,7 +23,7 @@ dependencies = [
     "numpy >= 2.0",
     "astropy",
     "astroquery",
-    "matplotlib",
+    "matplotlib", # FIXME make optional
     "opencv-python",
     "py4j",
     "pyyaml",
@@ -31,6 +31,16 @@ dependencies = [
     "scikit-image",
     "scipy",
     "shapely"
+]
+
+[dependency-groups]
+dev = [
+  "pytest",
+  "sphinx",
+  "sphinx-prompt",
+  "sphinx-copybutton",
+  "sphinxcontrib-mermaid",
+  "sphinx-multiversion"
 ]
 
 [project.urls]

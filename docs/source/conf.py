@@ -24,6 +24,7 @@ extensions = [
     "sphinx_prompt",
     "sphinx_copybutton",
     "sphinxcontrib.mermaid",
+    "sphinx_multiversion",
 ]
 source_suffix = ".rst"
 templates_path = ["_templates"]
@@ -52,4 +53,25 @@ html_show_copyright = True
 html_theme_options = {
     # 'fixed_sidebar': True,  # Cannot search if window is too small
     "show_relbars": True,
+}
+
+
+# Multiversion
+
+smv_tag_whitelist = r"^v\d+\.\d+\.\d+$"  # FIXME >= 2.0.0
+smv_branch_whitelist = r"^develop$"
+smv_remote_whitelist = r"^origin$"
+smv_released_pattern = r"^refs/tags/.*$"
+
+templates_path = [
+    "_templates",
+]
+
+html_sidebars = {
+    "**": [
+        "searchfield.html",
+        "navigation.html",
+        "relations.html",
+        "versioning.html",
+    ]
 }

@@ -26,7 +26,6 @@ The image below is the raw output of:
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
 
    retrieve
    process
