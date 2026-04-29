@@ -1,3 +1,63 @@
+# 2.0
+
+# Breaking changes
+
+* The following commands were deprecated:
+  * `find` (merged into `retrieve`),
+  * `crop` (partially replaced with cutout retrieval, to be fully replaced later),
+  * `assemble` (previously experimental, replaced with `arrange`),
+  * `tune` (previously experimental, to be merged into `process` later).
+
+`azul retrieve`
+
+* Data provider `sas` was replaced with `pdr`.
+
+## Bug fixes
+
+`azul process`
+
+* In some systems and environments, the script was crashing when `--wcs` was enabled and no slicing was performed.
+
+## New features
+
+* The following commands were added: `arrange`, `cite`.
+* The following commands support piping:
+  * `retrieve` can read targets from `stdin`, write workdirs to `stdout`,
+  * `process` can read workdirs from `stdout`, write render filenames to `stdout`,
+  * `arrange` can read inputs from `stdin`, write collage filename to `stdout`,
+  * `roam` can read input from `stdin`, write video filename to `stdout`.
+* Default arguments can be overloaded with environment variables and configuration files.
+
+`azul retrieve`
+
+* Retrieve named objects.
+* Retrieve coordinates.
+* Retrieve cutouts (option `--radius`).
+* Option `-n` limits the number of tiles per target.
+* Option `-q` performs queries only (no download).
+* Option `-f` with no argument forces all downloads.
+
+`azul process`
+
+* Process a sequence of workdirs.
+* Accept workdirs with subfolders.
+
+`azul arrange`
+
+* Arrange a collection of images into a regular grid.
+
+`azul cite`
+
+* Print citation instructions.
+
+# Cleaning
+
+* Logs are written to `stderr` with a proper logger, which also supprts log levels (option `--log`).
+* Documentation uses proper HTML pages.
+* Video tutorials are published.
+* Packaging is handled with `uv`.
+* Merged `AstroQuery` class into `SAS`.
+
 # 1.2.0
 
 ## New features
