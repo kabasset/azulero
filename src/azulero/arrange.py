@@ -45,21 +45,26 @@ def add_parser(subparsers):
         type=int,
         default=6,
         metavar="PIXELS",
-        help="Number of pixels between images.",
+        help="Number of pixels around images.",
     )
     parser.add_argument(
         "--background",
-        type=str,
-        default=None,
+        type=int,
+        default=0,
         metavar="COLOR",
-        help="Color name of comma-separated components of the margins (None for transparent or black)",
+        help="Value of the background pixels",
     )
     parser.add_argument(
         "--output",
         "-o",
         type=str,
         metavar="PATH",
-        help="Output collage path, relative to the workspace.",
+        default="{workspace}/collage_{first}_{last}.png",
+        help=(
+            "Output collage path template, where: ",
+            "{workspace} is replaced by the workspace path, ",
+            "{first} and {last} are respectively replaced by the first and last file stems in the input list",
+        ),
     )
 
     parser.set_defaults(func=run)
@@ -84,8 +89,8 @@ def run(args):
     width = args.margin * (columns + 1) + w * columns
     height = args.margin * (rows + 1) + h * rows
     logger.info(f"- Format: {width} x {height}")
-    canvas = np.zeros([height, width, 3], dtype=np.uint8)  # FIXME adapt dtype?
-    # FIXME fill color
+    canvas = np.full([height, width, 3], args.background, dtype=np.uint8)
+    # FIXME support RGBA
     timer.tic_log()
 
     logger.header(1, f"Blit images")
@@ -100,11 +105,14 @@ def run(args):
             blit_centered(canvas[y : y + h, x : x + w, :], images[i])
     timer.tic_log()
 
-    logger.header(1, f"Save collage: {args.output}")
-    cv2.imwrite(args.output, canvas)
+    output = args.output.format(
+        workspace=args.workspace, first=filenames[0].stem, last=filenames[0].stem
+    )
+    logger.header(1, f"Save collage: {output}")
+    cv2.imwrite(output, canvas)
     timer.tic_log()
 
-    write_pipe_args([args.output])
+    write_pipe_args([output])
 
 
 def parse_format(arg, images):
