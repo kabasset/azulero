@@ -143,7 +143,7 @@ def query_tiles(provider, dsrs: list[str], target: str):
         logger.bullet(f"Tile: {t}")
     targets = [Target(target, t.index, radec) for t in tiles]
     if len(targets) == 0:
-        logger.warning("WARNING: No tile found!")
+        logger.warning("No tile found!")
     return list(targets)
 
 
