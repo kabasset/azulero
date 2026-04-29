@@ -1,5 +1,5 @@
-Batch processing
-================
+Pipelines
+=========
 
 Introduction
 ------------

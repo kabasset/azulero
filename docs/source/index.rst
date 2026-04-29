@@ -10,7 +10,7 @@ which connects to public (SAS) or private (EAS) data archives (see :doc:`retriev
 Last but not least, ``azul roam`` produces flowing videos, for example by panning and zooming images.
 
 Azulero is now compatible with Unix and Windows pipelines, which makes batch processing simple,
-including with parallelization (see :doc:`batch`).
+including with parallelization (see :doc:`pipelines`).
 The image below is the raw output of:
 
 .. prompt:: bash
@@ -29,7 +29,7 @@ The image below is the raw output of:
 
    retrieve
    process
-   batch
+   pipelines
 
 
 .. [#] I started this project when Euclid EROs came out...
