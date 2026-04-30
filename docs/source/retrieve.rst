@@ -25,6 +25,8 @@ For example, the following command would retrieve the tiles covering targets of 
    azul retrieve NGC6505 270.93,67.05 102157949
 
 
+..  _workspace:
+
 Workspace and workdirs
 ----------------------
 
@@ -34,33 +36,30 @@ It can be configured with option ``--workspace``:
 
 .. prompt:: bash
 
-   azul --workspace /tmp retrieve NGC6505 270.93,67.05 102157949
+   azul --workspace /tmp retrieve NGC6505 270.93,67.05 102157949 PGC61356
 
 Note that this is an option of ``azul`` and not ``azul retrieve``,
 because it will be used by other ``azul`` commands.
 
 The wokdirs are named after the targets, grouped by tile index.
 Several tiles may cover a single target, such that several workdirs may be created for each of them.
+Conversely, several targets may belong a same tile, in which case workdirs have a common parent tile folder.
 At the time of writing, the above command creates the following workdirs::
 
    /tmp
-   |
    ├── 101832848
    │   └── NGC6505
-   |
    ├── 101832849
-   │ └── NGC6505
-   |
+   │   └── NGC6505
    ├── 101836362
-   │   └── 270.93,67.05
-   |
+   |   ├── 270.93,67.05
+   |   └── PGC61356
    ├── 102157949
-   |
    ├── 102158889
    │   └── NGC6505
-   |
    └── 102159776
-       └── 270.93,67.05
+       ├── 270.93,67.05
+       └── PGC61356
 
 
 Providers
