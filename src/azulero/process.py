@@ -177,8 +177,15 @@ def run(args):
     curves = []
     for i in range(len(args.curves)):
         knots = io.parse_map(args.curves[i])
-        knots.insert(0, [0, 0])
-        knots.append([1, 1])
+        if knots:
+            first = knots[0]
+            if first[0] != 0 and first[1] != 0:
+                knots.insert(0, [0, 0])
+            last = knots[-1]
+            if last[0] != 1 and last[1] != 1:
+                knots.append([1, 1])
+        else:
+            knots = [[0, 0], [1, 1]]
         curves.append(knots)
 
     transform = color.Transform(
