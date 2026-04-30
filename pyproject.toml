@@ -40,7 +40,8 @@ dev = [
   "sphinx-prompt",
   "sphinx-copybutton",
   "sphinxcontrib-mermaid",
-  "sphinx-multiversion"
+  "sphinx-multiversion",
+  "sphinx-subfigure"
 ]
 
 [project.urls]

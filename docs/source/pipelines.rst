@@ -11,23 +11,86 @@ while logs are written to the standard error stream (``stderr``).
 Moreover, the commands now accept multiple inputs,
 which make them suitable for batch processing.
 
-For example, the following pipeline will find and download MER data for a collection of (two) targets,
-and then render color images for each target:
+The following sections demonstrate classical use cases.
+Basic knowledge on pipelines and standard streams
+-- specifically, knowing operators ``|``, ``<`` and ``>`` -- is required.
+For the sake of simplicity (and sanity), we'll illustrate the features for Bash on Unix systems only.
+Translation to Windows is left as an exercise!
+
+The results will be presented for public Q1 data only;
+set the following environment variables in order to reproduce the images exactly:
 
 .. prompt:: bash
 
-   azul retrieve NGC6505 UGC11116 --radius 1m | azul process
+   export AZULRETRIEVE_FROM=pdr
+   export AZULRETRIEVE_DSR=Q1_R1
 
-Note that several MER tiles may contain each of the targets,
+
+Object names to color images
+----------------------------
+
+The simplest use case for an Azulero pipeline is to download MER data and render color images.
+In this example, we will use galaxy names as input:
+
+.. prompt:: bash
+
+   azul retrieve UGC11116 PGC61356 --radius 1m | azul process
+
+Note that several MER tiles may contain a given target,
 such that more than two images may be rendered.
+If this is unwanted, set option ``-n 1``.
+Conversely, several targets may belong the same tile,
+which is the case for those two galaxies in `Q1 tile 102159776 <https://www.youtube.com/watch?v=z1-V0zz4p_s>`_.
 
-Next section dissects this example line to explain the communication flow,
-and following sections show related features for even more fun with pipelines!
-Basic knowledge on pipelines and standard streams
--- specifically, knowing operators ``|``, ``<`` and ``>`` -- is required.
-For the sake of simplicity (and sanity), we'll illustrate the features for Unix systems only.
-Translation to Windows is left as an exercise!
+The above command will generate two images:
 
+.. subfigure:: AB
+   :gap: 1em
+
+   .. image:: _static/UGC11116_102159776_azul_adjusted.jpg
+
+   .. image:: _static/PGC61356_102159776_azul_adjusted.jpg
+
+   2' x 2' cutouts around UGC11116 and PGC61356.
+   Credit: ESA Euclid/Euclid Consortium/NASA/Q1-2025/Antoine Basset (CNES)
+
+The resulting workspace contains two workdirs which share a common tile folder::
+
+   102159776
+   ├── PGC61356
+   │   ├── EUC_MER_BGSUB-MOSAIC-NIR-H_TILE102159776-9A9A41_20241024T223843.133644Z_00.00.fits
+   │   ├── EUC_MER_BGSUB-MOSAIC-NIR-J_TILE102159776-A30311_20241024T223448.200678Z_00.00.fits
+   │   ├── EUC_MER_BGSUB-MOSAIC-NIR-Y_TILE102159776-F70908_20241024T222851.359405Z_00.00.fits
+   │   ├── EUC_MER_BGSUB-MOSAIC-VIS_TILE102159776-ACB359_20241025T034718.289475Z_00.00.fits
+   │   ├── PGC61356_102159776_azul_adjusted.tiff
+   │   ├── PGC61356_102159776_azul_blended.tiff
+   │   ├── PGC61356_102159776_azul_mask.tiff
+   │   └── PGC61356_102159776_azul_wcs.yaml
+   └── UGC11116
+      ├── EUC_MER_BGSUB-MOSAIC-NIR-H_TILE102159776-9A9A41_20241024T223843.133644Z_00.00.fits
+      ├── EUC_MER_BGSUB-MOSAIC-NIR-J_TILE102159776-A30311_20241024T223448.200678Z_00.00.fits
+      ├── EUC_MER_BGSUB-MOSAIC-NIR-Y_TILE102159776-F70908_20241024T222851.359405Z_00.00.fits
+      ├── EUC_MER_BGSUB-MOSAIC-VIS_TILE102159776-ACB359_20241025T034718.289475Z_00.00.fits
+      ├── UGC11116_102159776_azul_adjusted.tiff
+      ├── UGC11116_102159776_azul_blended.tiff
+      ├── UGC11116_102159776_azul_mask.tiff
+      └── UGC11116_102159776_azul_wcs.yaml
+
+We have generated the color images one after the other by executing a single ``azul process`` command,
+but it is possible to parallelize the pipeline, for example with xargs:
+
+.. prompt:: bash
+
+   azul retrieve UGC11116 PGC61356 --radius 1m | xargs -n 1 -P 4 azul process
+
+where ``-n 1`` is the number of targets passed to each ``azul process`` command,
+and ``-P 4`` is the maximum number of parallel executions.
+
+Similarly, the retrieval can be parallelized:
+
+.. prompt:: bash
+
+   echo UGC11116 PGC61356 | xargs -n 1 -P 4 azul retrieve --radius 1m | xargs -n 1 -P 4 azul process
 
 ..  _workspace:
 
@@ -121,7 +184,6 @@ and finally pass the result to Azulero:
 
 ..  _named_options:
 
-
 Named options
 -------------
 
@@ -204,36 +266,35 @@ Voilà!
 Online catalog to collage
 -------------------------
 
-Let us use the lens catalog which was used to render
+Let us run Azulero on the lens catalog which was used to render
 `the Q1 strong lensing collage <https://www.esa.int/ESA_Multimedia/Images/2025/03/Strong_gravitational_lenses_captured_by_Euclid>`_
 to generate a similar output in one pipeline:
 
 .. prompt:: bash
 
    wget -q -O - https://zenodo.org/records/15025832/files/q1_discovery_engine_lens_catalog.csv \
-   | tail -n+2 \ 
-   | sort -r -t ',' -k 8 \ 
-   | head -112 \ 
-   | cut -d ',' -f 5,6 \ 
-   | azul retrieve -n 1 --radius 5s \ 
-   | azul process \ 
-   | azul arrange -n 14 \ 
+   | tail -n+2 \
+   | sort -r -t ',' -k 8 \
+   | head -112 \
+   | cut -d ',' -f 5,6 \
+   | azul retrieve -n 1 --radius 5s \
+   | azul process \
+   | azul arrange -n 14 \
    | xargs open 
 
 The above pipeline performs the following:
 
-* download the catalog into `stdout`,
+* download the catalog into ``stdout``,
 * remove the header row,
-* sort rows by flux,
-* select coordinates columns,
-* keep 112 targets,
-* retrieve one 10' x 10' cutout per target,
+* sort rows by descending flux,
+* select RA and Dec columns,
+* keep 14 x 8 = 112 targets,
+* retrieve one 10" x 10" cutout per target,
 * render a color image per cutout,
 * arrange renders into a 14-column grid,
-* display:
+* display the resulting collage:
 
 .. figure:: _static/collage_56.46762095259402,-49.45093443791871_102020055_azul_adjusted_56.46762095259402,-49.45093443791871_102020055_azul_adjusted.png
 
-   Collage of 10' x 10' cutouts around Q1 srong lenses.
-
+   Collage of 10" x 10" cutouts around Q1 srong lenses.
    Credit: ESA Euclid/Euclid Consortium/NASA/Q1-2025/Antoine Basset (CNES)

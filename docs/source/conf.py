@@ -25,12 +25,14 @@ extensions = [
     "sphinx_copybutton",
     "sphinxcontrib.mermaid",
     "sphinx_multiversion",
+    "sphinx_subfigure",
 ]
 source_suffix = ".rst"
 templates_path = ["_templates"]
 master_doc = "index"
 exclude_patterns = []
 pygments_style = "sphinx"
+copybutton_exclude = ".linenos, .gp"
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
