@@ -104,7 +104,7 @@ def run(args):
             y = args.margin * (r + 1) + h * r
             blit_centered(canvas[y : y + h, x : x + w, :], images[i])
     output = args.output.format(
-        workspace=args.workspace, first=filenames[0].stem, last=filenames[0].stem
+        workspace=args.workspace, first=filenames[0].stem, last=filenames[-1].stem
     )
     logger.bullet(1, f"Save collage: {output}")
     cv2.imwrite(output, canvas)
