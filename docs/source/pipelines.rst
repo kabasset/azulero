@@ -121,6 +121,7 @@ and finally pass the result to Azulero:
 
 ..  _named_options:
 
+
 Named options
 -------------
 
@@ -198,20 +199,41 @@ or with targets from a catalog:
      xargs -n1 -P0 azul process | \
      xargs -n1 open
 
-TODO:
+Voilà!
 
-* Copy target names from clipboard and remove spaces;
-* For each target, retrieve one 1' x 1' cutout from the public data releases;
-* Render one color image per cutout;
-* Arrange the color images in a grid of 7 columns;
-* Open the collage!
+Online catalog to collage
+-------------------------
+
+Let us use the lens catalog which was used to render
+`the Q1 strong lensing collage <https://www.esa.int/ESA_Multimedia/Images/2025/03/Strong_gravitational_lenses_captured_by_Euclid>`_
+to generate a similar output in one pipeline:
 
 .. prompt:: bash
 
-   xclip -o | sed 's/ //g' | \
-     azul retrieve --from pdr -n 1 --radius 30s | \
-     azul process | \
-     azul arrange -n 7 -o collage.jpg | \
-     xargs open
- 
-Voilà!
+   wget -q -O - https://zenodo.org/records/15025832/files/q1_discovery_engine_lens_catalog.csv \
+   | tail -n+2 \ 
+   | sort -r -t ',' -k 8 \ 
+   | head -112 \ 
+   | cut -d ',' -f 5,6 \ 
+   | azul retrieve -n 1 --radius 5s \ 
+   | azul process \ 
+   | azul arrange -n 14 \ 
+   | xargs open 
+
+The above pipeline performs the following:
+
+* download the catalog into `stdout`,
+* remove the header row,
+* sort rows by flux,
+* select coordinates columns,
+* keep 112 targets,
+* retrieve one 10' x 10' cutout per target,
+* render a color image per cutout,
+* arrange renders into a 14-column grid,
+* display:
+
+.. figure:: _static/collage_56.46762095259402,-49.45093443791871_102020055_azul_adjusted_56.46762095259402,-49.45093443791871_102020055_azul_adjusted.png
+
+   Collage of 10' x 10' cutouts around Q1 srong lenses.
+
+   Credit: ESA Euclid/Euclid Consortium/NASA/Q1-2025/Antoine Basset (CNES)
