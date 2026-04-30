@@ -50,9 +50,9 @@ The above command will generate two images:
 .. subfigure:: AB
    :gap: 1em
 
-   .. image:: _static/UGC11116_102159776_azul_adjusted.jpg
+   .. image:: _static/UGC11116_102159776_adjusted.jpg
 
-   .. image:: _static/PGC61356_102159776_azul_adjusted.jpg
+   .. image:: _static/PGC61356_102159776_adjusted.jpg
 
    2' x 2' cutouts around UGC11116 and PGC61356.
    Credit: ESA Euclid/Euclid Consortium/NASA/Q1-2025/Antoine Basset (CNES)
@@ -65,19 +65,19 @@ The resulting workspace contains two workdirs which share a common tile folder::
    │   ├── EUC_MER_BGSUB-MOSAIC-NIR-J_TILE102159776-A30311_20241024T223448.200678Z_00.00.fits
    │   ├── EUC_MER_BGSUB-MOSAIC-NIR-Y_TILE102159776-F70908_20241024T222851.359405Z_00.00.fits
    │   ├── EUC_MER_BGSUB-MOSAIC-VIS_TILE102159776-ACB359_20241025T034718.289475Z_00.00.fits
-   │   ├── PGC61356_102159776_azul_adjusted.tiff
-   │   ├── PGC61356_102159776_azul_blended.tiff
-   │   ├── PGC61356_102159776_azul_mask.tiff
-   │   └── PGC61356_102159776_azul_wcs.yaml
+   │   ├── PGC61356_102159776_adjusted.tiff
+   │   ├── PGC61356_102159776_blended.tiff
+   │   ├── PGC61356_102159776_mask.tiff
+   │   └── PGC61356_102159776_wcs.yaml
    └── UGC11116
       ├── EUC_MER_BGSUB-MOSAIC-NIR-H_TILE102159776-9A9A41_20241024T223843.133644Z_00.00.fits
       ├── EUC_MER_BGSUB-MOSAIC-NIR-J_TILE102159776-A30311_20241024T223448.200678Z_00.00.fits
       ├── EUC_MER_BGSUB-MOSAIC-NIR-Y_TILE102159776-F70908_20241024T222851.359405Z_00.00.fits
       ├── EUC_MER_BGSUB-MOSAIC-VIS_TILE102159776-ACB359_20241025T034718.289475Z_00.00.fits
-      ├── UGC11116_102159776_azul_adjusted.tiff
-      ├── UGC11116_102159776_azul_blended.tiff
-      ├── UGC11116_102159776_azul_mask.tiff
-      └── UGC11116_102159776_azul_wcs.yaml
+      ├── UGC11116_102159776_adjusted.tiff
+      ├── UGC11116_102159776_blended.tiff
+      ├── UGC11116_102159776_mask.tiff
+      └── UGC11116_102159776_wcs.yaml
 
 We have generated the color images one after the other by executing a single ``azul process`` command,
 but it is possible to parallelize the pipeline, for example with xargs:
@@ -127,7 +127,7 @@ The above pipeline performs the following:
 * arrange renders into a 14-column grid,
 * display the resulting collage:
 
-.. figure:: _static/collage_56.46762095259402,-49.45093443791871_102020055_azul_adjusted_56.46762095259402,-49.45093443791871_102020055_azul_adjusted.png
+.. figure:: _static/collage_56.46762095259402,-49.45093443791871_102020055_adjusted_56.46762095259402,-49.45093443791871_102020055_adjusted.png
 
    Collage of 10" x 10" cutouts around Q1 srong lenses.
    Credit: ESA Euclid/Euclid Consortium/NASA/Q1-2025/Antoine Basset (CNES)
