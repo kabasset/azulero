@@ -119,7 +119,7 @@ def add_parser(subparsers):
         "--white",
         "-w",
         type=float,
-        default=22.0,
+        default=22.5,
         metavar="AB_MAG",
         help="White point in AB magnitude.",
     )
@@ -127,7 +127,7 @@ def add_parser(subparsers):
         "--stretch",
         "-a",
         type=float,
-        default=28.0,
+        default=27.0,
         metavar="AB_MAG",
         help="Stretching factor in AB magnitude.",
     )
@@ -135,7 +135,7 @@ def add_parser(subparsers):
         "--offset",
         "-b",
         type=float,
-        default=29.0,
+        default=28.5,
         metavar="AB_MAG",
         help="Opposite of black point in AB magnitude.",
     )
