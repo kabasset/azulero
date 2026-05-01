@@ -27,6 +27,9 @@ The image below is the raw output of:
 .. toctree::
    :maxdepth: 2
 
+   quickstart
+   install
+   news
    interfaces
    retrieve
    process
