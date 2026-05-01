@@ -58,5 +58,5 @@ Within this context, the following lines are equivalent:
 .. prompt:: bash
 
    azul retrieve NGC6505 UGC11116 | azul process
-   azul --log DEBUG retrieve NGC6505 UGC11116 --radius 1m --from pdr -f | azul --log DEBUG process
+   azul --log DEBUG retrieve NGC6505 UGC11116 -r 1m --from pdr -f | azul --log DEBUG process
 

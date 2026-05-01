@@ -28,6 +28,10 @@ set the following environment variables in order to reproduce the images exactly
    export AZULRETRIEVE_FROM=pdr
    export AZULRETRIEVE_DSR=Q1_R1
 
+Credit for all images and videos in this page:
+
+   ESA Euclid / Euclid Consortium / NASA / Q1-2025 / Antoine Basset (CNES).
+
 
 Object names to color images
 ----------------------------
@@ -37,7 +41,7 @@ In this example, we will use galaxy names as input:
 
 .. prompt:: bash
 
-   azul retrieve UGC11116 PGC61356 --radius 1m | azul process
+   azul retrieve UGC11116 PGC61356 -r 1m | azul process
 
 Note that several MER tiles may contain a given target,
 such that more than two images may be rendered.
@@ -55,7 +59,6 @@ The above command will generate two images:
    .. image:: _static/PGC61356_102159776_adjusted.jpg
 
    Color rendering of 2' x 2' cutouts around UGC11116 and PGC61356.
-   Credit: ESA Euclid/Euclid Consortium/NASA/Q1-2025/Antoine Basset (CNES)
 
 The resulting workspace contains two workdirs which share a common tile folder::
 
@@ -84,7 +87,7 @@ but it is possible to parallelize the pipeline, for example with ``xargs``:
 
 .. prompt:: bash
 
-   azul retrieve UGC11116 PGC61356 --radius 1m \
+   azul retrieve UGC11116 PGC61356 -r 1m \
    | xargs -n 1 -P 4 azul process
 
 where ``-n 1`` is the number of targets passed to each ``azul process`` command,
@@ -95,7 +98,7 @@ Similarly, the retrieval can be parallelized:
 .. prompt:: bash
 
    echo UGC11116 PGC61356 \
-   | xargs -n 1 -P 4 azul retrieve --radius 1m \
+   | xargs -n 1 -P 4 azul retrieve -r 1m \
    | xargs -n 1 -P 4 azul process
 
 
@@ -113,7 +116,7 @@ and generate a similar output in one pipeline:
    | sort -r -t ',' -k 8 \
    | head -112 \
    | cut -d ',' -f 5,6 \
-   | azul retrieve -n 1 --radius 5s \
+   | azul retrieve -n 1 -r 5s \
    | azul process \
    | azul arrange -n 14 \
    | xargs open 
@@ -132,14 +135,48 @@ The above pipeline performs the following:
 
 .. figure:: _static/collage_56.46762095259402,-49.45093443791871_102020055_adjusted_56.46762095259402,-49.45093443791871_102020055_adjusted.png
 
-   Collage of 10" x 10" cutouts around Q1 srong lenses.
-   Credit: ESA Euclid/Euclid Consortium/NASA/Q1-2025/Antoine Basset (CNES)
+   Collage of 10" x 10" cutouts around Q1 strong lenses.
 
 
 Clipboard to slideshow
 ----------------------
 
-FIXME nearby galaxies slideshow
+This example is a bit more exotic than the others, but may come in handy sometimes.
+We will get the list of targets from the clipboard and generate a video from the renderings.
+To this end, we will rely on ImageMagick's ``convert``, which can turn a sequence of images into a video as follows:
+
+.. code-block:: xml
+
+   convert -delay <DURATION> <IMAGES> <VIDEO>
+
+where:
+
+* ``<DURATION>`` is the duration of each image in centiseconds,
+* ``<IMAGES>`` is the space-separated list of input images,
+* ``<VIDEO>`` is the path to the output video.
+
+As targets, we will use `Q1 nearby galaxies <https://www.cosmos.esa.int/web/euclid/euclid-nearby-galaxies-collage>`_.
+The pipeline will be fed by the clipboard, therefore we will just select the table at the bottom of this page and run:
+
+.. prompt:: bash
+
+   xclip -o \
+   | sed 's/ //g' \
+   | azul retrieve -n 1 -r 30s \
+   | azul process \
+   | cat - <(echo " slideshow.mp4") \
+   | xargs convert -delay 50
+
+* ``xclip`` prints the selection to ``stdout``;
+* ``sed`` removes spurious spaces, e.g. ``PGC 2693358`` is transformed into ``PGC2693358``;
+* ``azul retrieve`` downloads 1' x 1' cutouts;
+* ``azul process`` renders the images and returns the paths;
+* ``cat`` appends the output video filename to the rendering paths for ``convert``;
+* ``convert`` generates the video.
+
+.. video:: _static/slideshow.mp4
+   :align: center
+   :caption: Slideshow of 1' x 1' cutouts of Euclid Q1 nearby galaxies. 
 
 
 Dissecting a pipeline
@@ -150,7 +187,7 @@ Let us introduce a simple yet complete example pipeline:
 .. prompt:: bash
 
    echo UGC11116 PGC61356 LEDA2697349 \
-   | azul retrieve --radius 1m \
+   | azul retrieve -r 1m \
    | azul process \
    | azul arrange --format max \
    | xargs open
@@ -160,7 +197,6 @@ which gives:
 .. figure:: _static/collage_UGC11116_102159776_adjusted_LEDA2697349_102159776_adjusted.png
 
    Collage of 2' x 2' cutouts around UGC11116, PGC61356 and LEDA2697349.
-   Credit: ESA Euclid/Euclid Consortium/NASA/Q1-2025/Antoine Basset (CNES)
 
 Since we did not pass option ``-n 1`` to ``azul retrieve``,
 all of the tiles which contain a target are retrieved,

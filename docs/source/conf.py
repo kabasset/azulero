@@ -26,6 +26,7 @@ extensions = [
     "sphinxcontrib.mermaid",
     "sphinx_multiversion",
     "sphinx_subfigure",
+    "sphinxcontrib.video",
 ]
 source_suffix = ".rst"
 templates_path = ["_templates"]

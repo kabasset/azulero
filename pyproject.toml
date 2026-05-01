@@ -41,7 +41,8 @@ dev = [
   "sphinx-copybutton",
   "sphinxcontrib-mermaid",
   "sphinx-multiversion",
-  "sphinx-subfigure"
+  "sphinx-subfigure",
+  "sphinxcontrib-video"
 ]
 
 [project.urls]

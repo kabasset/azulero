@@ -36,7 +36,7 @@
 
 * Retrieve named objects.
 * Retrieve coordinates.
-* Retrieve cutouts (option `--radius`).
+* Retrieve cutouts (option `-r`).
 * Option `-n` limits the number of tiles per target.
 * Option `-q` performs queries only (no download).
 * Option `-f` with no argument forces all downloads.

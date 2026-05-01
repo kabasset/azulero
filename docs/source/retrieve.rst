@@ -107,7 +107,7 @@ Similarly, for DSS data, an EAS account has to be configured:
 Cutouts
 -------
 
-When retrieving coordinates or named objects, a cone radius can be passed as option ``--radius``,
+When retrieving coordinates or named objects, a cone radius can be passed as option ``-r``,
 which triggers a cutout service and downloads only a square region around the target.
 All formats handled by Astropy's ``Angle`` are accepted.
 
@@ -117,7 +117,7 @@ Therefore, the following line:
 
 .. prompt:: bash
 
-   azul retrieve NGC6505 270.93,67.05 102157949 --radius 1m
+   azul retrieve NGC6505 270.93,67.05 102157949 -r 1m
 
 downloads 2' x 2' regions for NGC6505 and (270.93, 67.05), as well as the whole 102157949 tile.
 

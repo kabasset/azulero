@@ -15,7 +15,7 @@ The image below is the raw output of:
 
 .. prompt:: bash
 
-   azul retrieve UGC11116 --radius 1m --from pdr | azul process
+   azul retrieve UGC11116 -r 1m --from pdr | azul process
 
 .. figure:: _static/UGC11116.jpg
 
