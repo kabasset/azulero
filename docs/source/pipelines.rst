@@ -13,7 +13,7 @@ which make them suitable for batch processing.
 
 The following sections demonstrate classical use cases.
 Basic knowledge on pipelines and standard streams
--- specifically, knowing operators ``|``, ``<`` and ``>`` -- is required.
+-- at least, knowing operator ``|`` -- is required.
 For the sake of simplicity (and sanity), we'll illustrate the features for Bash on Unix systems only.
 Translation to Windows is left as an exercise!
 
@@ -21,7 +21,7 @@ For a better understanding of what actually happens,
 the last section dissects the data flow of a simple pipeline.
 
 The results will be presented for public Q1 data only;
-set the following environment variables in order to reproduce the images exactly:
+set the following environment variables in order to reproduce the images exactly (see :ref:`named_options`):
 
 .. prompt:: bash
 
@@ -33,8 +33,8 @@ Credit for all images and videos in this page:
    ESA Euclid / Euclid Consortium / NASA / Q1-2025 / Antoine Basset (CNES).
 
 
-Object names to color images
-----------------------------
+Pipeline: Object names to color images
+--------------------------------------
 
 The simplest use case for an Azulero pipeline is to download MER data and render color images.
 In this example, we will use galaxy names as input:
@@ -102,8 +102,8 @@ Similarly, the retrieval can be parallelized:
    | xargs -n 1 -P 4 azul process
 
 
-Online catalog to collage
--------------------------
+Pipeline: Online catalog to collage
+-----------------------------------
 
 Let us run Azulero on the lens catalog which was used to render
 `the Q1 strong lensing collage <https://www.esa.int/ESA_Multimedia/Images/2025/03/Strong_gravitational_lenses_captured_by_Euclid>`_
@@ -138,10 +138,10 @@ The above pipeline performs the following:
    Collage of 10" x 10" cutouts around Q1 strong lenses.
 
 
-Clipboard to slideshow
-----------------------
+Pipeline: Clipboard to slideshow
+--------------------------------
 
-This example is a bit more exotic than the others, but may come in handy sometimes.
+This example is a bit more exotic than the others, but parts of it may come in handy.
 We will get the list of targets from the clipboard and generate a video from the renderings.
 To this end, we will rely on ImageMagick's ``convert``, which can turn a sequence of images into a video as follows:
 
@@ -155,8 +155,9 @@ where:
 * ``<IMAGES>`` is the space-separated list of input images,
 * ``<VIDEO>`` is the path to the output video.
 
-As targets, we will use `Q1 nearby galaxies <https://www.cosmos.esa.int/web/euclid/euclid-nearby-galaxies-collage>`_.
-The pipeline will be fed by the clipboard, therefore we will just select the table at the bottom of this page and run:
+As targets, we will use Q1 nearby galaxies.
+The pipeline will be fed by the clipboard, therefore we will just select the table at the bottom of
+`this page <https://www.cosmos.esa.int/web/euclid/euclid-nearby-galaxies-collage>`_ and run:
 
 .. prompt:: bash
 
@@ -167,12 +168,14 @@ The pipeline will be fed by the clipboard, therefore we will just select the tab
    | cat - <(echo " slideshow.mp4") \
    | xargs convert -delay 50
 
+where:
+
 * ``xclip`` prints the selection to ``stdout``;
 * ``sed`` removes spurious spaces, e.g. ``PGC 2693358`` is transformed into ``PGC2693358``;
 * ``azul retrieve`` downloads 1' x 1' cutouts;
 * ``azul process`` renders the images and returns the paths;
 * ``cat`` appends the output video filename to the rendering paths for ``convert``;
-* ``convert`` generates the video.
+* ``convert`` generates the video:
 
 .. video:: _static/slideshow.mp4
    :align: center
@@ -182,7 +185,7 @@ The pipeline will be fed by the clipboard, therefore we will just select the tab
 Dissecting a pipeline
 ---------------------
 
-Let us introduce a simple yet complete example pipeline:
+Let us introduce a simple and typical example pipeline:
 
 .. prompt:: bash
 
