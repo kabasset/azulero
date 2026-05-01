@@ -72,6 +72,7 @@ def add_parser(subparsers):
     )
     parser.add_argument(
         "--radius",
+        "-r",
         type=Angle,
         default=None,
         metavar="ANGLE",
