@@ -2,21 +2,34 @@
 Installation guide
 ==================
 
-Azulero can be installed from PyPI or from sources.
+Latest release
+--------------
 
+Azulero is deployed to `PyPI <https://pypi.org/project/azulero/>`_.
+The simplest way to install it is with ``pip``:
 
-Latest release from PyPI
-------------------------
+.. prompt:: bash
+
+   pip install azulero
+
+If you already have an old version installed, use:
 
 .. prompt:: bash
 
    pip install --upgrade azulero
 
 
-Development version from sources
---------------------------------
+Development version
+-------------------
 
-To clone and install (and therefore have the sources in local):
+If you simply want to get the development version from time to time, use:
+
+.. prompt:: bash
+
+   pip install git+https://github.com/kabasset/azulero
+
+If instead, you want to modify the sources or update very often,
+better clone the repository locally:
 
 .. prompt:: bash
 
@@ -24,8 +37,10 @@ To clone and install (and therefore have the sources in local):
    cd azulero
    pip install .
 
-To install without cloning:
+Azulero is packaged with `uv <https://docs.astral.sh/uv/>`_.
+It is not needed to install the package to execute the scripts.
+For example, to download a cutout without installing, launch:
 
 .. prompt:: bash
 
-   pip install git+https://github.com/kabasset/azulero
+    uv run azul retrieve NGC6505 -r 1m
