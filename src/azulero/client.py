@@ -74,7 +74,7 @@ def run():
 
     citation = log_citation()
     if args.cmd == "cite":
-        write_pipe_args(citation)
+        write_pipe_args(citation, log=False)
 
     logger.info("")
 

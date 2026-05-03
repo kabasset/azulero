@@ -29,8 +29,8 @@ def read_pipe_args():
     return []
 
 
-def write_pipe_args(args):
-    if args:
+def write_pipe_args(args, log=True):
+    if args and log:
         logger.header(1, "Output")
         for a in args:
             logger.bullet(str(a))
