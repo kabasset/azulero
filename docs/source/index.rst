@@ -25,7 +25,7 @@ The image below is the raw output of:
 
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    quickstart
    install
