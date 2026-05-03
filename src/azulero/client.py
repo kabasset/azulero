@@ -20,7 +20,7 @@ from azulero.tools.messaging import logger, parse_envargs, write_pipe_args
 from azulero import _version
 
 
-def run():
+def add_parser():
 
     parser = argparse.ArgumentParser(
         prog="azul",
@@ -62,6 +62,12 @@ def run():
     overlay.add_parser(subparsers)  # FIXME rework
 
     parser.set_defaults(**parse_envargs())
+
+    return parser
+
+
+def run():
+    parser = add_parser()
     args = parser.parse_args()
 
     logger.setLevel(args.log)

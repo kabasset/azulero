@@ -27,6 +27,7 @@ extensions = [
     "sphinx_multiversion",
     "sphinx_subfigure",
     "sphinxcontrib.video",
+    "sphinxarg.ext",
 ]
 source_suffix = ".rst"
 templates_path = ["_templates"]

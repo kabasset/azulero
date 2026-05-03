@@ -6,6 +6,7 @@ import argparse
 from dataclasses import dataclass
 import numpy as np
 from pathlib import Path
+from rich_argparse import ArgumentDefaultsRichHelpFormatter
 
 from azulero import color, io, mask
 from azulero.tools.messaging import logger, read_pipe_args, write_pipe_args
@@ -18,14 +19,14 @@ def add_parser(subparsers):
         help="Process MER channels to render a color image.",
         description=(
             "Process MER channels: "
-            "1. Inpaint dead pixels; "
-            "2. Sharpen IYJH channels; "
-            "3. Stretch dynamic range with asinh function; "
-            "4. Blend IYJH channels into RGB and lightness (L) channels; "
-            "5. Shift hue and boost color saturation; "
-            "6. Adjust curves."
+            "* Inpaint dead pixels; "
+            "* Sharpen IYJH channels; "
+            "* Stretch dynamic range with asinh function; "
+            "* Blend IYJH channels into RGB and lightness (L) channels; "
+            "* Shift hue and boost color saturation; "
+            "* Adjust curves."
         ),
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+        formatter_class=ArgumentDefaultsRichHelpFormatter,
     )
 
     parser.add_argument(
@@ -35,7 +36,8 @@ def add_parser(subparsers):
         default=read_pipe_args(),
         help=(
             "Space separated list of workdirs relative to the workspace, "
-            "optionally with slicing à-la NumPy, e.g. 102160611[1500:7500,11500:17500]"
+            "optionally with slicing à-la NumPy, e.g. ``102160611[1500:7500,11500:17500]``. "
+            "If no value is specified, the program will read `stdin`."
         ),
     )
     parser.add_argument(
@@ -44,17 +46,16 @@ def add_parser(subparsers):
         type=str,
         default="{workspace}/{workdir}/{target}_{tile}_{step}.tiff",
         metavar="TEMPLATE",
-        help=(
-            "Output path template, where: "
-            "{workspace} is replaced with the workspace folder; "
-            "{wordir} is replaced with the workdir folder relative to the workspace; "
-            "{target} is replaced with the last part of the workdir; "
-            " or with 'Tile' if there is only one part; "
-            "{tile} is replaced with the first part of the workdir; "
-            "and {step} is replaced with the processing step. "
-            "If {step} is not present in the template, "
-            "then intermediate steps are not saved."
-        ),
+        help="""
+        Output path template, where: 
+        {workspace} is replaced with the workspace folder; 
+        {wordir} is replaced with the workdir folder relative to the workspace; 
+        {target} is replaced with the last part of the workdir or with 'Tile' if there is only one part; 
+        {tile} is replaced with the first part of the workdir; 
+        and {step} is replaced with the processing step. 
+        If {step} is not present in the template, 
+        then intermediate steps are not saved.
+        """,
     )
     parser.add_argument(
         "--zero",

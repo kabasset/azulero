@@ -28,6 +28,7 @@ dependencies = [
     "py4j",
     "pyyaml",
     "requests",
+    "rich-argparse",
     "scikit-image",
     "scipy",
     "shapely"
@@ -37,10 +38,11 @@ dependencies = [
 dev = [
   "pytest",
   "sphinx",
-  "sphinx-prompt",
+  "sphinx-argparse",
   "sphinx-copybutton",
   "sphinxcontrib-mermaid",
   "sphinx-multiversion",
+  "sphinx-prompt",
   "sphinx-subfigure",
   "sphinxcontrib-video"
 ]
