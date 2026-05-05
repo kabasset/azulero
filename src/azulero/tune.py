@@ -6,7 +6,7 @@ import argparse
 from astropy.io import fits
 import numpy as np
 
-from azulero import stats
+from azulero.tools import stats
 from azulero.tools.timing import Timer
 
 

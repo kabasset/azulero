@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from pathlib import Path
 
-from azulero import io
+from azulero.image import io
 from azulero.tools.timing import Timer
 
 

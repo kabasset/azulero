@@ -11,7 +11,7 @@ import cv2
 from dataclasses import dataclass
 import numpy as np
 
-from azulero import io
+from azulero.image import io
 from azulero.tools.timing import Timer
 
 

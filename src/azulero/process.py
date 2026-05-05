@@ -7,7 +7,7 @@ from dataclasses import dataclass
 import numpy as np
 from pathlib import Path
 
-from azulero import color, io, mask
+from azulero.image import color, io, mask
 from azulero.tools.messaging import logger, read_pipe_args, write_pipe_args
 from azulero.tools.timing import Timer
 

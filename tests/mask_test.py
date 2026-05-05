@@ -4,7 +4,7 @@
 
 import numpy as np
 
-from azulero import mask
+from azulero.image import mask
 
 
 def test_flagging():

@@ -8,8 +8,6 @@ import cv2
 from scipy import interpolate
 from skimage.filters import unsharp_mask as sksharpen
 
-from azulero import io  # FIXME rm
-
 
 @dataclass
 class Transform(object):

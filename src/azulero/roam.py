@@ -7,9 +7,11 @@ import numpy as np
 from pathlib import Path
 import cv2
 
-from azulero import io, overlay, sequence
-from azulero.equirectangular import Projection
-from azulero.gaiasky import roam_gaiasky
+from azulero.image import io
+from azulero.video import sequence
+from azulero import overlay
+from azulero.projections.equirectangular import Projection
+from azulero.video.gaiasky import roam_gaiasky
 from azulero.tools.timing import Timer
 
 

@@ -15,7 +15,7 @@ def add_parser(subparsers):
     parser = subparsers.add_parser(
         "arrange",
         help="Assemble a grid of images.",
-        description=("Crop or pad images and assemble them into a grid."),
+        description="Crop or pad images and assemble them into a grid.",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
 
@@ -37,7 +37,7 @@ def add_parser(subparsers):
         "--format",
         type=str,
         default="min,min",
-        metavar=("WIDTH,HEIGHT"),
+        metavar="WIDTH,HEIGHT",
         help="Format of each image in the grid.",
     )
     parser.add_argument(
@@ -60,11 +60,12 @@ def add_parser(subparsers):
         type=str,
         metavar="PATH",
         default="{workspace}/collage_{first}_{last}.png",
-        help=(
-            "Output collage path template, where: ",
-            "{workspace} is replaced by the workspace path, ",
-            "{first} and {last} are respectively replaced by the first and last file stems in the input list",
-        ),
+        help="""
+        Output collage path template, where:
+
+        * ``{workspace}`` is replaced by the workspace path,
+        * ``{first}`` and ``{last}`` are respectively replaced by the first and last file stems in the input list.
+        """,
     )
 
     parser.set_defaults(func=run)

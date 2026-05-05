@@ -4,7 +4,7 @@
 
 import numpy as np
 
-from azulero import stats
+from azulero.tools import stats
 
 
 def test_percentiles():

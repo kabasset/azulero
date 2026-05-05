@@ -9,7 +9,7 @@ import json
 from pathlib import Path
 from shapely import geometry
 
-from azulero import io
+from azulero.image import io
 from azulero.tools.timing import Timer
 
 

@@ -6,7 +6,7 @@ from astropy.coordinates import SkyCoord
 from astropy import units as u
 import numpy as np
 
-from azulero import sequence
+from azulero.video import sequence
 
 
 def test_center_parsing():

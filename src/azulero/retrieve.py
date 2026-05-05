@@ -7,7 +7,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from astropy.coordinates import Angle, SkyCoord
 
-from azulero import io
+from azulero.image import io
 from azulero.providers import dss, sas
 from azulero.tools.messaging import (
     logger,
