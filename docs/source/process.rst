@@ -143,5 +143,4 @@ Command line interface
 .. argparse::
    :module: azulero.client
    :func: add_parser
-   :prog: azul
    :path: process

@@ -23,7 +23,7 @@ from azulero import _version
 def add_parser():
 
     parser = argparse.ArgumentParser(
-        prog="azul",
+        prog="azul [global_options]",
         description=_version.__description__,
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
