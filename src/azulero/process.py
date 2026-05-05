@@ -23,6 +23,7 @@ def add_parser(subparsers):
         * Sharpen IYJH channels;
         * Stretch dynamic range with asinh function;
         * Blend IYJH channels into RGB and lightness (L) channels;
+        * Boost intensity of saturated stars;
         * Shift hue and boost color saturation;
         * Adjust curves.
         """,
@@ -39,7 +40,7 @@ def add_parser(subparsers):
         Space separated list of workdirs relative to the workspace,
         optionally with slicing à-la NumPy, e.g. ``102160611[1500:7500,11500:17500]``.
         If no value is specified, the program will read ``stdin``.
-        """,
+        """,  # FIXME use {workspace}
     )
     parser.add_argument(
         "--output",
@@ -65,7 +66,7 @@ def add_parser(subparsers):
         type=float,
         default=[24.5, 29.8, 30.1, 30.0],
         metavar=("ZP_I", "ZP_Y", "ZP_J", "ZP_H"),
-        help="Zero points for each band",
+        help="Zero points for each band.",  # FIXME read FITS header, keep this arg as the defaults
     )
     parser.add_argument(
         "--scaling",
@@ -81,14 +82,14 @@ def add_parser(subparsers):
         type=float,
         default=[1.6, 3.5, 3.4, 3.5],
         metavar=("FWHM_I", "FWHM_Y", "FWHM_J", "FWHM_H"),
-        help="FWHM for each band.",
+        help="FWHM for each band, used for sharpening.",
     )
     parser.add_argument(
         "--sharpen",
         type=float,
         default=0.5,
         metavar="STRENGTH",
-        help="Strength of the sharpening.",
+        help="Strength of the sharpening. Set to 0 to disable sharpening.",
     )
     parser.add_argument(
         "--nirl",
@@ -143,7 +144,11 @@ def add_parser(subparsers):
         help="Opposite of black point in AB magnitude.",
     )
     parser.add_argument(
-        "--hue", type=float, default=-20, metavar="ANGLE", help="Hue shift"
+        "--hue",
+        type=float,
+        default=-20,
+        metavar="ANGLE",
+        help="Hue shift in degrees.",
     )
     parser.add_argument(
         "--saturation",
