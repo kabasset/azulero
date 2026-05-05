@@ -135,3 +135,12 @@ Depending on your system, it may be necessary to add quotes:
 .. prompt:: bash
 
    azul process "102159776[5000:,:5000]"
+
+
+Command line interface
+----------------------
+
+.. argparse::
+   :module: azulero.client
+   :func: add_parser
+   :path: process

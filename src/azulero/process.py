@@ -16,15 +16,18 @@ def add_parser(subparsers):
     parser = subparsers.add_parser(
         "process",
         help="Process MER channels to render a color image.",
-        description=(
-            "Process MER channels: "
-            "1. Inpaint dead pixels; "
-            "2. Sharpen IYJH channels; "
-            "3. Stretch dynamic range with asinh function; "
-            "4. Blend IYJH channels into RGB and lightness (L) channels; "
-            "5. Shift hue and boost color saturation; "
-            "6. Adjust curves."
-        ),
+        description="""
+        Process MER channels:
+
+        * Inpaint dead pixels;
+        * Sharpen IYJH channels;
+        * Stretch dynamic range with asinh function;
+        * Blend IYJH channels into RGB and lightness (L) channels;
+        * Boost intensity of saturated stars;
+        * Shift hue and boost color saturation;
+        * Adjust curves.
+        """,
+        usage="%(prog)s <workdirs> [options]",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
 
@@ -33,10 +36,11 @@ def add_parser(subparsers):
         type=str,
         nargs="*",
         default=read_pipe_args(),
-        help=(
-            "Space separated list of workdirs relative to the workspace, "
-            "optionally with slicing à-la NumPy, e.g. 102160611[1500:7500,11500:17500]"
-        ),
+        help="""
+        Space separated list of workdirs relative to the workspace,
+        optionally with slicing à-la NumPy, e.g. ``102160611[1500:7500,11500:17500]``.
+        If no value is specified, the program will read ``stdin``.
+        """,  # FIXME use {workspace}
     )
     parser.add_argument(
         "--output",
@@ -44,17 +48,17 @@ def add_parser(subparsers):
         type=str,
         default="{workspace}/{workdir}/{target}_{tile}_{step}.tiff",
         metavar="TEMPLATE",
-        help=(
-            "Output path template, where: "
-            "{workspace} is replaced with the workspace folder; "
-            "{wordir} is replaced with the workdir folder relative to the workspace; "
-            "{target} is replaced with the last part of the workdir; "
-            " or with 'Tile' if there is only one part; "
-            "{tile} is replaced with the first part of the workdir; "
-            "and {step} is replaced with the processing step. "
-            "If {step} is not present in the template, "
-            "then intermediate steps are not saved."
-        ),
+        help="""
+        Output path template, where: 
+
+        * ``{workspace}`` is replaced with the workspace folder; 
+        * ``{wordir}`` is replaced with the workdir folder relative to the workspace; 
+        * ``{target}`` is replaced with the last part of the workdir or with 'Tile' if there is only one part; 
+        * ``{tile}`` is replaced with the first part of the workdir; 
+        * ``{step}`` is replaced with the processing step. 
+          If ``{step}`` is not present in the template, 
+          then intermediate steps are not saved.
+        """,
     )
     parser.add_argument(
         "--zero",
@@ -62,7 +66,7 @@ def add_parser(subparsers):
         type=float,
         default=[24.5, 29.8, 30.1, 30.0],
         metavar=("ZP_I", "ZP_Y", "ZP_J", "ZP_H"),
-        help="Zero points for each band",
+        help="Zero points for each band.",  # FIXME read FITS header, keep this arg as the defaults
     )
     parser.add_argument(
         "--scaling",
@@ -70,7 +74,7 @@ def add_parser(subparsers):
         type=float,
         default=[2.2, 1.3, 1.2, 1.0],
         metavar=("GAIN_I", "GAIN_Y", "GAIN_J", "GAIN_H"),
-        help="Scaling factors applied immediately to the IYJH bands for white balance",
+        help="Scaling factors applied immediately to the IYJH bands for white balance.",
     )
     parser.add_argument(
         "--fwhm",
@@ -78,14 +82,14 @@ def add_parser(subparsers):
         type=float,
         default=[1.6, 3.5, 3.4, 3.5],
         metavar=("FWHM_I", "FWHM_Y", "FWHM_J", "FWHM_H"),
-        help="FWHM for each band",
+        help="FWHM for each band, used for sharpening.",
     )
     parser.add_argument(
         "--sharpen",
         type=float,
         default=0.5,
         metavar="STRENGTH",
-        help="Strength of the sharpening",
+        help="Strength of the sharpening. Set to 0 to disable sharpening.",
     )
     parser.add_argument(
         "--nirl",
@@ -140,14 +144,18 @@ def add_parser(subparsers):
         help="Opposite of black point in AB magnitude.",
     )
     parser.add_argument(
-        "--hue", type=float, default=-20, metavar="ANGLE", help="Hue shift"
+        "--hue",
+        type=float,
+        default=-20,
+        metavar="ANGLE",
+        help="Hue shift in degrees.",
     )
     parser.add_argument(
         "--saturation",
         type=float,
         default=1.2,
         metavar="GAIN",
-        help="Saturation factor",
+        help="Saturation factor.",
     )
     parser.add_argument(
         "--curves",
