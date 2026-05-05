@@ -6,7 +6,6 @@ import argparse
 from dataclasses import dataclass
 import numpy as np
 from pathlib import Path
-from rich_argparse import ArgumentDefaultsRichHelpFormatter
 
 from azulero import color, io, mask
 from azulero.tools.messaging import logger, read_pipe_args, write_pipe_args
@@ -17,16 +16,18 @@ def add_parser(subparsers):
     parser = subparsers.add_parser(
         "process",
         help="Process MER channels to render a color image.",
-        description=(
-            "Process MER channels: "
-            "* Inpaint dead pixels; "
-            "* Sharpen IYJH channels; "
-            "* Stretch dynamic range with asinh function; "
-            "* Blend IYJH channels into RGB and lightness (L) channels; "
-            "* Shift hue and boost color saturation; "
-            "* Adjust curves."
-        ),
-        formatter_class=ArgumentDefaultsRichHelpFormatter,
+        description="""
+        Process MER channels:
+
+        * Inpaint dead pixels;
+        * Sharpen IYJH channels;
+        * Stretch dynamic range with asinh function;
+        * Blend IYJH channels into RGB and lightness (L) channels;
+        * Shift hue and boost color saturation;
+        * Adjust curves.
+        """,
+        usage="%(prog)s <workdirs> [options]",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
 
     parser.add_argument(
@@ -34,11 +35,11 @@ def add_parser(subparsers):
         type=str,
         nargs="*",
         default=read_pipe_args(),
-        help=(
-            "Space separated list of workdirs relative to the workspace, "
-            "optionally with slicing à-la NumPy, e.g. ``102160611[1500:7500,11500:17500]``. "
-            "If no value is specified, the program will read `stdin`."
-        ),
+        help="""
+        Space separated list of workdirs relative to the workspace,
+        optionally with slicing à-la NumPy, e.g. ``102160611[1500:7500,11500:17500]``.
+        If no value is specified, the program will read ``stdin``.
+        """,
     )
     parser.add_argument(
         "--output",
@@ -48,13 +49,14 @@ def add_parser(subparsers):
         metavar="TEMPLATE",
         help="""
         Output path template, where: 
-        {workspace} is replaced with the workspace folder; 
-        {wordir} is replaced with the workdir folder relative to the workspace; 
-        {target} is replaced with the last part of the workdir or with 'Tile' if there is only one part; 
-        {tile} is replaced with the first part of the workdir; 
-        and {step} is replaced with the processing step. 
-        If {step} is not present in the template, 
-        then intermediate steps are not saved.
+
+        * ``{workspace}`` is replaced with the workspace folder; 
+        * ``{wordir}`` is replaced with the workdir folder relative to the workspace; 
+        * ``{target}`` is replaced with the last part of the workdir or with 'Tile' if there is only one part; 
+        * ``{tile}`` is replaced with the first part of the workdir; 
+        * ``{step}`` is replaced with the processing step. 
+          If ``{step}`` is not present in the template, 
+          then intermediate steps are not saved.
         """,
     )
     parser.add_argument(
@@ -71,7 +73,7 @@ def add_parser(subparsers):
         type=float,
         default=[2.2, 1.3, 1.2, 1.0],
         metavar=("GAIN_I", "GAIN_Y", "GAIN_J", "GAIN_H"),
-        help="Scaling factors applied immediately to the IYJH bands for white balance",
+        help="Scaling factors applied immediately to the IYJH bands for white balance.",
     )
     parser.add_argument(
         "--fwhm",
@@ -79,14 +81,14 @@ def add_parser(subparsers):
         type=float,
         default=[1.6, 3.5, 3.4, 3.5],
         metavar=("FWHM_I", "FWHM_Y", "FWHM_J", "FWHM_H"),
-        help="FWHM for each band",
+        help="FWHM for each band.",
     )
     parser.add_argument(
         "--sharpen",
         type=float,
         default=0.5,
         metavar="STRENGTH",
-        help="Strength of the sharpening",
+        help="Strength of the sharpening.",
     )
     parser.add_argument(
         "--nirl",
@@ -148,7 +150,7 @@ def add_parser(subparsers):
         type=float,
         default=1.2,
         metavar="GAIN",
-        help="Saturation factor",
+        help="Saturation factor.",
     )
     parser.add_argument(
         "--curves",
