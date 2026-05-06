@@ -20,7 +20,7 @@ def capture_frame(image : np.ndarray, wcs: WCS, video_format: tuple[int, int], f
     dec = np.rad2deg(v)
     x, y = wcs.world_to_pixel(SkyCoord(ra, dec, unit="deg", frame="icrs"))
     x = np.nan_to_num(x, nan=-1).astype(np.float32)
-    y = np.nan_to_num(y, nan=-1).astype(np.float32)
+    y = np.nan_to_num(image.shape[0] - y -1, nan=-1).astype(np.float32)
     x, y = cv2.convertMaps(
             x,
             y,
