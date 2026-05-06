@@ -33,6 +33,7 @@ The image below is the raw output of:
    interfaces
    retrieve
    process
+   roam
    pipelines
 
 

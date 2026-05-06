@@ -28,40 +28,70 @@ def fourcc(path: Path):
 def add_parser(subparsers):
     parser = subparsers.add_parser(
         "roam",
-        help="Create a video which pans and zooms in an image.",
-        description=(
-            "Supply an image, specify viewport position and parameters at given times. "
-            "They will be interpolated to render a smooth roaming video."
-        ),
+        help="Create a video which roams through images.",
+        description="""
+        Supply an image (or a list of images), specify viewport parameters at given key frames.
+        They will be interpolated to render a smooth roaming video.
+
+        For full-sky views, an interface to Gaia Sky is available.
+        To use it, first start Gaia Sky and then execute this script with option ``--gaiasky``.
+        """
+        ,
+        usage="%(prog)s <images> [options]",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
 
     parser.add_argument(
-        "image",
+        "images",
         type=str,
+        nargs="*",
         default=read_pipe_args(),
-        help="Input image file or any name for Gaia Sky.",
+        help="Space separated list of image files or any name for Gaia Sky.",
     )
     group = parser.add_mutually_exclusive_group(required=False)
     group.add_argument(
         "--planar",
         metavar="PATH",
-        help="Key frame sequence file for no projection."
+        help="""
+        Key frame sequence file for no projection.
+        Only translations and rotations will be applied.
+        The key frames may be specified as image coordinates,
+        or as sky coordinates if the images come with WCS parameters,
+        or as a mix of image and sky coordinates.
+        """
     )
     group.add_argument(
         "--wcs",
         metavar="PATH",
-        help="Key frame sequence file for WCS to planar projection",
+        help="""
+        Key frame sequence file for WCS to planar projection.
+        The input images must come with WCS parameters,
+        and only sky coordinates are supported.
+        """,
     )
     group.add_argument(
         "--equirectangular",
         metavar="PATH",
-        help="Key frame sequence file for equirectangular to planar projection.",
+        help="""
+        Key frame sequence file for equirectangular to planar projection.
+        The input images must be equirectangular with:
+
+        * RA from -180° on the right to 180° on the left,
+        * declination from -90° at the bottom to 90° at the top.
+
+        Only sky coordinates are supported.
+        """,
     )
     group.add_argument(
         "--gaiasky",
         metavar="PATH",
-        help="Key frame sequence file for Gaia Sky.",
+        help="""
+        Key frame sequence file for Gaia Sky.
+        Only sky coordinates are supported.
+
+        **WARNING: Gaia Sky has to be running before you execute this script!
+        You will be asked to close the application when frames have been generated.**
+        """,
     )
     parser.add_argument(
         "--output",
@@ -84,11 +114,14 @@ def add_parser(subparsers):
     )
     parser.add_argument(
         "--format",
-        type=int,
-        nargs=2,
-        default=[1920, 1080],
-        metavar=("WIDTH", "HEIGHT"),
-        help="Video format",
+        type=str,
+        default="2K",
+        metavar="WIDTH,HEIGHT",
+        help="""
+        Video format as comma-separated width and height or format name.
+        Format names are numbers followed by ``K`` like ``2K`` for 1920 x 1080 pixels
+        or ``4K`` for 3840 x 2160 pixels.
+        """,
     )
     parser.add_argument(
         "--fps", type=float, default=25, metavar="FPS", help="Frames per second."
@@ -110,18 +143,28 @@ def add_parser(subparsers):
     parser.add_argument(
         "--scale",
         type=str,
-        nargs="*",
         default=None,
-        metavar=("LENGTH", "TEXT"),
-        help="Scale length in image pixels, and text above",
+        metavar=("LENGTH,TEXT"),
+        help="Comma-separated scale length in image pixels and optional text above.",
     )
 
     parser.set_defaults(func=run)
 
 
+def parse_format(text):
+    if "," in text:
+        w, h = text.split(",")
+    elif value := sequence.match_suffix("K", text):
+        w = float(value) * 960
+        h = float(value) * 540
+    else:
+        raise RuntimeError(f"Unrecognized format: {text}")
+    return int(w), int(h)
+
+
 def run(args):
 
-    input = Path(args.workspace).expanduser() / args.image
+    input = Path(args.workspace).expanduser() / args.images[0] # FIXME loop over inputs
     config = Path(args.planar or args.wcs or args.equirectangular or args.gaiasky)
     output = Path(
         args.output.format(
@@ -141,12 +184,14 @@ def run(args):
         # FIXME read both image and wcs with azulero.io
         image_shape = image.shape[:2]
         print(f"- Shape: {image_shape[0]} x {image_shape[1]}")
-        pyramid = Pyramid(image, 8)
+        pyramid = Pyramid(image, 8) # FIXME deduce amount from shape and format
         print(f"- Pyramid levels: {len(pyramid)}")
         timer.tic_log()
 
     print(f"Read sequence of key frames: {config.name}")
-    params = sequence.read_key_frames(config, image_shape, args.fps, args.format)
+    video_format = parse_format(args.format)
+    print(f"- Video format: {video_format[0]} x {video_format[1]}")
+    params = sequence.read_key_frames(config, image_shape, args.fps, video_format)
     print(f"- Key frames: {len(params)}")
     centers = sequence.sin_sequence(params.centers)
     hfovs = sequence.sin_sequence(params.hfovs)
@@ -161,31 +206,32 @@ def run(args):
 
     if args.scale is None:
         scale = overlay.Scale(width=0, text="")
-    elif len(args.scale) == 0:
+    elif not args.scale:
         scale = overlay.Scale(width=600, text="1 arcmin")  # FIXME from WCS
-    elif len(args.scale) == 1:
-        scale = overlay.Scale(width=int(args.scale[0]), text="")
-    elif len(args.scale) == 2:
-        scale = overlay.Scale(width=int(args.scale[0]), text=args.scale[1])
+    elif "," not in args.scale:
+        scale = overlay.Scale(width=int(args.scale), text="")
+    else:
+        w, t = args.scale.split(",")
+        scale = overlay.Scale(width=int(w), text=t)
 
     print(f"Generate frames")
     if args.gaiasky:
         print("- Run Gaia Sky")
-        gaia_frames = roam_gaiasky(params, args.fps, args.format, output)
+        gaia_frames = roam_gaiasky(params, args.fps, video_format, output)
         print("- Combine frames")
 
-    writer = cv2.VideoWriter(output, fourcc(output), args.fps, args.format)
+    writer = cv2.VideoWriter(output, fourcc(output), args.fps, video_format)
     for i, p in enumerate(params):
         print(f"- {p} [{i+1}/{len(params)}]")
         if args.gaiasky:
             frame = cv2.imread(gaia_frames[i], cv2.IMREAD_COLOR)
         elif args.equirectangular:
-            frame = crop_equirectangular(image, p, args.format)
+            frame = crop_equirectangular(image, p, video_format)
         elif args.wcs:
-            frame = wcs_frame(image, wcs, args.format, p)
+            frame = wcs_frame(image, wcs, video_format, p)
         else:
             frame = crop_pyramid(
-                pyramid, p.planar(wcs, image_shape), args.format
+                pyramid, p.planar(wcs, image_shape), video_format
             )  # FIXME this transforms p inplace
         if scale.width > 0:
             scale.draw(frame, 100.0 * p.hfov)
