@@ -45,7 +45,7 @@ def read_wcs(workdir: Path, pattern: str):
     """
     Read the WCS from a FITS or YAML file.
     """
-    file = list(workdir.glob(pattern.format(channel="VIS")))[0]
+    file = next(workdir.glob(pattern.format(channel="VIS")))
     ext = file.suffix.lower()
     if ext == ".fits":
         with fits.open(file) as f:

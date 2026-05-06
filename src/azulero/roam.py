@@ -179,7 +179,8 @@ def run(args):
     else:
         print(f"Read input image: {input.name}")
         wcs_filename = input if input.suffix.lower() in (".fits", ".fit", ".fts") else input.with_suffix(".yaml")
-        wcs = io.read_wcs(Path(args.workspace), wcs_filename.name) # FIXME not necessarily in the workspace
+        print(f"- WCS: {wcs_filename}")
+        wcs = io.read_wcs(wcs_filename.parent, wcs_filename.name)
         image = cv2.imread(input, cv2.IMREAD_COLOR)
         # FIXME read both image and wcs with azulero.io
         image_shape = image.shape[:2]
