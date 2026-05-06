@@ -3,16 +3,26 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import argparse
+from astropy.wcs import WCS
 import numpy as np
 from pathlib import Path
 import cv2
 
+from azulero.tools.messaging import logger, read_pipe_args, write_pipe_args
 from azulero.image import io
 from azulero.video import sequence
 from azulero import overlay
-from azulero.projections.equirectangular import Projection
+from azulero.projections.wcs import capture_frame as wcs_frame
+from azulero.projections.equirectangular import Projection # FIXME
 from azulero.video.gaiasky import roam_gaiasky
 from azulero.tools.timing import Timer
+
+
+supported_codecs = {".mp4": "mp4v", ".avi": "xvid", ".mkv": "ffv1"}
+
+def fourcc(path: Path):
+    ext = path.suffix.lower()
+    return cv2.VideoWriter_fourcc(*supported_codecs[ext])
 
 
 def add_parser(subparsers):
@@ -29,45 +39,48 @@ def add_parser(subparsers):
     parser.add_argument(
         "image",
         type=str,
-        help="Input image file.",
-    )
-    parser.add_argument(
-        "sequence",
-        type=str,
-        help="YAML configuration file which specifies the sequence of key frames.",
+        default=read_pipe_args(),
+        help="Input image file or any name for Gaia Sky.",
     )
     group = parser.add_mutually_exclusive_group(required=False)
     group.add_argument(
-        "--equirectangular",
-        "-e",
-        action="store_true",
-        help="Enable equirectangular to planar projection.",
-    )
-    group.add_argument(
-        "--gaiasky",
-        "-g",
-        action="store_true",
-        help="Render Gaiasky frames.",
+        "--planar",
+        metavar="PATH",
+        help="Key frame sequence file for no projection."
     )
     group.add_argument(
         "--wcs",
-        type=str,
-        default=None,
         metavar="PATH",
-        help=(
-            "Path to the WCS parameters as a YAML file. "
-            "This is needed to specify the center as RA/dec coordinates "
-            "or the zoom as an angular field of view, "
-            "unless the input has equirectangular projection."
-        ),
+        help="Key frame sequence file for WCS to planar projection",
+    )
+    group.add_argument(
+        "--equirectangular",
+        metavar="PATH",
+        help="Key frame sequence file for equirectangular to planar projection.",
+    )
+    group.add_argument(
+        "--gaiasky",
+        metavar="PATH",
+        help="Key frame sequence file for Gaia Sky.",
     )
     parser.add_argument(
         "--output",
         "-o",
         type=str,
-        default="{workspace}/{image}_{sequence}.mkv",
+        default="{workspace}/{sequence}_{image}.mkv",
         metavar="TEMPLATE",
-        help="Output video file template (mkv compression is lossless, mp4 compression is lossy).",
+        help=(
+            """
+            Output video file template, where:
+            
+            * ``{workspace}`` is replaced by the workspace path,
+            * ``{image}`` is replaced by the image file stem,
+            * ``{sequence}`` is replaced by the sequence file stem.
+
+            """
+            f"Supported extensions are: {', '.join(supported_codecs)}. "
+            f"Only the MKV compression is lossless."
+        ),
     )
     parser.add_argument(
         "--format",
@@ -109,10 +122,10 @@ def add_parser(subparsers):
 def run(args):
 
     input = Path(args.workspace).expanduser() / args.image
-    config = Path(args.sequence)
+    config = Path(args.planar or args.wcs or args.equirectangular or args.gaiasky)
     output = Path(
         args.output.format(
-            workspace=args.workspace, image=input.with_suffix(""), sequence=config.stem
+            workspace=args.workspace, image=input.stem, sequence=config.stem
         )
     )
 
@@ -122,7 +135,10 @@ def run(args):
         image_shape = [0, 0]
     else:
         print(f"Read input image: {input.name}")
+        wcs_filename = input if input.suffix.lower() in (".fits", ".fit", ".fts") else input.with_suffix(".yaml")
+        wcs = io.read_wcs(Path(args.workspace), wcs_filename.name) # FIXME not necessarily in the workspace
         image = cv2.imread(input, cv2.IMREAD_COLOR)
+        # FIXME read both image and wcs with azulero.io
         image_shape = image.shape[:2]
         print(f"- Shape: {image_shape[0]} x {image_shape[1]}")
         pyramid = Pyramid(image, 8)
@@ -130,7 +146,6 @@ def run(args):
         timer.tic_log()
 
     print(f"Read sequence of key frames: {config.name}")
-    wcs = None if args.wcs is None else io.read_wcs(Path(args.workspace), args.wcs)
     params = sequence.read_key_frames(config, image_shape, args.fps, args.format)
     print(f"- Key frames: {len(params)}")
     centers = sequence.sin_sequence(params.centers)
@@ -157,6 +172,7 @@ def run(args):
     if args.gaiasky:
         print("- Run Gaia Sky")
         gaia_frames = roam_gaiasky(params, args.fps, args.format, output)
+        print("- Combine frames")
 
     writer = cv2.VideoWriter(output, fourcc(output), args.fps, args.format)
     for i, p in enumerate(params):
@@ -165,6 +181,8 @@ def run(args):
             frame = cv2.imread(gaia_frames[i], cv2.IMREAD_COLOR)
         elif args.equirectangular:
             frame = crop_equirectangular(image, p, args.format)
+        elif args.wcs:
+            frame = wcs_frame(image, wcs, args.format, p)
         else:
             frame = crop_pyramid(
                 pyramid, p.planar(wcs, image_shape), args.format
@@ -205,11 +223,6 @@ class Pyramid:
                 res = factor
         return res
 
-
-def fourcc(path: Path):
-    ext = path.suffix.lower()
-    codecs = {".mp4": "mp4v", ".avi": "xvid", ".mkv": "ffv1"}
-    return cv2.VideoWriter_fourcc(*codecs[ext])
 
 
 def crop_pyramid(
@@ -279,7 +292,7 @@ def crop_planar(
 
 
 def crop_equirectangular(
-    image: np.ndarray, params: sequence.Frame, video_format: tuple
+    image: np.ndarray, params: sequence.Frame, video_format: tuple[int, int]
 ):
     """
     Project equirectangular image, adapted from py360convert.
