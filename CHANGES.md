@@ -1,8 +1,8 @@
 # 2.0
 
-# Breaking changes
+## Breaking changes
 
-* The following commands were deprecated:
+* The following commands are deprecated:
   * `find` (merged into `retrieve`),
   * `crop` (partially replaced with cutout retrieval, to be fully replaced later),
   * `assemble` (previously experimental, replaced with `arrange`),
@@ -10,11 +10,19 @@
 
 `azul retrieve`
 
-* Data provider `sas` was replaced with `pdr`.
+* Data provider `sas` was renamed as `pdr`.
 
 `azul process`
 
-* Option `--wcs` was removed (WCS parameters are always witten following the output name).
+* Default dynamic range parameters were updated to increase SNR.
+* Option `--wcs` was removed:
+  * For FITS files, standard WCS records are used;
+  * For TIFF files, the parameters are saved as standard metadata;
+  * For other formats, the parameters are witten following the output name with extension `.wcs`.
+
+`azul roam`
+
+* The key frames file is passed as a named option.
 
 ## Bug fixes
 
@@ -30,7 +38,7 @@
   * `process` can read workdirs from `stdout`, write render filenames to `stdout`,
   * `arrange` can read inputs from `stdin`, write collage filename to `stdout`,
   * `roam` can read input from `stdin`, write video filename to `stdout`.
-* Default arguments can be overloaded with environment variables and configuration files.
+* Default arguments can be overloaded with environment variables.
 
 `azul retrieve`
 
@@ -45,19 +53,24 @@
 
 * Process a sequence of workdirs.
 * Accept workdirs with subfolders.
+* Clipping is enabled by `--curves`.
 
 `azul arrange`
 
 * Arrange a collection of images into a regular grid.
 
+`azul roam`
+
+* Add WCS to planar projection.
+
 `azul cite`
 
 * Print citation instructions.
 
-# Cleaning
+## Cleaning
 
 * Logs are written to `stderr` with a proper logger, which also supprts log levels (option `--log`).
-* Documentation uses proper HTML pages.
+* Documentation uses proper HTML pages (which include CLI documentation).
 * Video tutorials are published.
 * Packaging is handled with `uv`.
 * Merged `AstroQuery` class into `SAS`.
