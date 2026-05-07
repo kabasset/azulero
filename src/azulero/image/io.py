@@ -5,6 +5,7 @@
 from astropy.io import fits
 from astropy.wcs import WCS
 import cv2
+import json
 import numpy as np
 from pathlib import Path
 import tifffile
@@ -54,7 +55,6 @@ supported_formats = {
     ".tiff": [".tiff", ".tif"],
     ".png": [".png"],
     ".jpeg": [".jpeg", ".jpg"],
-    ".wcs": [".wcs"],
 }
 
 
@@ -85,7 +85,7 @@ def find_wcs(workdir: Path, pattern: str):
     return next(workdir.glob(path))
 
 
-def read_wcs(path: Path, pattern: str):
+def read_wcs(path: Path):
     """
     Read a WCS.
 
@@ -94,12 +94,24 @@ def read_wcs(path: Path, pattern: str):
     ext = standard_extension(path)
     if ext == ".fits":
         with fits.open(path) as f:
-            return WCS(f[0])
+            h = f[0].header
+            print(dict(h))
+            if "WCSAXES" in dict(h):
+                return WCS(h)
+            return None
     elif ext == ".tiff":
         with tifffile.TiffFile(path) as f:
-            return WCS(fits.Header(f.metadata)) # FIXME fix header, first?
-    with open(path.with_suffix(".wcs")) as f:
-        return WCS(yaml.safe_load(f))
+            desc = f.pages[0].tags['ImageDescription'].value
+            metadata = json.loads(desc)
+            if "WCSAXES" in metadata:
+                h = fits.Header(metadata) # FIXME fix header, first?
+                return WCS(h)
+            return None
+    wcs_path = path.with_suffix(".wcs")
+    if wcs_path.exists():
+        with open(wcs_path) as f:
+            return WCS(yaml.safe_load(f))
+    return None
 
 
 def read_data(path: Path):
@@ -108,13 +120,17 @@ def read_data(path: Path):
     """
     ext = standard_extension(path)
     if ext == ".fits":
-        return fits.getdata(path)
-    if ext == ".tiff":
-        return tifffile.imread(path)
-    return cv2.imread(path)
+        data = fits.getdata(path)
+        if data.ndim == 2:
+            return data
+        return np.stack([data[i] for i in range(len(data))], axis=-1)
+    data = np.flipud(cv2.imread(path))
+    if data.ndim == 3:
+        return data[:,:,::-1] # FIXME what about alpha?
+    return data
 
 
-def read_product(path: Path, slicing: slice | None):
+def read_product(path: Path, slicing: slice | None = None):
     """
     Read an image and WCS.
     """
@@ -187,21 +203,25 @@ def write_product(path: Path, data: np.ndarray, wcs: WCS | None = None):
     Write an image and optional WCS as an image file with WCS if supported,
     or as an image file and WCS files otherwise.
     """
-    ext = standard_ext(path)
+    ext = standard_extension(path)
     if ext == ".fits":
-        write_fits_product(path, data, wcs)
         metadata = product_metadata(wcs)
-        fits.PrimaryHDU(data, header=metadata).writeto(path, overwrite=True)
+        if data.ndim == 3:
+            data = np.stack([data[:,:,i] for i in range(data.shape[2])])
+        fits.PrimaryHDU(data, header=fits.Header(metadata)).writeto(path, overwrite=True)
         # FIXME get overwite policy from args
     elif ext == ".tiff":
-        tifffile.imwrite(np.flipud(data), metadata=product_metadata(wcs))
+        tifffile.imwrite(path, np.flipud(data), metadata=product_metadata(wcs))
     else:
+        if data.ndim == 3:
+            data = data[:,:,::-1] # FIXME what about alpha?
         res = cv2.imwrite(path, np.flipud(data))
         # FIXME raise if not res
-        write_wcs(path.with_suffix(".wcs"), wcs)
+        if wcs is not None:
+            write_wcs(path.with_suffix(".wcs"), wcs)
 
 
-def write_wcs(wcs: WCS, path: Path):
+def write_wcs(path: Path, wcs: WCS):
     """
     Write a WCS object to a YAML file.
     """
@@ -228,7 +248,7 @@ def write_rgb(rgb: np.array, path: Path, norm_depth: int = None, wcs: WCS = None
     else:
         raise ValueError(f"Parameter ``norm_depth`` must be one of: None, 1, 8 or 16")
     
-    ext = standard_ext(path)
+    ext = standard_extension(path)
     if ext == ".fits":
         channels = rgb.shape[2]
         write_fits_product(np.stack(rgb[:, :, i] for i in range(channels)), path, wcs)
