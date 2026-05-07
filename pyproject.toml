@@ -31,7 +31,8 @@ dependencies = [
     "rich-argparse",
     "scikit-image",
     "scipy",
-    "shapely"
+    "shapely",
+    "tifffile"
 ]
 
 [dependency-groups]
