@@ -87,7 +87,7 @@ def find_wcs(workdir: Path, pattern: str) -> Path | None:
     return next(workdir.glob(str(path)), None)
 
 
-def read_wcs(path: Path) -> WCS | None:
+def read_wcs(path: Path, slicing: tuple | None = None) -> WCS | None:
     """
     Read a WCS.
 
@@ -99,26 +99,27 @@ def read_wcs(path: Path) -> WCS | None:
     if ext == ".fits":
         with fits.open(path) as f:
             h = f[0].header  # type: ignore
-            if "WCSAXES" in dict(h):
-                return WCS(h)
+        if "WCSAXES" not in dict(h):
             return None
+        wcs = WCS(h)
     elif ext == ".tiff":
         with tifffile.TiffFile(path) as f:
             desc = f.pages[0].tags["ImageDescription"].value  # type: ignore
-            metadata = json.loads(desc)
-            print(metadata)
-            if "WCSAXES" in metadata:
-                h = {k: v for k, v in metadata.items() if not isinstance(v, list)}
-                return WCS(h)
+        metadata = json.loads(desc)
+        if "WCSAXES" not in metadata:
             return None
-    wcs_path = path.with_suffix(".wcs")
-    if wcs_path.exists():
+        h = {k: v for k, v in metadata.items() if not isinstance(v, list)}
+        wcs = WCS(h)
+    else:
+        wcs_path = path.with_suffix(".wcs")
+        if not wcs_path.exists():
+            return None
         with open(wcs_path) as f:
-            return WCS(yaml.safe_load(f))
-    return None
+            wcs = WCS(yaml.safe_load(f))
+    return wcs if slicing is None else wcs.slice(slicing)
 
 
-def read_data(path: Path) -> np.ndarray | None:
+def read_data(path: Path, slicing: tuple | None = None) -> np.ndarray | None:
     """
     Read an image.
 
@@ -131,11 +132,11 @@ def read_data(path: Path) -> np.ndarray | None:
         with fits.open(path) as f:
             p: fits.PrimaryHDU = f[0]  # type: ignore
             data = p.data
-        return data
-    data = cv2.imread(path)
-    if data is not None:
-        data = np.flipud(data)
-    return data
+    else:
+        data = cv2.imread(path)
+        if data is not None:
+            data = np.flipud(data)
+    return data if (data is None or slicing is None) else data[slicing]
 
 
 def read_product(
@@ -144,14 +145,8 @@ def read_product(
     """
     Read an image and WCS.
     """
-    data = read_data(path)
-    wcs = read_wcs(path)
-    if slicing is None:
-        return data, wcs
-    if data is not None:
-        data = data[slicing]
-    if wcs is not None:
-        wcs = wcs.slice(slicing)
+    data = read_data(path, slicing)
+    wcs = read_wcs(path, slicing)
     return data, wcs
 
 
@@ -159,13 +154,15 @@ def read_channel(workdir: Path, pattern: str, slicing=None):
     """
     Read the region of one channel.
     """
-    data_files = list(workdir.glob(pattern))
+    files = list(workdir.glob(pattern))
 
-    if len(data_files) == 1:
-        return read_fits(data_files[0], slicing)
+    # FIXME raise if list is empty
 
-    logger.warning(f"{len(data_files)} files found with pattern: {pattern}")
-    return _average([read_fits(f, slicing) for f in data_files])
+    if len(files) == 1:
+        return read_data(files[0], slicing)
+
+    logger.warning(f"{len(files)} files found with pattern: {pattern}")
+    return _average([read_data(f, slicing) for f in files])
 
 
 def _average(slices: list):
