@@ -16,7 +16,8 @@ from azulero.tools.messaging import logger
 
 # FIXME not in image.io
 
-def parse_target(text: str):
+
+def parse_target(text: str) -> tuple[Path, tuple | None]:
     """
     Parse the workdir and slicing from a target string.
     """
@@ -26,7 +27,7 @@ def parse_target(text: str):
     return Path(text), None
 
 
-def parse_slice(text: str | None):
+def parse_slice(text: str | None) -> tuple | None:
     """
     Parse a 2D slice from a string, e.g. ``:,3:14``.
     """
@@ -38,19 +39,20 @@ def parse_slice(text: str | None):
     )
 
 
-def parse_map(text: str, dtype=float):
+def parse_map(text: str, dtype=float) -> list[tuple[object, object]]:
     """
-    Parse a comma-separated list of 'key:value' pairs.
+    Parse a comma-separated list of ``key:value`` pairs.
     """
     if not text:
         return []
     pairs = [p.split(":") for p in text.split(",")]
-    return [[dtype(x), dtype(y)] for x, y in pairs]
+    return [(dtype(x), dtype(y)) for x, y in pairs]
+
 
 # end FIXME
 
 
-supported_formats = {
+supported_formats: dict[str, list[str]] = {
     ".fits": [".fits", ".fit", ".fts"],
     ".tiff": [".tiff", ".tif"],
     ".png": [".png"],
@@ -58,10 +60,10 @@ supported_formats = {
 }
 
 
-supported_wcs_formats = [".fits", ".tiff"]
+supported_wcs_formats: list[str] = [".fits", ".tiff"]
 
 
-def standard_extension(path: Path):
+def standard_extension(path: Path) -> str | None:
     """
     Get the standard supported extension of a path, if any, or ``None`` otherwise.
     """
@@ -74,37 +76,39 @@ def standard_extension(path: Path):
 # Reading
 
 
-def find_wcs(workdir: Path, pattern: str):
+def find_wcs(workdir: Path, pattern: str) -> Path | None:
     """
-    Find a suitable file in some workdir to read WCS.
+    Find a suitable file in some workdir to read WCS, or ``None``.
     """
-    path = Path(pattern.format(channel="VIS")) # FIXME no hadcoded channel
+    path = Path(pattern.format(channel="VIS"))  # FIXME no hardcoded channel
     ext = standard_extension(path)
     if ext not in supported_wcs_formats:
         path = path.with_suffix(".wcs")
-    return next(workdir.glob(path))
+    return next(workdir.glob(str(path)), None)
 
 
-def read_wcs(path: Path):
+def read_wcs(path: Path) -> WCS | None:
     """
     Read a WCS.
 
+    For TIFF files, ``ImageDescription`` metadata in the first page are used.
     Files which do not support WCS must be accompanied by a file named after them with extension ``.wcs``.
+    If no WCS is found, then ``None is returned``.
     """
     ext = standard_extension(path)
     if ext == ".fits":
         with fits.open(path) as f:
-            h = f[0].header
-            print(dict(h))
+            h = f[0].header  # type: ignore
             if "WCSAXES" in dict(h):
                 return WCS(h)
             return None
     elif ext == ".tiff":
         with tifffile.TiffFile(path) as f:
-            desc = f.pages[0].tags['ImageDescription'].value
+            desc = f.pages[0].tags["ImageDescription"].value  # type: ignore
             metadata = json.loads(desc)
+            print(metadata)
             if "WCSAXES" in metadata:
-                h = fits.Header(metadata) # FIXME fix header, first?
+                h = {k: v for k, v in metadata.items() if not isinstance(v, list)}
                 return WCS(h)
             return None
     wcs_path = path.with_suffix(".wcs")
@@ -114,23 +118,29 @@ def read_wcs(path: Path):
     return None
 
 
-def read_data(path: Path):
+def read_data(path: Path) -> np.ndarray | None:
     """
     Read an image.
+
+    FITS supports only grayscale images.
+    Color images are loaded with shape ``(height, width, depth)``
+    and color channels are ordered as ``(blue, green, red)``.
     """
     ext = standard_extension(path)
     if ext == ".fits":
-        data = fits.getdata(path)
-        if data.ndim == 2:
-            return data
-        return np.stack([data[i] for i in range(len(data))], axis=-1)
-    data = np.flipud(cv2.imread(path))
-    if data.ndim == 3:
-        return data[:,:,::-1] # FIXME what about alpha?
+        with fits.open(path) as f:
+            p: fits.PrimaryHDU = f[0]  # type: ignore
+            data = p.data
+        return data
+    data = cv2.imread(path)
+    if data is not None:
+        data = np.flipud(data)
     return data
 
 
-def read_product(path: Path, slicing: slice | None = None):
+def read_product(
+    path: Path, slicing: tuple | None = None
+) -> tuple[np.ndarray | None, WCS | None]:
     """
     Read an image and WCS.
     """
@@ -138,9 +148,11 @@ def read_product(path: Path, slicing: slice | None = None):
     wcs = read_wcs(path)
     if slicing is None:
         return data, wcs
-    if wcs is None:
-        return data[slicing], None
-    return data[slicing], wcs.slice(slicing)
+    if data is not None:
+        data = data[slicing]
+    if wcs is not None:
+        wcs = wcs.slice(slicing)
+    return data, wcs
 
 
 def read_channel(workdir: Path, pattern: str, slicing=None):
@@ -192,10 +204,15 @@ def make_workdir(workspace, workdir):
     return workdir
 
 
-def product_metadata(wcs: WCS | None):
-    res = {} if wcs is None else dict(wcs.to_header())
-    res["Software"] = f"{_version.__name_soft__} v{_version.__version__} (Antoine Basset, CNES)"
-    return res
+def product_header(wcs: WCS | None = None):
+    h = fits.Header() if wcs is None else wcs.to_header()
+    h["SOFTWARE"] = f"{_version.__name_soft__} v{_version.__version__}"
+    h["AUTHOR"] = "Antoine Basset"
+    return h
+
+
+def product_metadata(wcs: WCS | None = None):
+    return dict(product_header(wcs))
 
 
 def write_product(path: Path, data: np.ndarray, wcs: WCS | None = None):
@@ -205,16 +222,13 @@ def write_product(path: Path, data: np.ndarray, wcs: WCS | None = None):
     """
     ext = standard_extension(path)
     if ext == ".fits":
-        metadata = product_metadata(wcs)
-        if data.ndim == 3:
-            data = np.stack([data[:,:,i] for i in range(data.shape[2])])
-        fits.PrimaryHDU(data, header=fits.Header(metadata)).writeto(path, overwrite=True)
-        # FIXME get overwite policy from args
+        fits.PrimaryHDU(data, header=product_header(wcs)).writeto(path, overwrite=True)
+        # FIXME get overwrite policy from args
     elif ext == ".tiff":
+        if data.ndim == 3:
+            data = data[:, :, ::-1]  # FIXME what about alpha?
         tifffile.imwrite(path, np.flipud(data), metadata=product_metadata(wcs))
     else:
-        if data.ndim == 3:
-            data = data[:,:,::-1] # FIXME what about alpha?
         res = cv2.imwrite(path, np.flipud(data))
         # FIXME raise if not res
         if wcs is not None:
@@ -247,7 +261,7 @@ def write_rgb(rgb: np.array, path: Path, norm_depth: int = None, wcs: WCS = None
         data = np.round(rgb * 65535).astype(np.uint16)
     else:
         raise ValueError(f"Parameter ``norm_depth`` must be one of: None, 1, 8 or 16")
-    
+
     ext = standard_extension(path)
     if ext == ".fits":
         channels = rgb.shape[2]
