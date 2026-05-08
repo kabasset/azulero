@@ -177,6 +177,7 @@ def render_path_for_step(template, step):
 class IOs:
     workspace: Path
     input_pattern: str
+    channel_names: list
     output_template: str
 
 
@@ -215,6 +216,7 @@ def run(args):
     ios = IOs(
         workspace=args.workspace,
         input_pattern=args.input,
+        channel_names=args.channels,
         output_template=args.output,
     )
 
@@ -222,7 +224,7 @@ def run(args):
         process_target(ios, target, transform)
 
 
-def process_target(ios, target, transform):
+def process_target(ios: IOs, target: str, transform: color.Transform):
 
     logger.header(1, f"Target: {target}", linebreaks=[1, 0])
 
@@ -247,15 +249,15 @@ def process_target(ios, target, transform):
     timer = Timer()
 
     logger.header(2, f"Read IYJH image from: {workdir}")
-    iyjh = io.read_iyjh(workdir, slicing, ios.input_pattern)
+    iyjh = io.read_iyjh(workdir, slicing, ios.input_pattern, ios.channel_names)
     logger.bullet(f"Shape: {iyjh.shape[1]} x {iyjh.shape[2]}")
-    wcs = io.read_wcs(workdir, ios.input_pattern)
-    if slicing is not None:
-        wcs = wcs.slice(slicing)
-    # FIXME write WCS to metadata only
+    wcs_filename = io.find_wcs(workdir, ios.input_pattern)
+    if wcs_filename:
+        wcs = io.read_wcs(wcs_filename, slicing)
+    else:
+        wcs = None
+        logger.warning(f"No WCS found.")
     path = render_path_for_step(template, "wcs").with_suffix(".yaml")
-    io.write_wcs(wcs, path)
-    logger.bullet(f"Write WCS: {path.name}")
     timer.tic_log()
 
     logger.header(2, f"Detect bad pixels")

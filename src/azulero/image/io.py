@@ -150,16 +150,19 @@ def read_product(
     return data, wcs
 
 
-def read_channel(workdir: Path, pattern: str, slicing=None):
+def read_channel(workdir: Path, pattern: str, slicing=None) -> np.ndarray:
     """
     Read the region of one channel.
     """
     files = list(workdir.glob(pattern))
-
-    # FIXME raise if list is empty
+    if len(files) == 0:
+        raise RuntimeError(f"No file found with pattern: {pattern}")
 
     if len(files) == 1:
-        return read_data(files[0], slicing)
+        data = read_data(files[0], slicing)
+        if data is None:
+            raise RuntimeError(f"Cannot read file: {files[0]}")
+        return data
 
     logger.warning(f"{len(files)} files found with pattern: {pattern}")
     return _average([read_data(f, slicing) for f in files])
@@ -169,30 +172,31 @@ def _average(slices: list):
     """
     Average arrays while discarding zeros.
     """
-    stack = np.stack(slices)
+    if n := slices.count(None):
+        logger.warning(f"Invalid input(s) discarded: {n}/{len(slices)}")
+    stack = np.stack([s for s in slices if s is not None])
     stack[stack == 0] = np.nan
     return np.nan_to_num(np.nanmedian(stack, axis=0))
 
 
-def read_iyjh(workdir: Path, slicing=None, template="{}"):
+def read_iyjh(
+    workdir: Path,
+    slicing: tuple | None = None,
+    template: str = "{}",
+    channels: list[str] = ["VIS", "NIR-Y", "NIR-J", "NIR-H"],
+):
     """
     Read the region of a VIS- and NIR-covered tile.
     """
     return np.stack(
-        (
-            read_channel(workdir, template.format(channel="VIS"), slicing),
-            read_channel(workdir, template.format(channel="NIR-Y"), slicing),
-            read_channel(workdir, template.format(channel="NIR-J"), slicing),
-            read_channel(workdir, template.format(channel="NIR-H"), slicing),
-        )
+        [read_channel(workdir, template.format(channel=c), slicing) for c in channels]
     )
-    # FIXME get channel names from args
 
 
 # Writing
 
 
-def make_workdir(workspace, workdir):
+def make_workdir(workspace: Path, workdir: Path | str) -> Path:
     workdir = Path(workspace).expanduser() / workdir
     if workdir.is_dir():
         logger.warning(f"Working directory already exists: {workdir}")
@@ -201,18 +205,18 @@ def make_workdir(workspace, workdir):
     return workdir
 
 
-def product_header(wcs: WCS | None = None):
+def product_header(wcs: WCS | None = None) -> fits.Header:
     h = fits.Header() if wcs is None else wcs.to_header()
     h["SOFTWARE"] = f"{_version.__name_soft__} v{_version.__version__}"
     h["AUTHOR"] = "Antoine Basset"
     return h
 
 
-def product_metadata(wcs: WCS | None = None):
+def product_metadata(wcs: WCS | None = None) -> dict:
     return dict(product_header(wcs))
 
 
-def write_product(path: Path, data: np.ndarray, wcs: WCS | None = None):
+def write_product(path: Path, data: np.ndarray, wcs: WCS | None = None) -> Path | None:
     """
     Write an image and optional WCS as an image file with WCS if supported,
     or as an image file and WCS files otherwise.
@@ -243,7 +247,9 @@ def write_wcs(path: Path, wcs: WCS):
         yaml.safe_dump(h, f)
 
 
-def write_rgb(rgb: np.array, path: Path, norm_depth: int = None, wcs: WCS = None):
+def write_rgb(
+    rgb: np.ndarray, path: Path, norm_depth: int | None = None, wcs: WCS | None = None
+) -> Path | None:
     """
     Write an RGB product.
     Optional ``norm_depth`` parameter is used to scale normalized images as either 8- or 16-bit integers.
@@ -261,12 +267,7 @@ def write_rgb(rgb: np.array, path: Path, norm_depth: int = None, wcs: WCS = None
     else:
         raise ValueError(f"Parameter ``norm_depth`` must be one of: None, 1, 8 or 16")
 
-    ext = standard_extension(path)
-    if ext == ".fits":
-        channels = rgb.shape[2]
-        write_fits_product(np.stack(rgb[:, :, i] for i in range(channels)), path, wcs)
-    else:
-        write_product(path, data[:, :, ::-1], wcs)
+    return write_product(path, data[:, :, ::-1], wcs)
 
 
 def write_mask(iyjh: np.ndarray, path: Path):

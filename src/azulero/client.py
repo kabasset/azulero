@@ -33,11 +33,18 @@ def add_parser():
     )
     parser.add_argument(
         "--input",
-        "-i",
         type=str,
         default="*[-_]{channel}[-_]*.fits",
         metavar="PATTERN",
-        help="Input file pattern, where `{channel}` is replaced with the channel name, e.g. `NIR-Y`",
+        help="Input file pattern, where `{channel}` is replaced with the channel name",
+    )
+    parser.add_argument(
+        "--channels",
+        type=str,
+        nargs=4,
+        metavar=("I_NAME", "Y_NAME", "J_NAME", "H_NAME"),
+        default=["VIS", "NIR-Y", "NIR-J", "NIR-H"],
+        help="Channel names to be rendered in the input file pattern.",
     )
     parser.add_argument(
         "--log",
