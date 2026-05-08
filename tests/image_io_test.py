@@ -5,6 +5,7 @@
 from astropy.wcs import WCS
 import numpy as np
 from pathlib import Path
+import tempfile
 
 from azulero.image import io
 
@@ -70,13 +71,16 @@ def test_data_io():
 
 
 def check_data_io(filename, data, wcs):
-    workdir = Path("/tmp")  # FIXME temporary dir
-    io.write_product(workdir / filename, data, wcs)
-    res = io.read_product(workdir / filename)
-    assert res[0] is not None
-    assert np.array_equal(res[0].shape, data.shape)
-    assert np.array_equal(res[0], data)
-    if wcs is None:
-        assert res[1] is None
-    else:
-        assert res[1].to_header_string() == wcs.to_header_string()
+    with tempfile.TemporaryDirectory() as workdir:
+        filename = Path(workdir) / filename
+        res = io.write_product(filename, data, wcs)
+        assert res
+        print(res)
+        res = io.read_product(filename)
+        assert res[0] is not None
+        assert np.array_equal(res[0].shape, data.shape)
+        assert np.array_equal(res[0], data)
+        if wcs is None:
+            assert res[1] is None
+        else:
+            assert res[1].to_header_string() == wcs.to_header_string()
