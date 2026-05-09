@@ -8,6 +8,9 @@ import cv2
 from scipy import interpolate
 from skimage.filters import unsharp_mask as sksharpen
 
+from azulero.image import tune
+from azulero.tools.messaging import logger
+
 
 @dataclass
 class Transform(object):
@@ -39,10 +42,14 @@ def abmag_to_value(mag, zp):
 
 
 def stretch_iyjh(iyjh: np.ndarray, transform: Transform):
-    whites = abmag_to_value(transform.bw[1], transform.iyjh_zero_points)
+    w = transform.bw[1]
+    if w == 0:
+        w = tune.propose_white_point(iyjh[0], transform.iyjh_zero_points[0])
+        logger.bullet(f"Auto-tune white point: {w:0.2f}")
+    whites = abmag_to_value(w, transform.iyjh_zero_points)
     scaling = (transform.iyjh_scaling / whites)[:, np.newaxis, np.newaxis]
-    a = abmag_to_value(transform.bw[1], transform.stretch)
-    b = -abmag_to_value(transform.bw[0], transform.bw[1])
+    a = abmag_to_value(w, transform.stretch)
+    b = -abmag_to_value(transform.bw[0], w)
     iyjh *= scaling
     return asinh(iyjh, a, b)
 

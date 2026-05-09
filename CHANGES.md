@@ -54,6 +54,7 @@
 
 * Process a sequence of workdirs.
 * Accept workdirs with subfolders.
+* Auto-tune white point with `-w 0`.
 * Clipping is enabled by `--curves`.
 
 `azul arrange`

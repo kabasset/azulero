@@ -53,7 +53,7 @@ def run(args):
     print("Read patches")
     patches = []
     with open(workspace / args.tiles, "r") as f:
-        specs = [io.parse_tile(tile) for tile in yaml.safe_load(f)]
+        specs = [io.parse_target(tile) for tile in yaml.safe_load(f)]
     common_height = height(specs[0][1])
     print(f"- Height: {common_height}")
     assert all(
@@ -76,5 +76,5 @@ def run(args):
     for name, channel in zip(("VIS", "NIR-Y", "NIR-J", "NIR-H"), assemblage):
         path = workdir / f"EUC_{name}_ASSEMBLAGE.fits"
         print(f"- [{name}] {path}")
-        io.write_fits(channel, path)
+        io.write_product(path, channel)
     timer.tic_log()

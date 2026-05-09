@@ -125,7 +125,7 @@ def add_parser(subparsers):
         type=float,
         default=22.5,
         metavar="AB_MAG",
-        help="White point in AB magnitude.",
+        help="White point in AB magnitude, or 0 to enable experimental auto-tuning.",
     )
     parser.add_argument(
         "--stretch",

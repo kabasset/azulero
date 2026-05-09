@@ -13,7 +13,6 @@ from azulero import (
     crop,
     find,
     assemble,
-    tune,
 )
 from azulero.tools.messaging import logger, parse_envargs, write_pipe_args
 
@@ -61,12 +60,10 @@ def add_parser():
     roam.add_parser(subparsers)
     subparsers.add_parser("cite", description="Print citation instructions.")
 
-    # FIXME Deprecate
     find.add_parser(subparsers)
     crop.add_parser(subparsers)
     assemble.add_parser(subparsers)
-    tune.add_parser(subparsers)
-    overlay.add_parser(subparsers)  # FIXME rework
+    overlay.add_parser(subparsers)
 
     parser.set_defaults(**parse_envargs())
 
