@@ -18,7 +18,7 @@
 * Option `--wcs` was removed:
   * For FITS files, standard WCS records are used;
   * For TIFF files, the parameters are saved as standard metadata;
-  * For other formats, the parameters are witten following the output name with extension `.wcs`.
+  * For other formats, the parameters are written following the output name with extension `.wcs`.
 
 `azul roam`
 
@@ -29,6 +29,7 @@
 `azul process`
 
 * In some systems and environments, the script was crashing when `--wcs` was enabled and no slicing was performed.
+* Masked saturated stars were rendered too dim.
 
 ## New features
 
@@ -69,11 +70,12 @@
 
 ## Cleaning
 
-* Logs are written to `stderr` with a proper logger, which also supprts log levels (option `--log`).
+* Logs are written to `stderr` with a proper logger, which also supports log levels (option `--log`).
 * Documentation uses proper HTML pages (which include CLI documentation).
 * Video tutorials are published.
 * Packaging is handled with `uv`.
 * Merged `AstroQuery` class into `SAS`.
+* Pixel ordering is consistent.
 
 # 1.2.0
 
