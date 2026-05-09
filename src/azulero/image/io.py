@@ -270,6 +270,22 @@ def write_rgb(
     return write_product(path, data[:, :, ::-1], wcs)
 
 
+def write_normalized_bgr(
+    path: Path, bgr: np.ndarray, wcs: WCS | None, bits=0
+) -> Path | None:
+    if bits == 0:
+        bits = 16 if standard_extension(path) == ".tiff" else 8
+    if bits == 1:
+        data = bgr
+    elif bits == 8:
+        data = np.round(bgr * 255).astype(np.uint8)
+    elif bits == 16:
+        data = np.round(bgr * 65535).astype(np.uint16)
+    else:
+        raise ValueError(f"Parameter ``bits`` must be one of: 0, 1, 8 or 16")
+    return write_product(path, data, wcs)
+
+
 def write_mask(iyjh: np.ndarray, path: Path):
     """
     Write a 4-channel binary mask.

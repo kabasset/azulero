@@ -38,31 +38,31 @@ def abmag_to_value(mag, zp):
     return 10 ** ((zp - mag) / 2.5)
 
 
-def stretch_iyjh(data: np.ndarray, transform: Transform):
+def stretch_iyjh(iyjh: np.ndarray, transform: Transform):
     whites = abmag_to_value(transform.bw[1], transform.iyjh_zero_points)
     scaling = (transform.iyjh_scaling / whites)[:, np.newaxis, np.newaxis]
     a = abmag_to_value(transform.bw[1], transform.stretch)
     b = -abmag_to_value(transform.bw[0], transform.bw[1])
-    data *= scaling
-    return asinh(data, a, b)
+    iyjh *= scaling
+    return asinh(iyjh, a, b)
 
 
-def iyjh_to_lrgb(data: np.ndarray, transform: Transform):
-    i, y, j, h = data
-    lrgb = np.zeros((data.shape[1], data.shape[2], 4), dtype=np.float32)
-    lrgb[:, :, 0] = lerp(transform.nir_to_l, np.median(data[1:], axis=0), data[0])
-    lrgb[:, :, 1] = lerp(transform.j_to_r, j, h)
-    lrgb[:, :, 2] = lerp(transform.y_to_g, y, j)
-    lrgb[:, :, 3] = lerp(transform.i_to_b, i, y)
-    return lrgb
+def iyjh_to_lbgr(iyjh: np.ndarray, transform: Transform):
+    i, y, j, h = iyjh
+    lbgr = np.zeros((iyjh.shape[1], iyjh.shape[2], 4), dtype=np.float32)
+    lbgr[:, :, 0] = lerp(transform.nir_to_l, np.median(iyjh[1:], axis=0), i)
+    lbgr[:, :, 1] = lerp(transform.i_to_b, i, y)
+    lbgr[:, :, 2] = lerp(transform.y_to_g, y, j)
+    lbgr[:, :, 3] = lerp(transform.j_to_r, j, h)
+    return lbgr
 
 
-def lrgb_to_rgb(data: np.ndarray, transform: Transform):
-    hls = cv2.cvtColor(data[:, :, 1:], cv2.COLOR_RGB2HLS)
+def lbgr_to_bgr(lbgr: np.ndarray, transform: Transform):
+    hls = cv2.cvtColor(lbgr[:, :, 1:], cv2.COLOR_BGR2HLS)
     hls[:, :, 0] = (hls[:, :, 0] + transform.hue) % 360
     hls[:, :, 2] = np.clip(hls[:, :, 2] * transform.saturation, 0, 1)
-    hls[:, :, 1] = data[:, :, 0]
-    return cv2.cvtColor(hls, cv2.COLOR_HLS2RGB)
+    hls[:, :, 1] = lbgr[:, :, 0]
+    return cv2.cvtColor(hls, cv2.COLOR_HLS2BGR)
 
 
 def lerp(x, a, b):

@@ -189,12 +189,12 @@ def run(args):
         if knots:
             first = knots[0]
             if first[0] != 0 and first[1] != 0:
-                knots.insert(0, [0, 0])
+                knots.insert(0, (0, 0))
             last = knots[-1]
             if last[0] != 1 and last[1] != 1:
-                knots.append([1, 1])
+                knots.append((1, 1))
         else:
-            knots = [[0, 0], [1, 1]]
+            knots = [(0, 0), (1, 1)]
         curves.append(knots)
 
     transform = color.Transform(
@@ -210,7 +210,7 @@ def run(args):
         saturation=args.saturation,
         stretch=args.stretch,
         bw=np.array([args.offset, args.white]),
-        curves=curves,
+        curves=curves[::-1],  # RGB to BGR
     )
 
     ios = IOs(
@@ -271,7 +271,7 @@ def process_target(ios: IOs, target: str, transform: color.Transform):
 
     logger.header(2, f"Inpaint dead pixels")
     iyjh[0] = mask.inpaint(iyjh[0], dead[0])
-    # iyjh[0][dead[0]] = mask.resaturate(iyjh[0][dead[0]], np.max(iyjh[0]))
+    print(np.min(iyjh[0]), np.max(iyjh[0]))
     nir_dead = dead[1] | dead[2] | dead[3]
     iyjh[1:] = mask.inpaint(iyjh[1:], nir_dead, 0)
     timer.tic_log()
@@ -282,40 +282,29 @@ def process_target(ios: IOs, target: str, transform: color.Transform):
 
     logger.header(2, f"Stretch dynamic range")
     iyjh = color.stretch_iyjh(iyjh, transform)
-    # logger.bullet(f"Medians: {', '.join(str(np.median(c)) for c in iyjh)}") # TODO use approximant
+    # iyjh[0][dead[0]] = mask.resaturate(iyjh[0][dead[0]])
     timer.tic_log()
     # TODO save vstacked iyjh (crop if too high)
 
     logger.header(2, f"Blend IYJH to RGB")
-    lrgb = color.iyjh_to_lrgb(iyjh, transform)
+    lbgr = color.iyjh_to_lbgr(iyjh, transform)
     del iyjh
-    rgb = color.lrgb_to_rgb(lrgb, transform)
-    del lrgb
+    bgr = color.lbgr_to_bgr(lbgr, transform)
+    del lbgr
     if "{step}" in template or len(transform.curves) == 0:
         # FIXME implement some Step to handle len(args.curves) == 0 case generically
         path = render_path_for_step(template, "blended")
         logger.bullet(f"Write: {path.name}")
-        io.write_rgb(rgb, path, wcs=wcs)
+        io.write_normalized_bgr(path, bgr, wcs)
     timer.tic_log()
-
-    # logger.header(2, f"Inpaint hot pixels")
-    # rgb[dead[0]] = mask.resaturate(rgb[dead[0]])
-    # rgb = mask.inpaint(rgb, hot)
-    # timer.tic_log()
-
-    # if "{step}" in name:
-    #     path = render_path_for_step(template, "inpainted")
-    #     logger.bullet(f"Write: {path.name}")
-    #     io.write_rgb(rgb, path, wcs=wcs)
-    #     timer.tic_log()
 
     if len(transform.curves) > 0:
         logger.header(2, f"Adjust curves")
         for i in range(len(transform.curves)):
-            rgb[:, :, i] = color.adjust_curve(rgb[:, :, i], transform.curves[i])
+            bgr[:, :, i] = color.adjust_curve(bgr[:, :, i], transform.curves[i])
         path = render_path_for_step(template, "adjusted")
         logger.bullet(f"Write: {path.name}")
-        io.write_rgb(rgb, path, wcs=wcs)
+        io.write_normalized_bgr(path, bgr, wcs)
         timer.tic_log()
 
     write_pipe_args([path])
