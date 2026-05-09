@@ -65,14 +65,12 @@ def inpaint(data: np.ndarray, mask: np.ndarray, axis: int = -1):
 
 
 def _resaturate(x):
-    if x <= 0.8:
-        return x
-    if x >= 0.9:
-        return 1
-    return 2 * x - 0.8
+    return np.sqrt(x)
 
 
 def resaturate(data, factor=1.0):
     if len(data) == 0:
         return data
-    return np.vectorize(_resaturate)(data / factor) * factor
+    if factor == 1:
+        return np.sqrt(data)
+    return np.sqrt(data / factor) * factor

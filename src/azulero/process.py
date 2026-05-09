@@ -271,7 +271,6 @@ def process_target(ios: IOs, target: str, transform: color.Transform):
 
     logger.header(2, f"Inpaint dead pixels")
     iyjh[0] = mask.inpaint(iyjh[0], dead[0])
-    print(np.min(iyjh[0]), np.max(iyjh[0]))
     nir_dead = dead[1] | dead[2] | dead[3]
     iyjh[1:] = mask.inpaint(iyjh[1:], nir_dead, 0)
     timer.tic_log()
@@ -282,7 +281,6 @@ def process_target(ios: IOs, target: str, transform: color.Transform):
 
     logger.header(2, f"Stretch dynamic range")
     iyjh = color.stretch_iyjh(iyjh, transform)
-    # iyjh[0][dead[0]] = mask.resaturate(iyjh[0][dead[0]])
     timer.tic_log()
     # TODO save vstacked iyjh (crop if too high)
 
@@ -291,6 +289,7 @@ def process_target(ios: IOs, target: str, transform: color.Transform):
     del iyjh
     bgr = color.lbgr_to_bgr(lbgr, transform)
     del lbgr
+    bgr[dead[0]] = mask.resaturate(bgr[dead[0]])
     if "{step}" in template or len(transform.curves) == 0:
         # FIXME implement some Step to handle len(args.curves) == 0 case generically
         path = render_path_for_step(template, "blended")
