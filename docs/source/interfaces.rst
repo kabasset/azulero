@@ -1,8 +1,6 @@
 General interface design
 ========================
 
-.. warning:: To be written
-
 Introduction
 ------------
 
@@ -11,7 +9,20 @@ TODO
 Commands
 --------
 
-TODO
+The main script is ``azul``.
+It supports a variety of so-called commands,
+such as ``retrieve`` to retrieve datafiles or ``process`` to render color images.
+There are both global options, common to all commands, which are passed between ``azul`` and the command name,
+and command options, which are passed after the command name.
+
+For example, the log level is a global option named ``--log``
+and the search radius is a ``retrieve``-specific option named ``-r``.
+The following line sets both:
+
+.. prompt:: bash
+
+   azul --log DEBUG retrieve -r 1m NGC6505
+
 
 ..  _named_options:
 
@@ -60,3 +71,11 @@ Within this context, the following lines are equivalent:
    azul retrieve NGC6505 UGC11116 | azul process
    azul --log DEBUG retrieve NGC6505 UGC11116 -r 1m --from pdr -f | azul --log DEBUG process
 
+
+Command line interface
+----------------------
+
+.. argparse::
+   :module: azulero.client
+   :func: add_parser
+   :nosubcommands:

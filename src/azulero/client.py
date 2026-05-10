@@ -23,6 +23,7 @@ def add_parser():
 
     parser = argparse.ArgumentParser(
         prog="azul [global_options]",
+        usage="%(prog)s <cmd> [options]",
         description=_version.__description__,
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
