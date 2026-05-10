@@ -5,12 +5,15 @@
 import numpy as np
 import cv2
 from scipy.spatial.transform import Rotation
-from astropy.coordinates import SkyCoord
+from astropy.coordinates import SkyCoord, Angle
 from astropy.wcs import WCS
 
 from azulero.video.sequence import Frame
 
-def capture_frame(image : np.ndarray, wcs: WCS, video_format: tuple[int, int], frame: Frame):
+
+def capture_frame(
+    image: np.ndarray, wcs: WCS, video_format: tuple[int, int], frame: Frame
+):
     hfov = frame.hfov_in_degrees()
     vfov = 2 * np.atan(np.tan(hfov / 2) * video_format[1] / video_format[0])
     fov = np.deg2rad([hfov, vfov])
@@ -20,20 +23,20 @@ def capture_frame(image : np.ndarray, wcs: WCS, video_format: tuple[int, int], f
     dec = np.rad2deg(v)
     x, y = wcs.world_to_pixel(SkyCoord(ra, dec, unit="deg", frame="icrs"))
     x = np.nan_to_num(x, nan=-1).astype(np.float32)
-    y = np.nan_to_num(image.shape[0] - y -1, nan=-1).astype(np.float32)
+    y = np.nan_to_num(y, nan=-1).astype(np.float32)
     x, y = cv2.convertMaps(
-            x,
-            y,
-            cv2.CV_16SC2,
-            nninterpolation=False,
-        )
+        x,
+        y,
+        cv2.CV_16SC2,
+        nninterpolation=False,
+    )
     # FIXME image pyramid
     return cv2.remap(image, x, y, interpolation=cv2.INTER_CUBIC)
 
 
 def _xyzpers(
-    fov: tuple[float,float],
-    center: SkyCoord,
+    fov: tuple[float, float],
+    center: Angle,
     video_format: tuple[int, int],
     orientation: float,
 ) -> np.ndarray:
@@ -50,7 +53,7 @@ def _xyzpers(
     return out.dot(Rx).dot(Ry).dot(Ri).astype(np.float32)
 
 
-def _xyz2uv(xyz: np.array) -> tuple[np.array, np.array]:
+def _xyz2uv(xyz: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     """Transform cartesian (x,y,z) to spherical(r, u, v), and only outputs (u, v).
 
     Parameters

@@ -13,12 +13,12 @@ from azulero.image import io
 from azulero.video import sequence
 from azulero import overlay
 from azulero.projections.wcs import capture_frame as wcs_frame
-from azulero.projections.equirectangular import Projection # FIXME
+from azulero.projections.equirectangular import Projection  # FIXME
 from azulero.video.gaiasky import roam_gaiasky
 from azulero.tools.timing import Timer
 
-
 supported_codecs = {".mp4": "mp4v", ".avi": "xvid", ".mkv": "ffv1"}
+
 
 def fourcc(path: Path):
     ext = path.suffix.lower()
@@ -35,8 +35,7 @@ def add_parser(subparsers):
 
         For full-sky views, an interface to Gaia Sky is available.
         To use it, first start Gaia Sky and then execute this script with option ``--gaiasky``.
-        """
-        ,
+        """,
         usage="%(prog)s <images> [options]",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
@@ -58,7 +57,7 @@ def add_parser(subparsers):
         The key frames may be specified as image coordinates,
         or as sky coordinates if the images come with WCS parameters,
         or as a mix of image and sky coordinates.
-        """
+        """,
     )
     group.add_argument(
         "--wcs",
@@ -164,7 +163,7 @@ def parse_format(text):
 
 def run(args):
 
-    input = Path(args.workspace).expanduser() / args.images[0] # FIXME loop over inputs
+    input = Path(args.workspace).expanduser() / args.images[0]  # FIXME loop over inputs
     config = Path(args.planar or args.wcs or args.equirectangular or args.gaiasky)
     output = Path(
         args.output.format(
@@ -177,32 +176,28 @@ def run(args):
     if args.gaiasky:
         image_shape = [0, 0]
     else:
-        print(f"Read input image: {input.name}")
-        wcs_filename = input if input.suffix.lower() in (".fits", ".fit", ".fts") else input.with_suffix(".yaml")
-        print(f"- WCS: {wcs_filename}")
-        wcs = io.read_wcs(wcs_filename.parent, wcs_filename.name)
-        image = cv2.imread(input, cv2.IMREAD_COLOR)
-        # FIXME read both image and wcs with azulero.io
+        logger.header(2, f"Read input image: {input.name}")
+        image, wcs = io.read_product(input)
         image_shape = image.shape[:2]
-        print(f"- Shape: {image_shape[0]} x {image_shape[1]}")
-        pyramid = Pyramid(image, 8) # FIXME deduce amount from shape and format
-        print(f"- Pyramid levels: {len(pyramid)}")
+        logger.bullet(f"Shape: {image_shape[0]} x {image_shape[1]}")
+        pyramid = Pyramid(image, 8)  # TODO deduce amount from shape and format
+        logger.bullet(f"Pyramid levels: {len(pyramid)}")
         timer.tic_log()
 
-    print(f"Read sequence of key frames: {config.name}")
+    logger.header(2, f"Read sequence of key frames: {config.name}")
     video_format = parse_format(args.format)
-    print(f"- Video format: {video_format[0]} x {video_format[1]}")
+    logger.bullet(f"Video format: {video_format[0]} x {video_format[1]}")
     params = sequence.read_key_frames(config, image_shape, args.fps, video_format)
-    print(f"- Key frames: {len(params)}")
+    logger.bullet(f"Key frames: {len(params)}")
     centers = sequence.sin_sequence(params.centers)
     hfovs = sequence.sin_sequence(params.hfovs)
     orientations = sequence.sin_sequence(params.orientations)
-    print(f"- Total frames: {len(centers)}")
+    logger.bullet(f"Total frames: {len(centers)}")
     params = [
         sequence.Frame(i, c, z, a)
         for i, c, z, a in zip(range(len(centers)), centers, hfovs, orientations)
     ][args.start : args.stop]
-    print(f"- Rendering range: [{args.start}, {args.stop})")
+    logger.bullet(f"Rendering range: [{args.start}, {args.stop})")
     timer.tic_log()
 
     if args.scale is None:
@@ -215,15 +210,15 @@ def run(args):
         w, t = args.scale.split(",")
         scale = overlay.Scale(width=int(w), text=t)
 
-    print(f"Generate frames")
+    logger.header(2, f"Generate frames")
     if args.gaiasky:
-        print("- Run Gaia Sky")
+        logger.bullet("Run Gaia Sky")
         gaia_frames = roam_gaiasky(params, args.fps, video_format, output)
-        print("- Combine frames")
+        logger.bullet("Combine frames")
 
     writer = cv2.VideoWriter(output, fourcc(output), args.fps, video_format)
     for i, p in enumerate(params):
-        print(f"- {p} [{i+1}/{len(params)}]")
+        logger.bullet(f"{p} [{i+1}/{len(params)}]")
         if args.gaiasky:
             frame = cv2.imread(gaia_frames[i], cv2.IMREAD_COLOR)
         elif args.equirectangular:
@@ -239,8 +234,10 @@ def run(args):
         writer.write(frame)
 
     writer.release()
-    print(f"- Output written: {output}")
+    logger.bullet(f"Output written: {output}")
     timer.tic_log()
+
+    write_pipe_args([output])
 
 
 class Pyramid:
@@ -271,15 +268,14 @@ class Pyramid:
         return res
 
 
-
 def crop_pyramid(
     pyramid: Pyramid, params: sequence.Frame, video_format: tuple[int, int]
 ):
     factor = pyramid.atleast_wide(
         pyramid[1].shape[1] / params.hfov * video_format[0] * 2
     )  # FIXME handle rotation
-    print(
-        f"- Reduction factor: {params.hfov / pyramid[1].shape[1]} -> {factor}"
+    logger.header(
+        2, f"- Reduction factor: {params.hfov / pyramid[1].shape[1]} -> {factor}"
     )  # FIXME rm
     scaled_params = sequence.Frame(
         params.index, params.center / factor, params.hfov / factor, params.orientation
@@ -312,16 +308,16 @@ def crop_planar(
     x1 = x0 + w
     y1 = y0 + h
     if x0 < 0:
-        print(f"WARNING: min(x) < 0 ({x0})")
+        logger.header(2, f"WARNING: min(x) < 0 ({x0})")
         x0 = 0
     if y0 < 0:
-        print(f"WARNING: min(y) < 0 ({y0})")
+        logger.header(2, f"WARNING: min(y) < 0 ({y0})")
         y0 = 0
     if x1 > image.shape[1]:
-        print(f"WARNING: max(x) > {image.shape[1]-1} ({x1-1})")
+        logger.header(2, f"WARNING: max(x) > {image.shape[1]-1} ({x1-1})")
         x1 = image.shape[0]
     if y1 > image.shape[0]:
-        print(f"WARNING: max(y) > {image.shape[0]-1} ({y1-1})")
+        logger.header(2, f"WARNING: max(y) > {image.shape[0]-1} ({y1-1})")
         y1 = image.shape[1]
     if x0 >= image.shape[1] or y0 >= image.shape[0] or x1 <= 0 or y1 <= 0:
         return np.zeros([video_format[1], video_format[0], 3], dtype=image.dtype)
