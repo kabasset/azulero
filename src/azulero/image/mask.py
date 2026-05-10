@@ -65,12 +65,22 @@ def inpaint(data: np.ndarray, mask: np.ndarray, axis: int = -1):
 
 
 def _resaturate(x):
-    return np.sqrt(x)
+    """
+    Apply ``f(x) = x + x**2 - x**3``.
+
+    This is the simplest polynomial with:
+
+    * ``f(0) = 0``
+    * ``f(1) = 1``
+    * ``f'(0) = 1``
+    * ``f'(1) = 0``
+
+    It is very similar to sinc, but much faster to compute.
+    """
+    return x + x * x - x * x * x
 
 
-def resaturate(data, factor=1.0):
+def resaturate(data):
     if len(data) == 0:
         return data
-    if factor == 1:
-        return np.sqrt(data)
-    return np.sqrt(data / factor) * factor
+    return np.vectorize(_resaturate)(data)
