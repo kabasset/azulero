@@ -87,6 +87,17 @@ def find_wcs(workdir: Path, pattern: str) -> Path | None:
     return next(workdir.glob(str(path)), None)
 
 
+def has_wcs(metadata: dict | fits.Header) -> bool:
+    """
+    Detect WCS keywords.
+    """
+    keywords = ["WCSAXES", "CRVAL1", "CRPIX1", "CDELT1", "CTYPE1"]
+    for k in keywords:
+        if k in metadata:
+            return True
+    return False
+
+
 def read_wcs(path: Path, slicing: tuple | None = None) -> WCS | None:
     """
     Read a WCS.
@@ -99,14 +110,14 @@ def read_wcs(path: Path, slicing: tuple | None = None) -> WCS | None:
     if ext == ".fits":
         with fits.open(path) as f:
             h = f[0].header  # type: ignore
-        if "WCSAXES" not in dict(h):
+        if not has_wcs(h):
             return None
         wcs = WCS(h)
     elif ext == ".tiff":
         with tifffile.TiffFile(path) as f:
             desc = f.pages[0].tags["ImageDescription"].value  # type: ignore
         metadata = json.loads(desc)
-        if "WCSAXES" not in metadata:
+        if not has_wcs(metadata):
             return None
         h = {k: v for k, v in metadata.items() if not isinstance(v, list)}
         wcs = WCS(h)
