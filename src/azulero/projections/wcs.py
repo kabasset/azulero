@@ -46,11 +46,11 @@ def _xyzpers(
     x_ticks = np.linspace(-x_max, x_max, num=video_format[0], dtype=np.float32)
     y_ticks = np.linspace(-y_max, y_max, num=video_format[1], dtype=np.float32)
     out[..., :2] = np.stack(np.meshgrid(x_ticks, -y_ticks), -1)
-    Rx = rotation_matrix(center[1], 0)
-    Ry = rotation_matrix(center[0], 1)
-    Ri = rotation_matrix(orientation, np.array([0.0, 0.0, 1.0]).dot(Rx).dot(Ry))
+    yaw = rotation_matrix(center[0], 1)
+    pitch = rotation_matrix(center[1], 0)
+    roll = rotation_matrix(orientation, np.array([0.0, 0.0, 1.0]).dot(pitch).dot(yaw))
 
-    return out.dot(Rx).dot(Ry).dot(Ri).astype(np.float32)
+    return out.dot(pitch).dot(yaw).dot(roll).astype(np.float32)
 
 
 def _xyz2uv(xyz: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
@@ -79,8 +79,8 @@ def _xyz2uv(xyz: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     x = xyz[..., 0:1]  # Keep dimensions but avoid copy
     y = xyz[..., 1:2]
     z = xyz[..., 2:3]
-    u = np.arctan2(x, z)
     c = np.hypot(x, z)
+    u = np.arctan2(x, z)
     v = np.arctan2(y, c)
     return u, v
 
