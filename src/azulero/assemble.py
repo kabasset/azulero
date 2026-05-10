@@ -11,10 +11,10 @@ from azulero.image import io
 from azulero.tools.timing import Timer
 
 
-def add_parser(subparsers):
+def add_parser(subparsers, help):
     parser = subparsers.add_parser(
         "assemble",
-        help="Assemble tile patches for testing purposes.",
+        help=help,
         description=(
             "Assemble tile patches in a grid, "
             "in order to process a varied collection of objects and tune parameters."

@@ -25,10 +25,10 @@ def fourcc(path: Path):
     return cv2.VideoWriter_fourcc(*supported_codecs[ext])
 
 
-def add_parser(subparsers):
+def add_parser(subparsers, help):
     parser = subparsers.add_parser(
         "roam",
-        help="Create a video which roams through images.",
+        help=help,
         description="""
         Supply an image (or a list of images), specify viewport parameters at given key frames.
         They will be interpolated to render a smooth roaming video.

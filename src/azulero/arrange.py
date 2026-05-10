@@ -11,10 +11,10 @@ from azulero.tools.timing import Timer
 from azulero.tools.messaging import logger, read_pipe_args, write_pipe_args
 
 
-def add_parser(subparsers):
+def add_parser(subparsers, help):
     parser = subparsers.add_parser(
         "arrange",
-        help="Assemble a grid of images.",
+        help=help,
         description="Crop or pad images and assemble them into a grid.",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )

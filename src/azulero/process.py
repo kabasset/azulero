@@ -12,10 +12,10 @@ from azulero.tools.messaging import logger, read_pipe_args, write_pipe_args
 from azulero.tools.timing import Timer
 
 
-def add_parser(subparsers):
+def add_parser(subparsers, help):
     parser = subparsers.add_parser(
         "process",
-        help="Process MER channels to render a color image.",
+        help=help,
         description="""
         Process MER channels:
 

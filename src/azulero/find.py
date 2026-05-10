@@ -13,11 +13,11 @@ from azulero.image import io
 from azulero.tools.timing import Timer
 
 
-def add_parser(subparsers):
+def add_parser(subparsers, help):
 
     parser = subparsers.add_parser(
         "find",
-        help="Find the tiles which contain objects or the image coordinates of objects.",
+        help=help,
         description=(
             "Find object coordinates and "
             "(a) intersecting tiles from a Geojson catalog of tiles, or "

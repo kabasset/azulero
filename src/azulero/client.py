@@ -35,7 +35,7 @@ def add_parser():
         type=str,
         default="*[-_]{channel}[-_]*.fits",
         metavar="PATTERN",
-        help="Input file pattern, where `{channel}` is replaced with the channel name",
+        help="Input file pattern, where ``{channel}`` is replaced with the channel name",
     )
     parser.add_argument(
         "--channels",
@@ -54,16 +54,19 @@ def add_parser():
     )
 
     subparsers = parser.add_subparsers(title="Commands", dest="cmd")
-    retrieve.add_parser(subparsers)
-    process.add_parser(subparsers)
-    arrange.add_parser(subparsers)
-    roam.add_parser(subparsers)
-    subparsers.add_parser("cite", description="Print citation instructions.")
+    retrieve.add_parser(subparsers, "Retrieve channels of MER tiles or cutouts.")
+    process.add_parser(subparsers, "Process MER channels to render a color image.")
+    arrange.add_parser(subparsers, "Arrange images into a grid.")
+    roam.add_parser(subparsers, "Create videos which roam through images.")
+    subparsers.add_parser(
+        "cite",
+        help="Print citation instructions.",
+    )
 
-    find.add_parser(subparsers)
-    crop.add_parser(subparsers)
-    assemble.add_parser(subparsers)
-    overlay.add_parser(subparsers)
+    find.add_parser(subparsers, "DEPRECATED")
+    crop.add_parser(subparsers, "DEPRECATED")
+    assemble.add_parser(subparsers, "DEPRECATED")
+    overlay.add_parser(subparsers, "DEPRECATED")
 
     parser.set_defaults(**parse_envargs())
 

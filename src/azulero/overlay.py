@@ -128,12 +128,12 @@ def read_catalog(path):
     return data
 
 
-def add_parser(subparsers):
+def add_parser(subparsers, help):
 
     parser = subparsers.add_parser(
         "overlay",
-        help="Overlay image with source detections.",
-        description="Take an image as input and generate an overlay mask.",
+        help=help,
+        description="Overlay an image with source detections.",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
 

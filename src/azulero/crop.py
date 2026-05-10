@@ -12,10 +12,10 @@ from azulero.image import io
 from azulero.tools.timing import Timer
 
 
-def add_parser(subparsers):
+def add_parser(subparsers, help):
     parser = subparsers.add_parser(
         "crop",
-        help="Display the VIS channel for region selection.",
+        help=help,
         description=(
             "Display the VIS channel between values 0 and 1 in a new window, "
             "and enable cropping a region by zooming in. "

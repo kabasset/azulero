@@ -17,7 +17,6 @@ from azulero.tools.messaging import (
 )
 from azulero.tools.timing import Timer
 
-
 providers = {
     "pdr": lambda: sas.SAS("PDR"),
     "idr": lambda: sas.SAS("IDR"),
@@ -37,11 +36,11 @@ def help_choice(values):
     return help_enumeration(values, " or ")
 
 
-def add_parser(subparsers):
+def add_parser(subparsers, help):
 
     parser = subparsers.add_parser(
         "retrieve",
-        help="Retrieve datafiles.",
+        help=help,
         description="Query and download various datafiles at given positions or tile indices.",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
