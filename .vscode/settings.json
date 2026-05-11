@@ -11,6 +11,7 @@
         "fwhm",
         "iyjh",
         "lbgr",
-        "WCSAXES"
+        "WCSAXES",
+        "workdirs"
     ]
 }

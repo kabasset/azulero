@@ -10,6 +10,7 @@ from pathlib import Path
 from azulero.image import color, io, mask
 from azulero.tools.messaging import logger, read_pipe_args, write_pipe_args
 from azulero.tools.timing import Timer
+from azulero.tools.workspace import Workspace
 
 
 def add_parser(subparsers, help):
@@ -173,14 +174,6 @@ def render_path_for_step(template, step):
     return Path(template.format(step=step))
 
 
-@dataclass
-class IOs:
-    workspace: Path
-    input_pattern: str
-    channel_names: list
-    output_template: str
-
-
 def run(args):
 
     curves = []
@@ -213,18 +206,13 @@ def run(args):
         curves=curves[::-1],  # RGB to BGR
     )
 
-    ios = IOs(
-        workspace=args.workspace,
-        input_pattern=args.input,
-        channel_names=args.channels,
-        output_template=args.output,
-    )
+    ios = Workspace.from_args(args)
 
     for target in args.workdirs:
         process_target(ios, target, transform)
 
 
-def process_target(ios: IOs, target: str, transform: color.Transform):
+def process_target(ios: Workspace, target: str, transform: color.Transform):
 
     logger.header(1, f"Target: {target}", linebreaks=[1, 0])
 
@@ -306,4 +294,4 @@ def process_target(ios: IOs, target: str, transform: color.Transform):
         io.write_normalized_bgr(path, bgr, wcs)
         timer.tic_log()
 
-    write_pipe_args([path])
+    write_pipe_args([ios.relative_to_workspace(path)])
