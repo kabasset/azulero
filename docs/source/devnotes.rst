@@ -1,8 +1,8 @@
 Developer notes
 ===============
 
-Image storages
---------------
+Image storage
+-------------
 
 Color images are stored as ``ndarray``s following most OpenCV conventions:
 
@@ -20,7 +20,7 @@ Inpainting
 ----------
 
 Different algorithms are used to inpaint VIS and NISP invalid pixels.
-Specifically, color images and image stacks are inpainted with biharmonic algorithm,
-while grayscale images are inpainted with Navier-Stokes algorithm.
+Specifically, color images and image stacks are inpainted with SciKit's biharmonic algorithm,
+while grayscale images are inpainted with OpenCV's Navier-Stokes algorithm.
 The former is very memory-greedy but renders much smoother large regions,
 which often occur at the center of galaxies.
