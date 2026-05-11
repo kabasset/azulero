@@ -16,6 +16,7 @@ from azulero.tools.messaging import (
     write_pipe_args,
 )
 from azulero.tools.timing import Timer
+from azulero.tools.workspace import Workspace
 
 providers = {
     "pdr": lambda: sas.SAS("PDR"),
@@ -103,6 +104,19 @@ def add_parser(subparsers, help):
         action="store_true",
         help="Only query the filenames without downloading.",
     )
+    parser.add_argument(
+        "--output",
+        "-o",
+        default="{workspace}/{tile}/{target}",
+        help="""
+        Output directory template where, for each target:
+
+        * ``{workspace}`` is replaced with the workspace directory,
+        * ``{tile}`` is replaced with the target tile index,
+        * ``{target}`` is replaced with the input target object name or coordinates
+          or ignored if the input target is a tile index.
+        """,
+    )
 
     parser.set_defaults(**parse_envargs("retrieve"), func=run)
 
@@ -111,13 +125,15 @@ def add_parser(subparsers, help):
 class Target:
 
     name: str
-    index: str
+    tile: str
     coord: SkyCoord | None = field(default=None, compare=False)
 
-    def workdir(self):
-        if self.name == self.index:
-            return self.index
-        return str(Path(self.index) / self.name)
+    def workdir(self, ios: Workspace) -> Path:
+        target = "" if self.name == self.tile else self.name
+        workdir = ios.output_template.format(
+            workspace=ios.workspace, tile=self.tile, target=target
+        )
+        return Path(workdir)
 
 
 def query_tiles(provider, dsrs: list[str], target: str):
@@ -141,7 +157,7 @@ def query_tiles(provider, dsrs: list[str], target: str):
     tiles = provider.query_tiles(radec, dsrs)
     for t in tiles:
         logger.bullet(f"Tile: {t}")
-    targets = [Target(target, t.index, radec) for t in tiles]
+    targets = [Target(target, t.tile, radec) for t in tiles]
     if len(targets) == 0:
         logger.warning("No tile found!")
     return list(targets)
@@ -174,11 +190,11 @@ def download_datafiles(retriever, datafiles, workdir, target, radius, overwrite)
         if path.is_file() and not overwrite:
             logger.bullet(f"File already exists; skip: {path.name}")
         else:
+            logger.bullet(f"{path.name}")
             if path.is_file():
                 logger.warning(f"Existing file will be overwritten: {path.name}")
             args = [] if radius is None else [target, radius]
             retriever.download_datafile(name, path, *args)
-            logger.bullet(f"{path}")
 
 
 def run(args):
@@ -187,6 +203,7 @@ def run(args):
     provider = providers[vars(args)["from"].lower()]()  # from is a Python keyword
     dsrs = args.dsr.split(",")
     assert not args.force or len(args.targets) == 1
+    ios = Workspace.from_args(args)
 
     logger.header(1, "Resolve targets")
 
@@ -201,24 +218,24 @@ def run(args):
             datafiles = args.force
         else:
             for dsr in dsrs:
-                datafiles = query_datafiles(provider, t.index, dsr)
+                datafiles = query_datafiles(provider, t.tile, dsr)
                 if len(datafiles) > 0:
                     break
             timer.tic_log()
         if args.force is None and len(datafiles) < 4:
-            logger.error(f"Only {len(datafiles)} files found; Skip tile: {t.index}")
+            logger.error(f"Only {len(datafiles)} files found; Skip tile: {t.tile}")
             continue
         if args.force is None and len(datafiles) > 4:
             logger.warning(f"More than 4 files found: {len(datafiles)}.")
 
         if not args.query_only:
-            workdir = io.make_workdir(args.workspace, t.workdir())
+            workdir = io.make_workdir(t.workdir(ios))
             download_datafiles(
                 provider, datafiles, workdir, t, args.radius, args.force is not None
             )
             timer.tic_log()
 
-    res = [t.workdir() for t in targets]
+    res = [ios.relative_to_workspace(t.workdir(ios)) for t in targets]
     if not write_pipe_args(res):
         res = " ".join(res)
         logger.command(f"azul --workspace {args.workspace} process {res}")

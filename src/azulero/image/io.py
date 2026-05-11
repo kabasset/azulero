@@ -207,8 +207,7 @@ def read_iyjh(
 # Writing
 
 
-def make_workdir(workspace: Path, workdir: Path | str) -> Path:
-    workdir = Path(workspace).expanduser() / workdir
+def make_workdir(workdir: Path) -> Path:
     if workdir.is_dir():
         logger.warning(f"Working directory already exists: {workdir}")
     else:

@@ -72,7 +72,7 @@ def run(args):
     timer.tic_log()
 
     print("Write channels")
-    workdir = io.make_workdir(workspace, args.output_dir)
+    workdir = io.make_workdir(workspace / args.output_dir)
     for name, channel in zip(("VIS", "NIR-Y", "NIR-J", "NIR-H"), assemblage):
         path = workdir / f"EUC_{name}_ASSEMBLAGE.fits"
         print(f"- [{name}] {path}")
