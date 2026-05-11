@@ -43,10 +43,15 @@ def add_parser(subparsers, help):
     )
     parser.add_argument(
         "--margin",
-        type=int,
-        default=6,
-        metavar="PIXELS",
-        help="Number of pixels around images.",
+        default="1%",
+        metavar="SPACE",
+        help="Margin around the grid in pixels or or percentage of the maximum image extent.",
+    )
+    parser.add_argument(
+        "--gap",
+        default="1%",
+        metavar="SPACE",
+        help="Margin between images in pixels or or percentage of the maximum image extent.",
     )
     parser.add_argument(
         "--background",
@@ -88,8 +93,10 @@ def run(args):
     timer.tic_log()
 
     logger.header(1, f"Prepare canvas")
-    width = args.margin * (columns + 1) + w * columns
-    height = args.margin * (rows + 1) + h * rows
+    gap = parse_spacing(args.gap, max(w, h))
+    margin = parse_spacing(args.margin, max(w, h))
+    width = (columns - 1) * gap + columns * w + 2 * margin
+    height = (rows - 1) * gap + rows * h + 2 * margin
     logger.bullet(f"Format: {width} x {height}")
     canvas = np.full([height, width, 3], args.background, dtype=np.uint8)
     # FIXME support RGBA
@@ -102,15 +109,15 @@ def run(args):
             if i >= len(filenames):
                 break
             logger.bullet(f"{r}, {c}: {filenames[i]}")
-            x = args.margin * (c + 1) + w * c
-            y = args.margin * (r + 1) + h * r
+            x = margin + (gap + w) * c
+            y = margin + (gap + h) * r
             blit_centered(canvas[y : y + h, x : x + w, :], images[i])
     output = Path(
         ios.output_template.format(
             workspace=ios.workspace, first=filenames[0].stem, last=filenames[-1].stem
         )
     )
-    logger.bullet(1, f"Write: {output.name}")
+    logger.bullet(f"Write: {output.name}")
     cv2.imwrite(output, canvas)
     timer.tic_log()
 
@@ -137,6 +144,14 @@ def parse_format(arg, images):
         else:
             h = aggs[format[1]](heights)
     return w, h
+
+
+def parse_spacing(arg: str, reference: int):
+    if arg.endswith("%"):  # FIXME rely on match_suffix
+        return int(float(arg[:-1]) * reference / 100)
+    if arg.endswith("px"):  # FIXME rely on match_suffix
+        arg = arg[:-2]
+    return int(arg)
 
 
 def blit_centered(canvas, image):
