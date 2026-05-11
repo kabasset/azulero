@@ -236,6 +236,4 @@ def run(args):
             timer.tic_log()
 
     res = [ios.relative_to_workspace(t.workdir(ios)) for t in targets]
-    if not write_pipe_args(res):
-        res = " ".join(res)
-        logger.command(f"azul --workspace {args.workspace} process {res}")
+    write_pipe_args(res)
