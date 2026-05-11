@@ -3,19 +3,19 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import argparse
-from astropy.wcs import WCS
 import numpy as np
 from pathlib import Path
 import cv2
 
-from azulero.tools.messaging import logger, read_pipe_args, write_pipe_args
-from azulero.image import io
-from azulero.video import sequence
 from azulero import overlay
-from azulero.projections.wcs import capture_frame as wcs_frame
+from azulero.image import io
 from azulero.projections.equirectangular import Projection  # FIXME
-from azulero.video.gaiasky import roam_gaiasky
+from azulero.projections.wcs import capture_frame as wcs_frame
+from azulero.tools.messaging import logger, read_pipe_args, write_pipe_args
 from azulero.tools.timing import Timer
+from azulero.tools.workspace import Workspace
+from azulero.video import sequence
+from azulero.video.gaiasky import roam_gaiasky
 
 supported_codecs = {".mp4": "mp4v", ".avi": "xvid", ".mkv": "ffv1"}
 
@@ -163,11 +163,12 @@ def parse_format(text):
 
 def run(args):
 
-    input = Path(args.workspace).expanduser() / args.images[0]  # FIXME loop over inputs
+    ios = Workspace.from_args(args)
+    input = ios.workspace / args.images[0]  # FIXME loop over inputs
     config = Path(args.planar or args.wcs or args.equirectangular or args.gaiasky)
     output = Path(
-        args.output.format(
-            workspace=args.workspace, image=input.stem, sequence=config.stem
+        ios.output_template.format(
+            workspace=ios.workspace, image=input.stem, sequence=config.stem
         )
     )
 
@@ -187,7 +188,9 @@ def run(args):
     logger.header(2, f"Read sequence of key frames: {config.name}")
     video_format = parse_format(args.format)
     logger.bullet(f"Video format: {video_format[0]} x {video_format[1]}")
-    params = sequence.read_key_frames(config, image_shape, args.fps, video_format)
+    params = sequence.read_key_frames(
+        ios.workspace / config, image_shape, args.fps, video_format
+    )
     logger.bullet(f"Key frames: {len(params)}")
     centers = sequence.sin_sequence(params.centers)
     hfovs = sequence.sin_sequence(params.hfovs)
@@ -234,10 +237,10 @@ def run(args):
         writer.write(frame)
 
     writer.release()
-    logger.bullet(f"Output written: {output}")
+    logger.bullet(f"Wrote: {output.name}")
     timer.tic_log()
 
-    write_pipe_args([output])
+    write_pipe_args([ios.relative_to_workspace(output)])
 
 
 class Pyramid:
@@ -347,10 +350,10 @@ def crop_equirectangular(
     v = float(np.deg2rad(params.center[1].value))
     a = float(np.deg2rad(params.orientation_in_degrees()))
     proj = Projection.from_perspective(
-        [hfov, vfov],
-        [u, v],
+        (hfov, vfov),
+        (u, v),
         a,
-        [h, w],
+        (h, w),
         video_format,
     )
     return np.stack(
