@@ -59,16 +59,14 @@ def add_parser():
     process.add_parser(subparsers, "Process MER channels to render a color image.")
     arrange.add_parser(subparsers, "Arrange images into a grid.")
     roam.add_parser(subparsers, "Create videos which roam through images.")
-    subparsers.add_parser(
-        "cite",
-        help="Print citation instructions.",
-    )
+    subparsers.add_parser("cite", help="Print citation instructions.")
 
     find.add_parser(subparsers, "DEPRECATED")
     crop.add_parser(subparsers, "DEPRECATED")
     assemble.add_parser(subparsers, "DEPRECATED")
     overlay.add_parser(subparsers, "DEPRECATED")
 
+    # TODO read .env first
     parser.set_defaults(**parse_envargs())
 
     return parser
