@@ -224,7 +224,7 @@ def process_target(ios: Workspace, target: str, transform: color.Transform):
         slicing_str = f"{slicing[0].start or ''}:{slicing[0].stop or ''},{slicing[1].start or ''}:{slicing[1].stop or ''}"
     else:
         slicing_str = ""
-    workdir = Path(ios.workspace).expanduser() / target
+    workdir = ios.workspace / target
     template = ios.output_template.format(
         workspace=ios.workspace,
         workdir=target,

@@ -9,6 +9,7 @@ from pathlib import Path
 
 from azulero.tools.timing import Timer
 from azulero.tools.messaging import logger, read_pipe_args, write_pipe_args
+from azulero.tools.workspace import Workspace
 
 
 def add_parser(subparsers, help):
@@ -74,12 +75,12 @@ def add_parser(subparsers, help):
 def run(args):
 
     timer = Timer()
-    workspace = Path(args.workspace).expanduser()
+    ios = Workspace.from_args(args)
 
     columns = min(len(args.images), args.columns) if args.columns else len(args.images)
     rows = (len(args.images) - 1) // columns + 1
 
-    filenames = [workspace / n for n in args.images]
+    filenames = [ios.workspace / f for f in args.images]
     logger.header(1, f"Read {len(filenames)} image{'s' if len(filenames) > 1 else ''}")
     images = [cv2.imread(f) for f in filenames]
     w, h = parse_format(args.format, images)
@@ -104,14 +105,16 @@ def run(args):
             x = args.margin * (c + 1) + w * c
             y = args.margin * (r + 1) + h * r
             blit_centered(canvas[y : y + h, x : x + w, :], images[i])
-    output = args.output.format(
-        workspace=args.workspace, first=filenames[0].stem, last=filenames[-1].stem
+    output = Path(
+        ios.output_template.format(
+            workspace=ios.workspace, first=filenames[0].stem, last=filenames[-1].stem
+        )
     )
-    logger.bullet(1, f"Save collage: {output}")
+    logger.bullet(1, f"Write: {output.name}")
     cv2.imwrite(output, canvas)
     timer.tic_log()
 
-    write_pipe_args([output])
+    write_pipe_args([ios.relative_to_workspace(output)])
 
 
 def parse_format(arg, images):

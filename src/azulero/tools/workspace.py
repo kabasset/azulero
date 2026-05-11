@@ -19,7 +19,8 @@ class Workspace:
         """
         Parse command line arguments.
         """
-        return cls(args.workspace, args.input, args.channels, args.output)
+        workspace = Path(args.workspace).expanduser()
+        return cls(workspace, args.input, args.channels, args.output)
 
     def relative_to_workspace(self, path: Path) -> Path:
         """
