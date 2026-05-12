@@ -23,6 +23,7 @@ extensions = [
     "sphinx.ext.githubpages",
     "sphinx_prompt",
     "sphinx_copybutton",
+    "sphinxcontrib.plantuml",
     "sphinxcontrib.mermaid",
     "sphinx_multiversion",
     "sphinx_subfigure",
@@ -77,5 +78,6 @@ html_sidebars = {
         "navigation.html",
         "relations.html",
         "versioning.html",
+        "localtoc.html",
     ]
 }

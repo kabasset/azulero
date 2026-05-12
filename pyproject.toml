@@ -42,6 +42,7 @@ dev = [
   "sphinx-argparse",
   "sphinx-copybutton",
   "sphinxcontrib-mermaid",
+  "sphinxcontrib-plantuml",
   "sphinx-multiversion",
   "sphinx-prompt",
   "sphinx-subfigure",

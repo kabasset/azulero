@@ -9,14 +9,14 @@ The input files of Azulero are individual MER mosaics, which can be downloaded w
 Euclid data are found and downloaded with command ``azul retrieve``.
 It takes as input a list of so-called targets, which may be of different types:
 
-* tile,
+* tile index,
 * coordinates,
 * named object.
 
 Tiles are passed as integers.
-Coordinates are passed as ICRS comma-separated right ascension and declination;
-All formats accepted by Astropy's ``SkyCoord`` are valid.
-Named objects are passed as strings.
+Coordinates are passed using any format accepted by Astropy's ``SkyCoord``,
+typically as ICRS comma-separated right ascension and declination;
+Named objects are passed as strings, coordinates of which are looked up in the CDS name resolver.
 
 For example, the following command would retrieve the tiles covering targets of each type:
 
