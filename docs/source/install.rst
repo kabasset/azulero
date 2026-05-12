@@ -44,3 +44,10 @@ For example, to download a cutout without installing, launch:
 .. prompt:: bash
 
     uv run azul retrieve NGC6505 -r 1m
+
+
+Setup
+-----
+
+Now that the package is available to you, you will need to configure it for accessing remote data providers.
+To this end, please follow the setup phases: :ref:`setup`.
