@@ -42,3 +42,7 @@ div.footer {
     padding-bottom: 20px;
     background-color: white;
 }
+
+.plantuml {
+    background-color: #FAF3E8;
+}

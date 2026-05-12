@@ -17,7 +17,7 @@ The diagram below illustrates the various steps of the algorithm processing a si
    :align: center
 
    !theme mars
-   skinparam backgroundColor #FAF3E8
+   skinparam backgroundColor transparent
 
    folder workdir {
    }
@@ -74,8 +74,11 @@ Inputs
 ------
 
 Input files are discovered according to their names in the workdir (see :ref:`workspace`) and a glob pattern.
-For more details, see help messages of options ``--workspace`` and ``--input`` with ``azul -h``.
-When several files are given for a single channel, they are stacked as the median image.
+For more details, see help messages of global options ``--workspace`` and ``--input``:
+
+.. prompt:: bash
+
+   azul -h
 
 
 Outputs
@@ -177,7 +180,7 @@ Blending
    :align: center
 
    !theme mars
-   skinparam backgroundColor #FAF3E8
+   skinparam backgroundColor transparent
    left to right direction
 
    card L #FFFFFF
@@ -211,9 +214,9 @@ Two adjacent input channels may contribute to an output channel, e.g. Y and J ma
 An input channel may contribute to two adjacent output channels, e.g. Y may contribute to B and G.
 
 In order to maximize resolution while retaining very red objects,
-a intermediate lightness map (L) is built from the VIS (I) intensity and average NISP intensity
+a intermediate lightness map (L) is built from the VIS (I) intensity and average NIR intensity
 (specifically, the median stacking of YJH).
-Resolution in VIS is better than in NISP,
+Resolution in VIS is better than in NIR,
 therefore it has higher weight in the output lightness.
 
 The different weight parameters control the different blending contributions.
