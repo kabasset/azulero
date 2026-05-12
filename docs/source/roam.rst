@@ -1,21 +1,40 @@
-Video generation
-================
+``azul roam``
+=============
 
-Purpose
--------
-
-Synopsis
+Overview
 --------
 
-.. code::
+.. plantuml::
+   :align: center
+   :max-width: 100%
 
-    ┌───────┐
-    │ image │
-    └─▼─────┘
-    azul roam
-    ┌─▼─────┐
-    │ video │
-    └───────┘
+   skinparam backgroundColor transparent
+
+   file image {
+   }
+
+   object Subsample {
+   }
+   object Interpolate {
+   --format
+   --fps
+   --start
+   --stop
+   }
+   object Capture {
+   --planar
+   --wcs
+   --equirectangular
+   --gaiasky
+   }
+
+   file video {
+   }
+
+   image --> Subsample
+   Subsample -> Interpolate
+   Interpolate -> Capture
+   Capture --> video
 
 
 Input
