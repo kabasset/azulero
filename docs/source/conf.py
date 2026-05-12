@@ -81,3 +81,7 @@ html_sidebars = {
         "localtoc.html",
     ]
 }
+
+# PlantUml
+
+plantuml_output_format = "svg"

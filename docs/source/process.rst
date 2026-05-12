@@ -15,8 +15,8 @@ The diagram below illustrates the various steps of the algorithm processing a si
 
 .. plantuml::
    :align: center
+   :max-width: 100%
 
-   !theme mars
    skinparam backgroundColor transparent
 
    folder workdir {
@@ -178,8 +178,8 @@ Blending
 
 .. uml::
    :align: center
+   :max-width: 100%
 
-   !theme mars
    skinparam backgroundColor transparent
    left to right direction
 
