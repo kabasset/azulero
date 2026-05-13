@@ -105,6 +105,13 @@ def add_parser(subparsers, help):
         help="Only query the filenames without downloading.",
     )
     parser.add_argument(
+        "--tiling",
+        type=str,
+        default="DpdMerFinalCatalog.geojson",
+        metavar="FILENAME",
+        help="Tiling Geojson file.",
+    )
+    parser.add_argument(
         "--output",
         "-o",
         default="{workspace}/{tile}/{target}",
