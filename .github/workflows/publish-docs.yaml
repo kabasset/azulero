@@ -26,7 +26,8 @@ jobs:
       uses: ammaraskar/sphinx-action@master
       with:
         docs-folder: "docs/"
-        build-command: "uv run sphinx-build -M html source/ build/develop/"
+        pre-build-command: "uv pip install ."
+        build-command: "sphinx-build -M html source/ build/develop/"
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
