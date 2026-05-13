@@ -87,12 +87,12 @@ class SAS:
             path = self.euclid.get_product(file_name=name, output_file=path)
         else:
             q = f"SELECT file_path, instrument_name FROM sedm.mosaic_product WHERE file_name='{name}'"
-            res = self.euclid.launch_job(q).get_results()[0]
+            res = self.euclid.launch_job(q).get_results()[0]  # type: ignore
             path = self.euclid.get_cutout(
                 file_path=Path(res["file_path"]) / name,
                 instrument=res["instrument_name"],
-                id=target.index,
+                id=target.tile,
                 coordinate=target.coord,
                 radius=radius,
                 output_file=path,
-            )
+            )  # type: ignore
