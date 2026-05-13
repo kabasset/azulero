@@ -10,16 +10,7 @@ from dataclasses import dataclass
 from io import StringIO
 import netrc
 
-
-@dataclass(frozen=True)
-class Tile(object):
-    index: str
-    mode: str
-    dsr: str
-    distance: float
-
-    def __str__(self) -> str:
-        return f"{self.mode}: {self.index} ({self.dsr}); distance: {self.distance:.2f}°"
+from azulero.providers.tiling import Tile, Target
 
 
 def tile(res, target):
@@ -44,6 +35,7 @@ class SAS:
         err, out = StringIO(), StringIO()
         with contextlib.redirect_stderr(err), contextlib.redirect_stdout(out):
             auth = netrc.netrc().authenticators("easidr.esac.esa.int")
+            # FIXME raise if None
             self.euclid.login(user=auth[0], password=auth[2])
         if err.getvalue():
             raise RuntimeError(err.getvalue())
@@ -62,13 +54,7 @@ class SAS:
             select_text += ",processing_mode"
         q = f"SELECT {select_text} FROM sedm.mosaic_product WHERE (mosaic_product.data_set_release IN ({dsrs_text})) AND INTERSECTS(CIRCLE({radec.ra.value},{radec.dec.value},0),fov)=1"
         res = self.euclid.launch_job(q).get_results()
-        return sorted(
-            sorted(
-                set(tile(r, radec) for r in res),
-                key=lambda t: t.distance,
-            ),
-            key=lambda t: t.mode,
-        )  # FIXME sorting to retrieve.py to be applied to all providers
+        return [tile(r, radec) for r in res]
 
     def query_datafiles(self, tile: str, dsr: str):
         products = self.euclid.get_product_list(
@@ -81,7 +67,11 @@ class SAS:
         }
 
     def download_datafile(
-        self, name: str, path: Path, target=None, radius: Angle = None
+        self,
+        name: str,
+        path: Path,
+        target: Target | None = None,
+        radius: Angle | None = None,
     ):
         if radius is None:
             path = self.euclid.get_product(file_name=name, output_file=path)

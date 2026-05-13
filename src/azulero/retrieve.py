@@ -8,7 +8,7 @@ from pathlib import Path
 from astropy.coordinates import Angle, SkyCoord
 
 from azulero.image import io
-from azulero.providers import dss, sas
+from azulero.providers import dss, sas, tiling, cutout
 from azulero.tools.messaging import (
     logger,
     parse_envargs,
@@ -121,21 +121,6 @@ def add_parser(subparsers, help):
     parser.set_defaults(**parse_envargs("retrieve"), func=run)
 
 
-@dataclass(frozen=True)
-class Target:
-
-    name: str
-    tile: str
-    coord: SkyCoord | None = field(default=None, compare=False)
-
-    def workdir(self, ios: Workspace) -> Path:
-        target = "" if self.name == self.tile else self.name
-        workdir = ios.output_template.format(
-            workspace=ios.workspace, tile=self.tile, target=target
-        )
-        return Path(workdir)
-
-
 def query_tiles(provider, dsrs: list[str], target: str):
     """
     Query the list of tiles for a given target, which may be a tile index, coordinates or object name.
@@ -143,7 +128,7 @@ def query_tiles(provider, dsrs: list[str], target: str):
 
     if target.isdigit():
         logger.info(f"Tile: {target}")
-        return [Target(target, target, None)]
+        return [tiling.Target(target, target, None)]
 
     if "," in target:
         logger.info(f"Coordinates: {target}")
@@ -154,10 +139,17 @@ def query_tiles(provider, dsrs: list[str], target: str):
         radec = SkyCoord.from_name(target)
         logger.bullet(f"Coordinates: {radec.ra.value:.2f}° {radec.dec.value:.2f}°")
 
-    tiles = provider.query_tiles(radec, dsrs)
+    tiles = sorted(
+        sorted(
+            set(provider.query_tiles(radec, dsrs)),
+            key=lambda t: t.distance,
+        ),
+        key=lambda t: t.mode,
+    )
+
     for t in tiles:
         logger.bullet(f"Tile: {t}")
-    targets = [Target(target, t.index, radec) for t in tiles]
+    targets = [tiling.Target(target, t.index, radec) for t in tiles]
     if len(targets) == 0:
         logger.warning("No tile found!")
     return list(targets)
@@ -201,6 +193,14 @@ def run(args):
 
     timer = Timer()
     provider = providers[vars(args)["from"].lower()]()  # from is a Python keyword
+    tile_provider = (
+        provider if hasattr(provider, "query_tiles") else tiling.Tiling(args.tiling)
+    )
+    cutout_provider = (
+        provider
+        if hasattr(provider, "download_cutout")
+        else cutout.LocalCutout(provider)
+    )
     dsrs = args.dsr.split(",")
     assert not args.force or len(args.targets) == 1
     ios = Workspace.from_args(args)
@@ -209,7 +209,7 @@ def run(args):
 
     targets = []
     for t in args.targets:
-        targets += query_tiles(provider, dsrs, t)[: args.limit]
+        targets += query_tiles(tile_provider, dsrs, t)[: args.limit]
 
     logger.header(1, "Retrieve targets", linebreaks=[1, 0])
 
@@ -231,7 +231,12 @@ def run(args):
         if not args.query_only:
             workdir = io.make_workdir(t.workdir(ios))
             download_datafiles(
-                provider, datafiles, workdir, t, args.radius, args.force is not None
+                cutout_provider,
+                datafiles,
+                workdir,
+                t,
+                args.radius,
+                args.force is not None,
             )
             timer.tic_log()
 
