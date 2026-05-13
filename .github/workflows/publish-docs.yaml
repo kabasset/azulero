@@ -4,8 +4,6 @@ on: push
 
 jobs:
   build:
-    env:
-      UV_SYSTEM_PYTHON: 1
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -25,7 +23,9 @@ jobs:
     - name: Install uv
       uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
     - name: Install azulero
-      run: "uv pip install ."
+      run: uv pip install .
+      env:
+        UV_SYSTEM_PYTHON: 1
     - name: Build HTML
       uses: ammaraskar/sphinx-action@master
       with:
