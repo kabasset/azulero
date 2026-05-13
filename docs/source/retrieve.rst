@@ -139,10 +139,10 @@ It can be configured with global option ``--workspace``:
 
    azul --workspace /tmp retrieve NGC6505 270.93,67.05 102157949 PGC61356
 
-The workdirs are named after the targets, grouped by tile index.
+By default, the workdirs are named after the targets, grouped by tile index.
 Several tiles (e.g. 101832848 and 101832849) may cover a single target (NGC6505),
 such that several workdirs may be created for each of them.
-Conversely, several targets (270.93,67.05 and PGC61356) may belong a same tile (101836362),
+Conversely, several targets (e.g. 270.93,67.05 and PGC61356) may belong a same tile (101836362),
 in which case workdirs have a common parent tile folder.
 At the time of writing, the above command creates the following workdirs inside workspace ``/tmp``:
 
@@ -160,11 +160,17 @@ At the time of writing, the above command creates the following workdirs inside 
    /tmp/102159776/PGC61356/
    @endfiles
 
-In this 
-
 The way the workspace is structured depends on the output template parameter ``-o``.
+The template is rendered as follows:
 
-TODO
+================ ==================
+Placeholder name Substitution value
+================ ==================
+``{workspace}``  Workspace path
+``{tile}``       Resolved target tile index
+``{target}``     Input target object name or coordinates
+================ ==================
+
 
 Name resolution
 ---------------
