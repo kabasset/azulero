@@ -18,6 +18,13 @@ class Target:
     tile: str
     coord: SkyCoord | None = field(default=None, compare=False)
 
+    def tiledir(self, ios: Workspace) -> Path:
+        return Path(
+            ios.output_template.format(
+                workspace=ios.workspace, tile=self.tile, target=""
+            )
+        )
+
     def workdir(self, ios: Workspace) -> Path:
         target = "" if self.name == self.tile else self.name
         workdir = ios.output_template.format(
