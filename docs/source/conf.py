@@ -8,7 +8,10 @@
 
 import locale
 
-locale.setlocale(locale.LC_TIME, "en_US.utf8")
+try:
+    locale.setlocale(locale.LC_TIME, "en_US.utf8")
+except locale.Error as e:
+    print(f"Error: {e}")
 
 from azulero import _version
 
