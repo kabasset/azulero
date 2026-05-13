@@ -19,10 +19,10 @@ WIDE tiles are comparatively larger (32' x 32', 20k x 20k pixels) and not MER-st
 When there are several observations over a single WIDE tile,
 ``azul process`` stacks them itself.
 
-As depicted below, ``azul retrieve`` constists of two main steps:
+As depicted below, ``azul retrieve`` consists of two main steps:
 
-1. Querying the indices of the tiles which contain input targets;
-1. Downloading the data files in full or in part.
+#. Querying the indices of the tiles which contain input targets;
+#. Downloading the data files in full or in part.
 
 .. plantuml::
    :align: center
