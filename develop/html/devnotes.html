@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Developer notes &#8212; azulero v2.0</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=24db8408" />
+    <script src="_static/documentation_options.js?v=7f41d439"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=35a8b989"></script>
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+              <div class="related top">
+                &nbsp;
+  <nav id="rellinks">
+    <ul>
+    </ul>
+  </nav>
+              </div>
+          
+
+          <div class="body" role="main">
+            
+
+
+  <section id="developer-notes">
+<h1>Developer notes</h1>
+<section id="image-storage">
+<h2>Image storage</h2>
+<p>Color images are stored as <a href="#id1"><span class="problematic" id="id2">``</span></a>ndarray``s following most OpenCV conventions:</p>
+<ul class="simple">
+<li><p>Axes are ordered as height, width, depth;</p></li>
+<li><p>Channels are ordered as BGRA;</p></li>
+<li><p>However, <strong>contrary to OpenCV, the y-axis points upward</strong> for compatibility with WCS.</p></li>
+</ul>
+<p>Specifically, this impacts IOs, since non-FITS supported formats are stored from top to bottom.
+Therefore, image IOs should always be performed with the <code class="docutils literal notranslate"><span class="pre">azulero.image.io</span></code> module.</p>
+<p>Grayscale image stacks, such as the IYJH stack, use the first axis as an image index.</p>
+</section>
+<section id="inpainting">
+<h2>Inpainting</h2>
+<p>Different algorithms are used to inpaint VIS and NISP invalid pixels.
+Specifically, color images and image stacks are inpainted with SciKit’s biharmonic algorithm,
+while grayscale images are inpainted with OpenCV’s Navier-Stokes algorithm.
+The former is very memory-greedy but renders much smoother large regions,
+which often occur at the center of galaxies.</p>
+</section>
+</section>
+
+
+
+          </div>
+              <div class="related bottom">
+                &nbsp;
+  <nav id="rellinks">
+    <ul>
+    </ul>
+  </nav>
+              </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/logo.png" alt="Logo of azulero"/>
+            </a></p>
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="news.html">What’s new</a></li>
+<li class="toctree-l1"><a class="reference internal" href="interfaces.html">General interface design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="retrieve.html"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="process.html"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="roam.html"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">roam</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="pipelines.html">Pipelines</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+  <div>
+    <h3><a href="index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Developer notes</a><ul>
+<li><a class="reference internal" href="#image-storage">Image storage</a></li>
+<li><a class="reference internal" href="#inpainting">Inpainting</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025-2026, Antoine Basset (CNES) and contributors.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

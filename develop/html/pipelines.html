@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Pipelines &#8212; azulero v2.0</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=24db8408" />
+    <script src="_static/documentation_options.js?v=7f41d439"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=35a8b989"></script>
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="azul roam" href="roam.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+              <div class="related top">
+                &nbsp;
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="roam.html" title="Previous document"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">roam</span></code></a>
+        </li>
+    </ul>
+  </nav>
+              </div>
+          
+
+          <div class="body" role="main">
+            
+
+
+  
+<style>
+  .ss-layout-default-AB { grid-template-areas: 'A B'; }
+</style>
+<section id="pipelines">
+<h1>Pipelines</h1>
+<section id="introduction">
+<h2>Introduction</h2>
+<p>Starting from version 2.0, when executed as part of a Unix or Windows pipeline,
+Azulero commands can read their positional arguments from the standard input stream (<code class="docutils literal notranslate"><span class="pre">stdin</span></code>),
+and write their results to the standard output stream (<code class="docutils literal notranslate"><span class="pre">stdout</span></code>).
+Logs are written to the standard error stream (<code class="docutils literal notranslate"><span class="pre">stderr</span></code>).
+Moreover, the commands now accept multiple inputs,
+which make them suitable for batch processing.</p>
+<p>The following sections demonstrate classical use cases.
+Basic knowledge on pipelines and standard streams
+– at least, knowing operator <code class="docutils literal notranslate"><span class="pre">|</span></code> – is required.
+For the sake of simplicity (and sanity), we’ll illustrate the features for Bash on Unix systems only.
+Translation to Windows is left as an exercise!</p>
+<p>For a better understanding of what actually happens,
+the last section dissects the data flow of a simple pipeline.</p>
+<p>The results will be presented for public Q1 data only;
+set the following environment variables in order to reproduce the images exactly (see <a class="reference internal" href="interfaces.html#named-options"><span class="std std-ref">Named options</span></a>):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><style type="text/css">
+span.prompt1:before {
+  content: "$ ";
+}
+</style><span class="prompt1"><span class="nb">export</span><span class="w"> </span><span class="nv">AZULRETRIEVE_FROM</span><span class="o">=</span>pdr</span>
+<span class="prompt1"><span class="nb">export</span><span class="w"> </span><span class="nv">AZULRETRIEVE_DSR</span><span class="o">=</span>Q1_R1</span>
+</pre></div></div><p>Credit for all images and videos in this page:</p>
+<blockquote>
+<div><p>ESA Euclid / Euclid Consortium / NASA / Q1-2025 / Antoine Basset (CNES).</p>
+</div></blockquote>
+</section>
+<section id="pipeline-object-names-to-color-images">
+<h2>Pipeline: Object names to color images</h2>
+<p>The simplest use case for an Azulero pipeline is to download MER data and render color images.
+In this example, we will use galaxy names as input:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">azul<span class="w"> </span>retrieve<span class="w"> </span>UGC11116<span class="w"> </span>PGC61356<span class="w"> </span>-r<span class="w"> </span>1m<span class="w"> </span><span class="p">|</span><span class="w"> </span>azul<span class="w"> </span>process</span>
+</pre></div></div><p>Note that several MER tiles may contain a given target,
+such that more than two images may be rendered.
+If this is unwanted, set option <code class="docutils literal notranslate"><span class="pre">-n</span> <span class="pre">1</span></code>.
+Conversely, several targets may belong the same tile,
+which is the case for those two galaxies in <a class="reference external" href="https://www.youtube.com/watch?v=z1-V0zz4p_s">Q1 tile 102159776</a>.</p>
+<p>The above command will generate two images:</p>
+<figure class="sphinx-subfigure align-default" id="id1">
+<div class="sphinx-subfigure-grid ss-layout-default-AB" style="display: grid; gap: 1em; grid-gap: 1em;">
+<div class="sphinx-subfigure-area" style="display: flex; flex-direction: column; justify-content: center; align-items: center; grid-area: A;">
+<img alt="_images/UGC11116_102159776_adjusted.jpg" src="_images/UGC11116_102159776_adjusted.jpg" />
+</div>
+<div class="sphinx-subfigure-area" style="display: flex; flex-direction: column; justify-content: center; align-items: center; grid-area: B;">
+<img alt="_images/PGC61356_102159776_adjusted.jpg" src="_images/PGC61356_102159776_adjusted.jpg" />
+</div>
+</div>
+<figcaption>
+<p><span class="caption-text">Color rendering of 2’ x 2’ cutouts around UGC11116 and PGC61356.</span></p>
+</figcaption>
+</figure>
+<p>The resulting workspace contains two workdirs which share a common tile folder:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>102159776
+├── PGC61356
+│   ├── EUC_MER_BGSUB-MOSAIC-NIR-H_TILE102159776-9A9A41_20241024T223843.133644Z_00.00.fits
+│   ├── EUC_MER_BGSUB-MOSAIC-NIR-J_TILE102159776-A30311_20241024T223448.200678Z_00.00.fits
+│   ├── EUC_MER_BGSUB-MOSAIC-NIR-Y_TILE102159776-F70908_20241024T222851.359405Z_00.00.fits
+│   ├── EUC_MER_BGSUB-MOSAIC-VIS_TILE102159776-ACB359_20241025T034718.289475Z_00.00.fits
+│   ├── PGC61356_102159776_adjusted.tiff
+│   ├── PGC61356_102159776_blended.tiff
+│   ├── PGC61356_102159776_mask.tiff
+│   └── PGC61356_102159776_wcs.yaml
+└── UGC11116
+   ├── EUC_MER_BGSUB-MOSAIC-NIR-H_TILE102159776-9A9A41_20241024T223843.133644Z_00.00.fits
+   ├── EUC_MER_BGSUB-MOSAIC-NIR-J_TILE102159776-A30311_20241024T223448.200678Z_00.00.fits
+   ├── EUC_MER_BGSUB-MOSAIC-NIR-Y_TILE102159776-F70908_20241024T222851.359405Z_00.00.fits
+   ├── EUC_MER_BGSUB-MOSAIC-VIS_TILE102159776-ACB359_20241025T034718.289475Z_00.00.fits
+   ├── UGC11116_102159776_adjusted.tiff
+   ├── UGC11116_102159776_blended.tiff
+   ├── UGC11116_102159776_mask.tiff
+   └── UGC11116_102159776_wcs.yaml
+</pre></div>
+</div>
+<p>We have generated the color images one after the other by executing a single <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code> command,
+but it is possible to parallelize the pipeline, for example with <code class="docutils literal notranslate"><span class="pre">xargs</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">azul<span class="w"> </span>retrieve<span class="w"> </span>UGC11116<span class="w"> </span>PGC61356<span class="w"> </span>-r<span class="w"> </span>1m<span class="w"> </span><span class="se">\</span>
+<span class="p">|</span><span class="w"> </span>xargs<span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="w"> </span>-P<span class="w"> </span><span class="m">4</span><span class="w"> </span>azul<span class="w"> </span>process</span>
+</pre></div></div><p>where <code class="docutils literal notranslate"><span class="pre">-n</span> <span class="pre">1</span></code> is the number of targets passed to each <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code> command,
+and <code class="docutils literal notranslate"><span class="pre">-P</span> <span class="pre">4</span></code> is the maximum number of parallel executions.</p>
+<p>Similarly, the retrieval can be parallelized:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1"><span class="nb">echo</span><span class="w"> </span>UGC11116<span class="w"> </span>PGC61356<span class="w"> </span><span class="se">\</span>
+<span class="p">|</span><span class="w"> </span>xargs<span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="w"> </span>-P<span class="w"> </span><span class="m">4</span><span class="w"> </span>azul<span class="w"> </span>retrieve<span class="w"> </span>-r<span class="w"> </span>1m<span class="w"> </span><span class="se">\</span>
+<span class="p">|</span><span class="w"> </span>xargs<span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="w"> </span>-P<span class="w"> </span><span class="m">4</span><span class="w"> </span>azul<span class="w"> </span>process</span>
+</pre></div></div></section>
+<section id="pipeline-online-catalog-to-collage">
+<h2>Pipeline: Online catalog to collage</h2>
+<p>Let us run Azulero on the lens catalog which was used to render
+<a class="reference external" href="https://www.esa.int/ESA_Multimedia/Images/2025/03/Strong_gravitational_lenses_captured_by_Euclid">the Q1 strong lensing collage</a>
+and generate a similar output in one pipeline:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">wget<span class="w"> </span>-q<span class="w"> </span>-O<span class="w"> </span>-<span class="w"> </span>https://zenodo.org/records/15025832/files/q1_discovery_engine_lens_catalog.csv<span class="w"> </span><span class="se">\</span>
+<span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-n+2<span class="w"> </span><span class="se">\</span>
+<span class="p">|</span><span class="w"> </span>sort<span class="w"> </span>-r<span class="w"> </span>-t<span class="w"> </span><span class="s1">&#39;,&#39;</span><span class="w"> </span>-k<span class="w"> </span><span class="m">8</span><span class="w"> </span><span class="se">\</span>
+<span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-112<span class="w"> </span><span class="se">\</span>
+<span class="p">|</span><span class="w"> </span>cut<span class="w"> </span>-d<span class="w"> </span><span class="s1">&#39;,&#39;</span><span class="w"> </span>-f<span class="w"> </span><span class="m">5</span>,6<span class="w"> </span><span class="se">\</span>
+<span class="p">|</span><span class="w"> </span>azul<span class="w"> </span>retrieve<span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="w"> </span>-r<span class="w"> </span>5s<span class="w"> </span><span class="se">\</span>
+<span class="p">|</span><span class="w"> </span>azul<span class="w"> </span>process<span class="w"> </span><span class="se">\</span>
+<span class="p">|</span><span class="w"> </span>azul<span class="w"> </span>arrange<span class="w"> </span>-n<span class="w"> </span><span class="m">14</span><span class="w"> </span><span class="se">\</span>
+<span class="p">|</span><span class="w"> </span>xargs<span class="w"> </span>open</span>
+</pre></div></div><p>The above pipeline performs the following:</p>
+<ul class="simple">
+<li><p>download the catalog into <code class="docutils literal notranslate"><span class="pre">stdout</span></code>,</p></li>
+<li><p>remove the header row,</p></li>
+<li><p>sort rows by descending flux,</p></li>
+<li><p>select RA and Dec columns,</p></li>
+<li><p>keep 14 x 8 = 112 targets,</p></li>
+<li><p>retrieve one 10” x 10” cutout per target,</p></li>
+<li><p>render a color image per cutout,</p></li>
+<li><p>arrange renderings into a 14-column grid,</p></li>
+<li><p>display the resulting collage:</p></li>
+</ul>
+<figure class="align-default" id="id2">
+<img alt="_images/collage_56.46762095259402%2C-49.45093443791871_102020055_adjusted_56.46762095259402%2C-49.45093443791871_102020055_adjusted.png" src="_images/collage_56.46762095259402%2C-49.45093443791871_102020055_adjusted_56.46762095259402%2C-49.45093443791871_102020055_adjusted.png" />
+<figcaption>
+<p><span class="caption-text">Collage of 10” x 10” cutouts around Q1 strong lenses.</span></p>
+</figcaption>
+</figure>
+</section>
+<section id="pipeline-clipboard-to-slideshow">
+<h2>Pipeline: Clipboard to slideshow</h2>
+<p>This example is a bit more exotic than the others, but parts of it may come in handy.
+We will get the list of targets from the clipboard and generate a video from the renderings.
+To this end, we will rely on ImageMagick’s <code class="docutils literal notranslate"><span class="pre">convert</span></code>, which can turn a sequence of images into a video as follows:</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span>convert<span class="w"> </span>-delay<span class="w"> </span><span class="nt">&lt;DURATION&gt;</span><span class="w"> </span><span class="nt">&lt;IMAGES&gt;</span><span class="w"> </span><span class="nt">&lt;VIDEO&gt;</span>
+</pre></div>
+</div>
+<p>where:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">&lt;DURATION&gt;</span></code> is the duration of each image in centiseconds,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&lt;IMAGES&gt;</span></code> is the space-separated list of input images,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&lt;VIDEO&gt;</span></code> is the path to the output video.</p></li>
+</ul>
+<p>As targets, we will use Q1 nearby galaxies.
+The pipeline will be fed by the clipboard, therefore we will just select the table at the bottom of
+<a class="reference external" href="https://www.cosmos.esa.int/web/euclid/euclid-nearby-galaxies-collage">this page</a> and run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">xclip<span class="w"> </span>-o<span class="w"> </span><span class="se">\</span>
+<span class="p">|</span><span class="w"> </span>sed<span class="w"> </span><span class="s1">&#39;s/ //g&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="p">|</span><span class="w"> </span>azul<span class="w"> </span>retrieve<span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="w"> </span>-r<span class="w"> </span>30s<span class="w"> </span><span class="se">\</span>
+<span class="p">|</span><span class="w"> </span>azul<span class="w"> </span>process<span class="w"> </span><span class="se">\</span>
+<span class="p">|</span><span class="w"> </span>cat<span class="w"> </span>-<span class="w"> </span>&lt;<span class="o">(</span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot; slideshow.mp4&quot;</span><span class="o">)</span><span class="w"> </span><span class="se">\</span>
+<span class="p">|</span><span class="w"> </span>xargs<span class="w"> </span>convert<span class="w"> </span>-delay<span class="w"> </span><span class="m">50</span></span>
+</pre></div></div><p>where:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">xclip</span></code> prints the selection to <code class="docutils literal notranslate"><span class="pre">stdout</span></code>;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sed</span></code> removes spurious spaces, e.g. <code class="docutils literal notranslate"><span class="pre">PGC</span> <span class="pre">2693358</span></code> is transformed into <code class="docutils literal notranslate"><span class="pre">PGC2693358</span></code>;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code> downloads 1’ x 1’ cutouts;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code> renders the images and returns the paths;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cat</span></code> appends the output video filename to the rendering paths for <code class="docutils literal notranslate"><span class="pre">convert</span></code>;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">convert</span></code> generates the video:</p></li>
+</ul>
+<figure  class="sphinx-contrib-video-container align-center"><video controls="True" preload="auto"><source src="_images/slideshow.mp4" type="video/mp4"></video><figcaption class="align-center"><p style="text-align: left; display:inline-block"><span class="caption-text">Slideshow of 1' x 1' cutouts of Euclid Q1 nearby galaxies.</span></p></figcaption></figure></section>
+<section id="dissecting-a-pipeline">
+<h2>Dissecting a pipeline</h2>
+<p>Let us introduce a simple and typical example pipeline:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1"><span class="nb">echo</span><span class="w"> </span>UGC11116<span class="w"> </span>PGC61356<span class="w"> </span>LEDA2697349<span class="w"> </span><span class="se">\</span>
+<span class="p">|</span><span class="w"> </span>azul<span class="w"> </span>retrieve<span class="w"> </span>-r<span class="w"> </span>1m<span class="w"> </span><span class="se">\</span>
+<span class="p">|</span><span class="w"> </span>azul<span class="w"> </span>process<span class="w"> </span><span class="se">\</span>
+<span class="p">|</span><span class="w"> </span>azul<span class="w"> </span>arrange<span class="w"> </span>--format<span class="w"> </span>max<span class="w"> </span><span class="se">\</span>
+<span class="p">|</span><span class="w"> </span>xargs<span class="w"> </span>open</span>
+</pre></div></div><p>which gives:</p>
+<figure class="align-default" id="id3">
+<img alt="_images/collage_UGC11116_102159776_adjusted_LEDA2697349_102159776_adjusted.png" src="_images/collage_UGC11116_102159776_adjusted_LEDA2697349_102159776_adjusted.png" />
+<figcaption>
+<p><span class="caption-text">Collage of 2’ x 2’ cutouts around UGC11116, PGC61356 and LEDA2697349.</span></p>
+</figcaption>
+</figure>
+<p>Since we did not pass option <code class="docutils literal notranslate"><span class="pre">-n</span> <span class="pre">1</span></code> to <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code>,
+all of the tiles which contain a target are retrieved,
+which is why there are two images of LEDA2697349.
+One of them is incomplete because the whole 2’ x 2’ cutout doesn’t fit inside the second tile.
+With option <code class="docutils literal notranslate"><span class="pre">-n</span></code>, the tiles would have been sorted by coverage in order to retrieve complete cutouts in priority.
+Finally, <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">arrange</span></code>’s option <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">max</span></code> is used to pad the smallest cutout instead of cropping the largest ones.</p>
+<p>The message flow is illustrated below:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span> echo
+┌─▼─────────────────────────────┐
+│ UGC11116 PGC61356 LEDA2697349 │
+└─▼─────────────────────────────┘
+ azul retrieve
+┌─▼─────────────────────┐
+│ 102159776/UGC11116    │
+│ 102159776/PGC61356    │
+│ 102160059/LEDA2697349 │
+│ 102159776/LEDA2697349 │
+└─▼─────────────────────┘
+ azul process
+┌─▼─────────────────────────────────────────────────────────┐
+│ 102159776/UGC11116/UGC11116_102159776_adjusted.tiff       │
+│ 102159776/PGC61356/PGC61356_102159776_adjusted.tiff       │
+│ 102160059/LEDA2697349/LEDA2697349_102160059_adjusted.tiff │
+│ 102159776/LEDA2697349/LEDA2697349_102159776_adjusted.tiff │
+└─▼─────────────────────────────────────────────────────────┘
+ azul arrange
+┌─▼──────────────────────────────────────────────────────────────────────┐
+│ collage_UGC11116_102159776_adjusted_LEDA2697349_102159776_adjusted.png │
+└─▼──────────────────────────────────────────────────────────────────────┘
+ open
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">echo</span></code> streams the targets toward <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code> streams the workdirs toward <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code> streams the paths to the renderings toward <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">arrange</span></code>.
+Generally, several files are created per workdir: one per active step.
+For pipelining, only the path to the last step (by default, <code class="docutils literal notranslate"><span class="pre">adjusted</span></code>) is streamed out.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">arrange</span></code> streams the path to the collage file toward <code class="docutils literal notranslate"><span class="pre">open</span></code>.</p></li>
+</ul>
+</section>
+</section>
+
+
+
+          </div>
+              <div class="related bottom">
+                &nbsp;
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="roam.html" title="Previous document"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">roam</span></code></a>
+        </li>
+    </ul>
+  </nav>
+              </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/logo.png" alt="Logo of azulero"/>
+            </a></p>
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="news.html">What’s new</a></li>
+<li class="toctree-l1"><a class="reference internal" href="interfaces.html">General interface design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="retrieve.html"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="process.html"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="roam.html"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">roam</span></code></a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Pipelines</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="roam.html" title="previous chapter"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">roam</span></code></a></li>
+  </ul></li>
+</ul>
+</div>
+  <div>
+    <h3><a href="index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Pipelines</a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a></li>
+<li><a class="reference internal" href="#pipeline-object-names-to-color-images">Pipeline: Object names to color images</a></li>
+<li><a class="reference internal" href="#pipeline-online-catalog-to-collage">Pipeline: Online catalog to collage</a></li>
+<li><a class="reference internal" href="#pipeline-clipboard-to-slideshow">Pipeline: Clipboard to slideshow</a></li>
+<li><a class="reference internal" href="#dissecting-a-pipeline">Dissecting a pipeline</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025-2026, Antoine Basset (CNES) and contributors.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

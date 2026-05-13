@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>azul roam &#8212; azulero v2.0</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=24db8408" />
+    <script src="_static/documentation_options.js?v=7f41d439"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=35a8b989"></script>
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Pipelines" href="pipelines.html" />
+    <link rel="prev" title="azul process" href="process.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+              <div class="related top">
+                &nbsp;
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="process.html" title="Previous document"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code></a>
+        </li>
+        <li>
+          <a href="pipelines.html" title="Next document">Pipelines</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+              </div>
+          
+
+          <div class="body" role="main">
+            
+
+
+  <section id="azul-roam">
+<h1><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">roam</span></code></h1>
+<section id="overview">
+<h2>Overview</h2>
+<figure class="align-center">
+</figure>
+</section>
+<section id="input">
+<h2>Input</h2>
+<p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">roam</span></code> takes as input a single image path,
+given as a positional argument or through <code class="docutils literal notranslate"><span class="pre">stdin</span></code>.</p>
+<p>If the path is not absolute, then it is assumed to be relative to the workspace.</p>
+</section>
+<section id="output">
+<h2>Output</h2>
+<p>The video produced by <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">roam</span></code> is a saved following a template given to option <code class="docutils literal notranslate"><span class="pre">-o</span></code>.
+See the command line interface documentation below for more details.</p>
+</section>
+<section id="parameters">
+<h2>Parameters</h2>
+<p>The main option of <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">roam</span></code> is a so-called sequence-file
+containing the specifications of key frames: time and viewport parameters.</p>
+</section>
+<section id="command-line-interface">
+<h2>Command line interface</h2>
+<p><blockquote>
+<div><p>Supply an image (or a list of images), specify viewport parameters at given key frames.
+They will be interpolated to render a smooth roaming video.</p>
+<p>For full-sky views, an interface to Gaia Sky is available.
+To use it, first start Gaia Sky and then execute this script with option <code class="docutils literal notranslate"><span class="pre">--gaiasky</span></code>.</p>
+</div></blockquote>
+</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">azul</span> <span class="p">[</span><span class="n">global_options</span><span class="p">]</span> <span class="n">roam</span> <span class="o">&lt;</span><span class="n">images</span><span class="o">&gt;</span> <span class="p">[</span><span class="n">options</span><span class="p">]</span>
+</pre></div>
+</div>
+<section id="azulero.client-add_parser-positional-arguments">
+<h3>Positional Arguments</h3>
+<dl class="option-list">
+<dt><kbd>images</kbd></dt>
+<dd><p>Space separated list of image files or any name for Gaia Sky.</p>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">[]</span></code></p>
+</dd>
+</dl>
+</section>
+<section id="azulero.client-add_parser-named-arguments">
+<h3>Named Arguments</h3>
+<dl class="option-list">
+<dt><kbd>--planar</kbd></dt>
+<dd><blockquote>
+<div><p>Key frame sequence file for no projection.
+Only translations and rotations will be applied.
+The key frames may be specified as image coordinates,
+or as sky coordinates if the images come with WCS parameters,
+or as a mix of image and sky coordinates.</p>
+</div></blockquote>
+</dd>
+<dt><kbd>--wcs</kbd></dt>
+<dd><blockquote>
+<div><p>Key frame sequence file for WCS to planar projection.
+The input images must come with WCS parameters,
+and only sky coordinates are supported.</p>
+</div></blockquote>
+</dd>
+<dt><kbd>--equirectangular</kbd></dt>
+<dd><blockquote>
+<div><p>Key frame sequence file for equirectangular to planar projection.
+The input images must be equirectangular with:</p>
+<ul class="simple">
+<li><p>RA from -180° on the right to 180° on the left,</p></li>
+<li><p>declination from -90° at the bottom to 90° at the top.</p></li>
+</ul>
+<p>Only sky coordinates are supported.</p>
+</div></blockquote>
+</dd>
+<dt><kbd>--gaiasky</kbd></dt>
+<dd><blockquote>
+<div><p>Key frame sequence file for Gaia Sky.
+Only sky coordinates are supported.</p>
+<p><strong>WARNING: Gaia Sky has to be running before you execute this script!
+You will be asked to close the application when frames have been generated.</strong></p>
+</div></blockquote>
+</dd>
+<dt><kbd>--output, -o</kbd></dt>
+<dd><blockquote>
+<div><p>Output video file template, where:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">{workspace}</span></code> is replaced by the workspace path,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">{image}</span></code> is replaced by the image file stem,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">{sequence}</span></code> is replaced by the sequence file stem.</p></li>
+</ul>
+<p>Supported extensions are: .mp4, .avi, .mkv. Only the MKV compression is lossless.</p>
+</div></blockquote>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">'{workspace}/{sequence}_{image}.mkv'</span></code></p>
+</dd>
+<dt><kbd>--format</kbd></dt>
+<dd><blockquote>
+<div><p>Video format as comma-separated width and height or format name.
+Format names are numbers followed by <code class="docutils literal notranslate"><span class="pre">K</span></code> like <code class="docutils literal notranslate"><span class="pre">2K</span></code> for 1920 x 1080 pixels
+or <code class="docutils literal notranslate"><span class="pre">4K</span></code> for 3840 x 2160 pixels.</p>
+</div></blockquote>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">'2K'</span></code></p>
+</dd>
+<dt><kbd>--fps</kbd></dt>
+<dd><p>Frames per second.</p>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">25</span></code></p>
+</dd>
+<dt><kbd>--start</kbd></dt>
+<dd><p>Index of the first frame to be rendered.</p>
+</dd>
+<dt><kbd>--stop</kbd></dt>
+<dd><p>Index of the last frame to be rendered.</p>
+</dd>
+<dt><kbd>--scale</kbd></dt>
+<dd><p>Comma-separated scale length in image pixels and optional text above.</p>
+</dd>
+</dl>
+</section>
+</section>
+</section>
+
+
+
+          </div>
+              <div class="related bottom">
+                &nbsp;
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="process.html" title="Previous document"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code></a>
+        </li>
+        <li>
+          <a href="pipelines.html" title="Next document">Pipelines</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+              </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/logo.png" alt="Logo of azulero"/>
+            </a></p>
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="news.html">What’s new</a></li>
+<li class="toctree-l1"><a class="reference internal" href="interfaces.html">General interface design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="retrieve.html"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="process.html"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code></a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">roam</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="pipelines.html">Pipelines</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="process.html" title="previous chapter"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code></a></li>
+      <li>Next: <a href="pipelines.html" title="next chapter">Pipelines</a></li>
+  </ul></li>
+</ul>
+</div>
+  <div>
+    <h3><a href="index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">roam</span></code></a><ul>
+<li><a class="reference internal" href="#overview">Overview</a></li>
+<li><a class="reference internal" href="#input">Input</a></li>
+<li><a class="reference internal" href="#output">Output</a></li>
+<li><a class="reference internal" href="#parameters">Parameters</a></li>
+<li><a class="reference internal" href="#command-line-interface">Command line interface</a><ul>
+<li><a class="reference internal" href="#azulero.client-add_parser-positional-arguments">Positional Arguments</a></li>
+<li><a class="reference internal" href="#azulero.client-add_parser-named-arguments">Named Arguments</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025-2026, Antoine Basset (CNES) and contributors.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>What’s new &#8212; azulero v2.0</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=24db8408" />
+    <script src="_static/documentation_options.js?v=7f41d439"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=35a8b989"></script>
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="General interface design" href="interfaces.html" />
+    <link rel="prev" title="Installation guide" href="install.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+              <div class="related top">
+                &nbsp;
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="install.html" title="Previous document">Installation guide</a>
+        </li>
+        <li>
+          <a href="interfaces.html" title="Next document">General interface design</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+              </div>
+          
+
+          <div class="body" role="main">
+            
+
+
+  <section id="what-s-new">
+<h1>What’s new</h1>
+<section id="version-2">
+<h2>Version 2</h2>
+<p>This version is an almost complete rewriting of Azulero.
+We have reworked every aspect of the software
+from the lowest level (pixel ordering, logging, code quality)
+to the highest level (parametrization, documentation, workflow).
+The result is a much cleaner and more extensible design,
+able to accommodate novel features more efficiently.
+Speaking of which, the raison-d’être of this release is mass production of images.
+To this end,we introduce <strong>cutout retrieval</strong> and <strong>pipelining</strong>.
+In turn, they enable faster and parallel processing,
+as well as streamlined production workflows.</p>
+<ul class="simple">
+<li><p><strong>Cutout retrieval</strong> enables the download of tile regions, which may save a significant amount of time.
+Typically, a 1’ x 1’ cutout is 1000x smaller and therefore 1000x faster to download and process than a WIDE tile.</p></li>
+<li><p><strong>Pipelining</strong> is a new way of chaining operations with Azulero.
+Relying on the Unix or Windows pipe operator, it is now possible to execute the various image production steps
+(e.g. downloading, rendering and collage) in a single command line.</p></li>
+</ul>
+<p>All of these evolutions come with a few breaking changes.
+Many commands were deprecated – generally merged with other commands.
+The only remaining commands from v1 are: <code class="docutils literal notranslate"><span class="pre">retrieve</span></code>, <code class="docutils literal notranslate"><span class="pre">process</span></code> and <code class="docutils literal notranslate"><span class="pre">roam</span></code>.
+Former command <code class="docutils literal notranslate"><span class="pre">find</span></code> has been merged into <code class="docutils literal notranslate"><span class="pre">retrieve</span></code> and <code class="docutils literal notranslate"><span class="pre">process</span></code>.
+New command <code class="docutils literal notranslate"><span class="pre">arrange</span></code> supersedes the former experimental command <code class="docutils literal notranslate"><span class="pre">assemble</span></code>.
+Finally, <code class="docutils literal notranslate"><span class="pre">crop</span></code> is deprecated.</p>
+</section>
+</section>
+
+
+
+          </div>
+              <div class="related bottom">
+                &nbsp;
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="install.html" title="Previous document">Installation guide</a>
+        </li>
+        <li>
+          <a href="interfaces.html" title="Next document">General interface design</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+              </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/logo.png" alt="Logo of azulero"/>
+            </a></p>
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation guide</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">What’s new</a></li>
+<li class="toctree-l1"><a class="reference internal" href="interfaces.html">General interface design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="retrieve.html"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="process.html"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="roam.html"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">roam</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="pipelines.html">Pipelines</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="install.html" title="previous chapter">Installation guide</a></li>
+      <li>Next: <a href="interfaces.html" title="next chapter">General interface design</a></li>
+  </ul></li>
+</ul>
+</div>
+  <div>
+    <h3><a href="index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">What’s new</a><ul>
+<li><a class="reference internal" href="#version-2">Version 2</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025-2026, Antoine Basset (CNES) and contributors.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>General interface design &#8212; azulero v2.0</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=24db8408" />
+    <script src="_static/documentation_options.js?v=7f41d439"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=35a8b989"></script>
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="azul retrieve" href="retrieve.html" />
+    <link rel="prev" title="What’s new" href="news.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+              <div class="related top">
+                &nbsp;
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="news.html" title="Previous document">What’s new</a>
+        </li>
+        <li>
+          <a href="retrieve.html" title="Next document"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code></a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+              </div>
+          
+
+          <div class="body" role="main">
+            
+
+
+  <section id="general-interface-design">
+<h1>General interface design</h1>
+<section id="introduction">
+<h2>Introduction</h2>
+<p>TODO</p>
+</section>
+<section id="commands">
+<h2>Commands</h2>
+<p>The main script is <code class="docutils literal notranslate"><span class="pre">azul</span></code>.
+It supports a variety of so-called commands,
+such as <code class="docutils literal notranslate"><span class="pre">retrieve</span></code> to retrieve datafiles or <code class="docutils literal notranslate"><span class="pre">process</span></code> to render color images.
+There are both global options, common to all commands, which are passed between <code class="docutils literal notranslate"><span class="pre">azul</span></code> and the command name,
+and command options, which are passed after the command name.</p>
+<p>For example, the log level is a global option named <code class="docutils literal notranslate"><span class="pre">--log</span></code>
+and the search radius is a <code class="docutils literal notranslate"><span class="pre">retrieve</span></code>-specific option named <code class="docutils literal notranslate"><span class="pre">-r</span></code>.
+The following line sets both:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><style type="text/css">
+span.prompt1:before {
+  content: "$ ";
+}
+</style><span class="prompt1">azul<span class="w"> </span>--log<span class="w"> </span>DEBUG<span class="w"> </span>retrieve<span class="w"> </span>-r<span class="w"> </span>1m<span class="w"> </span>NGC6505</span>
+</pre></div></div></section>
+<section id="named-options">
+<span id="id1"></span><h2>Named options</h2>
+<p>Named options like <code class="docutils literal notranslate"><span class="pre">--workspace</span></code> are not forwarded through pipelines.
+Typically, the following pipeline would break:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">azul<span class="w"> </span>--workspace<span class="w"> </span>/tmp<span class="w"> </span>retrieve<span class="w"> </span>NGC6505<span class="w"> </span><span class="p">|</span><span class="w"> </span>azul<span class="w"> </span>process</span>
+</pre></div></div><p>because <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code> would use the default workspace (<code class="docutils literal notranslate"><span class="pre">.</span></code>)
+instead of the custom workspace given to <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code>.</p>
+<p>Therefore, we have implemented an environment-level mechanism in order to avoid repeating them from command to command.
+Each named option can be read from an environment variable named as follows:</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span>AZUL<span class="nt">&lt;COMMAND&gt;</span>_<span class="nt">&lt;OPTION&gt;</span>
+</pre></div>
+</div>
+<p>where:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">&lt;COMMAND&gt;</span></code> is the uppercase command name, if any, such as <code class="docutils literal notranslate"><span class="pre">RETRIEVE</span></code> or <code class="docutils literal notranslate"><span class="pre">PROCESS</span></code>;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&lt;OPTION&gt;</span></code> is the uppercase long-from option name, such as <code class="docutils literal notranslate"><span class="pre">FROM</span></code> for <code class="docutils literal notranslate"><span class="pre">--from</span></code>
+or <code class="docutils literal notranslate"><span class="pre">WHITE</span></code> for <code class="docutils literal notranslate"><span class="pre">--white</span></code> (but not <code class="docutils literal notranslate"><span class="pre">W</span></code> for <code class="docutils literal notranslate"><span class="pre">-w</span></code>).</p></li>
+</ul>
+<p>For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1"><span class="nb">export</span><span class="w"> </span><span class="nv">AZUL_LOG</span><span class="o">=</span>DEBUG</span>
+<span class="prompt1"><span class="nb">export</span><span class="w"> </span><span class="nv">AZULRETRIEVE_FROM</span><span class="o">=</span>pdr</span>
+<span class="prompt1"><span class="nb">export</span><span class="w"> </span><span class="nv">AZULRETRIEVE_RADIUS</span><span class="o">=</span>1m</span>
+</pre></div></div><p>sets the log level to <code class="docutils literal notranslate"><span class="pre">DEBUG</span></code> for all commands,
+and sets the data provider to <code class="docutils literal notranslate"><span class="pre">pdr</span></code> and crop radius to 1 arcmin for <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code>.
+These parameters are overloaded by command line arguments.</p>
+<p>Within this context, the following lines are equivalent:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">azul<span class="w"> </span>retrieve<span class="w"> </span>NGC6505<span class="w"> </span>UGC11116<span class="w"> </span><span class="p">|</span><span class="w"> </span>azul<span class="w"> </span>process</span>
+<span class="prompt1">azul<span class="w"> </span>--log<span class="w"> </span>DEBUG<span class="w"> </span>retrieve<span class="w"> </span>NGC6505<span class="w"> </span>UGC11116<span class="w"> </span>-r<span class="w"> </span>1m<span class="w"> </span>--from<span class="w"> </span>pdr<span class="w"> </span>-f<span class="w"> </span><span class="p">|</span><span class="w"> </span>azul<span class="w"> </span>--log<span class="w"> </span>DEBUG<span class="w"> </span>process</span>
+</pre></div></div></section>
+<section id="command-line-interface">
+<h2>Command line interface</h2>
+<p><p>Bring colors to Euclid tiles!</p>
+</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">azul</span> <span class="p">[</span><span class="n">global_options</span><span class="p">]</span> <span class="o">&lt;</span><span class="n">cmd</span><span class="o">&gt;</span> <span class="p">[</span><span class="n">options</span><span class="p">]</span>
+</pre></div>
+</div>
+<section id="azulero.client-add_parser-named-arguments">
+<h3>Named Arguments</h3>
+<dl class="option-list">
+<dt><kbd>--workspace</kbd></dt>
+<dd><p>Parent workspace</p>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">'.'</span></code></p>
+</dd>
+<dt><kbd>--input</kbd></dt>
+<dd><p>Input file pattern, where <code class="docutils literal notranslate"><span class="pre">{channel}</span></code> is replaced with the channel name</p>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">'*[-_]{channel}[-_]*.fits'</span></code></p>
+</dd>
+<dt><kbd>--channels</kbd></dt>
+<dd><p>Channel names to be rendered in the input file pattern.</p>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">['VIS',</span> <span class="pre">'NIR-Y',</span> <span class="pre">'NIR-J',</span> <span class="pre">'NIR-H']</span></code></p>
+</dd>
+<dt><kbd>--log</kbd></dt>
+<dd><p>Log level.</p>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">'INFO'</span></code></p>
+</dd>
+</dl>
+</section>
+<section id="azulero.client-add_parser-commands">
+<h3>Commands</h3>
+<dl class="option-list">
+<dt><kbd>cmd</kbd></dt>
+<dd><p>Possible choices: retrieve, process, arrange, roam, cite, find, crop, assemble, overlay</p>
+</dd>
+</dl>
+</section>
+</section>
+</section>
+
+
+
+          </div>
+              <div class="related bottom">
+                &nbsp;
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="news.html" title="Previous document">What’s new</a>
+        </li>
+        <li>
+          <a href="retrieve.html" title="Next document"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code></a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+              </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/logo.png" alt="Logo of azulero"/>
+            </a></p>
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="news.html">What’s new</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">General interface design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="retrieve.html"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="process.html"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="roam.html"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">roam</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="pipelines.html">Pipelines</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="news.html" title="previous chapter">What’s new</a></li>
+      <li>Next: <a href="retrieve.html" title="next chapter"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code></a></li>
+  </ul></li>
+</ul>
+</div>
+  <div>
+    <h3><a href="index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">General interface design</a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a></li>
+<li><a class="reference internal" href="#commands">Commands</a></li>
+<li><a class="reference internal" href="#named-options">Named options</a></li>
+<li><a class="reference internal" href="#command-line-interface">Command line interface</a><ul>
+<li><a class="reference internal" href="#azulero.client-add_parser-named-arguments">Named Arguments</a></li>
+<li><a class="reference internal" href="#azulero.client-add_parser-commands">Commands</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025-2026, Antoine Basset (CNES) and contributors.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>azul retrieve &#8212; azulero v2.0</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=24db8408" />
+    <script src="_static/documentation_options.js?v=7f41d439"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=35a8b989"></script>
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="azul process" href="process.html" />
+    <link rel="prev" title="General interface design" href="interfaces.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+              <div class="related top">
+                &nbsp;
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="interfaces.html" title="Previous document">General interface design</a>
+        </li>
+        <li>
+          <a href="process.html" title="Next document"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code></a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+              </div>
+          
+
+          <div class="body" role="main">
+            
+
+
+  <section id="azul-retrieve">
+<h1><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code></h1>
+<section id="overview">
+<h2>Overview</h2>
+<p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code> finds and downloads Euclid MER data which contain specified <strong>targets</strong>,
+such as coordinates or named astronomical objects.
+The retrieved files are organized in directories we call <strong>workdirs</strong>.</p>
+<p>The atomic MER data footprint is a <strong>tile</strong>
+and all MER products over a tile (images, masks, catalogs) are properly aligned.
+Tiles are assigned a unique <strong>tile index</strong>.
+There are two main types of tiles: DEEP and WIDE.
+DEEP tiles quite small (17’ x 17’ in the sky and roughly 10k x 10k pixels in images)
+but made of several Euclid observations already stacked by MER.
+Stacking makes fainter objects visible and lowers the noise level.
+WIDE tiles are comparatively larger (32’ x 32’, 20k x 20k pixels) and not MER-stacked.
+When there are several observations over a single WIDE tile,
+<code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code> stacks them itself.</p>
+<p>As depicted below, <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code> consists of two main steps:</p>
+<ol class="arabic simple">
+<li><p>Querying the indices of the tiles which contain input targets;</p></li>
+<li><p>Downloading the data files in full or in part.</p></li>
+</ol>
+<figure class="align-center">
+</figure>
+</section>
+<section id="setup">
+<span id="id1"></span><h2>Setup</h2>
+<section id="for-euclid-members">
+<h3>For Euclid members</h3>
+<p>Accessing public data require no configuration.</p>
+<p>Internal data retrieval requires authentication,
+which is set up in the netrc configuration file (<code class="docutils literal notranslate"><span class="pre">~/.netrc</span></code> on Unix, <code class="docutils literal notranslate"><span class="pre">%HOMEPATH%\_netrc</span></code> on Windows) as follows:</p>
+<ul>
+<li><p>For internal SAS data:</p>
+<blockquote>
+<div><div class="highlight-xml notranslate"><div class="highlight"><pre><span></span>machine<span class="w"> </span>easidr.esac.esa.int
+login<span class="w"> </span><span class="nt">&lt;login&gt;</span>
+password<span class="w"> </span><span class="nt">&lt;password&gt;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>For DSS data:</p>
+<blockquote>
+<div><div class="highlight-xml notranslate"><div class="highlight"><pre><span></span>machine<span class="w"> </span>eas-dps-rest-ops.esac.esa.int
+login<span class="w"> </span><span class="nt">&lt;login&gt;</span>
+password<span class="w"> </span><span class="nt">&lt;password&gt;</span>
+machine<span class="w"> </span>euclidsoc.esac.esa.int
+login<span class="w"> </span><span class="nt">&lt;login&gt;</span>
+password<span class="w"> </span><span class="nt">&lt;password&gt;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+<p>TODO: Tiling file for DSS</p>
+</section>
+<section id="for-other-users">
+<h3>For other users</h3>
+<p>Because you will retrieve only public data,
+you can setup your environment to always restrict queries to the PDR provider.
+To do so, simply set the environment variable <code class="docutils literal notranslate"><span class="pre">AZULRETRIEVE_FROM</span></code> to <code class="docutils literal notranslate"><span class="pre">pdr</span></code>
+(read the remaining of this page and see <a class="reference internal" href="interfaces.html#named-options"><span class="std std-ref">Named options</span></a> to know why).
+Typically, Bash users may add the following to the <code class="docutils literal notranslate"><span class="pre">.bashrc</span></code> file:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">export</span> <span class="n">AZULRETRIEVE_FROM</span><span class="o">=</span><span class="n">pdr</span>
+</pre></div>
+</div>
+<p>No other configuration is needed for public data.</p>
+</section>
+</section>
+<section id="inputs">
+<h2>Inputs</h2>
+<p>The command takes as input a list of so-called targets, which may be of different types:</p>
+<ul class="simple">
+<li><p>tile index,</p></li>
+<li><p>coordinates,</p></li>
+<li><p>named object.</p></li>
+</ul>
+<p>Tiles are passed as integers.
+Coordinates are passed using any format accepted by Astropy’s <code class="docutils literal notranslate"><span class="pre">SkyCoord</span></code>,
+typically as ICRS comma-separated right ascension and declination.
+Named objects are passed as strings,
+coordinates of which are looked up in the <a class="reference external" href="https://cds.unistra.fr/cgi-bin/Sesame">CDS name resolver</a>.</p>
+<p>For example, the following command would retrieve the tiles covering targets of each type:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><style type="text/css">
+span.prompt1:before {
+  content: "$ ";
+}
+</style><span class="prompt1">azul<span class="w"> </span>retrieve<span class="w"> </span>NGC6505<span class="w"> </span><span class="m">270</span>.93,67.05<span class="w"> </span><span class="m">102157949</span></span>
+</pre></div></div></section>
+<section id="outputs">
+<span id="workspace"></span><h2>Outputs</h2>
+<p>The files are downloaded into a dedicated <strong>workdir</strong> for each target, inside some parent <strong>workspace</strong>.
+By default, the workspace is the current directory (<code class="docutils literal notranslate"><span class="pre">.</span></code>).
+It can be configured with global option <code class="docutils literal notranslate"><span class="pre">--workspace</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">azul<span class="w"> </span>--workspace<span class="w"> </span>/tmp<span class="w"> </span>retrieve<span class="w"> </span>NGC6505<span class="w"> </span><span class="m">270</span>.93,67.05<span class="w"> </span><span class="m">102157949</span><span class="w"> </span>PGC61356</span>
+</pre></div></div><p>By default, the workdirs are named after the targets, grouped by tile index.
+Several tiles (e.g. 101832848 and 101832849) may cover a single target (NGC6505),
+such that several workdirs may be created for each of them.
+Conversely, several targets (e.g. 270.93,67.05 and PGC61356) may belong a same tile (101836362),
+in which case workdirs have a common parent tile folder.
+At the time of writing, the above command creates the following workdirs inside workspace <code class="docutils literal notranslate"><span class="pre">/tmp</span></code>:</p>
+<p>The way the workspace is structured depends on the output template parameter <code class="docutils literal notranslate"><span class="pre">-o</span></code>.
+The template is rendered as follows:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Placeholder name</p></th>
+<th class="head"><p>Substitution value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">{workspace}</span></code></p></td>
+<td><p>Workspace path</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">{tile}</span></code></p></td>
+<td><p>Resolved target tile index</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">{target}</span></code></p></td>
+<td><p>Input target object name or coordinates</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="name-resolution">
+<h2>Name resolution</h2>
+<p>In order for <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code> to download data files containing a named object,
+the coordinates of the latter are queried to the CDS name resolver.</p>
+<p>If the name has to contain spaces or special characters, the argument must be given between quotes.
+In general, spaces can be omitted, though, such that the two following lines are equivalent:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">azul<span class="w"> </span>retrieve<span class="w"> </span><span class="s2">&quot;NGC 6505&quot;</span></span>
+<span class="prompt1">azul<span class="w"> </span>retrieve<span class="w"> </span>NGC6505</span>
+</pre></div></div></section>
+<section id="query">
+<h2>Query</h2>
+<p>The querying phase consists in finding the tile indices of the input coordinates and resolved objects,
+as well as the names of the files to be downloaded.</p>
+<p>This step relies on what we call a <strong>data provider</strong>, passed to option <code class="docutils literal notranslate"><span class="pre">--from</span></code>
+(or through environment variable <code class="docutils literal notranslate"><span class="pre">AZULRETRIEVE_FROM</span></code>).
+and applies to all of the targets of the command line:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">azul<span class="w"> </span>retrieve<span class="w"> </span>NGC6505<span class="w"> </span><span class="m">270</span>.93,67.05<span class="w"> </span><span class="m">102157949</span><span class="w"> </span>--from<span class="w"> </span>pdr</span>
+</pre></div></div><p>There are several such providers, which store different sets of data:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">pdr</span></code>, for Public Data Releases, contains all public data;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">idr</span></code>, for Internal Data Releases, contains SAS data under embargo which will later be released as a PDR;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">otf</span></code>, for on-the-fly data, contains unreleased SAS data; it is updated from time to time between data releases;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dss</span></code>, for Distributed Storage System, contains all data.</p></li>
+</ul>
+</section>
+<section id="download">
+<h2>Download</h2>
+<p>TODO</p>
+<p>When retrieving coordinates or named objects, a cone radius can be passed as option <code class="docutils literal notranslate"><span class="pre">-r</span></code>,
+which triggers a cutout service and downloads only a square region around the target.
+All formats handled by Astropy’s <code class="docutils literal notranslate"><span class="pre">Angle</span></code> are accepted.</p>
+<p>The radius applies to all coordinates and named objects of the command line,
+but not to the tile targets.
+Therefore, the following line:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">azul<span class="w"> </span>retrieve<span class="w"> </span>NGC6505<span class="w"> </span><span class="m">270</span>.93,67.05<span class="w"> </span><span class="m">102157949</span><span class="w"> </span>-r<span class="w"> </span>1m</span>
+</pre></div></div><p>downloads 2’ x 2’ regions for NGC6505 and (270.93, 67.05), as well as the whole 102157949 tile.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>As of today, provider <code class="docutils literal notranslate"><span class="pre">dss</span></code> does not support the cutout service.</p>
+</div>
+<p>By default, if a file to be downloaded already exists in the specified workdir, it is skipped.
+This behavior can be changed by forcing downloads with flag <code class="docutils literal notranslate"><span class="pre">-f</span></code>.
+In this case, files which already exist will be overwritten.</p>
+<p>TODO selective forcing</p>
+</section>
+<section id="more-on-data-providers">
+<h2>More on data providers</h2>
+<p>What we call a data provider is in fact a couple of Euclid components:
+a database and a data store.</p>
+<p>Querying relies on a database for finding the tile indices and MER file names.
+There are two such databases provided by the Euclid Archive System (EAS):</p>
+<ul class="simple">
+<li><p>the Science Archive Service (EAS-SAS or simply SAS);</p></li>
+<li><p>the Data Processing System (EAS-DPS or DPS).</p></li>
+</ul>
+<p>The SAS offers the spatial query and cutout service but does not know of all of the internal data,
+while the DPS does reference everything
+but does not offer the spatial query (at least, not in a reasonable amount of time) or cutout service.</p>
+<p>Once the file names have been resolved, the files are downloaded from a data store.
+The DSS is the storage associated to the DPS.
+The other providers are associated to the SAS.
+Therefore, selecting provider DSS means accessing metadata from the DPS and data from the DSS.
+Only the latter is specified to <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code>, and the former is deduced
+(same goes for the other data providers with the SAS).</p>
+</section>
+</section>
+
+
+
+          </div>
+              <div class="related bottom">
+                &nbsp;
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="interfaces.html" title="Previous document">General interface design</a>
+        </li>
+        <li>
+          <a href="process.html" title="Next document"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code></a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+              </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/logo.png" alt="Logo of azulero"/>
+            </a></p>
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="news.html">What’s new</a></li>
+<li class="toctree-l1"><a class="reference internal" href="interfaces.html">General interface design</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="process.html"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="roam.html"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">roam</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="pipelines.html">Pipelines</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="interfaces.html" title="previous chapter">General interface design</a></li>
+      <li>Next: <a href="process.html" title="next chapter"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code></a></li>
+  </ul></li>
+</ul>
+</div>
+  <div>
+    <h3><a href="index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code></a><ul>
+<li><a class="reference internal" href="#overview">Overview</a></li>
+<li><a class="reference internal" href="#setup">Setup</a><ul>
+<li><a class="reference internal" href="#for-euclid-members">For Euclid members</a></li>
+<li><a class="reference internal" href="#for-other-users">For other users</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#inputs">Inputs</a></li>
+<li><a class="reference internal" href="#outputs">Outputs</a></li>
+<li><a class="reference internal" href="#name-resolution">Name resolution</a></li>
+<li><a class="reference internal" href="#query">Query</a></li>
+<li><a class="reference internal" href="#download">Download</a></li>
+<li><a class="reference internal" href="#more-on-data-providers">More on data providers</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025-2026, Antoine Basset (CNES) and contributors.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
