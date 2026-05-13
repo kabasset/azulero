@@ -4,15 +4,25 @@
 Overview
 --------
 
-VIS and NIR bands of the MER mosaics can be found and downloaded with ``azul retrieve``.
-A variety of targets can be queried, which means their tile index is retrieved.
-From this point, the MER tiles can be downloaded either in full or in part.
-For each of the input target, an output workdir is created,
-to which data files are downloaded.
+``azul retrieve`` finds and downloads Euclid MER data which contain specified **targets**,
+such as coordinates or named astronomical objects.
+The retrieved files are organized in directories we call **workdirs**.
 
-The diagram below illustrates the steps performed by ``azul retrieve``
-to download data files for a single target.
-Command line parameters, if any, are listed below the step name.
+The atomic MER data footprint is a **tile**
+and all MER products over a tile (images, masks, catalogs) are properly aligned.
+Tiles are assigned a unique **tile index**.
+There are two main types of tiles: DEEP and WIDE.
+DEEP tiles quite small (17' x 17' in the sky and roughly 10k x 10k pixels in images)
+but made of several Euclid observations already stacked by MER.
+Stacking makes fainter objects visible and lowers the noise level.
+WIDE tiles are comparatively larger (32' x 32', 20k x 20k pixels) and not MER-stacked.
+When there are several observations over a single WIDE tile,
+``azul process`` stacks them itself.
+
+As depicted below, ``azul retrieve`` constists of two main steps:
+
+1. Querying the indices of the tiles which contain input targets;
+1. Downloading the data files in full or in part.
 
 .. plantuml::
    :align: center
@@ -56,26 +66,26 @@ For Euclid members
 Accessing public data require no configuration.
 
 Internal data retrieval requires authentication,
-which is set up in the netrc configuration file (``~/.netrc`` on Unix, ``_netrc`` on Windows) as follows:
+which is set up in the netrc configuration file (``~/.netrc`` on Unix, ``%HOMEPATH%\_netrc`` on Windows) as follows:
 
 * For internal SAS data:
 
-.. code-block:: xml
+   .. code-block:: xml
 
-   machine easidr.esac.esa.int
-     login <login>
-     password <password>
+      machine easidr.esac.esa.int
+      login <login>
+      password <password>
 
 * For DSS data:
 
-.. code-block:: xml
+   .. code-block:: xml
 
-   machine eas-dps-rest-ops.esac.esa.int
-     login <login>
-     password <password>
-   machine euclidsoc.esac.esa.int
-     login <login>
-     password <password>
+      machine eas-dps-rest-ops.esac.esa.int
+      login <login>
+      password <password>
+      machine euclidsoc.esac.esa.int
+      login <login>
+      password <password>
 
 TODO: Tiling file for DSS
 
@@ -130,8 +140,10 @@ It can be configured with global option ``--workspace``:
    azul --workspace /tmp retrieve NGC6505 270.93,67.05 102157949 PGC61356
 
 The workdirs are named after the targets, grouped by tile index.
-Several tiles may cover a single target, such that several workdirs may be created for each of them.
-Conversely, several targets may belong a same tile, in which case workdirs have a common parent tile folder.
+Several tiles (e.g. 101832848 and 101832849) may cover a single target (NGC6505),
+such that several workdirs may be created for each of them.
+Conversely, several targets (270.93,67.05 and PGC61356) may belong a same tile (101836362),
+in which case workdirs have a common parent tile folder.
 At the time of writing, the above command creates the following workdirs inside workspace ``/tmp``:
 
 .. plantuml::
@@ -148,6 +160,8 @@ At the time of writing, the above command creates the following workdirs inside 
    /tmp/102159776/PGC61356/
    @endfiles
 
+In this 
+
 The way the workspace is structured depends on the output template parameter ``-o``.
 
 TODO
@@ -155,8 +169,9 @@ TODO
 Name resolution
 ---------------
 
-In order for ``azul retrieve`` to download the tiles or cutouts containing a named object,
-the coordinates of the latter are queried to the CDS.
+In order for ``azul retrieve`` to download data files containing a named object,
+the coordinates of the latter are queried to the CDS name resolver.
+
 If the name has to contain spaces or special characters, the argument must be given between quotes.
 In general, spaces can be omitted, though, such that the two following lines are equivalent:
 
@@ -169,7 +184,8 @@ In general, spaces can be omitted, though, such that the two following lines are
 Query
 -----
 
-The querying phase consists in finding the tile indices of the input coordinates and resolved objects.
+The querying phase consists in finding the tile indices of the input coordinates and resolved objects,
+as well as the names of the files to be downloaded.
 
 This step relies on what we call a **data provider**, passed to option ``--from``
 (or through environment variable ``AZULRETRIEVE_FROM``).
@@ -183,7 +199,7 @@ There are several such providers, which store different sets of data:
 
 * ``pdr``, for Public Data Releases, contains all public data;
 * ``idr``, for Internal Data Releases, contains SAS data under embargo which will later be released as a PDR;
-* ``idr``, for on-the-fly data, contains unreleased SAS data; it is updated from time to time between data releases;
+* ``otf``, for on-the-fly data, contains unreleased SAS data; it is updated from time to time between data releases;
 * ``dss``, for Distributed Storage System, contains all data.
 
 
@@ -218,20 +234,22 @@ TODO selective forcing
 More on data providers
 ----------------------
 
-The query phase consists in contacting a database for finding the indices of the tiles which contain given coordinates.
+What we call a data provider is in fact a couple of Euclid components:
+a database and a data store.
+
+Querying relies on a database for finding the tile indices and MER file names.
 There are two such databases provided by the Euclid Archive System (EAS):
 
 * the Science Archive Service (EAS-SAS or simply SAS);
 * the Data Processing System (EAS-DPS or DPS).
 
-The SAS offers the query service we need but does not know of all of the internal data,
-while the DPS does reference everything but does not offer the service (at least, not in a reasonable amount of time).
+The SAS offers the spatial query and cutout service but does not know of all of the internal data,
+while the DPS does reference everything
+but does not offer the spatial query (at least, not in a reasonable amount of time) or cutout service.
 
-Once the tiles have been located, they can be downloaded in full or path.
-This is the role of what ``azul retrieve`` names data providers
-(which are, in fact, both metadata databases and storage systems).
-
+Once the file names have been resolved, the files are downloaded from a data store.
 The DSS is the storage associated to the DPS.
 The other providers are associated to the SAS.
 Therefore, selecting provider DSS means accessing metadata from the DPS and data from the DSS.
-Only the latter is specified to ``azul retrieve``, and the former is deduced.
+Only the latter is specified to ``azul retrieve``, and the former is deduced
+(same goes for the other data providers with the SAS).
