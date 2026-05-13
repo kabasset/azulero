@@ -20,17 +20,11 @@ jobs:
       run: |
         wget -O plantuml.jar https://github.com/plantuml/plantuml/releases/latest/download/plantuml-1.2026.3.jar
         echo "PLANTUML_JAR=$PWD/plantuml.jar" >> $GITHUB_ENV
-    - name: Install uv
-      uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
-    - name: Install azulero
-      run: uv pip install .
-      env:
-        UV_SYSTEM_PYTHON: 1
-    - name: Build HTML
-      uses: ammaraskar/sphinx-action@master
+    - uses: astral-sh/setup-uv@v7
       with:
-        docs-folder: "docs/"
-        build-command: "sphinx-build -M html source/ build/develop/"
+        enable-cache: true
+    - name: Build HTML
+      run: uv run sphinx-build -M html docs/source/ docs/build/develop/
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
