@@ -47,7 +47,7 @@ def add_parser(subparsers, help):
         "--output",
         "-o",
         type=str,
-        default="{workspace}/{workdir}/{target}_{tile}_{step}.tiff",
+        default="{workspace}/{workdir}/{target}_{tile}.tiff",
         metavar="TEMPLATE",
         help="""
         Output path template, where: 

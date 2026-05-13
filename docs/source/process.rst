@@ -191,8 +191,8 @@ Blending
    left to right direction
 
    card L #FFFFFF
-   card VIS #FFFFFF
-   card NIR #FFFFFF
+   card VIS
+   card NIR
    card I
    card Y
    card J
