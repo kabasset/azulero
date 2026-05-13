@@ -4,6 +4,8 @@ on: push
 
 jobs:
   build:
+    env:
+      UV_SYSTEM_PYTHON: 1
     runs-on: ubuntu-latest
     permissions:
       contents: write
