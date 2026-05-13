@@ -84,9 +84,16 @@ For more details, see help messages of global options ``--workspace`` and ``--in
 Outputs
 -------
 
-The script results in a 32-bit FITS, 16-bit TIFF, 8-bit PNG or 8-bit compressed JPG
+The script results in a 16-bit TIFF, 8-bit PNG or 8-bit compressed JPG
 depending on the extension of the file name parameter (``-o``).
-FITS outputs contain WCS parameters.
+
+WCS parameters are written as follows:
+
+* TIFF outputs contain WCS parameters as ``ImageDescription`` metadata,
+  for compatibility with `Mischa Shirmer's euniverse <https://github.com/schirmermischa/euniverse>`_;
+* PNG and JPEG outputs are accompanied with YAML files containing WCS parameters,
+  named after the image file with ``.wcs`` extension.
+
 The value passed to ``-o`` is a template in which the placeholders are rendered as follows.
 
 ================ ==================
