@@ -1,0 +1,37 @@
+name: "Sphinx: Publish docs"
+
+on: push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        persist-credentials: false
+    - name: Setup Java for PlantUML
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+    - name: Install PlantUML
+      run: |
+        wget -O plantuml.jar https://github.com/plantuml/plantuml/releases/latest/download/plantuml-1.2026.3.jar
+        echo "PLANTUML_JAR=$PWD/plantuml.jar" >> $GITHUB_ENV
+    - name: Build HTML
+      uses: ammaraskar/sphinx-action@master
+      with:
+        build-command: NO_COLOR=1 sphinx-build -M html docs/source/ docs/build/develop/
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: html-docs
+        path: docs/build/develop/
+    - name: Deploy
+      uses: peaceiris/actions-gh-pages@v3
+      if: github.ref == 'refs/heads/develop'
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: docs/build/
