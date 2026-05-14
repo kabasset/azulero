@@ -89,6 +89,6 @@ html_sidebars = {
 
 # PlantUml
 
-if ev := "PLANTUML_JAR" in os.environ:
-    plantuml = f"java -jar {os.environ[ev]}"
+if "PLANTUML_JAR" in os.environ:
+    plantuml = f"java -jar {os.environ.get('PLANTUML_JAR')}"
 plantuml_output_format = "svg"
