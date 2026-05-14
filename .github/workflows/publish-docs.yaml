@@ -19,6 +19,8 @@ jobs:
     - uses: astral-sh/setup-uv@v7
       with:
         enable-cache: true
+    - name: Setup Graphviz
+      uses: ts-graphviz/setup-graphviz@v2
     - name: Install PlantUML
       run: |
         wget -O plantuml.jar https://github.com/plantuml/plantuml/releases/latest/download/plantuml-1.2026.3.jar
