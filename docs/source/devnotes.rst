@@ -4,7 +4,7 @@ Developer notes
 Image storage
 -------------
 
-Color images are stored as ``ndarray``s following most OpenCV conventions:
+Color images are stored as ``ndarray``'s following most OpenCV conventions:
 
 * Axes are ordered as height, width, depth;
 * Channels are ordered as BGRA;

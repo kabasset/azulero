@@ -46,3 +46,11 @@ div.footer {
 .align-center .plantuml {
     background-color: #FAF3E8;
 }
+
+.epigraph {
+    margin: 20px 0px;
+    padding: 0px 30px;
+    border: thin solid #CCC;
+    border-left: thick solid #CCC;
+    font-style: italic;
+}

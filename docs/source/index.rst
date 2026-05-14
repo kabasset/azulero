@@ -1,7 +1,7 @@
 Bring colors to Euclid tiles!
 =============================
 
-Azul(ero) [#]_ is a toolbox which, among others, provides scripts to download and process Euclid observations over a MER tile.
+Azulero is a toolbox which, among others, provides scripts to download and process Euclid observations over a MER tile.
 
 For rendering color images, :doc:`process` detects and inpaints bad pixels (cold pixels, saturated stars...),
 and combines the 4 channels (I, Y, J, H) into an sRGB image.
@@ -27,6 +27,7 @@ The image below is the raw output of:
 
 .. toctree::
    :maxdepth: 1
+   :hidden:
 
    news
    quickstart
@@ -34,8 +35,6 @@ The image below is the raw output of:
    interfaces
    retrieve
    process
+   arrange
    roam
    pipelines
-
-
-.. [#] I started this project when Euclid EROs came out...

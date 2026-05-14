@@ -35,7 +35,7 @@ extensions = [
     "sphinxcontrib.video",
     "sphinxarg.ext",
 ]
-source_suffix = ".rst"
+source_suffix = {".rst": "restructuredtext"}
 templates_path = ["_templates"]
 master_doc = "index"
 exclude_patterns = []
@@ -84,6 +84,7 @@ html_sidebars = {
         "relations.html",
         "versioning.html",
         "localtoc.html",
+        "homelink.html",
     ]
 }
 
