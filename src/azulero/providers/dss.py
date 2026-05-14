@@ -42,3 +42,4 @@ class DSS(object):
             content = f.read()
         with open(path, "wb") as f:
             f.write(content)
+        return path
