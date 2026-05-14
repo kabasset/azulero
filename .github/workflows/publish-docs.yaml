@@ -24,15 +24,16 @@ jobs:
       with:
         enable-cache: true
     - name: Build HTML
-      run: uv run sphinx-build -M html docs/source/ docs/build/develop/
+      run: uv run sphinx-build -M html docs/source/ docs/build/
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
         name: html-docs
-        path: docs/build/develop/
+        path: docs/build/html/
     - name: Deploy
       uses: peaceiris/actions-gh-pages@v3
       if: github.ref == 'refs/heads/develop'
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: docs/build/
+        publish_dir: docs/build/html/
+        destination_dir: develop/
