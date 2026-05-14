@@ -162,11 +162,11 @@ def query_tiles(provider, dsrs: list[str], target: str):
     return list(targets)
 
 
-def query_datafiles(retriever, tile, dsr):
+def query_datafiles(provider, tile, dsr):
 
     logger.header(2, f"Query datafiles for tile {tile} and dataset release {dsr}:")
 
-    datafiles = retriever.query_datafiles(tile, dsr)
+    datafiles = provider.query_datafiles(tile, dsr)
     datafiles = {
         file: filter
         for file, filter in datafiles.items()
@@ -180,7 +180,7 @@ def query_datafiles(retriever, tile, dsr):
     return datafiles
 
 
-def download_datafiles(retriever, datafiles, workdir, target, radius, overwrite):
+def download_datafiles(provider, datafiles, workdir, target, radius, overwrite):
 
     logger.header(2, f"Download and extract datafiles to: {workdir}")
 
@@ -192,8 +192,10 @@ def download_datafiles(retriever, datafiles, workdir, target, radius, overwrite)
             logger.bullet(f"{path.name}")
             if path.is_file():
                 logger.warning(f"Existing file will be overwritten: {path.name}")
-            args = [] if radius is None else [target, radius]
-            retriever.download_datafile(name, path, *args)
+            if radius is None:
+                provider.download_datafile(name, path)
+            else:
+                provider.download_cutout(name, path, target, radius)
 
 
 def run(args):

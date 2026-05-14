@@ -66,23 +66,25 @@ class SAS:
             if str(p["release_name"]) == dsr
         }
 
-    def download_datafile(
+    def download_datafile(self, name: str, path: Path):
+        self.euclid.get_product(file_name=name, output_file=path)
+        return path
+
+    def download_cutout(
         self,
         name: str,
         path: Path,
-        target: Target | None = None,
-        radius: Angle | None = None,
+        target: Target,
+        radius: Angle,
     ):
-        if radius is None:
-            path = self.euclid.get_product(file_name=name, output_file=path)
-        else:
-            q = f"SELECT file_path, instrument_name FROM sedm.mosaic_product WHERE file_name='{name}'"
-            res = self.euclid.launch_job(q).get_results()[0]  # type: ignore
-            path = self.euclid.get_cutout(
-                file_path=Path(res["file_path"]) / name,
-                instrument=res["instrument_name"],
-                id=target.tile,
-                coordinate=target.coord,
-                radius=radius,
-                output_file=path,
-            )  # type: ignore
+        q = f"SELECT file_path, instrument_name FROM sedm.mosaic_product WHERE file_name='{name}'"
+        res = self.euclid.launch_job(q).get_results()[0]  # type: ignore
+        self.euclid.get_cutout(
+            file_path=Path(res["file_path"]) / name,
+            instrument=res["instrument_name"],
+            id=target.tile,
+            coordinate=target.coord,
+            radius=radius,
+            output_file=path,
+        )  # type: ignore
+        return path

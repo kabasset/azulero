@@ -3,8 +3,12 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from pathlib import Path
-from astropy.coordinates import Angle
+from astropy.coordinates import Angle, SkyCoord
+from astropy.io import fits
+from astropy.nddata import Cutout2D
+from astropy.wcs import WCS
 
+from azulero.tools.messaging import logger
 from azulero.providers import tiling
 
 
@@ -18,19 +22,33 @@ class LocalCutout:
     def __init__(self, provider):
         self.provider = provider
 
-    def download_datafiles(
+    def download_datafile(self, name: str, path: Path) -> Path:
+        if (path).exists():
+            logger.bullet(f"Tile file already exists; Skip: {name}")
+            return path
+        return self.provider.download_datafile(name, path)
+
+    def download_cutout(
         self,
         name: str,
         path: Path,
-        target: tiling.Target | None = None,
-        radius: Angle | None = None,
-    ):
-        if target is None or radius is None:
-            return self.provider.download_datafile(name, path)
-        tiledir = path.parent  # FIXME resolve tile folder
-        tile = self.provider.download_datafiles(name, tiledir)
-        return self._cut(tile, path)
+        target: tiling.Target,
+        radius: Angle,
+    ) -> Path:
+        tiledir = path.parent.parent / path.name  # FIXME resolve tile folder
+        logger.warning(
+            f"Cutout retrieval is not supported by this provider. "
+            f"Cutting locally a full tile to be retrieved in: {tiledir}"
+        )
+        tile = self.download_datafile(name, tiledir)
+        return self._cut(tile, path, target.coord, radius)
 
-    def _cut(self, tile: Path, cutout: Path):
-        # FIXME
-        return cutout
+    def _cut(self, input: Path, output: Path, coord: SkyCoord, radius: Angle) -> Path:
+        with fits.open(input) as f:
+            hdu = f[0]
+            wcs = WCS(hdu.header)
+            cutout = Cutout2D(hdu.data, position=coord, size=2 * radius, wcs=wcs)
+            hdu.data = cutout.data
+            hdu.header.update(cutout.wcs.to_header())
+            hdu.writeto(output, overwrite=True)  # FIXME overwrite policy from args
+        return output
