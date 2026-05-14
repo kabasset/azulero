@@ -55,23 +55,40 @@
 
   <section id="quick-start">
 <h1>Quick start</h1>
-<section id="introduction">
-<h2>Introduction</h2>
+<section id="how-to-read-this-documentation">
+<h2>How to read this documentation</h2>
+<p>Azulero is a command line toolbox made of several <strong>commands</strong>, e.g. <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code> or <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code>.
+All of them follow a common interface on one hand, and have their own specificities on the other hand.</p>
+<p>The shared interface concepts are described in <a class="reference internal" href="interfaces.html"><span class="doc">General interface design</span></a>
+– make sure to read this page first!
+Then, each command has its dedicated documentation, named after itself!</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>If you are already familiar with Azulero v1, there is nothing new for you here:
+<p>If you are already familiar with Azulero v1, there is nothing more for you here:
 Jump to the <a class="reference internal" href="news.html"><span class="doc">What’s new</span></a> page!</p>
 </div>
-<p>TODO</p>
 </section>
 <section id="installation-and-setup">
 <h2>Installation and setup</h2>
 <p>In order to start working with Azulero, you will have to install it (see <a class="reference internal" href="install.html"><span class="doc">Installation guide</span></a>)
 and if you want to find and download Euclid data, you will need to set up <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code> (see <a class="reference internal" href="retrieve.html#setup"><span class="std std-ref">Setup</span></a>).</p>
 </section>
-<section id="how-to-read-this-documentation">
-<h2>How to read this documentation</h2>
-<p>TODO</p>
+<section id="your-first-image">
+<h2>Your first image</h2>
+<p>Because you may not want to read documentation now that everything was just setup,
+we propose to create an image before (carefully) reading the next pages!</p>
+<p>We will start by downloading some Euclid data around a colorful and large-enough-but-not-too-large galaxy:
+<a class="reference external" href="https://www.cosmos.esa.int/web/euclid/euclid-nearby-galaxies-collage">UGC 11169</a>.
+Go to your favorite directory and run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><style type="text/css">
+span.prompt1:before {
+  content: "$ ";
+}
+</style><span class="prompt1">azul<span class="w"> </span>retrieve<span class="w"> </span>UGC11169<span class="w"> </span>-r<span class="w"> </span>30s<span class="w"> </span><span class="p">|</span><span class="w"> </span>azul<span class="w"> </span>process<span class="w"> </span>-w<span class="w"> </span><span class="m">0</span></span>
+</pre></div></div><p>This will retrieve and process an area of 1’ x 1’ or roughly 600 x 600 pixels around the galaxy core.
+Wait for a few seconds for the commands to complete…
+At the end of the logs, you should see the path to which the glorious color image was written,
+which you can already open and admire!</p>
 </section>
 </section>
 
@@ -135,9 +152,9 @@ and if you want to find and download Euclid data, you will need to set up <code 
     <h3><a href="index.html">Table of Contents</a></h3>
     <ul>
 <li><a class="reference internal" href="#">Quick start</a><ul>
-<li><a class="reference internal" href="#introduction">Introduction</a></li>
-<li><a class="reference internal" href="#installation-and-setup">Installation and setup</a></li>
 <li><a class="reference internal" href="#how-to-read-this-documentation">How to read this documentation</a></li>
+<li><a class="reference internal" href="#installation-and-setup">Installation and setup</a></li>
+<li><a class="reference internal" href="#your-first-image">Your first image</a></li>
 </ul>
 </li>
 </ul>
