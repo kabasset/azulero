@@ -3,11 +3,12 @@ Bring colors to Euclid tiles!
 
 Azul(ero) [#]_ is a toolbox which, among others, provides scripts to download and process Euclid observations over a MER tile.
 
-For rendering color images, ``azul process`` detects and inpaints bad pixels (cold pixels, saturated stars...),
-and combines the 4 channels (I, Y, J, H) into an sRGB image (see :doc:`process`).
-Input data files can be selected and downloaded with ``azul retrieve``,
-which connects to public (SAS) or private (EAS) data archives (see :doc:`retrieve`).
-Last but not least, ``azul roam`` produces flowing videos, for example by panning and zooming images.
+For rendering color images, :doc:`process` detects and inpaints bad pixels (cold pixels, saturated stars...),
+and combines the 4 channels (I, Y, J, H) into an sRGB image.
+Input data files can be selected and downloaded with :doc:`retrieve`,
+which connects to public or private data archives.
+Multiple images are assembled over a grid with :doc:`arrange`.
+Last but not least, :doc:`roam` produces flowing videos, for example by panning and zooming images.
 
 Azulero is now compatible with Unix and Windows pipelines, which makes batch processing simple,
 including with parallelization (see :doc:`pipelines`).
@@ -27,9 +28,9 @@ The image below is the raw output of:
 .. toctree::
    :maxdepth: 1
 
+   news
    quickstart
    install
-   news
    interfaces
    retrieve
    process
