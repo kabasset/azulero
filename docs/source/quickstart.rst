@@ -28,4 +28,18 @@ and if you want to find and download Euclid data, you will need to set up ``azul
 Your first image
 ----------------
 
-TODO
+Because you may not want to read documentation now that everything was just setup,
+we propose to create an image before (carefully) reading the next pages!
+
+We will start by downloading some Euclid data around a colorful and large-enough-but-not-too-large galaxy:
+`UGC 11169 <https://www.cosmos.esa.int/web/euclid/euclid-nearby-galaxies-collage>`_.
+Go to your favorite directory and run:
+
+.. prompt:: bash
+
+   azul retrieve UGC11169 -r 30s | azul process -w 0
+
+This will retrieve and process an area of 1' x 1' or roughly 600 x 600 pixels around the galaxy core.
+Wait for a few seconds for the commands to complete...
+At the end of the logs, you should see the path to which the glorious color image was written,
+which you can already open and admire!
