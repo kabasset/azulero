@@ -76,6 +76,35 @@ When there are several observations over a single WIDE tile,
 <li><p>Downloading the data files in full or in part.</p></li>
 </ol>
 <figure class="align-center">
+<p class="plantuml">
+<object data="_images/plantuml-6b6ddd78fed3f3e1022e50efb7bb690f8554b36e.svg" type="image/svg+xml" style="max-width:100%">
+<img src="_images/plantuml-6b6ddd78fed3f3e1022e50efb7bb690f8554b36e.png" alt="skinparam backgroundColor transparent
+
+card target {
+}
+
+object Resolve {
+}
+object Query {
+--from
+--dsr
+-n
+}
+object Download {
+-q
+-r
+-f
+}
+
+folder workdir {
+}
+
+target --&gt; Resolve
+Resolve -&gt; Query
+Query -&gt; Download
+Download --&gt; workdir"/>
+
+</object></p>
 </figure>
 </section>
 <section id="setup">
@@ -155,6 +184,20 @@ such that several workdirs may be created for each of them.
 Conversely, several targets (e.g. 270.93,67.05 and PGC61356) may belong a same tile (101836362),
 in which case workdirs have a common parent tile folder.
 At the time of writing, the above command creates the following workdirs inside workspace <code class="docutils literal notranslate"><span class="pre">/tmp</span></code>:</p>
+<p class="plantuml">
+<object data="_images/plantuml-93e04f04a754646785c4285da549496a43edde29.svg" type="image/svg+xml" style="max-width:100%">
+<img src="_images/plantuml-93e04f04a754646785c4285da549496a43edde29.png" alt="&#64;startfiles
+/tmp/101832848/NGC6505/
+/tmp/101832849/NGC6505/
+/tmp/101836362/270.93,67.05/
+/tmp/101836362/PGC61356/
+/tmp/102157949/
+/tmp/102158889/NGC6505/
+/tmp/102159776/270.93,67.05/
+/tmp/102159776/PGC61356/
+&#64;endfiles"/>
+
+</object></p>
 <p>The way the workspace is structured depends on the output template parameter <code class="docutils literal notranslate"><span class="pre">-o</span></code>.
 The template is rendered as follows:</p>
 <table class="docutils align-default">

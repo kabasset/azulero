@@ -65,6 +65,61 @@ and outputs one color rendering per workdir.
 Intermediate files can be written, mostly for debugging purposes.</p>
 <p>The diagram below illustrates the various steps of the algorithm processing a single workdir.</p>
 <figure class="align-center">
+<p class="plantuml">
+<object data="_images/plantuml-c087dafa0f0d8644d75d5884d79c75679cf15f72.svg" type="image/svg+xml" style="max-width:100%">
+<img src="_images/plantuml-c087dafa0f0d8644d75d5884d79c75679cf15f72.png" alt="skinparam backgroundColor transparent
+
+folder workdir {
+}
+object Stack {
+}
+object Inpaint {
+}
+object Sharpen {
+--fwhm
+--strength
+}
+object Equalize {
+--zero
+--scaling
+}
+object Stretch {
+-w
+-a
+-b
+}
+object Blend {
+--ib
+--yg
+--jr
+--nirl
+}
+object Adjust {
+--hue
+--saturation
+--curves
+}
+
+workdir --&gt; Stack
+Stack -&gt; Inpaint
+Inpaint -&gt; Sharpen
+Sharpen -&gt; Equalize
+Equalize -&gt; Stretch
+Stretch -&gt; Blend
+Blend -&gt; Adjust
+
+file mask {
+}
+file blended {
+}
+file adjusted {
+}
+
+Inpaint --&gt; mask
+Blend --&gt; blended
+Adjust --&gt; adjusted"/>
+
+</object></p>
 </figure>
 </section>
 <section id="inputs">
@@ -174,6 +229,37 @@ since they will be rendered with inconsistent stretching parameters.</p>
 <section id="blending">
 <h2>Blending</h2>
 <figure class="align-center">
+<p class="plantuml">
+<object data="_images/plantuml-6c42952afdc62ac8a4d6757363e36a70a2d3fde7.svg" type="image/svg+xml" style="max-width:100%">
+<img src="_images/plantuml-6c42952afdc62ac8a4d6757363e36a70a2d3fde7.png" alt="skinparam backgroundColor transparent
+left to right direction
+
+card L #FFFFFF
+card VIS
+card NIR
+card I
+card Y
+card J
+card H
+card B #8888FF
+card G #88FF88
+card R #FF8888
+
+L &lt;-- NIR : nirl
+L &lt;-- VIS
+VIS &lt;-- I
+NIR &lt;-- Y
+NIR &lt;-- J
+NIR &lt;-- H
+
+I --&gt; B : ib
+Y --&gt; B
+Y --&gt; G : yg
+J --&gt; G
+J --&gt; R : jr
+H --&gt; R"/>
+
+</object></p>
 </figure>
 <p>The blending generates an RGB image from four input channels.
 We decide to keep the wavelength ordering: I &lt; Y &lt; J &lt; H.

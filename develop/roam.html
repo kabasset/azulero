@@ -58,6 +58,37 @@
 <section id="overview">
 <h2>Overview</h2>
 <figure class="align-center">
+<p class="plantuml">
+<object data="_images/plantuml-8fa6611e00dd843f1317ad03a9fc5e51cd714bf2.svg" type="image/svg+xml" style="max-width:100%">
+<img src="_images/plantuml-8fa6611e00dd843f1317ad03a9fc5e51cd714bf2.png" alt="skinparam backgroundColor transparent
+
+file image {
+}
+
+object Subsample {
+}
+object Interpolate {
+--format
+--fps
+--start
+--stop
+}
+object Capture {
+--planar
+--wcs
+--equirectangular
+--gaiasky
+}
+
+file video {
+}
+
+image --&gt; Subsample
+Subsample -&gt; Interpolate
+Interpolate -&gt; Capture
+Capture --&gt; video"/>
+
+</object></p>
 </figure>
 </section>
 <section id="input">
