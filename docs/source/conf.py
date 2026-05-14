@@ -7,13 +7,15 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 import locale
+import os
+
+from azulero import _version
 
 try:
     locale.setlocale(locale.LC_TIME, "en_US.utf8")
 except locale.Error as e:
     print(f"Error: {e}")
 
-from azulero import _version
 
 project = _version.__title__
 copyright = _version.__copyright__
@@ -87,4 +89,6 @@ html_sidebars = {
 
 # PlantUml
 
+if ev := "PLANTUML_JAR" in os.environ:
+    plantuml = f"java -jar {os.environ[ev]}"
 plantuml_output_format = "svg"

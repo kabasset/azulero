@@ -16,13 +16,13 @@ jobs:
       with:
         distribution: 'temurin'
         java-version: '17'
+    - uses: astral-sh/setup-uv@v7
+      with:
+        enable-cache: true
     - name: Install PlantUML
       run: |
         wget -O plantuml.jar https://github.com/plantuml/plantuml/releases/latest/download/plantuml-1.2026.3.jar
         echo "PLANTUML_JAR=$PWD/plantuml.jar" >> $GITHUB_ENV
-    - uses: astral-sh/setup-uv@v7
-      with:
-        enable-cache: true
     - name: Build HTML
       run: uv run sphinx-build -M html docs/source/ docs/build/
     - name: Upload artifacts
