@@ -7,7 +7,7 @@ Installation
 Latest release
 ^^^^^^^^^^^^^^
 
-Azulero is deployed to `PyPI <https://pypi.org/project/azulero/>`_.
+Azulero is a Python package deployed to `PyPI <https://pypi.org/project/azulero/>`_.
 The simplest way to install it is with ``pip``:
 
 .. prompt:: bash
@@ -40,7 +40,8 @@ better clone the repository locally:
    pip install .
 
 Azulero is packaged with `uv <https://docs.astral.sh/uv/>`_.
-It is not needed to install the package to execute the scripts.
+Hence, there is no need to install the package in order to execute the scripts.
+Instead, from the clone directory, you can prepend commands with ``uv run``.
 For example, to download a cutout without installing, launch:
 
 .. prompt:: bash
@@ -95,17 +96,6 @@ Typically, Bash users may add the following to the ``.bashrc`` file::
 No other configuration is needed for public data.
 
 
-How to read this documentation
-------------------------------
-
-Azulero is a command line toolbox made of several **commands**, e.g. ``azul retrieve`` or ``azul process``.
-All of them follow a common interface on one hand, and have their own specificities on the other hand.
-
-The shared interface concepts are described in :doc:`interfaces`
--- make sure to read this page first!
-Then, each command has its dedicated documentation, named after itself!
-
-
 Your first image
 ----------------
 
@@ -124,3 +114,14 @@ This will retrieve and process an area of 1' x 1' or roughly 600 x 600 pixels ar
 Wait for a few seconds for the commands to complete...
 At the end of the logs, you should see the path to which the glorious color image was written,
 which you can already open and admire!
+
+
+How to read the documentation
+-----------------------------
+
+Azulero is a command line toolbox made of several **commands**, e.g. ``azul retrieve`` or ``azul process``.
+All of them follow a common interface on one hand, and have their own specificities on the other hand.
+
+The shared interface concepts are described in :doc:`interfaces`
+-- make sure to read this page first!
+Then, each command has its own documentation page, named after itself!
