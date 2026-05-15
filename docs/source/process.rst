@@ -183,7 +183,7 @@ since they will be rendered with inconsistent stretching parameters.
 Blending
 --------
 
-.. uml::
+.. plantuml::
    :align: center
    :max-width: 100%
 

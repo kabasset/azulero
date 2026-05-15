@@ -60,27 +60,23 @@ The above command will generate two images:
 
    Color rendering of 2' x 2' cutouts around UGC11116 and PGC61356.
 
-The resulting workspace contains two workdirs which share a common tile folder::
+The resulting workspace contains two workdirs which share a common tile folder:
 
-   102159776
-   ├── PGC61356
-   │   ├── EUC_MER_BGSUB-MOSAIC-NIR-H_TILE102159776-9A9A41_20241024T223843.133644Z_00.00.fits
-   │   ├── EUC_MER_BGSUB-MOSAIC-NIR-J_TILE102159776-A30311_20241024T223448.200678Z_00.00.fits
-   │   ├── EUC_MER_BGSUB-MOSAIC-NIR-Y_TILE102159776-F70908_20241024T222851.359405Z_00.00.fits
-   │   ├── EUC_MER_BGSUB-MOSAIC-VIS_TILE102159776-ACB359_20241025T034718.289475Z_00.00.fits
-   │   ├── PGC61356_102159776_adjusted.tiff
-   │   ├── PGC61356_102159776_blended.tiff
-   │   ├── PGC61356_102159776_mask.tiff
-   │   └── PGC61356_102159776_wcs.yaml
-   └── UGC11116
-      ├── EUC_MER_BGSUB-MOSAIC-NIR-H_TILE102159776-9A9A41_20241024T223843.133644Z_00.00.fits
-      ├── EUC_MER_BGSUB-MOSAIC-NIR-J_TILE102159776-A30311_20241024T223448.200678Z_00.00.fits
-      ├── EUC_MER_BGSUB-MOSAIC-NIR-Y_TILE102159776-F70908_20241024T222851.359405Z_00.00.fits
-      ├── EUC_MER_BGSUB-MOSAIC-VIS_TILE102159776-ACB359_20241025T034718.289475Z_00.00.fits
-      ├── UGC11116_102159776_adjusted.tiff
-      ├── UGC11116_102159776_blended.tiff
-      ├── UGC11116_102159776_mask.tiff
-      └── UGC11116_102159776_wcs.yaml
+.. plantuml::
+   :max-width: 100%
+
+   @startfiles
+   /102159776/PGC61356/EUC_MER_BGSUB-MOSAIC-NIR-H_TILE102159776-9A9A41_20241024T223843.133644Z_00.00.fits
+   /102159776/PGC61356/EUC_MER_BGSUB-MOSAIC-NIR-J_TILE102159776-A30311_20241024T223448.200678Z_00.00.fits
+   /102159776/PGC61356/EUC_MER_BGSUB-MOSAIC-NIR-Y_TILE102159776-F70908_20241024T222851.359405Z_00.00.fits
+   /102159776/PGC61356/EUC_MER_BGSUB-MOSAIC-VIS_TILE102159776-ACB359_20241025T034718.289475Z_00.00.fits
+   /102159776/PGC61356/PGC61356_102159776.tiff
+   /102159776/UGC11116/EUC_MER_BGSUB-MOSAIC-NIR-H_TILE102159776-9A9A41_20241024T223843.133644Z_00.00.fits
+   /102159776/UGC11116/EUC_MER_BGSUB-MOSAIC-NIR-J_TILE102159776-A30311_20241024T223448.200678Z_00.00.fits
+   /102159776/UGC11116/EUC_MER_BGSUB-MOSAIC-NIR-Y_TILE102159776-F70908_20241024T222851.359405Z_00.00.fits
+   /102159776/UGC11116/EUC_MER_BGSUB-MOSAIC-VIS_TILE102159776-ACB359_20241025T034718.289475Z_00.00.fits
+   /102159776/UGC11116/UGC11116_102159776.tiff
+   @endfiles
 
 We have generated the color images one after the other by executing a single ``azul process`` command,
 but it is possible to parallelize the pipeline, for example with ``xargs``:
@@ -147,13 +143,13 @@ To this end, we will rely on ImageMagick's ``convert``, which can turn a sequenc
 
 .. code-block:: xml
 
-   convert -delay <DURATION> <IMAGES> <VIDEO>
+   convert -delay <duration> <images> <video>
 
 where:
 
-* ``<DURATION>`` is the duration of each image in centiseconds,
-* ``<IMAGES>`` is the space-separated list of input images,
-* ``<VIDEO>`` is the path to the output video.
+* ``<duration>`` is the duration of each image in centiseconds,
+* ``<images>`` is the space-separated list of input images,
+* ``<video>`` is the path to the output video.
 
 As targets, we will use Q1 nearby galaxies.
 The pipeline will be fed by the clipboard, therefore we will just select the table at the bottom of
@@ -170,7 +166,7 @@ The pipeline will be fed by the clipboard, therefore we will just select the tab
 
 where:
 
-* ``xclip`` prints the selection to ``stdout``;
+* ``xclip`` (which you may need to install) prints the selection to ``stdout``;
 * ``sed`` removes spurious spaces, e.g. ``PGC 2693358`` is transformed into ``PGC2693358``;
 * ``azul retrieve`` downloads 1' x 1' cutouts;
 * ``azul process`` renders the images and returns the paths;
@@ -210,31 +206,51 @@ Finally, ``azul arrange``'s option ``--format max`` is used to pad the smallest 
 
 The message flow is illustrated below:
 
-.. code::
+.. plantuml::
+   :align: center
+   :max-width: 100%
 
-     echo
-    ┌─▼─────────────────────────────┐
-    │ UGC11116 PGC61356 LEDA2697349 │
-    └─▼─────────────────────────────┘
-     azul retrieve
-    ┌─▼─────────────────────┐
-    │ 102159776/UGC11116    │
-    │ 102159776/PGC61356    │
-    │ 102160059/LEDA2697349 │
-    │ 102159776/LEDA2697349 │
-    └─▼─────────────────────┘
-     azul process
-    ┌─▼─────────────────────────────────────────────────────────┐
-    │ 102159776/UGC11116/UGC11116_102159776_adjusted.tiff       │
-    │ 102159776/PGC61356/PGC61356_102159776_adjusted.tiff       │
-    │ 102160059/LEDA2697349/LEDA2697349_102160059_adjusted.tiff │
-    │ 102159776/LEDA2697349/LEDA2697349_102159776_adjusted.tiff │
-    └─▼─────────────────────────────────────────────────────────┘
-     azul arrange
-    ┌─▼──────────────────────────────────────────────────────────────────────┐
-    │ collage_UGC11116_102159776_adjusted_LEDA2697349_102159776_adjusted.png │
-    └─▼──────────────────────────────────────────────────────────────────────┘
-     open
+   skinparam backgroundColor transparent
+   skinparam componentstyle rectangle
+   left to right direction
+
+   object echo {
+   }
+   component targets #FFFFFF [
+   UGC11116 PGC61356 LEDA2697349
+   ]
+   object "azul retrieve" as retrieve {
+   }
+   component workdirs #FFFFFF [
+   102159776/UGC11116
+   102159776/PGC61356
+   102160059/LEDA2697349
+   102159776/LEDA2697349
+   ]
+   object "azul process" as process {
+   }
+   component renderings #FFFFFF [
+   102159776/UGC11116/UGC11116_102159776.tiff
+   102159776/PGC61356/PGC61356_102159776.tiff
+   102160059/LEDA2697349/LEDA2697349_102160059.tiff
+   102159776/LEDA2697349/LEDA2697349_102159776.tiff
+   ]
+   object "azul arrange" as arrange {
+   }
+   component collage #FFFFFF [
+   collage_UGC11116_102159776_LEDA2697349_102159776.png
+   ]
+   object open {
+   }
+
+   echo - targets
+   targets -> retrieve
+   retrieve - workdirs
+   workdirs -> process
+   process - renderings
+   renderings -> arrange
+   arrange - collage
+   collage -> open
 
 * ``echo`` streams the targets toward ``azul retrieve``.
 * ``azul retrieve`` streams the workdirs toward ``azul process``.
