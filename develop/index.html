@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Bring colors to Euclid tiles! &#8212; azulero v2.0</title>
+    <title>Azulero &#8212; azulero v2.0</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
@@ -48,18 +48,18 @@
             
 
 
-  <section id="bring-colors-to-euclid-tiles">
-<h1>Bring colors to Euclid tiles!</h1>
-<p>Azulero is a toolbox which, among others, provides scripts to download and process Euclid observations over a MER tile.</p>
-<p>For rendering color images, <a class="reference internal" href="process.html"><span class="doc">azul process</span></a> detects and inpaints bad pixels (cold pixels, saturated stars…),
-and combines the 4 channels (I, Y, J, H) into an sRGB image.
-Input data files can be selected and downloaded with <a class="reference internal" href="retrieve.html"><span class="doc">azul retrieve</span></a>,
-which connects to public or private data archives.
-Multiple images are assembled over a grid with <a class="reference internal" href="arrange.html"><span class="doc">azul arrange</span></a>.
-Last but not least, <a class="reference internal" href="roam.html"><span class="doc">azul roam</span></a> produces flowing videos, for example by panning and zooming images.</p>
+  <section id="azulero">
+<h1>Azulero</h1>
+<div class="toctree-wrapper compound">
+</div>
+<section id="bring-colors-to-euclid-tiles">
+<h2>Bring colors to Euclid tiles!</h2>
+<p>Azulero is a toolbox for producing stunning color Euclid images.</p>
+<p>It cleans and enhances MER data and combines the four Euclid photometric channels (I, Y, J, H) into an sRGB image.
+Input data are retrieved from public or private archives, and post-processing commands produce mesmerizing collages and flowing videos.</p>
 <p>Azulero is now compatible with Unix and Windows pipelines, which makes batch processing simple,
 including with parallelization (see <a class="reference internal" href="pipelines.html"><span class="doc">Pipelines</span></a>).
-The image below is the raw output of:</p>
+The image below is the unedited output of:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><style type="text/css">
 span.prompt1:before {
   content: "$ ";
@@ -74,8 +74,51 @@ span.prompt1:before {
 </div>
 </figcaption>
 </figure>
-<div class="toctree-wrapper compound">
+</section>
+<section id="license">
+<h2>License</h2>
+<p><a class="reference external" href="https://raw.githubusercontent.com/kabasset/azulero/refs/tags/v0.1.0/LICENSE">Apache-2.0</a></p>
+</section>
+<section id="how-to-help">
+<h2>How to help?</h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/kabasset/azulero/issues">Report bugs, request features</a>,
+tell us what you think of the tools and results…</p></li>
+<li><p>Share your images with us, we’re curious!</p></li>
+<li><p>If you publish images rendered with this software, please credit:
+<em>Image processing with Azulero (Antoine Basset, CNES).</em></p></li>
+<li><p>If you use this software for academic publications, please cite as follows:</p></li>
+</ul>
+<div class="highlight-bibtex notranslate"><div class="highlight"><pre><span></span><span class="nc">@software</span><span class="p">{</span><span class="nl">Basset_Azulero</span><span class="p">,</span>
+<span class="w">  </span><span class="na">author</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{Basset, Antoine and Schirmer, Mischa and Bouvard, Téo and Gimenez, Rollin and Nguyen-Kim, Kane and Candini, Gian Paolo and Malapert, Jean-Christophe}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">license</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{Apache-2.0}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">title</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{Azulero}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">version</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{2.0}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">year</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{2026}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">doi</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{10.24400/815952/Azulero}</span>
+<span class="p">}</span>
+</pre></div>
 </div>
+</section>
+<section id="contributors">
+<h2>Contributors</h2>
+<p>Azulero is the result of many discussions and technical exchanges.</p>
+<dl class="simple">
+<dt>Mischa Schirmer (MPIA)</dt><dd><p>Azulero’s color blending is freely inspired by that of Mischa’s script <a class="reference external" href="https://github.com/schirmermischa/eummy">eummy</a>.</p>
+</dd>
+<dt>Téo Bouvard (Thales)</dt><dd><p>Drafed <a class="reference internal" href="retrieve.html"><span class="doc">azul retrieve</span></a>.</p>
+</dd>
+<dt>Rollin Gimenez (CNES)</dt><dd><p>Fixed packaging, early and long-term beta-tester.</p>
+</dd>
+<dt>Kane Nguyen-Kim (IAP)</dt><dd><p>Provided URLs for retrieving public data, earliest and longest-term beta-tester!</p>
+</dd>
+<dt>Gian Paolo Candini (CSIC)</dt><dd><p>Investigated rendering issues and improved parametrization.
+Drafted auto-tuning of <a class="reference internal" href="process.html"><span class="doc">azul process</span></a>’ white point.</p>
+</dd>
+<dt>Jean-Christophe Malapert (CNES)</dt><dd><p>Implemented robust spatial queries on the sphere.</p>
+</dd>
+</dl>
+</section>
 </section>
 
 
@@ -128,7 +171,20 @@ span.prompt1:before {
       <li>Next: <a href="primer.html" title="next chapter">A Euclid primer</a></li>
   </ul></li>
 </ul>
-</div><h3>More...</h3>
+</div>
+  <div>
+    <h3><a href="#">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Azulero</a><ul>
+<li><a class="reference internal" href="#bring-colors-to-euclid-tiles">Bring colors to Euclid tiles!</a></li>
+<li><a class="reference internal" href="#license">License</a></li>
+<li><a class="reference internal" href="#how-to-help">How to help?</a></li>
+<li><a class="reference internal" href="#contributors">Contributors</a></li>
+</ul>
+</li>
+</ul>
+
+  </div><h3>More...</h3>
 <ul>
     <li><a href="http://doi.org/10.24400/815952/Azulero">Project homepage</a></li>
     <li><a href="devnotes.html">Developer notes</a></li>
