@@ -107,27 +107,22 @@ which is the case for those two galaxies in <a class="reference external" href="
 </figcaption>
 </figure>
 <p>The resulting workspace contains two workdirs which share a common tile folder:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>102159776
-├── PGC61356
-│   ├── EUC_MER_BGSUB-MOSAIC-NIR-H_TILE102159776-9A9A41_20241024T223843.133644Z_00.00.fits
-│   ├── EUC_MER_BGSUB-MOSAIC-NIR-J_TILE102159776-A30311_20241024T223448.200678Z_00.00.fits
-│   ├── EUC_MER_BGSUB-MOSAIC-NIR-Y_TILE102159776-F70908_20241024T222851.359405Z_00.00.fits
-│   ├── EUC_MER_BGSUB-MOSAIC-VIS_TILE102159776-ACB359_20241025T034718.289475Z_00.00.fits
-│   ├── PGC61356_102159776_adjusted.tiff
-│   ├── PGC61356_102159776_blended.tiff
-│   ├── PGC61356_102159776_mask.tiff
-│   └── PGC61356_102159776_wcs.yaml
-└── UGC11116
-   ├── EUC_MER_BGSUB-MOSAIC-NIR-H_TILE102159776-9A9A41_20241024T223843.133644Z_00.00.fits
-   ├── EUC_MER_BGSUB-MOSAIC-NIR-J_TILE102159776-A30311_20241024T223448.200678Z_00.00.fits
-   ├── EUC_MER_BGSUB-MOSAIC-NIR-Y_TILE102159776-F70908_20241024T222851.359405Z_00.00.fits
-   ├── EUC_MER_BGSUB-MOSAIC-VIS_TILE102159776-ACB359_20241025T034718.289475Z_00.00.fits
-   ├── UGC11116_102159776_adjusted.tiff
-   ├── UGC11116_102159776_blended.tiff
-   ├── UGC11116_102159776_mask.tiff
-   └── UGC11116_102159776_wcs.yaml
-</pre></div>
-</div>
+<p class="plantuml">
+<object data="_images/plantuml-1903c213285ae3478b5e8646ec4e2fa84fe929e5.svg" type="image/svg+xml" style="max-width:100%">
+<img src="_images/plantuml-1903c213285ae3478b5e8646ec4e2fa84fe929e5.png" alt="&#64;startfiles
+/102159776/PGC61356/EUC_MER_BGSUB-MOSAIC-NIR-H_TILE102159776-9A9A41_20241024T223843.133644Z_00.00.fits
+/102159776/PGC61356/EUC_MER_BGSUB-MOSAIC-NIR-J_TILE102159776-A30311_20241024T223448.200678Z_00.00.fits
+/102159776/PGC61356/EUC_MER_BGSUB-MOSAIC-NIR-Y_TILE102159776-F70908_20241024T222851.359405Z_00.00.fits
+/102159776/PGC61356/EUC_MER_BGSUB-MOSAIC-VIS_TILE102159776-ACB359_20241025T034718.289475Z_00.00.fits
+/102159776/PGC61356/PGC61356_102159776.tiff
+/102159776/UGC11116/EUC_MER_BGSUB-MOSAIC-NIR-H_TILE102159776-9A9A41_20241024T223843.133644Z_00.00.fits
+/102159776/UGC11116/EUC_MER_BGSUB-MOSAIC-NIR-J_TILE102159776-A30311_20241024T223448.200678Z_00.00.fits
+/102159776/UGC11116/EUC_MER_BGSUB-MOSAIC-NIR-Y_TILE102159776-F70908_20241024T222851.359405Z_00.00.fits
+/102159776/UGC11116/EUC_MER_BGSUB-MOSAIC-VIS_TILE102159776-ACB359_20241025T034718.289475Z_00.00.fits
+/102159776/UGC11116/UGC11116_102159776.tiff
+&#64;endfiles"/>
+
+</object></p>
 <p>We have generated the color images one after the other by executing a single <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code> command,
 but it is possible to parallelize the pipeline, for example with <code class="docutils literal notranslate"><span class="pre">xargs</span></code>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">azul<span class="w"> </span>retrieve<span class="w"> </span>UGC11116<span class="w"> </span>PGC61356<span class="w"> </span>-r<span class="w"> </span>1m<span class="w"> </span><span class="se">\</span>
@@ -177,14 +172,14 @@ and generate a similar output in one pipeline:</p>
 <p>This example is a bit more exotic than the others, but parts of it may come in handy.
 We will get the list of targets from the clipboard and generate a video from the renderings.
 To this end, we will rely on ImageMagick’s <code class="docutils literal notranslate"><span class="pre">convert</span></code>, which can turn a sequence of images into a video as follows:</p>
-<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span>convert<span class="w"> </span>-delay<span class="w"> </span><span class="nt">&lt;DURATION&gt;</span><span class="w"> </span><span class="nt">&lt;IMAGES&gt;</span><span class="w"> </span><span class="nt">&lt;VIDEO&gt;</span>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span>convert<span class="w"> </span>-delay<span class="w"> </span><span class="nt">&lt;duration&gt;</span><span class="w"> </span><span class="nt">&lt;images&gt;</span><span class="w"> </span><span class="nt">&lt;video&gt;</span>
 </pre></div>
 </div>
 <p>where:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">&lt;DURATION&gt;</span></code> is the duration of each image in centiseconds,</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">&lt;IMAGES&gt;</span></code> is the space-separated list of input images,</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">&lt;VIDEO&gt;</span></code> is the path to the output video.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&lt;duration&gt;</span></code> is the duration of each image in centiseconds,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&lt;images&gt;</span></code> is the space-separated list of input images,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&lt;video&gt;</span></code> is the path to the output video.</p></li>
 </ul>
 <p>As targets, we will use Q1 nearby galaxies.
 The pipeline will be fed by the clipboard, therefore we will just select the table at the bottom of
@@ -197,7 +192,7 @@ The pipeline will be fed by the clipboard, therefore we will just select the tab
 <span class="p">|</span><span class="w"> </span>xargs<span class="w"> </span>convert<span class="w"> </span>-delay<span class="w"> </span><span class="m">50</span></span>
 </pre></div></div><p>where:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">xclip</span></code> prints the selection to <code class="docutils literal notranslate"><span class="pre">stdout</span></code>;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">xclip</span></code> (which you may need to install) prints the selection to <code class="docutils literal notranslate"><span class="pre">stdout</span></code>;</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">sed</span></code> removes spurious spaces, e.g. <code class="docutils literal notranslate"><span class="pre">PGC</span> <span class="pre">2693358</span></code> is transformed into <code class="docutils literal notranslate"><span class="pre">PGC2693358</span></code>;</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code> downloads 1’ x 1’ cutouts;</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code> renders the images and returns the paths;</p></li>
@@ -227,31 +222,53 @@ One of them is incomplete because the whole 2’ x 2’ cutout doesn’t fit ins
 With option <code class="docutils literal notranslate"><span class="pre">-n</span></code>, the tiles would have been sorted by coverage in order to retrieve complete cutouts in priority.
 Finally, <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">arrange</span></code>’s option <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">max</span></code> is used to pad the smallest cutout instead of cropping the largest ones.</p>
 <p>The message flow is illustrated below:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span> echo
-┌─▼─────────────────────────────┐
-│ UGC11116 PGC61356 LEDA2697349 │
-└─▼─────────────────────────────┘
- azul retrieve
-┌─▼─────────────────────┐
-│ 102159776/UGC11116    │
-│ 102159776/PGC61356    │
-│ 102160059/LEDA2697349 │
-│ 102159776/LEDA2697349 │
-└─▼─────────────────────┘
- azul process
-┌─▼─────────────────────────────────────────────────────────┐
-│ 102159776/UGC11116/UGC11116_102159776_adjusted.tiff       │
-│ 102159776/PGC61356/PGC61356_102159776_adjusted.tiff       │
-│ 102160059/LEDA2697349/LEDA2697349_102160059_adjusted.tiff │
-│ 102159776/LEDA2697349/LEDA2697349_102159776_adjusted.tiff │
-└─▼─────────────────────────────────────────────────────────┘
- azul arrange
-┌─▼──────────────────────────────────────────────────────────────────────┐
-│ collage_UGC11116_102159776_adjusted_LEDA2697349_102159776_adjusted.png │
-└─▼──────────────────────────────────────────────────────────────────────┘
- open
-</pre></div>
-</div>
+<figure class="align-center">
+<p class="plantuml">
+<object data="_images/plantuml-3ae2d6e7ecce5aa1f9c26a0b53f4c36ca0883bc4.svg" type="image/svg+xml" style="max-width:100%">
+<img src="_images/plantuml-3ae2d6e7ecce5aa1f9c26a0b53f4c36ca0883bc4.png" alt="skinparam backgroundColor transparent
+skinparam componentstyle rectangle
+left to right direction
+
+object echo {
+}
+component targets #FFFFFF [
+UGC11116 PGC61356 LEDA2697349
+]
+object &quot;azul retrieve&quot; as retrieve {
+}
+component workdirs #FFFFFF [
+102159776/UGC11116
+102159776/PGC61356
+102160059/LEDA2697349
+102159776/LEDA2697349
+]
+object &quot;azul process&quot; as process {
+}
+component renderings #FFFFFF [
+102159776/UGC11116/UGC11116_102159776.tiff
+102159776/PGC61356/PGC61356_102159776.tiff
+102160059/LEDA2697349/LEDA2697349_102160059.tiff
+102159776/LEDA2697349/LEDA2697349_102159776.tiff
+]
+object &quot;azul arrange&quot; as arrange {
+}
+component collage #FFFFFF [
+collage_UGC11116_102159776_LEDA2697349_102159776.png
+]
+object open {
+}
+
+echo - targets
+targets -&gt; retrieve
+retrieve - workdirs
+workdirs -&gt; process
+process - renderings
+renderings -&gt; arrange
+arrange - collage
+collage -&gt; open"/>
+
+</object></p>
+</figure>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">echo</span></code> streams the targets toward <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code> streams the workdirs toward <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code>.</p></li>
