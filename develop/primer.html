@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>A Euclid primer &#8212; azulero v2.0</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=5ec2a83a" />
+    <script src="_static/documentation_options.js?v=7f41d439"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=35a8b989"></script>
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="What’s new" href="news.html" />
+    <link rel="prev" title="Bring colors to Euclid tiles!" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+              <div class="related top">
+                &nbsp;
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="index.html" title="Previous document">Bring colors to Euclid tiles!</a>
+        </li>
+        <li>
+          <a href="news.html" title="Next document">What’s new</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+              </div>
+          
+
+          <div class="body" role="main">
+            
+
+
+  <section id="a-euclid-primer">
+<h1>A Euclid primer</h1>
+<section id="the-mission">
+<h2>The mission</h2>
+<p>As explained <a class="reference external" href="https://www.esa.int/Science_Exploration/Space_Science/Euclid">by ESA</a>:</p>
+<blockquote class="epigraph">
+<div><p>ESA’s Euclid mission is designed to explore the composition and evolution of the dark Universe.
+The space telescope will create a great map of the large-scale structure of the Universe across space and time
+by observing billions of galaxies out to 10 billion light-years, across more than a third of the sky.
+Euclid will explore how the Universe has expanded and how structure has formed over cosmic history,
+revealing more about the role of gravity and the nature of dark energy and dark matter.</p>
+</div></blockquote>
+</section>
+<section id="the-images">
+<h2>The images</h2>
+<p>In order to create a “great map of the Universe”, Euclid takes a lot of pictures with two instruments: VIS and NISP.
+VIS is a camera sensitive to visible light and outputs a single “color”, or band, named <strong>I</strong>
+– which covers all the shades of the rainbow, like a consumer black-and-white camera would do.
+NISP is a “near-infrared spectro-photometer”, and we will only consider the photometer half of it, NIP.
+NIP uses color filters to capture three different bands named <strong>Y, J and H</strong>, all of which are in the infrared.</p>
+<p>To sum up, only VIS captures colors which could be visible to the human eye, but outputs black-and-white pixels,
+while NISP data covers three bands which would all appear black to us!
+The reason is that most galaxies which Euclid unveils would simply be barely visible,
+and could not be studied, with traditional colors.
+Azulero uses all IYJH bands to produce “false-color” images,
+as do most telescope projects, including Hubble and James Webb space telescopes.</p>
+</section>
+<section id="the-science-ground-segment">
+<h2>The Science Ground Segment</h2>
+<p>The Science Ground Segment (SGS) is the set of hardware and software components
+used to extract scientific results from the sequence of zeros and ones of the telemetry data.
+The scientific software is split into Processing Functions (PFs), each with its own responsibilities.
+Here is an outrageously simplified view of the data flow between PFs in the SGS:</p>
+<figure class="align-center">
+<p class="plantuml">
+<object data="_images/plantuml-b8182be4e22efd219a2702462071d2f16da38efe.svg" type="image/svg+xml" style="max-width:100%">
+<img src="_images/plantuml-b8182be4e22efd219a2702462071d2f16da38efe.png" alt="skinparam backgroundColor transparent
+left to right direction
+
+card telemetry #FF8888 {
+}
+
+object LE1 #FF8888 {
+}
+object VIS #FF8888 {
+}
+object NIR #FF8888 {
+}
+object MER #FF8888 {
+}
+object SIR {
+}
+object SHE {
+}
+object PHZ {
+}
+object SPE {
+}
+object LE3 {
+}
+
+card mosaic #FF8888 {
+}
+card catalog {
+}
+card cosmology {
+}
+
+telemetry -&gt; LE1
+
+LE1 --&gt; VIS
+LE1 --&gt; NIR
+LE1 --&gt; SIR
+VIS --&gt; MER
+NIR --&gt; MER
+SIR --&gt; MER
+MER --&gt; SHE
+MER --&gt; PHZ
+MER --&gt; SPE
+SHE --&gt; LE3
+PHZ --&gt; LE3
+SPE --&gt; LE3
+
+MER -&gt; mosaic
+catalog &lt;- MER
+LE3 -&gt; cosmology"/>
+
+</object></p>
+</figure>
+<p>We have outlined in red the part of the data flow which goes from the telemetry to the data used by Azulero: MER mosaics.
+LE1 is responsible for converting telemetry data into raw images.
+VIS and NIR respectively process the raw images from VIS and NIP instruments to obtain calibrated images.
+In these images, defects are identified or corrected and fluxes are estimated,
+i.e. the amount of light which hits a pixel is known very precisely.
+Among others, MER is in charge of aligning VIS and NIR images
+(and SIR images, and detecting galaxies, and creating a catalog…),
+which results in the data we need!</p>
+</section>
+<section id="the-mer-data">
+<h2>The MER data</h2>
+<p>Azulero relies on SGS products named <a class="reference external" href="https://euclid.esac.esa.int/dr/q1/dpdd/merdpd/dpcards/mer_bksmosaic.html">DpdMerBksMosaics</a>,
+or mosaics in short.
+In general, within Azulero documentation, we call them simply <strong>MER data</strong>,
+because mosaic may be confusing when we also talk about collages.</p>
+<p>The atomic MER data footprint (the region of the sky it covers) is a <strong>tile</strong>
+and all MER products over a tile (images, masks, catalogs) are properly aligned.
+Tiles are assigned a unique <strong>tile index</strong>, a term you will encounter often in the documentation.</p>
+<p>There are two main types of tiles: DEEP and WIDE.
+DEEP tiles are quite small (17’ x 17’ in the sky and roughly 10k x 10k pixels in images)
+but made of several Euclid observations of the same region.
+Images from the said observations are aggregated by MER.
+Aggregation, or <strong>stacking</strong>, makes fainter objects visible and lowers the noise level.
+WIDE tiles are comparatively larger (32’ x 32’, 20k x 20k pixels) and not stacked
+– but <a class="reference internal" href="process.html"><span class="doc">azul process</span></a> will happily stack MER data in WIDE tiles observed several times.</p>
+</section>
+</section>
+
+
+
+          </div>
+              <div class="related bottom">
+                &nbsp;
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="index.html" title="Previous document">Bring colors to Euclid tiles!</a>
+        </li>
+        <li>
+          <a href="news.html" title="Next document">What’s new</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+              </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/logo.png" alt="Logo of azulero"/>
+            </a></p>
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">A Euclid primer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="news.html">What’s new</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="interfaces.html">General interface design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="retrieve.html"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="process.html"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="arrange.html"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">arrange</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="roam.html"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">roam</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="pipelines.html">Pipelines</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">Bring colors to Euclid tiles!</a></li>
+      <li>Next: <a href="news.html" title="next chapter">What’s new</a></li>
+  </ul></li>
+</ul>
+</div>
+  <div>
+    <h3><a href="index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">A Euclid primer</a><ul>
+<li><a class="reference internal" href="#the-mission">The mission</a></li>
+<li><a class="reference internal" href="#the-images">The images</a></li>
+<li><a class="reference internal" href="#the-science-ground-segment">The Science Ground Segment</a></li>
+<li><a class="reference internal" href="#the-mer-data">The MER data</a></li>
+</ul>
+</li>
+</ul>
+
+  </div><h3>More...</h3>
+<ul>
+    <li><a href="http://doi.org/10.24400/815952/Azulero">Project homepage</a></li>
+    <li><a href="devnotes.html">Developer notes</a></li>
+</ul>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025-2026, Antoine Basset (CNES) and contributors.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

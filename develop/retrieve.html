@@ -60,16 +60,6 @@
 <p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code> finds and downloads Euclid MER data which contain specified <strong>targets</strong>,
 such as coordinates or named astronomical objects.
 The retrieved files are organized in directories we call <strong>workdirs</strong>.</p>
-<p>The atomic MER data footprint is a <strong>tile</strong>
-and all MER products over a tile (images, masks, catalogs) are properly aligned.
-Tiles are assigned a unique <strong>tile index</strong>.
-There are two main types of tiles: DEEP and WIDE.
-DEEP tiles quite small (17’ x 17’ in the sky and roughly 10k x 10k pixels in images)
-but made of several Euclid observations already stacked by MER.
-Stacking makes fainter objects visible and lowers the noise level.
-WIDE tiles are comparatively larger (32’ x 32’, 20k x 20k pixels) and not MER-stacked.
-When there are several observations over a single WIDE tile,
-<code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code> stacks them itself.</p>
 <p>As depicted below, <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code> consists of two main steps:</p>
 <ol class="arabic simple">
 <li><p>Querying the indices of the tiles which contain input targets;</p></li>
@@ -277,6 +267,7 @@ Only the latter is specified to <code class="docutils literal notranslate"><span
 </search>
 <script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="primer.html">A Euclid primer</a></li>
 <li class="toctree-l1"><a class="reference internal" href="news.html">What’s new</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="interfaces.html">General interface design</a></li>
