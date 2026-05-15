@@ -31,7 +31,6 @@ The image below is the raw output of:
 
    news
    quickstart
-   install
    interfaces
    retrieve
    process

@@ -1,6 +1,100 @@
 Quick start
 ===========
 
+Installation
+------------
+
+Latest release
+^^^^^^^^^^^^^^
+
+Azulero is deployed to `PyPI <https://pypi.org/project/azulero/>`_.
+The simplest way to install it is with ``pip``:
+
+.. prompt:: bash
+
+   pip install azulero
+
+If you already have an old version installed, use:
+
+.. prompt:: bash
+
+   pip install --upgrade azulero
+
+
+Development version
+^^^^^^^^^^^^^^^^^^^
+
+If you simply want to get the development version from time to time, use:
+
+.. prompt:: bash
+
+   pip install git+https://github.com/kabasset/azulero
+
+If instead, you want to modify the sources or update very often,
+better clone the repository locally:
+
+.. prompt:: bash
+
+   git clone https://github.com/kabasset/azulero
+   cd azulero
+   pip install .
+
+Azulero is packaged with `uv <https://docs.astral.sh/uv/>`_.
+It is not needed to install the package to execute the scripts.
+For example, to download a cutout without installing, launch:
+
+.. prompt:: bash
+
+    uv run azul retrieve NGC6505 -r 1m
+
+
+Setup
+-----
+
+For Euclid members
+^^^^^^^^^^^^^^^^^^
+
+Accessing public data require no configuration.
+
+Internal data retrieval requires authentication,
+which is set up in the netrc configuration file (``~/.netrc`` on Unix, ``%HOMEPATH%\_netrc`` on Windows) as follows:
+
+* For internal SAS data:
+
+   .. code-block:: xml
+
+      machine easidr.esac.esa.int
+      login <login>
+      password <password>
+
+* For DSS data:
+
+   .. code-block:: xml
+
+      machine eas-dps-rest-ops.esac.esa.int
+      login <login>
+      password <password>
+      machine euclidsoc.esac.esa.int
+      login <login>
+      password <password>
+
+TODO: Tiling file for DSS
+
+
+For other users
+^^^^^^^^^^^^^^^
+
+Because you will retrieve only public data,
+you can setup your environment to always restrict queries to the PDR provider.
+To do so, simply set the environment variable ``AZULRETRIEVE_FROM`` to ``pdr``
+(read the remaining of this page and see :ref:`named_options` to know why).
+Typically, Bash users may add the following to the ``.bashrc`` file::
+
+   export AZULRETRIEVE_FROM=pdr
+
+No other configuration is needed for public data.
+
+
 How to read this documentation
 ------------------------------
 
@@ -10,19 +104,6 @@ All of them follow a common interface on one hand, and have their own specificit
 The shared interface concepts are described in :doc:`interfaces`
 -- make sure to read this page first!
 Then, each command has its dedicated documentation, named after itself!
-
-
-.. note::
-   
-   If you are already familiar with Azulero v1, there is nothing more for you here:
-   Jump to the :doc:`news` page!
-
-
-Installation and setup
-----------------------
-
-In order to start working with Azulero, you will have to install it (see :doc:`install`)
-and if you want to find and download Euclid data, you will need to set up ``azul retrieve`` (see :ref:`setup`).
 
 
 Your first image

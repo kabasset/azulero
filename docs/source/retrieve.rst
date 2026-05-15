@@ -55,55 +55,6 @@ As depicted below, ``azul retrieve`` consists of two main steps:
    Download --> workdir
 
 
-.. _setup:
-
-Setup
------
-
-For Euclid members
-^^^^^^^^^^^^^^^^^^
-
-Accessing public data require no configuration.
-
-Internal data retrieval requires authentication,
-which is set up in the netrc configuration file (``~/.netrc`` on Unix, ``%HOMEPATH%\_netrc`` on Windows) as follows:
-
-* For internal SAS data:
-
-   .. code-block:: xml
-
-      machine easidr.esac.esa.int
-      login <login>
-      password <password>
-
-* For DSS data:
-
-   .. code-block:: xml
-
-      machine eas-dps-rest-ops.esac.esa.int
-      login <login>
-      password <password>
-      machine euclidsoc.esac.esa.int
-      login <login>
-      password <password>
-
-TODO: Tiling file for DSS
-
-
-For other users
-^^^^^^^^^^^^^^^
-
-Because you will retrieve only public data,
-you can setup your environment to always restrict queries to the PDR provider.
-To do so, simply set the environment variable ``AZULRETRIEVE_FROM`` to ``pdr``
-(read the remaining of this page and see :ref:`named_options` to know why).
-Typically, Bash users may add the following to the ``.bashrc`` file::
-
-   export AZULRETRIEVE_FROM=pdr
-
-No other configuration is needed for public data.
-
-
 Inputs
 ------
 
