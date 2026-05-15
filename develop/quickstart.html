@@ -59,7 +59,7 @@
 <h2>Installation</h2>
 <section id="latest-release">
 <h3>Latest release</h3>
-<p>Azulero is deployed to <a class="reference external" href="https://pypi.org/project/azulero/">PyPI</a>.
+<p>Azulero is a Python package deployed to <a class="reference external" href="https://pypi.org/project/azulero/">PyPI</a>.
 The simplest way to install it is with <code class="docutils literal notranslate"><span class="pre">pip</span></code>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><style type="text/css">
 span.prompt1:before {
@@ -79,7 +79,8 @@ better clone the repository locally:</p>
 <span class="prompt1"><span class="nb">cd</span><span class="w"> </span>azulero</span>
 <span class="prompt1">pip<span class="w"> </span>install<span class="w"> </span>.</span>
 </pre></div></div><p>Azulero is packaged with <a class="reference external" href="https://docs.astral.sh/uv/">uv</a>.
-It is not needed to install the package to execute the scripts.
+Hence, there is no need to install the package in order to execute the scripts.
+Instead, from the clone directory, you can prepend commands with <code class="docutils literal notranslate"><span class="pre">uv</span> <span class="pre">run</span></code>.
 For example, to download a cutout without installing, launch:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">uv<span class="w"> </span>run<span class="w"> </span>azul<span class="w"> </span>retrieve<span class="w"> </span>NGC6505<span class="w"> </span>-r<span class="w"> </span>1m</span>
 </pre></div></div></section>
@@ -129,14 +130,6 @@ Typically, Bash users may add the following to the <code class="docutils literal
 <p>No other configuration is needed for public data.</p>
 </section>
 </section>
-<section id="how-to-read-this-documentation">
-<h2>How to read this documentation</h2>
-<p>Azulero is a command line toolbox made of several <strong>commands</strong>, e.g. <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code> or <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code>.
-All of them follow a common interface on one hand, and have their own specificities on the other hand.</p>
-<p>The shared interface concepts are described in <a class="reference internal" href="interfaces.html"><span class="doc">General interface design</span></a>
-– make sure to read this page first!
-Then, each command has its dedicated documentation, named after itself!</p>
-</section>
 <section id="your-first-image">
 <h2>Your first image</h2>
 <p>Because you may not want to read documentation now that everything was just setup,
@@ -149,6 +142,14 @@ Go to your favorite directory and run:</p>
 Wait for a few seconds for the commands to complete…
 At the end of the logs, you should see the path to which the glorious color image was written,
 which you can already open and admire!</p>
+</section>
+<section id="how-to-read-the-documentation">
+<h2>How to read the documentation</h2>
+<p>Azulero is a command line toolbox made of several <strong>commands</strong>, e.g. <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code> or <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code>.
+All of them follow a common interface on one hand, and have their own specificities on the other hand.</p>
+<p>The shared interface concepts are described in <a class="reference internal" href="interfaces.html"><span class="doc">General interface design</span></a>
+– make sure to read this page first!
+Then, each command has its own documentation page, named after itself!</p>
 </section>
 </section>
 
@@ -221,13 +222,17 @@ which you can already open and admire!</p>
 <li><a class="reference internal" href="#for-other-users">For other users</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#how-to-read-this-documentation">How to read this documentation</a></li>
 <li><a class="reference internal" href="#your-first-image">Your first image</a></li>
+<li><a class="reference internal" href="#how-to-read-the-documentation">How to read the documentation</a></li>
 </ul>
 </li>
 </ul>
 
-  </div><h3><a href="http://doi.org/10.24400/815952/Azulero">Other versions</a></h3>
+  </div><h3>More...</h3>
+<ul>
+    <li><a href="http://doi.org/10.24400/815952/Azulero">Project homepage</a></li>
+    <li><a href="devnotes.html">Developer notes</a></li>
+</ul>
         </div>
       </div>
       <div class="clearer"></div>
