@@ -107,51 +107,6 @@ Download --&gt; workdir"/>
 </object></p>
 </figure>
 </section>
-<section id="setup">
-<span id="id1"></span><h2>Setup</h2>
-<section id="for-euclid-members">
-<h3>For Euclid members</h3>
-<p>Accessing public data require no configuration.</p>
-<p>Internal data retrieval requires authentication,
-which is set up in the netrc configuration file (<code class="docutils literal notranslate"><span class="pre">~/.netrc</span></code> on Unix, <code class="docutils literal notranslate"><span class="pre">%HOMEPATH%\_netrc</span></code> on Windows) as follows:</p>
-<ul>
-<li><p>For internal SAS data:</p>
-<blockquote>
-<div><div class="highlight-xml notranslate"><div class="highlight"><pre><span></span>machine<span class="w"> </span>easidr.esac.esa.int
-login<span class="w"> </span><span class="nt">&lt;login&gt;</span>
-password<span class="w"> </span><span class="nt">&lt;password&gt;</span>
-</pre></div>
-</div>
-</div></blockquote>
-</li>
-<li><p>For DSS data:</p>
-<blockquote>
-<div><div class="highlight-xml notranslate"><div class="highlight"><pre><span></span>machine<span class="w"> </span>eas-dps-rest-ops.esac.esa.int
-login<span class="w"> </span><span class="nt">&lt;login&gt;</span>
-password<span class="w"> </span><span class="nt">&lt;password&gt;</span>
-machine<span class="w"> </span>euclidsoc.esac.esa.int
-login<span class="w"> </span><span class="nt">&lt;login&gt;</span>
-password<span class="w"> </span><span class="nt">&lt;password&gt;</span>
-</pre></div>
-</div>
-</div></blockquote>
-</li>
-</ul>
-<p>TODO: Tiling file for DSS</p>
-</section>
-<section id="for-other-users">
-<h3>For other users</h3>
-<p>Because you will retrieve only public data,
-you can setup your environment to always restrict queries to the PDR provider.
-To do so, simply set the environment variable <code class="docutils literal notranslate"><span class="pre">AZULRETRIEVE_FROM</span></code> to <code class="docutils literal notranslate"><span class="pre">pdr</span></code>
-(read the remaining of this page and see <a class="reference internal" href="interfaces.html#named-options"><span class="std std-ref">Named options</span></a> to know why).
-Typically, Bash users may add the following to the <code class="docutils literal notranslate"><span class="pre">.bashrc</span></code> file:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">export</span> <span class="n">AZULRETRIEVE_FROM</span><span class="o">=</span><span class="n">pdr</span>
-</pre></div>
-</div>
-<p>No other configuration is needed for public data.</p>
-</section>
-</section>
 <section id="inputs">
 <h2>Inputs</h2>
 <p>The command takes as input a list of so-called targets, which may be of different types:</p>
@@ -324,7 +279,6 @@ Only the latter is specified to <code class="docutils literal notranslate"><span
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="news.html">What’s new</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick start</a></li>
-<li class="toctree-l1"><a class="reference internal" href="install.html">Installation guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="interfaces.html">General interface design</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="process.html"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code></a></li>
@@ -347,11 +301,6 @@ Only the latter is specified to <code class="docutils literal notranslate"><span
     <ul>
 <li><a class="reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code></a><ul>
 <li><a class="reference internal" href="#overview">Overview</a></li>
-<li><a class="reference internal" href="#setup">Setup</a><ul>
-<li><a class="reference internal" href="#for-euclid-members">For Euclid members</a></li>
-<li><a class="reference internal" href="#for-other-users">For other users</a></li>
-</ul>
-</li>
 <li><a class="reference internal" href="#inputs">Inputs</a></li>
 <li><a class="reference internal" href="#outputs">Outputs</a></li>
 <li><a class="reference internal" href="#name-resolution">Name resolution</a></li>

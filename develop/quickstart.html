@@ -17,7 +17,7 @@
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="_static/copybutton.js?v=35a8b989"></script>
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Installation guide" href="install.html" />
+    <link rel="next" title="General interface design" href="interfaces.html" />
     <link rel="prev" title="What’s new" href="news.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
@@ -41,7 +41,7 @@
           <a href="news.html" title="Previous document">What’s new</a>
         </li>
         <li>
-          <a href="install.html" title="Next document">Installation guide</a>
+          <a href="interfaces.html" title="Next document">General interface design</a>
           &rarr;
         </li>
     </ul>
@@ -55,6 +55,80 @@
 
   <section id="quick-start">
 <h1>Quick start</h1>
+<section id="installation">
+<h2>Installation</h2>
+<section id="latest-release">
+<h3>Latest release</h3>
+<p>Azulero is deployed to <a class="reference external" href="https://pypi.org/project/azulero/">PyPI</a>.
+The simplest way to install it is with <code class="docutils literal notranslate"><span class="pre">pip</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><style type="text/css">
+span.prompt1:before {
+  content: "$ ";
+}
+</style><span class="prompt1">pip<span class="w"> </span>install<span class="w"> </span>azulero</span>
+</pre></div></div><p>If you already have an old version installed, use:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">pip<span class="w"> </span>install<span class="w"> </span>--upgrade<span class="w"> </span>azulero</span>
+</pre></div></div></section>
+<section id="development-version">
+<h3>Development version</h3>
+<p>If you simply want to get the development version from time to time, use:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">pip<span class="w"> </span>install<span class="w"> </span>git+https://github.com/kabasset/azulero</span>
+</pre></div></div><p>If instead, you want to modify the sources or update very often,
+better clone the repository locally:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">git<span class="w"> </span>clone<span class="w"> </span>https://github.com/kabasset/azulero</span>
+<span class="prompt1"><span class="nb">cd</span><span class="w"> </span>azulero</span>
+<span class="prompt1">pip<span class="w"> </span>install<span class="w"> </span>.</span>
+</pre></div></div><p>Azulero is packaged with <a class="reference external" href="https://docs.astral.sh/uv/">uv</a>.
+It is not needed to install the package to execute the scripts.
+For example, to download a cutout without installing, launch:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">uv<span class="w"> </span>run<span class="w"> </span>azul<span class="w"> </span>retrieve<span class="w"> </span>NGC6505<span class="w"> </span>-r<span class="w"> </span>1m</span>
+</pre></div></div></section>
+</section>
+<section id="setup">
+<h2>Setup</h2>
+<section id="for-euclid-members">
+<h3>For Euclid members</h3>
+<p>Accessing public data require no configuration.</p>
+<p>Internal data retrieval requires authentication,
+which is set up in the netrc configuration file (<code class="docutils literal notranslate"><span class="pre">~/.netrc</span></code> on Unix, <code class="docutils literal notranslate"><span class="pre">%HOMEPATH%\_netrc</span></code> on Windows) as follows:</p>
+<ul>
+<li><p>For internal SAS data:</p>
+<blockquote>
+<div><div class="highlight-xml notranslate"><div class="highlight"><pre><span></span>machine<span class="w"> </span>easidr.esac.esa.int
+login<span class="w"> </span><span class="nt">&lt;login&gt;</span>
+password<span class="w"> </span><span class="nt">&lt;password&gt;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>For DSS data:</p>
+<blockquote>
+<div><div class="highlight-xml notranslate"><div class="highlight"><pre><span></span>machine<span class="w"> </span>eas-dps-rest-ops.esac.esa.int
+login<span class="w"> </span><span class="nt">&lt;login&gt;</span>
+password<span class="w"> </span><span class="nt">&lt;password&gt;</span>
+machine<span class="w"> </span>euclidsoc.esac.esa.int
+login<span class="w"> </span><span class="nt">&lt;login&gt;</span>
+password<span class="w"> </span><span class="nt">&lt;password&gt;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+<p>TODO: Tiling file for DSS</p>
+</section>
+<section id="for-other-users">
+<h3>For other users</h3>
+<p>Because you will retrieve only public data,
+you can setup your environment to always restrict queries to the PDR provider.
+To do so, simply set the environment variable <code class="docutils literal notranslate"><span class="pre">AZULRETRIEVE_FROM</span></code> to <code class="docutils literal notranslate"><span class="pre">pdr</span></code>
+(read the remaining of this page and see <a class="reference internal" href="interfaces.html#named-options"><span class="std std-ref">Named options</span></a> to know why).
+Typically, Bash users may add the following to the <code class="docutils literal notranslate"><span class="pre">.bashrc</span></code> file:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">export</span> <span class="n">AZULRETRIEVE_FROM</span><span class="o">=</span><span class="n">pdr</span>
+</pre></div>
+</div>
+<p>No other configuration is needed for public data.</p>
+</section>
+</section>
 <section id="how-to-read-this-documentation">
 <h2>How to read this documentation</h2>
 <p>Azulero is a command line toolbox made of several <strong>commands</strong>, e.g. <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code> or <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code>.
@@ -62,16 +136,6 @@ All of them follow a common interface on one hand, and have their own specificit
 <p>The shared interface concepts are described in <a class="reference internal" href="interfaces.html"><span class="doc">General interface design</span></a>
 – make sure to read this page first!
 Then, each command has its dedicated documentation, named after itself!</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>If you are already familiar with Azulero v1, there is nothing more for you here:
-Jump to the <a class="reference internal" href="news.html"><span class="doc">What’s new</span></a> page!</p>
-</div>
-</section>
-<section id="installation-and-setup">
-<h2>Installation and setup</h2>
-<p>In order to start working with Azulero, you will have to install it (see <a class="reference internal" href="install.html"><span class="doc">Installation guide</span></a>)
-and if you want to find and download Euclid data, you will need to set up <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code> (see <a class="reference internal" href="retrieve.html#setup"><span class="std std-ref">Setup</span></a>).</p>
 </section>
 <section id="your-first-image">
 <h2>Your first image</h2>
@@ -80,11 +144,7 @@ we propose to create an image before (carefully) reading the next pages!</p>
 <p>We will start by downloading some Euclid data around a colorful and large-enough-but-not-too-large galaxy:
 <a class="reference external" href="https://www.cosmos.esa.int/web/euclid/euclid-nearby-galaxies-collage">UGC 11169</a>.
 Go to your favorite directory and run:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><style type="text/css">
-span.prompt1:before {
-  content: "$ ";
-}
-</style><span class="prompt1">azul<span class="w"> </span>retrieve<span class="w"> </span>UGC11169<span class="w"> </span>-r<span class="w"> </span>30s<span class="w"> </span><span class="p">|</span><span class="w"> </span>azul<span class="w"> </span>process<span class="w"> </span>-w<span class="w"> </span><span class="m">0</span></span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">azul<span class="w"> </span>retrieve<span class="w"> </span>UGC11169<span class="w"> </span>-r<span class="w"> </span>30s<span class="w"> </span><span class="p">|</span><span class="w"> </span>azul<span class="w"> </span>process<span class="w"> </span>-w<span class="w"> </span><span class="m">0</span></span>
 </pre></div></div><p>This will retrieve and process an area of 1’ x 1’ or roughly 600 x 600 pixels around the galaxy core.
 Wait for a few seconds for the commands to complete…
 At the end of the logs, you should see the path to which the glorious color image was written,
@@ -104,7 +164,7 @@ which you can already open and admire!</p>
           <a href="news.html" title="Previous document">What’s new</a>
         </li>
         <li>
-          <a href="install.html" title="Next document">Installation guide</a>
+          <a href="interfaces.html" title="Next document">General interface design</a>
           &rarr;
         </li>
     </ul>
@@ -130,7 +190,6 @@ which you can already open and admire!</p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="news.html">What’s new</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Quick start</a></li>
-<li class="toctree-l1"><a class="reference internal" href="install.html">Installation guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="interfaces.html">General interface design</a></li>
 <li class="toctree-l1"><a class="reference internal" href="retrieve.html"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="process.html"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code></a></li>
@@ -144,7 +203,7 @@ which you can already open and admire!</p>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
       <li>Previous: <a href="news.html" title="previous chapter">What’s new</a></li>
-      <li>Next: <a href="install.html" title="next chapter">Installation guide</a></li>
+      <li>Next: <a href="interfaces.html" title="next chapter">General interface design</a></li>
   </ul></li>
 </ul>
 </div>
@@ -152,8 +211,17 @@ which you can already open and admire!</p>
     <h3><a href="index.html">Table of Contents</a></h3>
     <ul>
 <li><a class="reference internal" href="#">Quick start</a><ul>
+<li><a class="reference internal" href="#installation">Installation</a><ul>
+<li><a class="reference internal" href="#latest-release">Latest release</a></li>
+<li><a class="reference internal" href="#development-version">Development version</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#setup">Setup</a><ul>
+<li><a class="reference internal" href="#for-euclid-members">For Euclid members</a></li>
+<li><a class="reference internal" href="#for-other-users">For other users</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#how-to-read-this-documentation">How to read this documentation</a></li>
-<li><a class="reference internal" href="#installation-and-setup">Installation and setup</a></li>
 <li><a class="reference internal" href="#your-first-image">Your first image</a></li>
 </ul>
 </li>
