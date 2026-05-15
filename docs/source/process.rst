@@ -90,7 +90,7 @@ depending on the extension of the file name parameter (``-o``).
 WCS parameters are written as follows:
 
 * TIFF outputs contain WCS parameters as ``ImageDescription`` metadata,
-  for compatibility with `Mischa Shirmer's euniverse <https://github.com/schirmermischa/euniverse>`_;
+  for compatibility with euniverse_;
 * PNG and JPEG outputs are accompanied with YAML files containing WCS parameters,
   named after the image file with ``.wcs`` extension.
 
@@ -231,7 +231,7 @@ We have chosen to use only I to generate B, and to compress YJH into GR.
 Other research groups made different choices
 like skipping completely J for ERO images,
 using I only for L and YJH for RGB in many articles,
-or merging YJ into G and use only H for R in the Eummy package.
+or merging YJ into G and use only H for R in the eummy_ package.
 The default parameters of Azulero were challenged on thousands of various objects and always give pleasant results.
 That being said, there is no good or bad approach and you can create your own palette by varying the blending parameters.
 
@@ -281,3 +281,6 @@ Depending on your system, it may be necessary to add quotes:
 .. prompt:: bash
 
    azul process "102159776[5000:,:5000]"
+
+.. _eummy: https://github.com/schirmermischa/eummy
+.. _euniverse: https://github.com/schirmermischa/euniverse
