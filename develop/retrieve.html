@@ -99,17 +99,17 @@ Download --&gt; workdir"/>
 </section>
 <section id="inputs">
 <h2>Inputs</h2>
-<p>The command takes as input a list of so-called targets, which may be of different types:</p>
-<ul class="simple">
-<li><p>tile index,</p></li>
-<li><p>coordinates,</p></li>
-<li><p>named object.</p></li>
-</ul>
-<p>Tiles are passed as integers.
-Coordinates are passed using any format accepted by Astropy’s <code class="docutils literal notranslate"><span class="pre">SkyCoord</span></code>,
-typically as ICRS comma-separated right ascension and declination.
-Named objects are passed as strings,
+<p>The command takes as input the list of targets, which may be of different types:</p>
+<dl class="simple">
+<dt>Tiles</dt><dd><p>Tiles are passed as integers.</p>
+</dd>
+<dt>Coordinates</dt><dd><p>Coordinates are passed using any format accepted by Astropy’s <code class="docutils literal notranslate"><span class="pre">SkyCoord</span></code>,
+typically as ICRS comma-separated right ascension and declination.</p>
+</dd>
+<dt>Named objects</dt><dd><p>Named objects are passed as strings,
 coordinates of which are looked up in the <a class="reference external" href="https://cds.unistra.fr/cgi-bin/Sesame">CDS name resolver</a>.</p>
+</dd>
+</dl>
 <p>For example, the following command would retrieve the tiles covering targets of each type:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><style type="text/css">
 span.prompt1:before {
@@ -124,10 +124,6 @@ By default, the workspace is the current directory (<code class="docutils litera
 It can be configured with global option <code class="docutils literal notranslate"><span class="pre">--workspace</span></code>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">azul<span class="w"> </span>--workspace<span class="w"> </span>/tmp<span class="w"> </span>retrieve<span class="w"> </span>NGC6505<span class="w"> </span><span class="m">270</span>.93,67.05<span class="w"> </span><span class="m">102157949</span><span class="w"> </span>PGC61356</span>
 </pre></div></div><p>By default, the workdirs are named after the targets, grouped by tile index.
-Several tiles (e.g. 101832848 and 101832849) may cover a single target (NGC6505),
-such that several workdirs may be created for each of them.
-Conversely, several targets (e.g. 270.93,67.05 and PGC61356) may belong a same tile (101836362),
-in which case workdirs have a common parent tile folder.
 At the time of writing, the above command creates the following workdirs inside workspace <code class="docutils literal notranslate"><span class="pre">/tmp</span></code>:</p>
 <p class="plantuml">
 <object data="_images/plantuml-93e04f04a754646785c4285da549496a43edde29.svg" type="image/svg+xml" style="max-width:100%">
@@ -143,6 +139,10 @@ At the time of writing, the above command creates the following workdirs inside 
 &#64;endfiles"/>
 
 </object></p>
+<p>Several tiles (101832848 and 101832849) cover a single target (NGC6505),
+such that several workdirs are created for each of them.
+Conversely, several targets (270.93,67.05 and PGC61356) belong a same tile (101836362),
+in which case workdirs have a common parent tile folder.</p>
 <p>The way the workspace is structured depends on the output template parameter <code class="docutils literal notranslate"><span class="pre">-o</span></code>.
 The template is rendered as follows:</p>
 <table class="docutils align-default">
@@ -159,7 +159,7 @@ The template is rendered as follows:</p>
 <td><p>Resolved target tile index</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">{target}</span></code></p></td>
-<td><p>Input target object name or coordinates</p></td>
+<td><p>Verbatim target argument in command line</p></td>
 </tr>
 </tbody>
 </table>
@@ -228,6 +228,7 @@ The other providers are associated to the SAS.
 Therefore, selecting provider DSS means accessing metadata from the DPS and data from the DSS.
 Only the latter is specified to <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code>, and the former is deduced
 (same goes for the other data providers with the SAS).</p>
+<p>TODO: DSS tile query and cutout retrieval</p>
 </section>
 </section>
 

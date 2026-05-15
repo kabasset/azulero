@@ -62,18 +62,34 @@
 <section id="commands">
 <h2>Commands</h2>
 <p>The main script is <code class="docutils literal notranslate"><span class="pre">azul</span></code>.
-It supports a variety of so-called commands,
-such as <code class="docutils literal notranslate"><span class="pre">retrieve</span></code> to retrieve datafiles or <code class="docutils literal notranslate"><span class="pre">process</span></code> to render color images.
-There are both global options, common to all commands, which are passed between <code class="docutils literal notranslate"><span class="pre">azul</span></code> and the command name,
-and command options, which are passed after the command name.</p>
-<p>For example, the log level is a global option named <code class="docutils literal notranslate"><span class="pre">--log</span></code>
-and the search radius is a <code class="docutils literal notranslate"><span class="pre">retrieve</span></code>-specific option named <code class="docutils literal notranslate"><span class="pre">-r</span></code>.
-The following line sets both:</p>
+It supports a variety of so-called <strong>commands</strong>,
+such as <code class="docutils literal notranslate"><span class="pre">retrieve</span></code> to download datafiles or <code class="docutils literal notranslate"><span class="pre">process</span></code> to render color images.
+All commands follow the same pattern:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">azul</span> <span class="p">[</span><span class="n">global_options</span><span class="p">]</span> <span class="o">&lt;</span><span class="n">command</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">inputs</span><span class="o">&gt;</span> <span class="p">[</span><span class="n">options</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>with:</p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">[global_options]</span></code></dt><dd><p>Optional global options (e.g. <code class="docutils literal notranslate"><span class="pre">--log</span> <span class="pre">DEBUG</span></code>).</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">&lt;command&gt;</span></code></dt><dd><p>The name of the command (e.g. <code class="docutils literal notranslate"><span class="pre">retrieve</span></code>).</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">&lt;input&gt;</span></code></dt><dd><p>The space separated list of inputs (e.g. <code class="docutils literal notranslate"><span class="pre">UGC11116</span> <span class="pre">PGC61356</span></code>).
+If the list is empty, then <code class="docutils literal notranslate"><span class="pre">stdin</span></code> is read (see <a class="reference internal" href="pipelines.html"><span class="doc">Pipelines</span></a>).</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">[options]</span></code></dt><dd><p>The command options (e.g. <code class="docutils literal notranslate"><span class="pre">-r</span> <span class="pre">1m</span></code>).</p>
+</dd>
+</dl>
+<p>Global options, common to all commands, are passed <em>between</em> <code class="docutils literal notranslate"><span class="pre">azul</span></code> and the command name,
+and command options are passed <em>after</em> the command name, before or after inputs.
+Option <code class="docutils literal notranslate"><span class="pre">-o</span> <span class="pre">&lt;output&gt;</span></code> exists for all commands.</p>
+<p>Here is an example command line with global and command options,
+a list of inputs and an output specification:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><style type="text/css">
 span.prompt1:before {
   content: "$ ";
 }
-</style><span class="prompt1">azul<span class="w"> </span>--log<span class="w"> </span>DEBUG<span class="w"> </span>retrieve<span class="w"> </span>-r<span class="w"> </span>1m<span class="w"> </span>NGC6505</span>
+</style><span class="prompt1">azul<span class="w"> </span>--log<span class="w"> </span>DEBUG<span class="w"> </span>retrieve<span class="w"> </span>-r<span class="w"> </span>1m<span class="w"> </span>UGC11116<span class="w"> </span>PGC61356<span class="w"> </span>-o<span class="w"> </span><span class="o">{</span>target<span class="o">}</span></span>
 </pre></div></div></section>
 <section id="named-options">
 <span id="id1"></span><h2>Named options</h2>
