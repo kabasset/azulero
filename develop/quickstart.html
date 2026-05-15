@@ -148,8 +148,47 @@ which you can already open and admire!</p>
 <p>Azulero is a command line toolbox made of several <strong>commands</strong>, e.g. <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code> or <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code>.
 All of them follow a common interface on one hand, and have their own specificities on the other hand.</p>
 <p>The shared interface concepts are described in <a class="reference internal" href="interfaces.html"><span class="doc">General interface design</span></a>
-– make sure to read this page first!
-Then, each command has its own documentation page, named after itself!</p>
+– make sure to read this page first!</p>
+<p>Then, each command has its own documentation page named after itself, e.g. <a class="reference internal" href="retrieve.html"><span class="doc">azul retrieve</span></a> or <a class="reference internal" href="process.html"><span class="doc">azul process</span></a>.
+In these pages, commands are presented graphically, like:</p>
+<figure class="align-center">
+<p class="plantuml">
+<object data="_images/plantuml-2c555e95080ed9addabc25eebfa182c42cdec712.svg" type="image/svg+xml" style="max-width:100%">
+<img src="_images/plantuml-2c555e95080ed9addabc25eebfa182c42cdec712.png" alt="skinparam backgroundColor transparent
+
+file input {
+}
+
+object Step1 {
+--param1
+}
+object Step2 {
+}
+object Step3 {
+--param2
+-o
+}
+
+file interm {
+}
+
+file output {
+}
+
+input --&gt; Step1
+Step1 -&gt; Step2
+Step2 -&gt; Step3
+Step2 --&gt; interm
+Step3 --&gt; output"/>
+
+</object></p>
+</figure>
+<p>The diagram depicts the sequence of steps performed by the command.
+If any, the command line options are listed for each step.
+On top of the sequence are the inputs, and below the sequence are the (intermediate and final) outputs.</p>
+<p>After this overview section, inputs and outputs are described.
+Then, more details are given for each step and parameter.
+Additional sections may dive deeper on a case-by-case basis.</p>
 </section>
 </section>
 
