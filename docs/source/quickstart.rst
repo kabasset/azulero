@@ -124,4 +124,45 @@ All of them follow a common interface on one hand, and have their own specificit
 
 The shared interface concepts are described in :doc:`interfaces`
 -- make sure to read this page first!
-Then, each command has its own documentation page, named after itself!
+
+Then, each command has its own documentation page named after itself, e.g. :doc:`retrieve` or :doc:`process`.
+In these pages, commands are presented graphically, like:
+
+.. plantuml::
+   :align: center
+   :max-width: 100%
+
+   skinparam backgroundColor transparent
+
+   file input {
+   }
+
+   object Step1 {
+   --param1
+   }
+   object Step2 {
+   }
+   object Step3 {
+   --param2
+   -o
+   }
+
+   file interm {
+   }
+
+   file output {
+   }
+
+   input --> Step1
+   Step1 -> Step2
+   Step2 -> Step3
+   Step2 --> interm
+   Step3 --> output
+
+The diagram depicts the sequence of steps performed by the command.
+If any, the command line options are listed for each step.
+On top of the sequence are the inputs, and below the sequence are the (intermediate and final) outputs.
+
+After this overview section, inputs and outputs are described.
+Then, more details are given for each step and parameter.
+Additional sections may dive deeper on a case-by-case basis.
