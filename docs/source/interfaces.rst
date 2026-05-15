@@ -10,18 +10,34 @@ Commands
 --------
 
 The main script is ``azul``.
-It supports a variety of so-called commands,
-such as ``retrieve`` to retrieve datafiles or ``process`` to render color images.
-There are both global options, common to all commands, which are passed between ``azul`` and the command name,
-and command options, which are passed after the command name.
+It supports a variety of so-called **commands**,
+such as ``retrieve`` to download datafiles or ``process`` to render color images.
+All commands follow the same pattern::
 
-For example, the log level is a global option named ``--log``
-and the search radius is a ``retrieve``-specific option named ``-r``.
-The following line sets both:
+   azul [global_options] <command> <inputs> [options]
+
+with:
+
+``[global_options]``
+   Optional global options (e.g. ``--log DEBUG``).
+``<command>``
+   The name of the command (e.g. ``retrieve``).
+``<input>``
+   The space separated list of inputs (e.g. ``UGC11116 PGC61356``).
+   If the list is empty, then ``stdin`` is read (see :doc:`pipelines`).
+``[options]``
+   The command options (e.g. ``-r 1m``).
+
+Global options, common to all commands, are passed *between* ``azul`` and the command name,
+and command options are passed *after* the command name, before or after inputs.
+Option ``-o <output>`` exists for all commands.
+
+Here is an example command line with global and command options,
+a list of inputs and an output specification:
 
 .. prompt:: bash
 
-   azul --log DEBUG retrieve -r 1m NGC6505
+   azul --log DEBUG retrieve -r 1m UGC11116 PGC61356 -o {target}
 
 
 ..  _named_options:
