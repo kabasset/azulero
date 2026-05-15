@@ -8,17 +8,6 @@ Overview
 such as coordinates or named astronomical objects.
 The retrieved files are organized in directories we call **workdirs**.
 
-The atomic MER data footprint is a **tile**
-and all MER products over a tile (images, masks, catalogs) are properly aligned.
-Tiles are assigned a unique **tile index**.
-There are two main types of tiles: DEEP and WIDE.
-DEEP tiles quite small (17' x 17' in the sky and roughly 10k x 10k pixels in images)
-but made of several Euclid observations already stacked by MER.
-Stacking makes fainter objects visible and lowers the noise level.
-WIDE tiles are comparatively larger (32' x 32', 20k x 20k pixels) and not MER-stacked.
-When there are several observations over a single WIDE tile,
-``azul process`` stacks them itself.
-
 As depicted below, ``azul retrieve`` consists of two main steps:
 
 #. Querying the indices of the tiles which contain input targets;

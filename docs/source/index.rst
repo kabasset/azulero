@@ -29,6 +29,7 @@ The image below is the raw output of:
    :maxdepth: 1
    :hidden:
 
+   primer
    news
    quickstart
    interfaces
