@@ -34,6 +34,7 @@ extensions = [
     "sphinx_subfigure",
     "sphinxcontrib.video",
     "sphinxarg.ext",
+    "sphinx_changelog",
 ]
 source_suffix = {".rst": "restructuredtext"}
 templates_path = ["_templates"]

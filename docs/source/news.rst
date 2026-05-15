@@ -29,7 +29,7 @@ Collage
    In combination with cutout retrieval, it offers a very convenient way to render images from catalogs.
 
 All of these evolutions come with breaking changes, thus the major version number.
-Here is an overview (for more details, see the change log):
+Here is an overview (for more details, see the :doc:`changes`):
 
 Updated commands:
 
