@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Change log &#8212; azulero v2.0</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=5ec2a83a" />
+    <script src="_static/documentation_options.js?v=7f41d439"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=35a8b989"></script>
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+              <div class="related top">
+                &nbsp;
+  <nav id="rellinks">
+    <ul>
+    </ul>
+  </nav>
+              </div>
+          
+
+          <div class="body" role="main">
+            
+
+
+  <section id="change-log">
+<h1>Change log</h1>
+<p># 2.0</p>
+<p>## Breaking changes</p>
+<ul class="simple">
+<li><p>The following commands are deprecated:
+* <cite>find</cite> (merged into <cite>retrieve</cite>),
+* <cite>crop</cite> (partially replaced with cutout retrieval, to be fully replaced later),
+* <cite>assemble</cite> (previously experimental, replaced with <cite>arrange</cite>),
+* <cite>tune</cite> (previously experimental, to be merged into <cite>process</cite> later).</p></li>
+</ul>
+<p><cite>azul retrieve</cite></p>
+<ul class="simple">
+<li><p>Data provider <cite>sas</cite> was renamed as <cite>pdr</cite>.</p></li>
+</ul>
+<p><cite>azul process</cite></p>
+<ul class="simple">
+<li><p>Default dynamic range parameters were updated to increase SNR.</p></li>
+<li><p>Option <cite>–wcs</cite> was removed:
+* For FITS files, standard WCS records are used;
+* For TIFF files, the parameters are saved as standard metadata;
+* For other formats, the parameters are written following the output name with extension <cite>.wcs</cite>.</p></li>
+</ul>
+<p><cite>azul roam</cite></p>
+<ul class="simple">
+<li><p>The key frames file is passed as a named option.</p></li>
+</ul>
+<p>## Bug fixes</p>
+<p><cite>azul process</cite></p>
+<ul class="simple">
+<li><p>In some systems and environments, the script was crashing when <cite>–wcs</cite> was enabled and no slicing was performed.</p></li>
+<li><p>Masked saturated stars were rendered too dim.</p></li>
+</ul>
+<p>## New features</p>
+<ul class="simple">
+<li><p>The following commands were added: <cite>arrange</cite>, <cite>cite</cite>.</p></li>
+<li><p>The following commands support piping:
+* <cite>retrieve</cite> can read targets from <cite>stdin</cite>, write workdirs to <cite>stdout</cite>,
+* <cite>process</cite> can read workdirs from <cite>stdout</cite>, write render filenames to <cite>stdout</cite>,
+* <cite>arrange</cite> can read inputs from <cite>stdin</cite>, write collage filename to <cite>stdout</cite>,
+* <cite>roam</cite> can read input from <cite>stdin</cite>, write video filename to <cite>stdout</cite>.</p></li>
+<li><p>Default arguments can be overloaded with environment variables.</p></li>
+</ul>
+<p><cite>azul retrieve</cite></p>
+<ul class="simple">
+<li><p>Retrieve named objects.</p></li>
+<li><p>Retrieve coordinates.</p></li>
+<li><p>Retrieve cutouts (option <cite>-r</cite>).</p></li>
+<li><p>Option <cite>-n</cite> limits the number of tiles per target.</p></li>
+<li><p>Option <cite>-q</cite> performs queries only (no download).</p></li>
+<li><p>Option <cite>-f</cite> with no argument forces all downloads.</p></li>
+</ul>
+<p><cite>azul process</cite></p>
+<ul class="simple">
+<li><p>Process a sequence of workdirs.</p></li>
+<li><p>Accept workdirs with subfolders.</p></li>
+<li><p>Auto-tune white point with <cite>-w 0</cite>.</p></li>
+<li><p>Clipping is enabled by <cite>–curves</cite>.</p></li>
+</ul>
+<p><cite>azul arrange</cite></p>
+<ul class="simple">
+<li><p>Arrange a collection of images into a regular grid.</p></li>
+</ul>
+<p><cite>azul roam</cite></p>
+<ul class="simple">
+<li><p>Add WCS to planar projection.</p></li>
+</ul>
+<p><cite>azul cite</cite></p>
+<ul class="simple">
+<li><p>Print citation instructions.</p></li>
+</ul>
+<p>## Cleaning</p>
+<ul class="simple">
+<li><p>Logs are written to <cite>stderr</cite> with a proper logger, which also supports log levels (option <cite>–log</cite>).</p></li>
+<li><p>Documentation uses proper HTML pages (which include CLI documentation).</p></li>
+<li><p>Video tutorials are published.</p></li>
+<li><p>Packaging is handled with <cite>uv</cite>.</p></li>
+<li><p>Merged <cite>AstroQuery</cite> class into <cite>SAS</cite>.</p></li>
+<li><p>Pixel ordering is consistent.</p></li>
+</ul>
+<p># 1.2.0</p>
+<p>## New features</p>
+<p><cite>azul find</cite></p>
+<ul class="simple">
+<li><p>FITS files and WCS files are supported as input with option <cite>–wcs</cite>,
+in which case the location is returned in pixel coordinates,
+and an <cite>azul process</cite> command is proposed to process the region around the location.</p></li>
+</ul>
+<p><cite>azul process</cite></p>
+<ul class="simple">
+<li><p>Outputs can be saved as FITS files, in which case WCS records are written to the header.</p></li>
+<li><p>For all output formats, a WCS file can be saved with option <cite>–wcs</cite>.</p></li>
+</ul>
+<p><cite>azul roam</cite></p>
+<ul class="simple">
+<li><p>A FITS file or WCS file can be passed to option <cite>–wcs</cite>.</p></li>
+<li><p>Equirectangular images are supported as input.</p></li>
+<li><p>Gaia Sky is supported as input.</p></li>
+<li><p>RA/dec coordinates are supported for equirectangular images, Gaia Sky, or with option <cite>–wcs</cite>.</p></li>
+<li><p>Zoom can be specified as a horizontal field of view for equirectangular images, Gaia Sky, or with option <cite>–wcs</cite>.</p></li>
+<li><p>Low-pass filter is applied for wide fields of view to prevent aliasing.</p></li>
+</ul>
+<p>## Improvements</p>
+<p><cite>azul process</cite></p>
+<ul class="simple">
+<li><p>Arbitrary output paths can be configured with new placeholder <cite>{workspace}</cite>.</p></li>
+</ul>
+<p><cite>azul roam</cite></p>
+<ul class="simple">
+<li><p>Output name is built from input names.</p></li>
+<li><p>Default FPS is 25.</p></li>
+</ul>
+<p>## Optimization</p>
+<p><cite>azul roam</cite></p>
+<ul class="simple">
+<li><p>Image pyramids are built to speed up rendering of frames with wide fields of view.</p></li>
+</ul>
+<p>## Known issues</p>
+<p><cite>azul find</cite></p>
+<ul class="simple">
+<li><p>kabasset/azulero#35 - Cartesian coordinates are used,
+which cannot handle positions around RA = 0° = 360° or dec = +/-90°
+(where there are no Euclid data anyway).</p></li>
+</ul>
+<p><cite>azul process</cite></p>
+<ul class="simple">
+<li><p>kabasset/azulero#16 - Inpainted saturated pixel are rendered too dim.</p></li>
+</ul>
+<p><cite>azul roam</cite></p>
+<ul class="simple">
+<li><p>kabasset/azulero#55 - Zoom &lt; 1° is not supported for Gaia Sky.</p></li>
+<li><p>kabasset/azulero#31 - Zoom &gt; 100% is not supported.</p></li>
+</ul>
+<p># 1.1.1</p>
+<p>## Bug fixes</p>
+<p><cite>azul process</cite></p>
+<ul class="simple">
+<li><p>Command did crash when output template contained <cite>{step}</cite>.</p></li>
+</ul>
+<p># 1.1.0</p>
+<p>## Bug fixes</p>
+<p><cite>azul crop</cite></p>
+<ul class="simple">
+<li><p>Command did crash when reading the image.</p></li>
+</ul>
+<p>## New features</p>
+<p><cite>azul retrieve</cite></p>
+<ul class="simple">
+<li><p>New, SAS-based data provider for Internal Data Releases (default provider).</p></li>
+</ul>
+<p>## Improvements</p>
+<p><cite>azul process</cite></p>
+<ul class="simple">
+<li><p>Stacking of multiple inputs per channel relies on median instead of mean.</p></li>
+<li><p>Ouput(s) can be written anywhere, not only in the tile folder.</p></li>
+</ul>
+<p>## Optimization</p>
+<p><cite>azul process</cite></p>
+<ul class="simple">
+<li><p>Inpainting is a bit less memory-greedy.</p></li>
+</ul>
+<p># 1.0.0</p>
+<p>## Initial features</p>
+<p><cite>azul find</cite></p>
+<ul class="simple">
+<li><p>[Requires internet] Find object coordinates.</p></li>
+<li><p>[Euclid members] Find index of tiles containing given objects or coordinates.</p></li>
+</ul>
+<p><cite>azul retrieve</cite></p>
+<ul class="simple">
+<li><p>[Requires internet] Download input data for a collection of tiles.</p></li>
+</ul>
+<p><cite>azul crop</cite></p>
+<ul class="simple">
+<li><p>Select the region to be rendered with a rudimentary graphical interface.</p></li>
+</ul>
+<p><cite>azul process</cite></p>
+<ul class="simple">
+<li><p>Render a color image from MER data.</p></li>
+</ul>
+<p><cite>azul roam</cite></p>
+<ul class="simple">
+<li><p>Produce a pan-and-zoom video from an image.</p></li>
+</ul>
+<p>## Known issues</p>
+<p><cite>azul find</cite></p>
+<ul class="simple">
+<li><p>kabasset/azulero#35 - Cartesian coordinates are used, which cannot handle positions around RA = 0° = 360° or dec = +/-90° (where there are no Euclid data anyway).</p></li>
+</ul>
+<p><cite>azul process</cite></p>
+<ul class="simple">
+<li><p>kabasset/azulero#16 - Inpainted saturated pixel are rendered too dim.</p></li>
+<li><p>kabasset/azulero#19 - Missing values are badly handled when multiple inputs are provided for a channel.</p></li>
+</ul>
+<p><cite>azul roam</cite></p>
+<ul class="simple">
+<li><p>kabasset/azulero#31 - Zoom &gt; 100% is not supported.</p></li>
+</ul>
+</section>
+
+
+
+          </div>
+              <div class="related bottom">
+                &nbsp;
+  <nav id="rellinks">
+    <ul>
+    </ul>
+  </nav>
+              </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/logo.png" alt="Logo of azulero"/>
+            </a></p>
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="news.html">What’s new</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="interfaces.html">General interface design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="retrieve.html"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="process.html"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="arrange.html"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">arrange</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="roam.html"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">roam</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="pipelines.html">Pipelines</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div><h3>More...</h3>
+<ul>
+    <li><a href="http://doi.org/10.24400/815952/Azulero">Project homepage</a></li>
+    <li><a href="devnotes.html">Developer notes</a></li>
+</ul>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025-2026, Antoine Basset (CNES) and contributors.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
