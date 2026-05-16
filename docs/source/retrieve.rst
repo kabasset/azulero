@@ -126,6 +126,8 @@ In general, spaces can be omitted, though, such that the two following lines are
    azul retrieve "NGC 6505"
    azul retrieve NGC6505
 
+.. warning:: Currently, using spaces in target names may break :doc:`pipelines`.
+
 
 Query
 -----
@@ -154,6 +156,12 @@ There are several such providers, which store different sets of data:
 ``dss`` (Distributed Storage System)
    Contains everything!
 
+.. warning:: Provider ``dss`` does not natively support named objects and coordinates retrieval.
+
+   A `MER tiling file <https://gitlab.euclid-sgs.uk/sy-tools/ST_SMT_DATA/-/raw/DR1/data/DpdMerFinalCatalog.geojson?ref_type=heads>`_
+   must be given to option ``--tiling``.
+   This is a temporary workaround which we hope to improve in the next version.
+
 
 Download
 --------
@@ -174,7 +182,11 @@ Therefore, the following line:
 
 downloads 2' x 2' regions for NGC6505 and (270.93, 67.05), as well as the whole 102157949 tile.
 
-.. warning:: As of today, provider ``dss`` does not support the cutout service.
+.. warning:: Provider ``dss`` does not natively support the cutout service.
+
+   A full tile will be downloaded and cut locally.
+   Ensure that the target and tile directories as specified with option ``-o`` are distinct
+   (this is the case with the default value).
 
 By default, if a file to be downloaded already exists in the specified workdir, it is skipped.
 This behavior can be changed by forcing downloads with flag ``-f``.
