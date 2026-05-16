@@ -10,7 +10,7 @@
     <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=5ec2a83a" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=4203e71c" />
     <script src="_static/documentation_options.js?v=7f41d439"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
@@ -67,14 +67,12 @@ The retrieved files are organized in directories we call <strong>workdirs</stron
 </ol>
 <figure class="align-center">
 <p class="plantuml">
-<object data="_images/plantuml-6b6ddd78fed3f3e1022e50efb7bb690f8554b36e.svg" type="image/svg+xml" style="max-width:100%">
-<img src="_images/plantuml-6b6ddd78fed3f3e1022e50efb7bb690f8554b36e.png" alt="skinparam backgroundColor transparent
+<object data="_images/plantuml-7754c3822aba265de6c8ef98c34b95ad4f444007.svg" type="image/svg+xml" style="max-width:100%">
+<img src="_images/plantuml-7754c3822aba265de6c8ef98c34b95ad4f444007.png" alt="skinparam backgroundColor transparent
 
 card target {
 }
 
-object Resolve {
-}
 object Query {
 --from
 --dsr
@@ -89,8 +87,7 @@ object Download {
 folder workdir {
 }
 
-target --&gt; Resolve
-Resolve -&gt; Query
+target --&gt; Query
 Query -&gt; Download
 Download --&gt; workdir"/>
 
@@ -101,13 +98,13 @@ Download --&gt; workdir"/>
 <h2>Inputs</h2>
 <p>The command takes as input the list of targets, which may be of different types:</p>
 <dl class="simple">
-<dt>Tiles</dt><dd><p>Tiles are passed as integers.</p>
+<dt>Tiles</dt><dd><p>Integers are parsed as tile indices.</p>
 </dd>
-<dt>Coordinates</dt><dd><p>Coordinates are passed using any format accepted by Astropy’s <code class="docutils literal notranslate"><span class="pre">SkyCoord</span></code>,
-typically as ICRS comma-separated right ascension and declination.</p>
+<dt>Coordinates</dt><dd><p>If the target contains a comma, it is considered as RA/Dec coordinates
+in degrees, using ICRS reference frame.</p>
 </dd>
-<dt>Named objects</dt><dd><p>Named objects are passed as strings,
-coordinates of which are looked up in the <a class="reference external" href="https://cds.unistra.fr/cgi-bin/Sesame">CDS name resolver</a>.</p>
+<dt>Named objects</dt><dd><p>Other types of input are parsed as object names.
+Their coordinates are looked up in the <a class="reference external" href="https://cds.unistra.fr/cgi-bin/Sesame">CDS name resolver</a>.</p>
 </dd>
 </dl>
 <p>For example, the following command would retrieve the tiles covering targets of each type:</p>
@@ -116,7 +113,15 @@ span.prompt1:before {
   content: "$ ";
 }
 </style><span class="prompt1">azul<span class="w"> </span>retrieve<span class="w"> </span>NGC6505<span class="w"> </span><span class="m">270</span>.93,67.05<span class="w"> </span><span class="m">102157949</span></span>
-</pre></div></div></section>
+</pre></div></div><p>If the target <em>has to</em> contain spaces or special characters, the argument must be given between quotes.
+In general, spaces can be omitted, though, such that the two following lines are equivalent:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">azul<span class="w"> </span>retrieve<span class="w"> </span><span class="s2">&quot;NGC 6505&quot;</span></span>
+<span class="prompt1">azul<span class="w"> </span>retrieve<span class="w"> </span>NGC6505</span>
+</pre></div></div><div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Currently, using spaces in target names may break <a class="reference internal" href="pipelines.html"><span class="doc">Pipelines</span></a>.</p>
+</div>
+</section>
 <section id="outputs">
 <span id="workspace"></span><h2>Outputs</h2>
 <p>The files are downloaded into a dedicated <strong>workdir</strong> for each target, inside some parent <strong>workspace</strong>.
@@ -163,19 +168,6 @@ The template is rendered as follows:</p>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="name-resolution">
-<h2>Name resolution</h2>
-<p>In order for <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code> to download data files containing a named object,
-the coordinates of the latter are queried to the <a class="reference external" href="https://cds.unistra.fr/cgi-bin/Sesame">CDS name resolver</a>.</p>
-<p>If the name has to contain spaces or special characters, the argument must be given between quotes.
-In general, spaces can be omitted, though, such that the two following lines are equivalent:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">azul<span class="w"> </span>retrieve<span class="w"> </span><span class="s2">&quot;NGC 6505&quot;</span></span>
-<span class="prompt1">azul<span class="w"> </span>retrieve<span class="w"> </span>NGC6505</span>
-</pre></div></div><div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>Currently, using spaces in target names may break <a class="reference internal" href="pipelines.html"><span class="doc">Pipelines</span></a>.</p>
-</div>
 </section>
 <section id="query">
 <h2>Query</h2>
@@ -315,7 +307,6 @@ Only the latter is specified to <code class="docutils literal notranslate"><span
 <li><a class="reference internal" href="#overview">Overview</a></li>
 <li><a class="reference internal" href="#inputs">Inputs</a></li>
 <li><a class="reference internal" href="#outputs">Outputs</a></li>
-<li><a class="reference internal" href="#name-resolution">Name resolution</a></li>
 <li><a class="reference internal" href="#query">Query</a></li>
 <li><a class="reference internal" href="#download">Download</a></li>
 <li><a class="reference internal" href="#more-on-data-providers">More on data providers</a></li>
