@@ -116,8 +116,8 @@ The latter will be replaced with the name of the intermediate step as follows:
 
 For example, using the template ``{workspace}/{workdir}/{target}_{tile}_{step}.tiff``,
 the inpainting mask tile 102159776 will be saved as ``Tile_102159776_mask.tiff`` in the workdir.
-If, instead, ``-o {tile}.jpg`` is used, then the output will be a single JPG file in the current directory
-and no intermediate steps will be saved.
+If, instead, ``-o {tile}.jpg`` is used, then the output will be a JPG file in the current directory
+accompanied by a ``.wcs`` file, and no intermediate steps will be saved.
 
 
 Stacking
@@ -179,6 +179,19 @@ Special value ``-w 0`` triggers data-driven tuning based on image statistics.
 It generally gives good results, but using it will prevent stitching multiple images,
 since they will be rendered with inconsistent stretching parameters.
 
+.. plantuml::
+   :width: 100%
+
+   @startchart
+   h-axis "data" 0 --> 1 spacing 1 label-right
+   v-axis "stretched" 0 --> 1 spacing 1 label-top
+   line "a = 29" [(0.0, 0.1566693273236386), (0.0025000000000000005, 0.26751941663491213), (0.010000000000000002, 0.42054499330650014), (0.022500000000000006, 0.5213702076810071), (0.04000000000000001, 0.5937424146421468), (0.0625, 0.6500126348281552), (0.09000000000000002, 0.696022297131805), (0.12250000000000003, 0.7349338993349093), (0.16000000000000003, 0.7686449691032505), (0.2025, 0.7983821606048738), (0.25, 0.8249839288823392), (0.30250000000000005, 0.8490486561475633), (0.3600000000000001, 0.871018313242587), (0.42250000000000004, 0.8912286060955338), (0.4900000000000001, 0.9099405182020133), (0.5625, 0.9273609580163409), (0.6400000000000001, 0.9436567350792956), (0.7225000000000001, 0.9589642944866931), (0.81, 0.9733966661283485), (0.9025000000000001, 0.9870485332838725), (1.0, 1.0)] #F88
+   line "a = 27" [(0.0, 0.0488784634166931), (0.0025000000000000005, 0.07976275599379179), (0.010000000000000002, 0.1658922792796087), (0.022500000000000006, 0.27484067675024926), (0.04000000000000001, 0.37445609923347567), (0.0625, 0.45798501027078065), (0.09000000000000002, 0.528093480047535), (0.12250000000000003, 0.5880162185258003), (0.16000000000000003, 0.6401835286676365), (0.2025, 0.6863155911936527), (0.25, 0.7276400963687304), (0.30250000000000005, 0.7650535088865191), (0.3600000000000001, 0.7992267100085552), (0.42250000000000004, 0.8306733581107195), (0.4900000000000001, 0.8597948144236073), (0.5625, 0.8869103521523775), (0.6400000000000001, 0.9122779626934736), (0.7225000000000001, 0.9361090171057448), (0.81, 0.9585788175463841), (0.9025000000000001, 0.979834337652556), (1.0, 1.0)] #000
+   line "a = 25" [(0.0, 0.01310069295425506), (0.0025000000000000005, 0.021328871364393293), (0.010000000000000002, 0.045962219571342174), (0.022500000000000006, 0.08655093992199117), (0.04000000000000001, 0.14148527048102963), (0.0625, 0.20735322327317474), (0.09000000000000002, 0.2793484775656738), (0.12250000000000003, 0.3527557343730836), (0.16000000000000003, 0.4242178117457414), (0.2025, 0.49195163043381296), (0.25, 0.5553056269589933), (0.30250000000000005, 0.6142556383963345), (0.3600000000000001, 0.6690653320347311), (0.42250000000000004, 0.7201019431888923), (0.4900000000000001, 0.7677479198304585), (0.5625, 0.8123629772920163), (0.6400000000000001, 0.8542705654407106), (0.7225000000000001, 0.8937554628731269), (0.81, 0.9310660589387107), (0.9025000000000001, 0.9664183083145972), (1.0, 1.0)] #8F8
+   line "a = 23" [(0.0, 0.005058718071958012), (0.0025000000000000005, 0.00823546215909056), (0.010000000000000002, 0.017765195752798196), (0.022500000000000006, 0.03364343358957012), (0.04000000000000001, 0.0558527714179558), (0.0625, 0.0843482212135041), (0.09000000000000002, 0.11903750218882747), (0.12250000000000003, 0.1597578970576535), (0.16000000000000003, 0.206252637828269), (0.2025, 0.2581512749687633), (0.25, 0.3149594402619159), (0.30250000000000005, 0.3760629533854005), (0.3600000000000001, 0.4407487497313035), (0.42250000000000004, 0.5082409667414367), (0.4900000000000001, 0.5777462176315283), (0.5625, 0.6484995627531843), (0.6400000000000001, 0.7198031103326812), (0.7225000000000001, 0.7910521122756975), (0.81, 0.8617472725981691), (0.9025000000000001, 0.9314951295268422), (1.0, 1.0)] #88F
+   legend right
+   @endchart
+
 
 Blending
 --------
@@ -229,12 +242,12 @@ therefore it has higher weight in the output lightness.
 The different weight parameters control the different blending contributions:
 ``--ib`` (resp. ``--yg``, ``--jr``, ``--nirl``) control the relative contribution
 of I (resp. Y, J, NIR) to B (resp. G, R, L).
-We have chosen to use only I to generate B, and to compress YJH into GR.
+As default parameters, we have chosen to use only I to generate B, and to compress YJH into GR.
 Other research groups made different choices
 like skipping completely J for ERO images,
 using I only for L and YJH for RGB in many articles,
 or merging YJ into G and use only H for R in the eummy_ package.
-The default parameters of Azulero were challenged on thousands of various objects and always give pleasant results.
+The default parameters of Azulero were challenged on thousands of various objects and always gave pleasant results.
 That being said, there is no good or bad approach and you can create your own palette by varying the blending parameters.
 
 
@@ -243,6 +256,7 @@ Adjustment
 
 Before combining the intermediate RGB and L channels,
 hue is rotated (parameter ``--hue``) and saturation is boosted (``--saturation``).
+
 The intensity of each color channel is then adjusted using splines
 similar to Photoshop and Gimp curves (``--curves``).
 
@@ -283,6 +297,7 @@ Depending on your system, it may be necessary to add quotes:
 .. prompt:: bash
 
    azul process "102159776[5000:,:5000]"
+
 
 .. _eummy: https://github.com/schirmermischa/eummy
 .. _euniverse: https://github.com/schirmermischa/euniverse
