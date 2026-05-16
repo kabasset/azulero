@@ -59,7 +59,7 @@
 <h2>Overview</h2>
 <p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code> finds and downloads Euclid MER data which contain specified <strong>targets</strong>,
 such as coordinates or named astronomical objects.
-The retrieved files are organized in directories we call <strong>workdirs</strong>.</p>
+The retrieved files are organized in directories we call <strong>workdirs</strong> (see <a class="reference internal" href="#workspace"><span class="std std-ref">Outputs</span></a>).</p>
 <p>As depicted below, <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code> consists of two main steps:</p>
 <ol class="arabic simple">
 <li><p>Querying the indices of the tiles which contain input targets;</p></li>
@@ -197,10 +197,13 @@ It is updated from time to time between data releases.</p>
 must be given to option <code class="docutils literal notranslate"><span class="pre">--tiling</span></code>.
 This is a temporary workaround which we hope to improve in the next version.</p>
 </div>
+<p>Option <code class="docutils literal notranslate"><span class="pre">--dsr</span></code> is used to restrict the returned tiles according to the value of their <code class="docutils literal notranslate"><span class="pre">DataSetRelease</span></code> attribute.
+By default, dataset releases for Q1 and DR1 releases are enabled.</p>
+<p>Option <code class="docutils literal notranslate"><span class="pre">-n</span></code> limits the number of tiles returned by target.
+This is especially handy when one wants to get exactly one image per target (<code class="docutils literal notranslate"><span class="pre">-n</span> <span class="pre">1</span></code>).</p>
 </section>
 <section id="download">
 <h2>Download</h2>
-<p>TODO</p>
 <p>When retrieving coordinates or named objects, a cone radius can be passed as option <code class="docutils literal notranslate"><span class="pre">-r</span></code>,
 which triggers a cutout service and downloads only a square region around the target.
 All formats handled by Astropy’s <code class="docutils literal notranslate"><span class="pre">Angle</span></code> are accepted.</p>
@@ -216,10 +219,11 @@ Therefore, the following line:</p>
 Ensure that the target and tile directories as specified with option <code class="docutils literal notranslate"><span class="pre">-o</span></code> are distinct
 (this is the case with the default value).</p>
 </div>
+<p>Flag <code class="docutils literal notranslate"><span class="pre">-q</span></code> stands for “query only” and interrupts the command before effectively downloading data,
+such that the filenames you look for will be returned but no file download will happen.</p>
 <p>By default, if a file to be downloaded already exists in the specified workdir, it is skipped.
 This behavior can be changed by forcing downloads with flag <code class="docutils literal notranslate"><span class="pre">-f</span></code>.
 In this case, files which already exist will be overwritten.</p>
-<p>TODO selective forcing</p>
 </section>
 <section id="more-on-data-providers">
 <h2>More on data providers</h2>
