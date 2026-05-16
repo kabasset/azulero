@@ -70,14 +70,14 @@ All commands follow the same pattern:</p>
 </div>
 <p>with:</p>
 <dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">[global_options]</span></code></dt><dd><p>Optional global options (e.g. <code class="docutils literal notranslate"><span class="pre">--log</span> <span class="pre">DEBUG</span></code>).</p>
+<dt><code class="docutils literal notranslate"><span class="pre">[global_options]</span></code></dt><dd><p>Optional global arguments (e.g. <code class="docutils literal notranslate"><span class="pre">--log</span> <span class="pre">DEBUG</span></code>).</p>
 </dd>
 <dt><code class="docutils literal notranslate"><span class="pre">&lt;command&gt;</span></code></dt><dd><p>The name of the command (e.g. <code class="docutils literal notranslate"><span class="pre">retrieve</span></code>).</p>
 </dd>
 <dt><code class="docutils literal notranslate"><span class="pre">&lt;input&gt;</span></code></dt><dd><p>The space separated list of inputs (e.g. <code class="docutils literal notranslate"><span class="pre">UGC11116</span> <span class="pre">PGC61356</span></code>).
 If the list is empty, then <code class="docutils literal notranslate"><span class="pre">stdin</span></code> is read (see next section and <a class="reference internal" href="pipelines.html"><span class="doc">Pipelines</span></a>).</p>
 </dd>
-<dt><code class="docutils literal notranslate"><span class="pre">[options]</span></code></dt><dd><p>The command options (e.g. <code class="docutils literal notranslate"><span class="pre">-r</span> <span class="pre">1m</span></code>).</p>
+<dt><code class="docutils literal notranslate"><span class="pre">[options]</span></code></dt><dd><p>Optional command arguments (e.g. <code class="docutils literal notranslate"><span class="pre">-r</span> <span class="pre">1m</span></code>).</p>
 </dd>
 </dl>
 <p>Global options, common to all commands, are passed <em>between</em> <code class="docutils literal notranslate"><span class="pre">azul</span></code> and the command name,
@@ -89,14 +89,52 @@ a list of inputs and an output specification:</p>
 span.prompt1:before {
   content: "$ ";
 }
-</style><span class="prompt1">azul<span class="w"> </span>--log<span class="w"> </span>DEBUG<span class="w"> </span>retrieve<span class="w"> </span>-r<span class="w"> </span>1m<span class="w"> </span>UGC11116<span class="w"> </span>PGC61356<span class="w"> </span>-o<span class="w"> </span><span class="o">{</span>target<span class="o">}</span></span>
+</style><span class="prompt1">azul<span class="w"> </span>--log<span class="w"> </span>DEBUG<span class="w"> </span>retrieve<span class="w"> </span>-r<span class="w"> </span>1m<span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="w"> </span>UGC11116<span class="w"> </span>PGC61356<span class="w"> </span>-o<span class="w"> </span><span class="o">{</span>target<span class="o">}</span></span>
 </pre></div></div></section>
+<section id="workspace-input-and-output-paths">
+<span id="workspace"></span><h2>Workspace, input and output paths</h2>
+<p>Azulero defines three types of directories:</p>
+<dl class="simple">
+<dt>Workspace</dt><dd><p>A parent directory under which all inputs and outputs are located by default.</p>
+</dd>
+<dt>Tiledirs</dt><dd><p>Directories inside the workspace which contain data for a single tile.
+Tiledirs are named after the tile index.</p>
+</dd>
+<dt>Workdirs</dt><dd><p>Directories inside the workspace, generally inside tiledirs, which contain data for a single target.</p>
+</dd>
+</dl>
+<p>By default, all paths passed as input of a command are assumed to be relative to the workspace,
+unless they are absolute paths.
+Output paths are specified as templates with curly brace-enclosed placeholders.
+The placeholders are replaced with values depending on the command parameters.
+For example, most output path start with placeholder <code class="docutils literal notranslate"><span class="pre">{workspace}</span></code>,
+which will be rendered as the actual workspace path.</p>
+</section>
+<section id="global-options">
+<h2>Global options</h2>
+<p>Global options are:</p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">--log</span></code></dt><dd><p>The log level, either <code class="docutils literal notranslate"><span class="pre">DEBUG</span></code>, <code class="docutils literal notranslate"><span class="pre">INFO</span></code> (the default), <code class="docutils literal notranslate"><span class="pre">WARNING</span></code> or <code class="docutils literal notranslate"><span class="pre">ERROR</span></code>.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">--workspace</span></code></dt><dd><p>The path to the workspace.
+Defaults to the current directory.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">--channels</span></code></dt><dd><p>The way the four Euclid bands are uniquely identified in the paths to MER data, e.g. <code class="docutils literal notranslate"><span class="pre">NIR-J</span></code>.
+Unless you generate MER-like data yourself, you should not use this option.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">--input</span></code></dt><dd><p>The glob pattern used to find Euclid bands in a workdir.
+It must contain placeholder <code class="docutils literal notranslate"><span class="pre">{channel}</span></code>, which is rendered accordingly to the values of option <code class="docutils literal notranslate"><span class="pre">--channels</span></code>.
+For example, <code class="docutils literal notranslate"><span class="pre">*_{channel}_*.fits</span></code> would accept files with <code class="docutils literal notranslate"><span class="pre">.fits</span></code> extension
+which contain the band name (e.g. <code class="docutils literal notranslate"><span class="pre">NIR-J</span></code>) separated from other chunks by underscores.</p>
+</dd>
+</dl>
+</section>
 <section id="standard-streams">
 <h2>Standard streams</h2>
-<p>Azulero passes various messages via standard streams:</p>
+<p>Azulero commands read and write different types of messages from and to the different standard streams:</p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">stdin</span></code></dt><dd><p>When no inputs are provided to the command line, they are read from <code class="docutils literal notranslate"><span class="pre">stdin</span></code>.
-If <code class="docutils literal notranslate"><span class="pre">stdin</span></code> is empty, then the command stops early.</p>
+If <code class="docutils literal notranslate"><span class="pre">stdin</span></code> is also empty, then the command stops early.</p>
 </dd>
 <dt><code class="docutils literal notranslate"><span class="pre">stdout</span></code></dt><dd><p>The results of the command (e.g. path to workdir or rendered image) are written to <code class="docutils literal notranslate"><span class="pre">stdout</span></code>
 for further use by commands down a pipeline.</p>
@@ -119,8 +157,8 @@ Each named option can be read from an environment variable named as follows:</p>
 <dt><code class="docutils literal notranslate"><span class="pre">&lt;COMMAND&gt;</span></code></dt><dd><p>The uppercase command name, if any, such as <code class="docutils literal notranslate"><span class="pre">RETRIEVE</span></code> or <code class="docutils literal notranslate"><span class="pre">PROCESS</span></code>,
 or nothing for global options.</p>
 </dd>
-<dt><code class="docutils literal notranslate"><span class="pre">&lt;OPTION&gt;</span></code></dt><dd><p>The uppercase long-from option name, such as <code class="docutils literal notranslate"><span class="pre">FROM</span></code> for <code class="docutils literal notranslate"><span class="pre">--from</span></code>
-or <code class="docutils literal notranslate"><span class="pre">WHITE</span></code> for <code class="docutils literal notranslate"><span class="pre">--white</span></code> (but not <code class="docutils literal notranslate"><span class="pre">W</span></code> for <code class="docutils literal notranslate"><span class="pre">-w</span></code>).</p>
+<dt><code class="docutils literal notranslate"><span class="pre">&lt;OPTION&gt;</span></code></dt><dd><p>The uppercase <em>long-from</em> option name, such as <code class="docutils literal notranslate"><span class="pre">FROM</span></code> for <code class="docutils literal notranslate"><span class="pre">--from</span></code>
+or <code class="docutils literal notranslate"><span class="pre">RADIUS</span></code> for <code class="docutils literal notranslate"><span class="pre">--radius</span></code> but not <code class="docutils literal notranslate"><span class="pre">R</span></code> for <code class="docutils literal notranslate"><span class="pre">-r</span></code>.</p>
 </dd>
 </dl>
 <p>For example:</p>
@@ -198,6 +236,8 @@ These parameters are overloaded by command line arguments.</p>
 <li><a class="reference internal" href="#">General interface design</a><ul>
 <li><a class="reference internal" href="#introduction">Introduction</a></li>
 <li><a class="reference internal" href="#commands">Commands</a></li>
+<li><a class="reference internal" href="#workspace-input-and-output-paths">Workspace, input and output paths</a></li>
+<li><a class="reference internal" href="#global-options">Global options</a></li>
 <li><a class="reference internal" href="#standard-streams">Standard streams</a></li>
 <li><a class="reference internal" href="#named-options">Named options</a></li>
 </ul>
