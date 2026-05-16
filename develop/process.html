@@ -270,7 +270,9 @@ a intermediate lightness map (L) is built from the VIS (I) intensity and average
 (specifically, the median stacking of YJH).
 Resolution in VIS is better than in NIR,
 therefore it has higher weight in the output lightness.</p>
-<p>The different weight parameters control the different blending contributions.
+<p>The different weight parameters control the different blending contributions:
+<code class="docutils literal notranslate"><span class="pre">--ib</span></code> (resp. <code class="docutils literal notranslate"><span class="pre">--yg</span></code>, <code class="docutils literal notranslate"><span class="pre">--jr</span></code>, <code class="docutils literal notranslate"><span class="pre">--nirl</span></code>) control the relative contribution
+of I (resp. Y, J, NIR) to B (resp. G, R, L).
 We have chosen to use only I to generate B, and to compress YJH into GR.
 Other research groups made different choices
 like skipping completely J for ERO images,
