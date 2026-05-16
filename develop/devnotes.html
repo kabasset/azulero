@@ -65,6 +65,20 @@ while grayscale images are inpainted with OpenCV’s Navier-Stokes algorithm.
 The former is very memory-greedy but renders much smoother large regions,
 which often occur at the center of galaxies.</p>
 </section>
+<section id="dps-tile-lookup">
+<h2>DPS tile lookup</h2>
+<p>The DPS does not offer fast-enough spatial queries to find the tiles in which a target lies.
+Therefore, we rely on SMT’s Geojson tiling.
+Would be nice that users do not need to download the tiling themselves.</p>
+</section>
+<section id="dps-cutout-service">
+<h2>DPS cutout service</h2>
+<p>At the moment, there is no cutout service in the DPS.
+Therefore, we perform the cutout locally after downloading the full tile.
+This assumes the <code class="docutils literal notranslate"><span class="pre">-o</span></code> parameter specifies different tile and target workdirs,
+otherwise the tile will be overwritten by the cutout,
+which may result in undefined behavior for subsequent retrievals.</p>
+</section>
 </section>
 
 
@@ -119,6 +133,8 @@ which often occur at the center of galaxies.</p>
 <li><a class="reference internal" href="#">Developer notes</a><ul>
 <li><a class="reference internal" href="#image-storage">Image storage</a></li>
 <li><a class="reference internal" href="#inpainting">Inpainting</a></li>
+<li><a class="reference internal" href="#dps-tile-lookup">DPS tile lookup</a></li>
+<li><a class="reference internal" href="#dps-cutout-service">DPS cutout service</a></li>
 </ul>
 </li>
 </ul>

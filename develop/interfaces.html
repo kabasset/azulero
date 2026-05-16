@@ -75,7 +75,7 @@ All commands follow the same pattern:</p>
 <dt><code class="docutils literal notranslate"><span class="pre">&lt;command&gt;</span></code></dt><dd><p>The name of the command (e.g. <code class="docutils literal notranslate"><span class="pre">retrieve</span></code>).</p>
 </dd>
 <dt><code class="docutils literal notranslate"><span class="pre">&lt;input&gt;</span></code></dt><dd><p>The space separated list of inputs (e.g. <code class="docutils literal notranslate"><span class="pre">UGC11116</span> <span class="pre">PGC61356</span></code>).
-If the list is empty, then <code class="docutils literal notranslate"><span class="pre">stdin</span></code> is read (see <a class="reference internal" href="pipelines.html"><span class="doc">Pipelines</span></a>).</p>
+If the list is empty, then <code class="docutils literal notranslate"><span class="pre">stdin</span></code> is read (see next section and <a class="reference internal" href="pipelines.html"><span class="doc">Pipelines</span></a>).</p>
 </dd>
 <dt><code class="docutils literal notranslate"><span class="pre">[options]</span></code></dt><dd><p>The command options (e.g. <code class="docutils literal notranslate"><span class="pre">-r</span> <span class="pre">1m</span></code>).</p>
 </dd>
@@ -91,72 +91,49 @@ span.prompt1:before {
 }
 </style><span class="prompt1">azul<span class="w"> </span>--log<span class="w"> </span>DEBUG<span class="w"> </span>retrieve<span class="w"> </span>-r<span class="w"> </span>1m<span class="w"> </span>UGC11116<span class="w"> </span>PGC61356<span class="w"> </span>-o<span class="w"> </span><span class="o">{</span>target<span class="o">}</span></span>
 </pre></div></div></section>
+<section id="standard-streams">
+<h2>Standard streams</h2>
+<p>Azulero passes various messages via standard streams:</p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">stdin</span></code></dt><dd><p>When no inputs are provided to the command line, they are read from <code class="docutils literal notranslate"><span class="pre">stdin</span></code>.
+If <code class="docutils literal notranslate"><span class="pre">stdin</span></code> is empty, then the command stops early.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">stdout</span></code></dt><dd><p>The results of the command (e.g. path to workdir or rendered image) are written to <code class="docutils literal notranslate"><span class="pre">stdout</span></code>
+for further use by commands down a pipeline.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">stderr</span></code></dt><dd><p>Azulero commands log to <code class="docutils literal notranslate"><span class="pre">stderr</span></code>.</p>
+</dd>
+</dl>
+<p>For more details, see <a class="reference internal" href="pipelines.html"><span class="doc">Pipelines</span></a>.</p>
+</section>
 <section id="named-options">
 <span id="id1"></span><h2>Named options</h2>
-<p>Named options like <code class="docutils literal notranslate"><span class="pre">--workspace</span></code> are not forwarded through pipelines.
-Typically, the following pipeline would break:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">azul<span class="w"> </span>--workspace<span class="w"> </span>/tmp<span class="w"> </span>retrieve<span class="w"> </span>NGC6505<span class="w"> </span><span class="p">|</span><span class="w"> </span>azul<span class="w"> </span>process</span>
-</pre></div></div><p>because <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code> would use the default workspace (<code class="docutils literal notranslate"><span class="pre">.</span></code>)
-instead of the custom workspace given to <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code>.</p>
-<p>Therefore, we have implemented an environment-level mechanism in order to avoid repeating them from command to command.
+<p>For pipelining and batch processing, Azulero offers an environment-level mechanism
+for setting named options like global option <code class="docutils literal notranslate"><span class="pre">--log</span></code> or <a class="reference internal" href="retrieve.html"><span class="doc">azul retrieve</span></a> option <code class="docutils literal notranslate"><span class="pre">--from</span></code>.
 Each named option can be read from an environment variable named as follows:</p>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span>AZUL<span class="nt">&lt;COMMAND&gt;</span>_<span class="nt">&lt;OPTION&gt;</span>
 </pre></div>
 </div>
-<p>where:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">&lt;COMMAND&gt;</span></code> is the uppercase command name, if any, such as <code class="docutils literal notranslate"><span class="pre">RETRIEVE</span></code> or <code class="docutils literal notranslate"><span class="pre">PROCESS</span></code>;</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">&lt;OPTION&gt;</span></code> is the uppercase long-from option name, such as <code class="docutils literal notranslate"><span class="pre">FROM</span></code> for <code class="docutils literal notranslate"><span class="pre">--from</span></code>
-or <code class="docutils literal notranslate"><span class="pre">WHITE</span></code> for <code class="docutils literal notranslate"><span class="pre">--white</span></code> (but not <code class="docutils literal notranslate"><span class="pre">W</span></code> for <code class="docutils literal notranslate"><span class="pre">-w</span></code>).</p></li>
-</ul>
+<p>with:</p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">&lt;COMMAND&gt;</span></code></dt><dd><p>The uppercase command name, if any, such as <code class="docutils literal notranslate"><span class="pre">RETRIEVE</span></code> or <code class="docutils literal notranslate"><span class="pre">PROCESS</span></code>,
+or nothing for global options.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">&lt;OPTION&gt;</span></code></dt><dd><p>The uppercase long-from option name, such as <code class="docutils literal notranslate"><span class="pre">FROM</span></code> for <code class="docutils literal notranslate"><span class="pre">--from</span></code>
+or <code class="docutils literal notranslate"><span class="pre">WHITE</span></code> for <code class="docutils literal notranslate"><span class="pre">--white</span></code> (but not <code class="docutils literal notranslate"><span class="pre">W</span></code> for <code class="docutils literal notranslate"><span class="pre">-w</span></code>).</p>
+</dd>
+</dl>
 <p>For example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1"><span class="nb">export</span><span class="w"> </span><span class="nv">AZUL_LOG</span><span class="o">=</span>DEBUG</span>
 <span class="prompt1"><span class="nb">export</span><span class="w"> </span><span class="nv">AZULRETRIEVE_FROM</span><span class="o">=</span>pdr</span>
 <span class="prompt1"><span class="nb">export</span><span class="w"> </span><span class="nv">AZULRETRIEVE_RADIUS</span><span class="o">=</span>1m</span>
 </pre></div></div><p>sets the log level to <code class="docutils literal notranslate"><span class="pre">DEBUG</span></code> for all commands,
-and sets the data provider to <code class="docutils literal notranslate"><span class="pre">pdr</span></code> and crop radius to 1 arcmin for <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code>.
+and sets the data provider to <code class="docutils literal notranslate"><span class="pre">pdr</span></code> and crop radius to 1 arcmin for <a class="reference internal" href="retrieve.html"><span class="doc">azul retrieve</span></a>.
 These parameters are overloaded by command line arguments.</p>
 <p>Within this context, the following lines are equivalent:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">azul<span class="w"> </span>retrieve<span class="w"> </span>NGC6505<span class="w"> </span>UGC11116<span class="w"> </span><span class="p">|</span><span class="w"> </span>azul<span class="w"> </span>process</span>
 <span class="prompt1">azul<span class="w"> </span>--log<span class="w"> </span>DEBUG<span class="w"> </span>retrieve<span class="w"> </span>NGC6505<span class="w"> </span>UGC11116<span class="w"> </span>-r<span class="w"> </span>1m<span class="w"> </span>--from<span class="w"> </span>pdr<span class="w"> </span>-f<span class="w"> </span><span class="p">|</span><span class="w"> </span>azul<span class="w"> </span>--log<span class="w"> </span>DEBUG<span class="w"> </span>process</span>
 </pre></div></div></section>
-<section id="command-line-interface">
-<h2>Command line interface</h2>
-<p><p>Bring colors to Euclid tiles!</p>
-</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">azul</span> <span class="p">[</span><span class="n">global_options</span><span class="p">]</span> <span class="o">&lt;</span><span class="n">cmd</span><span class="o">&gt;</span> <span class="p">[</span><span class="n">options</span><span class="p">]</span>
-</pre></div>
-</div>
-<section id="azulero.client-add_parser-named-arguments">
-<h3>Named Arguments</h3>
-<dl class="option-list">
-<dt><kbd>--workspace</kbd></dt>
-<dd><p>Parent workspace</p>
-<p>Default: <code class="docutils literal notranslate"><span class="pre">'.'</span></code></p>
-</dd>
-<dt><kbd>--input</kbd></dt>
-<dd><p>Input file pattern, where <code class="docutils literal notranslate"><span class="pre">{channel}</span></code> is replaced with the channel name</p>
-<p>Default: <code class="docutils literal notranslate"><span class="pre">'*[-_]{channel}[-_]*.fits'</span></code></p>
-</dd>
-<dt><kbd>--channels</kbd></dt>
-<dd><p>Channel names to be rendered in the input file pattern.</p>
-<p>Default: <code class="docutils literal notranslate"><span class="pre">['VIS',</span> <span class="pre">'NIR-Y',</span> <span class="pre">'NIR-J',</span> <span class="pre">'NIR-H']</span></code></p>
-</dd>
-<dt><kbd>--log</kbd></dt>
-<dd><p>Log level.</p>
-<p>Default: <code class="docutils literal notranslate"><span class="pre">'INFO'</span></code></p>
-</dd>
-</dl>
-</section>
-<section id="azulero.client-add_parser-commands">
-<h3>Commands</h3>
-<dl class="option-list">
-<dt><kbd>cmd</kbd></dt>
-<dd><p>Possible choices: retrieve, process, arrange, roam, cite, find, crop, assemble, overlay</p>
-</dd>
-</dl>
-</section>
-</section>
 </section>
 
 
@@ -221,12 +198,8 @@ These parameters are overloaded by command line arguments.</p>
 <li><a class="reference internal" href="#">General interface design</a><ul>
 <li><a class="reference internal" href="#introduction">Introduction</a></li>
 <li><a class="reference internal" href="#commands">Commands</a></li>
+<li><a class="reference internal" href="#standard-streams">Standard streams</a></li>
 <li><a class="reference internal" href="#named-options">Named options</a></li>
-<li><a class="reference internal" href="#command-line-interface">Command line interface</a><ul>
-<li><a class="reference internal" href="#azulero.client-add_parser-named-arguments">Named Arguments</a></li>
-<li><a class="reference internal" href="#azulero.client-add_parser-commands">Commands</a></li>
-</ul>
-</li>
 </ul>
 </li>
 </ul>

@@ -167,7 +167,7 @@ The template is rendered as follows:</p>
 <section id="name-resolution">
 <h2>Name resolution</h2>
 <p>In order for <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code> to download data files containing a named object,
-the coordinates of the latter are queried to the CDS name resolver.</p>
+the coordinates of the latter are queried to the <a class="reference external" href="https://cds.unistra.fr/cgi-bin/Sesame">CDS name resolver</a>.</p>
 <p>If the name has to contain spaces or special characters, the argument must be given between quotes.
 In general, spaces can be omitted, though, such that the two following lines are equivalent:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">azul<span class="w"> </span>retrieve<span class="w"> </span><span class="s2">&quot;NGC 6505&quot;</span></span>
@@ -182,12 +182,18 @@ as well as the names of the files to be downloaded.</p>
 and applies to all of the targets of the command line:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">azul<span class="w"> </span>retrieve<span class="w"> </span>NGC6505<span class="w"> </span><span class="m">270</span>.93,67.05<span class="w"> </span><span class="m">102157949</span><span class="w"> </span>--from<span class="w"> </span>pdr</span>
 </pre></div></div><p>There are several such providers, which store different sets of data:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">pdr</span></code>, for Public Data Releases, contains all public data;</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">idr</span></code>, for Internal Data Releases, contains SAS data under embargo which will later be released as a PDR;</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">otf</span></code>, for on-the-fly data, contains unreleased SAS data; it is updated from time to time between data releases;</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">dss</span></code>, for Distributed Storage System, contains all data.</p></li>
-</ul>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">pdr</span></code> (Public Data Releases)</dt><dd><p>Contains all public data.
+This is the only provider which does not require authentication.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">idr</span></code> (Internal Data Releases)</dt><dd><p>Contains SAS data under embargo which will later be released publicly.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">otf</span></code> (on-the-fly)</dt><dd><p>Contains unreleased SAS data.
+It is updated from time to time between data releases.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">dss</span></code> (Distributed Storage System)</dt><dd><p>Contains everything!</p>
+</dd>
+</dl>
 </section>
 <section id="download">
 <h2>Download</h2>
