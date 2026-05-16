@@ -19,14 +19,14 @@ All commands follow the same pattern::
 with:
 
 ``[global_options]``
-   Optional global options (e.g. ``--log DEBUG``).
+   Optional global arguments (e.g. ``--log DEBUG``).
 ``<command>``
    The name of the command (e.g. ``retrieve``).
 ``<input>``
    The space separated list of inputs (e.g. ``UGC11116 PGC61356``).
    If the list is empty, then ``stdin`` is read (see next section and :doc:`pipelines`).
 ``[options]``
-   The command options (e.g. ``-r 1m``).
+   Optional command arguments (e.g. ``-r 1m``).
 
 Global options, common to all commands, are passed *between* ``azul`` and the command name,
 and command options are passed *after* the command name, before or after inputs.
@@ -37,17 +37,60 @@ a list of inputs and an output specification:
 
 .. prompt:: bash
 
-   azul --log DEBUG retrieve -r 1m UGC11116 PGC61356 -o {target}
+   azul --log DEBUG retrieve -r 1m -n 1 UGC11116 PGC61356 -o {target}
+
+
+.. _workspace:
+
+Workspace, input and output paths
+---------------------------------
+
+Azulero defines three types of directories:
+
+Workspace
+   A parent directory under which all inputs and outputs are located by default.
+Tiledirs
+   Directories inside the workspace which contain data for a single tile.
+   Tiledirs are named after the tile index.
+Workdirs
+   Directories inside the workspace, generally inside tiledirs, which contain data for a single target.
+
+By default, all paths passed as input of a command are assumed to be relative to the workspace,
+unless they are absolute paths.
+Output paths are specified as templates with curly brace-enclosed placeholders.
+The placeholders are replaced with values depending on the command parameters.
+For example, most output path start with placeholder ``{workspace}``,
+which will be rendered as the actual workspace path.
+
+
+Global options
+--------------
+
+Global options are:
+
+``--log``
+   The log level, either ``DEBUG``, ``INFO`` (the default), ``WARNING`` or ``ERROR``.
+``--workspace``
+   The path to the workspace.
+   Defaults to the current directory.
+``--channels``
+   The way the four Euclid bands are uniquely identified in the paths to MER data, e.g. ``NIR-J``.
+   Unless you generate MER-like data yourself, you should not use this option.
+``--input``
+   The glob pattern used to find Euclid bands in a workdir.
+   It must contain placeholder ``{channel}``, which is rendered accordingly to the values of option ``--channels``.
+   For example, ``*_{channel}_*.fits`` would accept files with ``.fits`` extension
+   which contain the band name (e.g. ``NIR-J``) separated from other chunks by underscores.
 
 
 Standard streams
 ----------------
 
-Azulero passes various messages via standard streams:
+Azulero commands read and write different types of messages from and to the different standard streams:
 
 ``stdin``
    When no inputs are provided to the command line, they are read from ``stdin``.
-   If ``stdin`` is empty, then the command stops early.
+   If ``stdin`` is also empty, then the command stops early.
 ``stdout``
    The results of the command (e.g. path to workdir or rendered image) are written to ``stdout``
    for further use by commands down a pipeline.
@@ -76,8 +119,8 @@ with:
    The uppercase command name, if any, such as ``RETRIEVE`` or ``PROCESS``,
    or nothing for global options.
 ``<OPTION>``
-   The uppercase long-from option name, such as ``FROM`` for ``--from``
-   or ``WHITE`` for ``--white`` (but not ``W`` for ``-w``).
+   The uppercase *long-from* option name, such as ``FROM`` for ``--from``
+   or ``RADIUS`` for ``--radius`` but not ``R`` for ``-r``.
 
 For example:
 
