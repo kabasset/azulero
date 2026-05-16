@@ -172,7 +172,11 @@ the coordinates of the latter are queried to the <a class="reference external" h
 In general, spaces can be omitted, though, such that the two following lines are equivalent:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">azul<span class="w"> </span>retrieve<span class="w"> </span><span class="s2">&quot;NGC 6505&quot;</span></span>
 <span class="prompt1">azul<span class="w"> </span>retrieve<span class="w"> </span>NGC6505</span>
-</pre></div></div></section>
+</pre></div></div><div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Currently, using spaces in target names may break <a class="reference internal" href="pipelines.html"><span class="doc">Pipelines</span></a>.</p>
+</div>
+</section>
 <section id="query">
 <h2>Query</h2>
 <p>The querying phase consists in finding the tile indices of the input coordinates and resolved objects,
@@ -194,6 +198,13 @@ It is updated from time to time between data releases.</p>
 <dt><code class="docutils literal notranslate"><span class="pre">dss</span></code> (Distributed Storage System)</dt><dd><p>Contains everything!</p>
 </dd>
 </dl>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Provider <code class="docutils literal notranslate"><span class="pre">dss</span></code> does not natively support named objects and coordinates retrieval.</p>
+<p>A <a class="reference external" href="https://gitlab.euclid-sgs.uk/sy-tools/ST_SMT_DATA/-/raw/DR1/data/DpdMerFinalCatalog.geojson?ref_type=heads">MER tiling file</a>
+must be given to option <code class="docutils literal notranslate"><span class="pre">--tiling</span></code>.
+This is a temporary workaround which we hope to improve in the next version.</p>
+</div>
 </section>
 <section id="download">
 <h2>Download</h2>
@@ -208,7 +219,10 @@ Therefore, the following line:</p>
 </pre></div></div><p>downloads 2’ x 2’ regions for NGC6505 and (270.93, 67.05), as well as the whole 102157949 tile.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>As of today, provider <code class="docutils literal notranslate"><span class="pre">dss</span></code> does not support the cutout service.</p>
+<p>Provider <code class="docutils literal notranslate"><span class="pre">dss</span></code> does not natively support the cutout service.</p>
+<p>A full tile will be downloaded and cut locally.
+Ensure that the target and tile directories as specified with option <code class="docutils literal notranslate"><span class="pre">-o</span></code> are distinct
+(this is the case with the default value).</p>
 </div>
 <p>By default, if a file to be downloaded already exists in the specified workdir, it is skipped.
 This behavior can be changed by forcing downloads with flag <code class="docutils literal notranslate"><span class="pre">-f</span></code>.
