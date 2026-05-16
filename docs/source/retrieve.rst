@@ -6,7 +6,7 @@ Overview
 
 ``azul retrieve`` finds and downloads Euclid MER data which contain specified **targets**,
 such as coordinates or named astronomical objects.
-The retrieved files are organized in directories we call **workdirs**.
+The retrieved files are organized in directories we call **workdirs** (see :ref:`workspace`).
 
 As depicted below, ``azul retrieve`` consists of two main steps:
 
@@ -152,11 +152,15 @@ There are several such providers, which store different sets of data:
    must be given to option ``--tiling``.
    This is a temporary workaround which we hope to improve in the next version.
 
+Option ``--dsr`` is used to restrict the returned tiles according to the value of their ``DataSetRelease`` attribute.
+By default, dataset releases for Q1 and DR1 releases are enabled.
+
+Option ``-n`` limits the number of tiles returned by target.
+This is especially handy when one wants to get exactly one image per target (``-n 1``).
+
 
 Download
 --------
-
-TODO
 
 When retrieving coordinates or named objects, a cone radius can be passed as option ``-r``,
 which triggers a cutout service and downloads only a square region around the target.
@@ -178,11 +182,12 @@ downloads 2' x 2' regions for NGC6505 and (270.93, 67.05), as well as the whole 
    Ensure that the target and tile directories as specified with option ``-o`` are distinct
    (this is the case with the default value).
 
+Flag ``-q`` stands for "query only" and interrupts the command before effectively downloading data,
+such that the filenames you look for will be returned but no file download will happen.
+
 By default, if a file to be downloaded already exists in the specified workdir, it is skipped.
 This behavior can be changed by forcing downloads with flag ``-f``.
 In this case, files which already exist will be overwritten.
-
-TODO selective forcing
 
 
 More on data providers
