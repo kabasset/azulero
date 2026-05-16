@@ -54,3 +54,7 @@ div.footer {
     border-left: thick solid #CCC;
     font-style: italic;
 }
+
+.simple dt {
+    font-weight: bold;
+}

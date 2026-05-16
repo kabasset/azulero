@@ -22,8 +22,6 @@ As depicted below, ``azul retrieve`` consists of two main steps:
    card target {
    }
 
-   object Resolve {
-   }
    object Query {
    --from
    --dsr
@@ -38,8 +36,7 @@ As depicted below, ``azul retrieve`` consists of two main steps:
    folder workdir {
    }
 
-   target --> Resolve
-   Resolve -> Query
+   target --> Query
    Query -> Download
    Download --> workdir
 
@@ -50,19 +47,29 @@ Inputs
 The command takes as input the list of targets, which may be of different types:
 
 Tiles
-   Tiles are passed as integers.
+   Integers are parsed as tile indices.
 Coordinates
-   Coordinates are passed using any format accepted by Astropy's ``SkyCoord``,
-   typically as ICRS comma-separated right ascension and declination.
+   If the target contains a comma, it is considered as RA/Dec coordinates
+   in degrees, using ICRS reference frame.
 Named objects
-   Named objects are passed as strings,
-   coordinates of which are looked up in the `CDS name resolver`_.
+   Other types of input are parsed as object names.
+   Their coordinates are looked up in the `CDS name resolver`_.
 
 For example, the following command would retrieve the tiles covering targets of each type:
 
 .. prompt:: bash
 
    azul retrieve NGC6505 270.93,67.05 102157949
+
+If the target *has to* contain spaces or special characters, the argument must be given between quotes.
+In general, spaces can be omitted, though, such that the two following lines are equivalent:
+
+.. prompt:: bash
+
+   azul retrieve "NGC 6505"
+   azul retrieve NGC6505
+
+.. warning:: Currently, using spaces in target names may break :doc:`pipelines`.
 
 
 ..  _workspace:
@@ -110,23 +117,6 @@ Placeholder name Substitution value
 ``{tile}``       Resolved target tile index
 ``{target}``     Verbatim target argument in command line
 ================ ==================
-
-
-Name resolution
----------------
-
-In order for ``azul retrieve`` to download data files containing a named object,
-the coordinates of the latter are queried to the `CDS name resolver`_.
-
-If the name has to contain spaces or special characters, the argument must be given between quotes.
-In general, spaces can be omitted, though, such that the two following lines are equivalent:
-
-.. prompt:: bash
-
-   azul retrieve "NGC 6505"
-   azul retrieve NGC6505
-
-.. warning:: Currently, using spaces in target names may break :doc:`pipelines`.
 
 
 Query
