@@ -24,3 +24,21 @@ Specifically, color images and image stacks are inpainted with SciKit's biharmon
 while grayscale images are inpainted with OpenCV's Navier-Stokes algorithm.
 The former is very memory-greedy but renders much smoother large regions,
 which often occur at the center of galaxies.
+
+
+DPS tile lookup
+---------------
+
+The DPS does not offer fast-enough spatial queries to find the tiles in which a target lies.
+Therefore, we rely on SMT's Geojson tiling.
+Would be nice that users do not need to download the tiling themselves.
+
+
+DPS cutout service
+------------------
+
+At the moment, there is no cutout service in the DPS.
+Therefore, we perform the cutout locally after downloading the full tile.
+This assumes the ``-o`` parameter specifies different tile and target workdirs,
+otherwise the tile will be overwritten by the cutout,
+which may result in undefined behavior for subsequent retrievals.

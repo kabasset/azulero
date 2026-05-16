@@ -56,7 +56,7 @@ Coordinates
    typically as ICRS comma-separated right ascension and declination.
 Named objects
    Named objects are passed as strings,
-   coordinates of which are looked up in the `CDS name resolver <https://cds.unistra.fr/cgi-bin/Sesame>`_.
+   coordinates of which are looked up in the `CDS name resolver`_.
 
 For example, the following command would retrieve the tiles covering targets of each type:
 
@@ -116,7 +116,7 @@ Name resolution
 ---------------
 
 In order for ``azul retrieve`` to download data files containing a named object,
-the coordinates of the latter are queried to the CDS name resolver.
+the coordinates of the latter are queried to the `CDS name resolver`_.
 
 If the name has to contain spaces or special characters, the argument must be given between quotes.
 In general, spaces can be omitted, though, such that the two following lines are equivalent:
@@ -143,10 +143,16 @@ and applies to all of the targets of the command line:
 
 There are several such providers, which store different sets of data:
 
-* ``pdr``, for Public Data Releases, contains all public data;
-* ``idr``, for Internal Data Releases, contains SAS data under embargo which will later be released as a PDR;
-* ``otf``, for on-the-fly data, contains unreleased SAS data; it is updated from time to time between data releases;
-* ``dss``, for Distributed Storage System, contains all data.
+``pdr`` (Public Data Releases)
+   Contains all public data.
+   This is the only provider which does not require authentication.
+``idr`` (Internal Data Releases)
+   Contains SAS data under embargo which will later be released publicly.
+``otf`` (on-the-fly)
+   Contains unreleased SAS data.
+   It is updated from time to time between data releases.
+``dss`` (Distributed Storage System)
+   Contains everything!
 
 
 Download
@@ -201,3 +207,5 @@ Only the latter is specified to ``azul retrieve``, and the former is deduced
 (same goes for the other data providers with the SAS).
 
 TODO: DSS tile query and cutout retrieval
+
+.. _CDS name resolver: https://cds.unistra.fr/cgi-bin/Sesame
