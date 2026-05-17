@@ -55,7 +55,7 @@ Setup
 For Euclid members
 ^^^^^^^^^^^^^^^^^^
 
-Accessing public data require no configuration.
+Accessing public data requires no configuration.
 
 Internal data retrieval requires authentication,
 which is set up in the netrc configuration file (``~/.netrc`` on Unix, ``%HOMEPATH%\_netrc`` on Windows) as follows:
@@ -86,9 +86,9 @@ For other users
 ^^^^^^^^^^^^^^^
 
 Because you will retrieve only public data,
-you can setup your environment to always restrict queries to the PDR provider.
+you can setup your environment to always restrict queries to the public archive.
 To do so, simply set the environment variable ``AZULRETRIEVE_FROM`` to ``pdr``
-(read the remaining of this page and see :ref:`named_options` to know why).
+(see :doc:`retrieve` and :ref:`named_options` to understand why).
 Typically, Bash users may add the following to the ``.bashrc`` file::
 
    export AZULRETRIEVE_FROM=pdr
@@ -116,8 +116,8 @@ At the end of the logs, you should see the path to which the glorious color imag
 which you can already open and admire!
 
 
-How to read the documentation
------------------------------
+How to read the documentation?
+------------------------------
 
 Azulero is a command line toolbox made of several **commands**, e.g. ``azul retrieve`` or ``azul process``.
 All of them follow a common interface on one hand, and have their own specificities on the other hand.
@@ -144,7 +144,6 @@ In these pages, commands are presented graphically, like:
    }
    object Step3 {
    --param2
-   -o
    }
 
    file interm {

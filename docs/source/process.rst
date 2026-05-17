@@ -180,6 +180,7 @@ It generally gives good results, but using it will prevent stitching multiple im
 since they will be rendered with inconsistent stretching parameters.
 
 .. plantuml::
+   :align: center
    :max-width: 100%
 
    @startchart

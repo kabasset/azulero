@@ -5,6 +5,7 @@ Azulero
    :maxdepth: 1
    :hidden:
 
+   self
    primer
    news
    quickstart
@@ -48,12 +49,19 @@ License
 How to help?
 ------------
 
-* `Report bugs, request features <https://github.com/kabasset/azulero/issues>`_,
-  tell us what you think of the tools and results...
-* Share your images with us, we're curious!
-* If you publish images rendered with this software, please credit:
-  *Image processing with Azulero (Antoine Basset, CNES).*
-* If you use this software for academic publications, please cite as follows:
+The most straightforward way to help us is to `report bugs and request features <https://github.com/kabasset/azulero/issues>`_!
+We view usability as a priority, always try to deliver clean interfaces, and value your feedback.
+Please tell us what you think of the tools and results.
+Also, feel free to share your images with us, we're curious and learn a lot from the experience of users.
+
+Azulero is partly funded by public agencies -- most notably `CNES <https://cnes.fr/en>`_.
+Using public money for development means we must deliver something meaningful and accessible.
+Azulero is a tiny piece of non-critical software,
+but we hope it contributes to making Euclid an exceptional mission which benefits to everyone, and we hope you feel the same!
+In this case, please do not forget to acknowledge the toolbox
+-- it really matters to show our managers Azulero is useful and must be maintained.
+If you publish images rendered with this software, please credit: *Image processing with Azulero (Antoine Basset, CNES).*
+If you use this software for academic publications, please cite as follows:
 
 .. code-block:: bibtex
 
@@ -70,7 +78,8 @@ How to help?
 Contributors
 ------------
 
-Azulero is the result of many discussions and technical exchanges.
+Azulero is the result of so many discussions and technical exchanges.
+Here is the exhaustive list of contributors and their contributions.
 
 Mischa Schirmer (MPIA)
    Azulero's color blending is freely inspired by that of Mischa's script eummy_.
@@ -85,6 +94,11 @@ Gian Paolo Candini (CSIC)
    Drafted auto-tuning of :doc:`process`' white point.
 Jean-Christophe Malapert (CNES)
    Implemented robust spatial queries on the sphere.
+
+In addition to these direct contributions, we would like to thank the Euclid community very warmly
+for the support they showed and the quick and surprisingly detailed answers they gave to our sometimes dummy questions.
+It is a real pleasure and an extraordinary journey working in such a collaboration
+with so many world-renowned experts and brilliant newcomers.
 
 
 .. _eummy: https://github.com/schirmermischa/eummy

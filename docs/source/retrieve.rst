@@ -72,8 +72,6 @@ In general, spaces can be omitted, though, such that the two following lines are
 .. warning:: Currently, using spaces in target names may break :doc:`pipelines`.
 
 
-..  _workspace:
-
 Outputs
 -------
 
@@ -115,7 +113,7 @@ Placeholder name Substitution value
 ================ ==================
 ``{workspace}``  Workspace path
 ``{tile}``       Resolved target tile index
-``{target}``     Verbatim target argument in command line
+``{target}``     Verbatim target argument in command line, or nothing it the target is a tile index
 ================ ==================
 
 
@@ -150,7 +148,7 @@ There are several such providers, which store different sets of data:
 
    A `MER tiling file <https://gitlab.euclid-sgs.uk/sy-tools/ST_SMT_DATA/-/raw/DR1/data/DpdMerFinalCatalog.geojson?ref_type=heads>`_
    must be given to option ``--tiling``.
-   This is a temporary workaround which we hope to improve in the next version.
+   This is a temporary workaround which we hope to improve in a future version.
 
 Option ``--dsr`` is used to restrict the returned tiles according to the value of their ``DataSetRelease`` attribute.
 By default, dataset releases for Q1 and DR1 releases are enabled.
@@ -179,7 +177,7 @@ downloads 2' x 2' regions for NGC6505 and (270.93, 67.05), as well as the whole 
 .. warning:: Provider ``dss`` does not natively support the cutout service.
 
    A full tile will be downloaded and cut locally.
-   Ensure that the target and tile directories as specified with option ``-o`` are distinct
+   Ensure that the workdirs and tiledirs as specified with option ``-o`` are distinct
    (this is the case with the default value).
 
 Flag ``-q`` stands for "query only" and interrupts the command before effectively downloading data,

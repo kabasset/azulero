@@ -12,7 +12,7 @@ The result is a much cleaner and more extensible design, able to accommodate nov
 Speaking of which, the purpose of this release is mass production of images.
 To this end,we introduce **cutout retrieval** and **pipelining**.
 In turn, they enable faster and parallel processing, as well as streamlined production workflows.
-Last but not least, Azulero v2 introduces new command :doc:`arrange` aimed at performing a very common post-processing stage:
+In addition, Azulero v2 introduces new command :doc:`arrange` aimed at performing a very common post-processing stage:
 making **collages** from collections of images.
 
 Cutout retrieval

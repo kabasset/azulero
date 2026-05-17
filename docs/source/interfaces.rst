@@ -9,7 +9,7 @@ TODO
 Commands
 --------
 
-The main script is ``azul``.
+The only executable of Azulero is ``azul``.
 It supports a variety of so-called **commands**,
 such as ``retrieve`` to download datafiles or ``process`` to render color images.
 All commands follow the same pattern::
@@ -140,3 +140,20 @@ Within this context, the following lines are equivalent:
 
    azul retrieve NGC6505 UGC11116 | azul process
    azul --log DEBUG retrieve NGC6505 UGC11116 -r 1m --from pdr -f | azul --log DEBUG process
+
+
+Command line help
+-----------------
+
+We tried our best to write a complete-enough documentation.
+However, we may have omitted a few details.
+For an exhaustive description of global and command options,
+ ``azul`` and each of its commands feature an option ``-h``, or ``--help``.
+In particular, the commands are documented in terms of short-form options when they exist.
+Check the help messages in order to find the long-from options (typically, to know the environment variable names).
+
+.. note::
+
+   If you find discrepancies between the documentation and help messages,
+   please `open issues <https://github.com/kabasset/azulero/issues/new>`_ or contact us.
+   This really helps!
