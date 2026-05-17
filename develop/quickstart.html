@@ -89,7 +89,7 @@ For example, to download a cutout without installing, launch:</p>
 <h2>Setup</h2>
 <section id="for-euclid-members">
 <h3>For Euclid members</h3>
-<p>Accessing public data require no configuration.</p>
+<p>Accessing public data requires no configuration.</p>
 <p>Internal data retrieval requires authentication,
 which is set up in the netrc configuration file (<code class="docutils literal notranslate"><span class="pre">~/.netrc</span></code> on Unix, <code class="docutils literal notranslate"><span class="pre">%HOMEPATH%\_netrc</span></code> on Windows) as follows:</p>
 <ul>
@@ -120,9 +120,9 @@ password<span class="w"> </span><span class="nt">&lt;password&gt;</span>
 <section id="for-other-users">
 <h3>For other users</h3>
 <p>Because you will retrieve only public data,
-you can setup your environment to always restrict queries to the PDR provider.
+you can setup your environment to always restrict queries to the public archive.
 To do so, simply set the environment variable <code class="docutils literal notranslate"><span class="pre">AZULRETRIEVE_FROM</span></code> to <code class="docutils literal notranslate"><span class="pre">pdr</span></code>
-(read the remaining of this page and see <a class="reference internal" href="interfaces.html#named-options"><span class="std std-ref">Named options</span></a> to know why).
+(see <a class="reference internal" href="retrieve.html"><span class="doc">azul retrieve</span></a> and <a class="reference internal" href="interfaces.html#named-options"><span class="std std-ref">Named options</span></a> to understand why).
 Typically, Bash users may add the following to the <code class="docutils literal notranslate"><span class="pre">.bashrc</span></code> file:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">export</span> <span class="n">AZULRETRIEVE_FROM</span><span class="o">=</span><span class="n">pdr</span>
 </pre></div>
@@ -144,7 +144,7 @@ At the end of the logs, you should see the path to which the glorious color imag
 which you can already open and admire!</p>
 </section>
 <section id="how-to-read-the-documentation">
-<h2>How to read the documentation</h2>
+<h2>How to read the documentation?</h2>
 <p>Azulero is a command line toolbox made of several <strong>commands</strong>, e.g. <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code> or <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code>.
 All of them follow a common interface on one hand, and have their own specificities on the other hand.</p>
 <p>The shared interface concepts are described in <a class="reference internal" href="interfaces.html"><span class="doc">General interface design</span></a>
@@ -153,8 +153,8 @@ All of them follow a common interface on one hand, and have their own specificit
 In these pages, commands are presented graphically, like:</p>
 <figure class="align-center">
 <p class="plantuml">
-<object data="_images/plantuml-2c555e95080ed9addabc25eebfa182c42cdec712.svg" type="image/svg+xml" style="max-width:100%">
-<img src="_images/plantuml-2c555e95080ed9addabc25eebfa182c42cdec712.png" alt="skinparam backgroundColor transparent
+<object data="_images/plantuml-2c4e73dfb341bc251492f878214b66afddc17b40.svg" type="image/svg+xml" style="max-width:100%">
+<img src="_images/plantuml-2c4e73dfb341bc251492f878214b66afddc17b40.png" alt="skinparam backgroundColor transparent
 
 file input {
 }
@@ -166,7 +166,6 @@ object Step2 {
 }
 object Step3 {
 --param2
--o
 }
 
 file interm {
@@ -228,6 +227,7 @@ Additional sections may dive deeper on a case-by-case basis.</p>
 </search>
 <script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">Azulero</a></li>
 <li class="toctree-l1"><a class="reference internal" href="primer.html">A Euclid primer</a></li>
 <li class="toctree-l1"><a class="reference internal" href="news.html">What’s new</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Quick start</a></li>
@@ -263,7 +263,7 @@ Additional sections may dive deeper on a case-by-case basis.</p>
 </ul>
 </li>
 <li><a class="reference internal" href="#your-first-image">Your first image</a></li>
-<li><a class="reference internal" href="#how-to-read-the-documentation">How to read the documentation</a></li>
+<li><a class="reference internal" href="#how-to-read-the-documentation">How to read the documentation?</a></li>
 </ul>
 </li>
 </ul>

@@ -61,7 +61,7 @@
 </section>
 <section id="commands">
 <h2>Commands</h2>
-<p>The main script is <code class="docutils literal notranslate"><span class="pre">azul</span></code>.
+<p>The only executable of Azulero is <code class="docutils literal notranslate"><span class="pre">azul</span></code>.
 It supports a variety of so-called <strong>commands</strong>,
 such as <code class="docutils literal notranslate"><span class="pre">retrieve</span></code> to download datafiles or <code class="docutils literal notranslate"><span class="pre">process</span></code> to render color images.
 All commands follow the same pattern:</p>
@@ -172,6 +172,23 @@ These parameters are overloaded by command line arguments.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">azul<span class="w"> </span>retrieve<span class="w"> </span>NGC6505<span class="w"> </span>UGC11116<span class="w"> </span><span class="p">|</span><span class="w"> </span>azul<span class="w"> </span>process</span>
 <span class="prompt1">azul<span class="w"> </span>--log<span class="w"> </span>DEBUG<span class="w"> </span>retrieve<span class="w"> </span>NGC6505<span class="w"> </span>UGC11116<span class="w"> </span>-r<span class="w"> </span>1m<span class="w"> </span>--from<span class="w"> </span>pdr<span class="w"> </span>-f<span class="w"> </span><span class="p">|</span><span class="w"> </span>azul<span class="w"> </span>--log<span class="w"> </span>DEBUG<span class="w"> </span>process</span>
 </pre></div></div></section>
+<section id="command-line-help">
+<h2>Command line help</h2>
+<p>We tried our best to write a complete-enough documentation.
+However, we may have omitted a few details.
+For an exhaustive description of global and command options,</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">azul</span></code> and each of its commands feature an option <code class="docutils literal notranslate"><span class="pre">-h</span></code>, or <code class="docutils literal notranslate"><span class="pre">--help</span></code>.</p>
+</div></blockquote>
+<p>In particular, the commands are documented in terms of short-form options when they exist.
+Check the help messages in order to find the long-from options (typically, to know the environment variable names).</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you find discrepancies between the documentation and help messages,
+please <a class="reference external" href="https://github.com/kabasset/azulero/issues/new">open issues</a> or contact us.
+This really helps!</p>
+</div>
+</section>
 </section>
 
 
@@ -210,6 +227,7 @@ These parameters are overloaded by command line arguments.</p>
 </search>
 <script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">Azulero</a></li>
 <li class="toctree-l1"><a class="reference internal" href="primer.html">A Euclid primer</a></li>
 <li class="toctree-l1"><a class="reference internal" href="news.html">What’s new</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick start</a></li>
@@ -240,6 +258,7 @@ These parameters are overloaded by command line arguments.</p>
 <li><a class="reference internal" href="#global-options">Global options</a></li>
 <li><a class="reference internal" href="#standard-streams">Standard streams</a></li>
 <li><a class="reference internal" href="#named-options">Named options</a></li>
+<li><a class="reference internal" href="#command-line-help">Command line help</a></li>
 </ul>
 </li>
 </ul>

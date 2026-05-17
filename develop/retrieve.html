@@ -59,7 +59,7 @@
 <h2>Overview</h2>
 <p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code> finds and downloads Euclid MER data which contain specified <strong>targets</strong>,
 such as coordinates or named astronomical objects.
-The retrieved files are organized in directories we call <strong>workdirs</strong> (see <a class="reference internal" href="#workspace"><span class="std std-ref">Outputs</span></a>).</p>
+The retrieved files are organized in directories we call <strong>workdirs</strong> (see <a class="reference internal" href="interfaces.html#workspace"><span class="std std-ref">Workspace, input and output paths</span></a>).</p>
 <p>As depicted below, <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code> consists of two main steps:</p>
 <ol class="arabic simple">
 <li><p>Querying the indices of the tiles which contain input targets;</p></li>
@@ -123,7 +123,7 @@ In general, spaces can be omitted, though, such that the two following lines are
 </div>
 </section>
 <section id="outputs">
-<span id="workspace"></span><h2>Outputs</h2>
+<h2>Outputs</h2>
 <p>The files are downloaded into a dedicated <strong>workdir</strong> for each target, inside some parent <strong>workspace</strong>.
 By default, the workspace is the current directory (<code class="docutils literal notranslate"><span class="pre">.</span></code>).
 It can be configured with global option <code class="docutils literal notranslate"><span class="pre">--workspace</span></code>:</p>
@@ -164,7 +164,7 @@ The template is rendered as follows:</p>
 <td><p>Resolved target tile index</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">{target}</span></code></p></td>
-<td><p>Verbatim target argument in command line</p></td>
+<td><p>Verbatim target argument in command line, or nothing it the target is a tile index</p></td>
 </tr>
 </tbody>
 </table>
@@ -195,7 +195,7 @@ It is updated from time to time between data releases.</p>
 <p>Provider <code class="docutils literal notranslate"><span class="pre">dss</span></code> does not natively support named objects and coordinates retrieval.</p>
 <p>A <a class="reference external" href="https://gitlab.euclid-sgs.uk/sy-tools/ST_SMT_DATA/-/raw/DR1/data/DpdMerFinalCatalog.geojson?ref_type=heads">MER tiling file</a>
 must be given to option <code class="docutils literal notranslate"><span class="pre">--tiling</span></code>.
-This is a temporary workaround which we hope to improve in the next version.</p>
+This is a temporary workaround which we hope to improve in a future version.</p>
 </div>
 <p>Option <code class="docutils literal notranslate"><span class="pre">--dsr</span></code> is used to restrict the returned tiles according to the value of their <code class="docutils literal notranslate"><span class="pre">DataSetRelease</span></code> attribute.
 By default, dataset releases for Q1 and DR1 releases are enabled.</p>
@@ -216,7 +216,7 @@ Therefore, the following line:</p>
 <p class="admonition-title">Warning</p>
 <p>Provider <code class="docutils literal notranslate"><span class="pre">dss</span></code> does not natively support the cutout service.</p>
 <p>A full tile will be downloaded and cut locally.
-Ensure that the target and tile directories as specified with option <code class="docutils literal notranslate"><span class="pre">-o</span></code> are distinct
+Ensure that the workdirs and tiledirs as specified with option <code class="docutils literal notranslate"><span class="pre">-o</span></code> are distinct
 (this is the case with the default value).</p>
 </div>
 <p>Flag <code class="docutils literal notranslate"><span class="pre">-q</span></code> stands for “query only” and interrupts the command before effectively downloading data,
@@ -284,6 +284,7 @@ Only the latter is specified to <code class="docutils literal notranslate"><span
 </search>
 <script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">Azulero</a></li>
 <li class="toctree-l1"><a class="reference internal" href="primer.html">A Euclid primer</a></li>
 <li class="toctree-l1"><a class="reference internal" href="news.html">What’s new</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick start</a></li>
