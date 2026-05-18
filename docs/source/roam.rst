@@ -5,11 +5,11 @@ Overview
 --------
 
 Command ``azul roam`` consists in moving a so-called **viewport**
--- a rectangular region from which video frames are extracted --
+-- a region from which video frames are extracted --
 over an input image.
 The image and viewport can be seen as analogous to a scene and camera, respectively.
 
-The viewport has a variable center, field of view and rotation angle.
+The viewport has a variable center, field of view and rotation angle around the line of sight.
 The parameters at **key frames** are specified by the user.
 
 The command supports the following frame capture modes:
@@ -22,7 +22,7 @@ WCS transform
    This is more than an affine transform because distortion as computed by MER is taken into account.
 Equirectangular
    This mode assumes that the input image is an equirectangular (plate-carrée) projection of the full sky,
-   with RA from 180° on the left to -180° on the rigth
+   with RA from 180° on the left to -180° on the right
    and Dec from -90° at the bottom to 90° at the top.
 Gaia Sky
    This special mode consists in capturing frames from a running `Gaia Sky <https://gaiasky.space/>`_ instance.
@@ -66,7 +66,7 @@ Gaia Sky
 Input
 -----
 
-``azul roam`` takes as input a single image path,
+In this version, ``azul roam`` takes as input a single image path,
 given as a positional argument or through ``stdin``.
 
 The key frames are specified through a so-called **sequence file**
@@ -88,14 +88,14 @@ Placeholder name Substitution value
 ``{sequence}``   Sequence file stem
 ================ ==================
 
-Several video file formats are supported (see the help message for a complete list),
+Several video file formats are supported (see the help message for a complete list: ``azul roam -h``),
 among which MKV (the default) features lossless compression, which is needed for further video compositing.
 
 
 Image subsampling
 -----------------
 
-Except for Gaia Sky mode, in order to speed up computation and get rid of aliasing with small fields of view,
+Except for Gaia Sky mode, in order to speed up computation and get rid of aliasing with large fields of view,
 a multiresolution image pyramid is built.
 Frames will be extracted from this image through geometric transformations, according to the capture mode.
 
@@ -113,7 +113,7 @@ TODO: sequence file format
 Interpolation also depends on the following parameters:
 
 ``--format``
-   The video format, given either as a ``<width>,<height>`` or as a standard "K"-format such as ``2K`` or ``4K``.
+   The video format, given either as ``<width>,<height>`` or as a standard "K"-format such as ``2K`` or ``4K``.
 ``--fps``
    The number of frames per second.
 ``--start`` and ``--stop``
