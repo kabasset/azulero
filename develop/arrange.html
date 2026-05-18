@@ -10,7 +10,7 @@
     <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=4203e71c" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=3140588f" />
     <script src="_static/documentation_options.js?v=7f41d439"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
@@ -140,7 +140,22 @@ Images are centered in their cells and the blit region is the intersection betwe
 <li><p>The background remains visible around images smaller than the cell along at least one axis.</p></li>
 </ul>
 <p>Images are row-major ordered from left to right and from top to bottom,
-such that the leftmost image of the second top row is the <code class="docutils literal notranslate"><span class="pre">--n</span></code>-th image from the input list.</p>
+such that the leftmost image of the second top row is indexed <code class="docutils literal notranslate"><span class="pre">-n</span></code> in the input list.
+The last row may be incomplete.
+For example, here is how 5 images would be ordered with <code class="docutils literal notranslate"><span class="pre">-n</span> <span class="pre">3</span></code>
+(5-pixel margins are shown in blue and 2-pixel gaps in red):</p>
+<table class="docutils align-default" id="arrange-grid">
+<tbody>
+<tr class="row-odd"><td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>2</p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p>4</p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
 </section>
 </section>
 
