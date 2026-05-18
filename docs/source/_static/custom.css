@@ -58,3 +58,14 @@ div.footer {
 .simple dt {
     font-weight: bold;
 }
+
+#arrange-grid {
+    border: 5px solid #CCF;
+    width: 50%;
+    height: 150px;
+}
+
+#arrange-grid tbody tr, #arrange-grid tbody tr td {
+    border: 2px solid #FCC;
+    text-align: center;
+}

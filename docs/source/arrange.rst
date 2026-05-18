@@ -88,4 +88,17 @@ Images are centered in their cells and the blit region is the intersection betwe
 * The background remains visible around images smaller than the cell along at least one axis.
 
 Images are row-major ordered from left to right and from top to bottom,
-such that the leftmost image of the second top row is the ``--n``-th image from the input list.
+such that the leftmost image of the second top row is indexed ``-n`` in the input list.
+The last row may be incomplete.
+For example, here is how 5 images would be ordered with ``-n 3``
+(5-pixel margins are shown in blue and 2-pixel gaps in red):
+
+.. table::
+   :name: arrange-grid
+
+   +---+---+---+
+   | 0 | 1 | 2 |
+   +---+---+---+
+   | 3 | 4 |   |
+   +---+---+---+
+
