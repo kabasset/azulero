@@ -57,6 +57,29 @@
 <h1><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">roam</span></code></h1>
 <section id="overview">
 <h2>Overview</h2>
+<p>Command <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">roam</span></code> consists in moving a so-called <strong>viewport</strong>
+– a rectangular region from which video frames are extracted –
+over an input image.
+The image and viewport can be seen as analogous to a scene and camera, respectively.</p>
+<p>The viewport has a variable center, field of view and rotation angle.
+The parameters at <strong>key frames</strong> are specified by the user.</p>
+<p>The command supports the following frame capture modes:</p>
+<dl class="simple">
+<dt>Pan-and-zoom</dt><dd><p>This is the simplest way of capturing frames, where the viewport supports only translation, scaling and rotation.</p>
+</dd>
+<dt>WCS transform</dt><dd><p>In this mode, the input WCS parameters are used to warp the image
+as if the camera was not pointing perpendicularly to the image plane.
+This is more than an affine transform because distortion as computed by MER is taken into account.</p>
+</dd>
+<dt>Equirectangular</dt><dd><p>This mode assumes that the input image is an equirectangular (plate-carrée) projection of the full sky,
+with RA from 180° on the left to -180° on the rigth
+and Dec from -90° at the bottom to 90° at the top.</p>
+</dd>
+<dt>Gaia Sky</dt><dd><p>This special mode consists in capturing frames from a running <a class="reference external" href="https://gaiasky.space/">Gaia Sky</a> instance.
+No other input data (no image) is used.
+The Gaia Sky mode is provided for creating seamless transitions between planetarium and Euclid data.</p>
+</dd>
+</dl>
 <figure class="align-center">
 <p class="plantuml">
 <object data="_images/plantuml-8fa6611e00dd843f1317ad03a9fc5e51cd714bf2.svg" type="image/svg+xml" style="max-width:100%">
@@ -95,112 +118,61 @@ Capture --&gt; video"/>
 <h2>Input</h2>
 <p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">roam</span></code> takes as input a single image path,
 given as a positional argument or through <code class="docutils literal notranslate"><span class="pre">stdin</span></code>.</p>
-<p>If the path is not absolute, then it is assumed to be relative to the workspace.</p>
+<p>The key frames are specified through a so-called <strong>sequence file</strong>
+passed to option <code class="docutils literal notranslate"><span class="pre">--planar</span></code>, <code class="docutils literal notranslate"><span class="pre">--wcs</span></code>, <code class="docutils literal notranslate"><span class="pre">--equirectangular</span></code> or <code class="docutils literal notranslate"><span class="pre">--gaiasky</span></code>
+depending on the wanted frame capture mode.</p>
 </section>
 <section id="output">
 <h2>Output</h2>
 <p>The video produced by <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">roam</span></code> is a saved following a template given to option <code class="docutils literal notranslate"><span class="pre">-o</span></code>.
-See the command line interface documentation below for more details.</p>
+Placeholders are:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Placeholder name</p></th>
+<th class="head"><p>Substitution value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">{workspace}</span></code></p></td>
+<td><p>Workspace path</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">{image}</span></code></p></td>
+<td><p>Input image stem</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">{sequence}</span></code></p></td>
+<td><p>Sequence file stem</p></td>
+</tr>
+</tbody>
+</table>
+<p>Several video file formats are supported (see the help message for a complete list),
+among which MKV (the default) features lossless compression, which is needed for further video compositing.</p>
 </section>
-<section id="parameters">
-<h2>Parameters</h2>
-<p>The main option of <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">roam</span></code> is a so-called sequence-file
-containing the specifications of key frames: time and viewport parameters.</p>
+<section id="image-subsampling">
+<h2>Image subsampling</h2>
+<p>Except for Gaia Sky mode, in order to speed up computation and get rid of aliasing with small fields of view,
+a multiresolution image pyramid is built.
+Frames will be extracted from this image through geometric transformations, according to the capture mode.</p>
 </section>
-<section id="command-line-interface">
-<h2>Command line interface</h2>
-<p><blockquote>
-<div><p>Supply an image (or a list of images), specify viewport parameters at given key frames.
-They will be interpolated to render a smooth roaming video.</p>
-<p>For full-sky views, an interface to Gaia Sky is available.
-To use it, first start Gaia Sky and then execute this script with option <code class="docutils literal notranslate"><span class="pre">--gaiasky</span></code>.</p>
-</div></blockquote>
-</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">azul</span> <span class="p">[</span><span class="n">global_options</span><span class="p">]</span> <span class="n">roam</span> <span class="o">&lt;</span><span class="n">images</span><span class="o">&gt;</span> <span class="p">[</span><span class="n">options</span><span class="p">]</span>
-</pre></div>
-</div>
-<section id="azulero.client-add_parser-positional-arguments">
-<h3>Positional Arguments</h3>
-<dl class="option-list">
-<dt><kbd>images</kbd></dt>
-<dd><p>Space separated list of image files or any name for Gaia Sky.</p>
-<p>Default: <code class="docutils literal notranslate"><span class="pre">[]</span></code></p>
+<section id="viewport-parameters-interpolation">
+<h2>Viewport parameters interpolation</h2>
+<p>The main command line argument of <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">roam</span></code> is a so-called key frame sequence file (or sequence file in short).
+It contains the specifications of key frames: time and viewport parameters.
+Between key frames, the viewport geometry is sine-interpolated to ensure smooth transitions.
+The path of the center can also be spline-interpolated to avoid unnatural-looking zigzag patterns.</p>
+<p>TODO: sequence file format</p>
+<p>Interpolation also depends on the following parameters:</p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">--format</span></code></dt><dd><p>The video format, given either as a <code class="docutils literal notranslate"><span class="pre">&lt;width&gt;,&lt;height&gt;</span></code> or as a standard “K”-format such as <code class="docutils literal notranslate"><span class="pre">2K</span></code> or <code class="docutils literal notranslate"><span class="pre">4K</span></code>.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">--fps</span></code></dt><dd><p>The number of frames per second.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">--start</span></code> and <code class="docutils literal notranslate"><span class="pre">--stop</span></code></dt><dd><p>The 0-based indices of the first and last frames to be captured.</p>
 </dd>
 </dl>
 </section>
-<section id="azulero.client-add_parser-named-arguments">
-<h3>Named Arguments</h3>
-<dl class="option-list">
-<dt><kbd>--planar</kbd></dt>
-<dd><blockquote>
-<div><p>Key frame sequence file for no projection.
-Only translations and rotations will be applied.
-The key frames may be specified as image coordinates,
-or as sky coordinates if the images come with WCS parameters,
-or as a mix of image and sky coordinates.</p>
-</div></blockquote>
-</dd>
-<dt><kbd>--wcs</kbd></dt>
-<dd><blockquote>
-<div><p>Key frame sequence file for WCS to planar projection.
-The input images must come with WCS parameters,
-and only sky coordinates are supported.</p>
-</div></blockquote>
-</dd>
-<dt><kbd>--equirectangular</kbd></dt>
-<dd><blockquote>
-<div><p>Key frame sequence file for equirectangular to planar projection.
-The input images must be equirectangular with:</p>
-<ul class="simple">
-<li><p>RA from -180° on the right to 180° on the left,</p></li>
-<li><p>declination from -90° at the bottom to 90° at the top.</p></li>
-</ul>
-<p>Only sky coordinates are supported.</p>
-</div></blockquote>
-</dd>
-<dt><kbd>--gaiasky</kbd></dt>
-<dd><blockquote>
-<div><p>Key frame sequence file for Gaia Sky.
-Only sky coordinates are supported.</p>
-<p><strong>WARNING: Gaia Sky has to be running before you execute this script!
-You will be asked to close the application when frames have been generated.</strong></p>
-</div></blockquote>
-</dd>
-<dt><kbd>--output, -o</kbd></dt>
-<dd><blockquote>
-<div><p>Output video file template, where:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">{workspace}</span></code> is replaced by the workspace path,</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">{image}</span></code> is replaced by the image file stem,</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">{sequence}</span></code> is replaced by the sequence file stem.</p></li>
-</ul>
-<p>Supported extensions are: .mp4, .avi, .mkv. Only the MKV compression is lossless.</p>
-</div></blockquote>
-<p>Default: <code class="docutils literal notranslate"><span class="pre">'{workspace}/{sequence}_{image}.mkv'</span></code></p>
-</dd>
-<dt><kbd>--format</kbd></dt>
-<dd><blockquote>
-<div><p>Video format as comma-separated width and height or format name.
-Format names are numbers followed by <code class="docutils literal notranslate"><span class="pre">K</span></code> like <code class="docutils literal notranslate"><span class="pre">2K</span></code> for 1920 x 1080 pixels
-or <code class="docutils literal notranslate"><span class="pre">4K</span></code> for 3840 x 2160 pixels.</p>
-</div></blockquote>
-<p>Default: <code class="docutils literal notranslate"><span class="pre">'2K'</span></code></p>
-</dd>
-<dt><kbd>--fps</kbd></dt>
-<dd><p>Frames per second.</p>
-<p>Default: <code class="docutils literal notranslate"><span class="pre">25</span></code></p>
-</dd>
-<dt><kbd>--start</kbd></dt>
-<dd><p>Index of the first frame to be rendered.</p>
-</dd>
-<dt><kbd>--stop</kbd></dt>
-<dd><p>Index of the last frame to be rendered.</p>
-</dd>
-<dt><kbd>--scale</kbd></dt>
-<dd><p>Comma-separated scale length in image pixels and optional text above.</p>
-</dd>
-</dl>
-</section>
+<section id="frame-capture">
+<h2>Frame capture</h2>
+<p>TODO</p>
 </section>
 </section>
 
@@ -270,12 +242,9 @@ or <code class="docutils literal notranslate"><span class="pre">4K</span></code>
 <li><a class="reference internal" href="#overview">Overview</a></li>
 <li><a class="reference internal" href="#input">Input</a></li>
 <li><a class="reference internal" href="#output">Output</a></li>
-<li><a class="reference internal" href="#parameters">Parameters</a></li>
-<li><a class="reference internal" href="#command-line-interface">Command line interface</a><ul>
-<li><a class="reference internal" href="#azulero.client-add_parser-positional-arguments">Positional Arguments</a></li>
-<li><a class="reference internal" href="#azulero.client-add_parser-named-arguments">Named Arguments</a></li>
-</ul>
-</li>
+<li><a class="reference internal" href="#image-subsampling">Image subsampling</a></li>
+<li><a class="reference internal" href="#viewport-parameters-interpolation">Viewport parameters interpolation</a></li>
+<li><a class="reference internal" href="#frame-capture">Frame capture</a></li>
 </ul>
 </li>
 </ul>
