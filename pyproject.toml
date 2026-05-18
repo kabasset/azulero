@@ -44,10 +44,10 @@ dev = [
   "sphinx-copybutton",
   "sphinxcontrib-mermaid",
   "sphinxcontrib-plantuml",
-  "sphinx-multiversion",
   "sphinx-prompt",
   "sphinx-subfigure",
-  "sphinxcontrib-video"
+  "sphinxcontrib-video",
+  "gitpython",
 ]
 
 [project.urls]

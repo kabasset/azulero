@@ -26,7 +26,7 @@ NIP uses color filters to capture three different bands named **Y, J and H**, al
 
 To sum up, only VIS captures colors which could be visible to the human eye, but outputs black-and-white pixels,
 while NISP data covers three bands which would all appear black to us!
-The reason is that most galaxies which Euclid unveils would simply be barely visible,
+The reason is that most galaxies which Euclid unveils would be barely visible,
 and could not be studied, with traditional colors.
 Azulero uses all IYJH bands to produce "false-color" images,
 as do most telescope projects, including Hubble and James Webb space telescopes.
@@ -117,9 +117,9 @@ The atomic MER data footprint (the region of the sky it covers) is a **tile**
 and all MER products over a tile (images, masks, catalogs) are properly aligned.
 Tiles are assigned a unique **tile index**, a term you will encounter often in the documentation.
 
-There are two main types of tiles: DEEP and WIDE.
+There are two main types of tiles: **DEEP and WIDE**.
 DEEP tiles are quite small (17' x 17' in the sky and roughly 10k x 10k pixels in images)
-but made of several Euclid observations of the same region.
+but covered by several Euclid observations of the same region.
 Images from the said observations are aggregated by MER.
 Aggregation, or **stacking**, makes fainter objects visible and lowers the noise level.
 WIDE tiles are comparatively larger (32' x 32', 20k x 20k pixels) and not stacked

@@ -1,5 +1,5 @@
-Azulero
-=======
+Azulero |version|
+=================
 
 .. toctree::
    :maxdepth: 1
@@ -15,6 +15,8 @@ Azulero
    arrange
    roam
    pipelines
+   changes
+   devnotes
 
 
 Bring colors to Euclid tiles!
@@ -43,7 +45,7 @@ The image below is the unedited output of:
 License
 -------
 
-`Apache-2.0 <https://raw.githubusercontent.com/kabasset/azulero/refs/tags/v0.1.0/LICENSE>`_
+The source code is licensed under |license| (see the SPDX_ page for details).
 
 
 How to help?

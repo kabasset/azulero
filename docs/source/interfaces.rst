@@ -148,7 +148,7 @@ Command line help
 We tried our best to write a complete-enough documentation.
 However, we may have omitted a few details.
 For an exhaustive description of global and command options,
- ``azul`` and each of its commands feature an option ``-h``, or ``--help``.
+``azul`` and each of its commands feature an option ``-h``, or ``--help``.
 In particular, the commands are documented in terms of short-form options when they exist.
 Check the help messages in order to find the long-from options (typically, to know the environment variable names).
 

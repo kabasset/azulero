@@ -6,6 +6,7 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
+import git
 import locale
 import os
 
@@ -17,9 +18,48 @@ except locale.Error as e:
     print(f"Error: {e}")
 
 
+def list_releases(other_versions: dict[str, str] = {}):
+
+    repo = git.Repo("../..")
+    try:
+        tags = repo.git.ls_remote("--tags", "origin")
+    except git.GitCommandError as e:
+        tags = repo.git.show_ref("--tags")
+    releases = [
+        line.split("refs/tags/v")[-1]
+        for line in tags.split("\n")
+        if "refs/tags/v" in line and "^{}" not in line
+    ]
+
+    old_version_url = "https://github.com/kabasset/azulero/blob/{version}/README.md"
+    new_version_url = "https://kabasset.github.io/azulero/{version}/index.html"
+
+    releases.sort(key=lambda v: [int(d) for d in v.split(".")], reverse=True)
+    url = lambda v: (
+        old_version_url if v.startswith("v1.") else new_version_url
+    ).format(version=v)
+    releases = {str(v): url(f"v{v}") for v in releases}
+    others = {v: url(other_versions[v]) for v in other_versions}
+    return {**releases, **others}
+
+
+html_context = {"versions": list_releases({"Development version": "develop"})}
+
 project = _version.__title__
+version = _version.__version__
+license = _version.__license__
 copyright = _version.__copyright__
 author = _version.__author__[0]
+
+rst_prolog = f"""
+.. _SPDX: https://spdx.org/licenses/{license}.html
+.. |project| replace:: {project}
+.. |version| replace:: {version}
+.. |copyright| replace:: {copyright}
+.. |author| replace:: {author}
+.. |license| replace:: {license}
+
+"""
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -30,7 +70,6 @@ extensions = [
     "sphinx_copybutton",
     "sphinxcontrib.plantuml",
     "sphinxcontrib.mermaid",
-    "sphinx_multiversion",
     "sphinx_subfigure",
     "sphinxcontrib.video",
     "sphinxarg.ext",
@@ -66,14 +105,6 @@ html_theme_options = {
     "show_relbars": True,
 }
 
-
-# Multiversion
-
-smv_tag_whitelist = r"^v\d+\.\d+\.\d+$"  # FIXME >= 2.0.0
-smv_branch_whitelist = r"^develop$"
-smv_remote_whitelist = r"^origin$"
-smv_released_pattern = r"^refs/tags/.*$"
-
 templates_path = [
     "_templates",
 ]
@@ -83,9 +114,8 @@ html_sidebars = {
         "searchfield.html",
         "navigation.html",
         "relations.html",
-        "versioning.html",
         "localtoc.html",
-        "homelink.html",
+        "versions.html",
     ]
 }
 
