@@ -18,6 +18,10 @@ Azulero |version|
    changes
    devnotes
 
+.. image:: _static/collage_266.0955154946042,66.96054615038162_102159772_ESO482-009_102045468.png
+   :scale: 60%
+   :align: right
+
 
 Bring colors to Euclid tiles!
 -----------------------------
@@ -29,17 +33,8 @@ Input data are retrieved from public or private archives, and post-processing co
 
 Azulero is now compatible with Unix and Windows pipelines, which makes batch processing simple,
 including with parallelization (see :doc:`pipelines`).
-The image below is the unedited output of:
-
-.. prompt:: bash
-
-   azul retrieve UGC11116 -r 1m --from pdr | azul process
-
-.. figure:: _static/UGC11116.jpg
-
-   A 2' x 2' field around `UGC 11116 <https://simbad.u-strasbg.fr/simbad/sim-basic?Ident=UGC+11116>`_.
-
-   Credit: ESA Euclid/Euclid Consortium/NASA/Q1-2025/Antoine Basset (CNES)
+As an example, the collage on the right is the unedited output of a single command line
+(credit: ESA Euclid / Euclid Consortium / NASA / Q1-2025 / Antoine Basset, CNES).
 
 
 License

@@ -148,7 +148,7 @@ def parse_format(arg, images):
 
 def parse_spacing(arg: str, reference: int):
     if arg.endswith("%"):  # FIXME rely on match_suffix
-        return int(float(arg[:-1]) * reference / 100)
+        return int(float(arg[:-1]) * reference / 100 + 0.5)
     if arg.endswith("px"):  # FIXME rely on match_suffix
         arg = arg[:-2]
     return int(arg)
