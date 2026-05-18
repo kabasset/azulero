@@ -24,6 +24,8 @@ def list_releases(other_versions: dict[str, str] = {}):
     try:
         tags = repo.git.ls_remote("--tags", "origin")
     except git.GitCommandError as e:
+        print(f"Error: {e}")
+        print(f"Finding versions in local repository.")
         tags = repo.git.show_ref("--tags")
     releases = [
         line.split("refs/tags/v")[-1]
@@ -69,10 +71,8 @@ extensions = [
     "sphinx_prompt",
     "sphinx_copybutton",
     "sphinxcontrib.plantuml",
-    "sphinxcontrib.mermaid",
     "sphinx_subfigure",
     "sphinxcontrib.video",
-    "sphinxarg.ext",
     "sphinx_changelog",
 ]
 source_suffix = {".rst": "restructuredtext"}

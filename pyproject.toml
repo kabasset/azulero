@@ -39,10 +39,8 @@ dependencies = [
 dev = [
   "pytest",
   "sphinx",
-  "sphinx-argparse",
   "sphinx-changelog",
   "sphinx-copybutton",
-  "sphinxcontrib-mermaid",
   "sphinxcontrib-plantuml",
   "sphinx-prompt",
   "sphinx-subfigure",
