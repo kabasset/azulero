@@ -58,10 +58,10 @@
 <section id="overview">
 <h2>Overview</h2>
 <p>Command <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">roam</span></code> consists in moving a so-called <strong>viewport</strong>
-– a rectangular region from which video frames are extracted –
+– a region from which video frames are extracted –
 over an input image.
 The image and viewport can be seen as analogous to a scene and camera, respectively.</p>
-<p>The viewport has a variable center, field of view and rotation angle.
+<p>The viewport has a variable center, field of view and rotation angle around the line of sight.
 The parameters at <strong>key frames</strong> are specified by the user.</p>
 <p>The command supports the following frame capture modes:</p>
 <dl class="simple">
@@ -72,7 +72,7 @@ as if the camera was not pointing perpendicularly to the image plane.
 This is more than an affine transform because distortion as computed by MER is taken into account.</p>
 </dd>
 <dt>Equirectangular</dt><dd><p>This mode assumes that the input image is an equirectangular (plate-carrée) projection of the full sky,
-with RA from 180° on the left to -180° on the rigth
+with RA from 180° on the left to -180° on the right
 and Dec from -90° at the bottom to 90° at the top.</p>
 </dd>
 <dt>Gaia Sky</dt><dd><p>This special mode consists in capturing frames from a running <a class="reference external" href="https://gaiasky.space/">Gaia Sky</a> instance.
@@ -116,7 +116,7 @@ Capture --&gt; video"/>
 </section>
 <section id="input">
 <h2>Input</h2>
-<p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">roam</span></code> takes as input a single image path,
+<p>In this version, <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">roam</span></code> takes as input a single image path,
 given as a positional argument or through <code class="docutils literal notranslate"><span class="pre">stdin</span></code>.</p>
 <p>The key frames are specified through a so-called <strong>sequence file</strong>
 passed to option <code class="docutils literal notranslate"><span class="pre">--planar</span></code>, <code class="docutils literal notranslate"><span class="pre">--wcs</span></code>, <code class="docutils literal notranslate"><span class="pre">--equirectangular</span></code> or <code class="docutils literal notranslate"><span class="pre">--gaiasky</span></code>
@@ -144,12 +144,12 @@ Placeholders are:</p>
 </tr>
 </tbody>
 </table>
-<p>Several video file formats are supported (see the help message for a complete list),
+<p>Several video file formats are supported (see the help message for a complete list: <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">roam</span> <span class="pre">-h</span></code>),
 among which MKV (the default) features lossless compression, which is needed for further video compositing.</p>
 </section>
 <section id="image-subsampling">
 <h2>Image subsampling</h2>
-<p>Except for Gaia Sky mode, in order to speed up computation and get rid of aliasing with small fields of view,
+<p>Except for Gaia Sky mode, in order to speed up computation and get rid of aliasing with large fields of view,
 a multiresolution image pyramid is built.
 Frames will be extracted from this image through geometric transformations, according to the capture mode.</p>
 </section>
@@ -162,7 +162,7 @@ The path of the center can also be spline-interpolated to avoid unnatural-lookin
 <p>TODO: sequence file format</p>
 <p>Interpolation also depends on the following parameters:</p>
 <dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">--format</span></code></dt><dd><p>The video format, given either as a <code class="docutils literal notranslate"><span class="pre">&lt;width&gt;,&lt;height&gt;</span></code> or as a standard “K”-format such as <code class="docutils literal notranslate"><span class="pre">2K</span></code> or <code class="docutils literal notranslate"><span class="pre">4K</span></code>.</p>
+<dt><code class="docutils literal notranslate"><span class="pre">--format</span></code></dt><dd><p>The video format, given either as <code class="docutils literal notranslate"><span class="pre">&lt;width&gt;,&lt;height&gt;</span></code> or as a standard “K”-format such as <code class="docutils literal notranslate"><span class="pre">2K</span></code> or <code class="docutils literal notranslate"><span class="pre">4K</span></code>.</p>
 </dd>
 <dt><code class="docutils literal notranslate"><span class="pre">--fps</span></code></dt><dd><p>The number of frames per second.</p>
 </dd>
