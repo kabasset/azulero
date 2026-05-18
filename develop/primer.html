@@ -18,7 +18,7 @@
     <script src="_static/copybutton.js?v=35a8b989"></script>
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="What’s new" href="news.html" />
-    <link rel="prev" title="Azulero" href="index.html" />
+    <link rel="prev" title="Azulero 2.0" href="index.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -38,7 +38,7 @@
     <ul>
         <li>
           &larr;
-          <a href="index.html" title="Previous document">Azulero</a>
+          <a href="index.html" title="Previous document">Azulero 2.0</a>
         </li>
         <li>
           <a href="news.html" title="Next document">What’s new</a>
@@ -75,7 +75,7 @@ NISP is a “near-infrared spectro-photometer”, and we will only consider the 
 NIP uses color filters to capture three different bands named <strong>Y, J and H</strong>, all of which are in the infrared.</p>
 <p>To sum up, only VIS captures colors which could be visible to the human eye, but outputs black-and-white pixels,
 while NISP data covers three bands which would all appear black to us!
-The reason is that most galaxies which Euclid unveils would simply be barely visible,
+The reason is that most galaxies which Euclid unveils would be barely visible,
 and could not be studied, with traditional colors.
 Azulero uses all IYJH bands to produce “false-color” images,
 as do most telescope projects, including Hubble and James Webb space telescopes.</p>
@@ -160,9 +160,9 @@ because mosaic may be confusing when we also talk about collages.</p>
 <p>The atomic MER data footprint (the region of the sky it covers) is a <strong>tile</strong>
 and all MER products over a tile (images, masks, catalogs) are properly aligned.
 Tiles are assigned a unique <strong>tile index</strong>, a term you will encounter often in the documentation.</p>
-<p>There are two main types of tiles: DEEP and WIDE.
+<p>There are two main types of tiles: <strong>DEEP and WIDE</strong>.
 DEEP tiles are quite small (17’ x 17’ in the sky and roughly 10k x 10k pixels in images)
-but made of several Euclid observations of the same region.
+but covered by several Euclid observations of the same region.
 Images from the said observations are aggregated by MER.
 Aggregation, or <strong>stacking</strong>, makes fainter objects visible and lowers the noise level.
 WIDE tiles are comparatively larger (32’ x 32’, 20k x 20k pixels) and not stacked
@@ -179,7 +179,7 @@ WIDE tiles are comparatively larger (32’ x 32’, 20k x 20k pixels) and not st
     <ul>
         <li>
           &larr;
-          <a href="index.html" title="Previous document">Azulero</a>
+          <a href="index.html" title="Previous document">Azulero 2.0</a>
         </li>
         <li>
           <a href="news.html" title="Next document">What’s new</a>
@@ -206,7 +206,7 @@ WIDE tiles are comparatively larger (32’ x 32’, 20k x 20k pixels) and not st
 </search>
 <script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="index.html">Azulero</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Azulero 2.0</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">A Euclid primer</a></li>
 <li class="toctree-l1"><a class="reference internal" href="news.html">What’s new</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick start</a></li>
@@ -216,13 +216,15 @@ WIDE tiles are comparatively larger (32’ x 32’, 20k x 20k pixels) and not st
 <li class="toctree-l1"><a class="reference internal" href="arrange.html"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">arrange</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="roam.html"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">roam</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="pipelines.html">Pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changes.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="devnotes.html">Developer notes</a></li>
 </ul>
 
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="index.html" title="previous chapter">Azulero</a></li>
+      <li>Previous: <a href="index.html" title="previous chapter">Azulero 2.0</a></li>
       <li>Next: <a href="news.html" title="next chapter">What’s new</a></li>
   </ul></li>
 </ul>
@@ -239,10 +241,13 @@ WIDE tiles are comparatively larger (32’ x 32’, 20k x 20k pixels) and not st
 </li>
 </ul>
 
-  </div><h3>More...</h3>
+  </div><h3>Versions</h3>
 <ul>
-    <li><a href="http://doi.org/10.24400/815952/Azulero">Project homepage</a></li>
-    <li><a href="devnotes.html">Developer notes</a></li>
+    <li><a href="https://github.com/kabasset/azulero/blob/v1.2.0/README.md">1.2.0</a></li>
+    <li><a href="https://github.com/kabasset/azulero/blob/v1.1.0/README.md">1.1.0</a></li>
+    <li><a href="https://github.com/kabasset/azulero/blob/v1.0.0/README.md">1.0.0</a></li>
+    <li><a href="https://kabasset.github.io/azulero/v0.1.0/index.html">0.1.0</a></li>
+    <li><a href="https://kabasset.github.io/azulero/develop/index.html">Development version</a></li>
 </ul>
         </div>
       </div>
