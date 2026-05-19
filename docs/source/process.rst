@@ -10,8 +10,23 @@ It takes as input workdirs which each contain at least one such MER image per Eu
 and outputs one color rendering per workdir.
 Intermediate files can be written, mostly for debugging purposes.
 
-The diagram below illustrates the various steps of the algorithm processing a single workdir.
+.. |I_band| image:: _static/VIS.png
+.. |Y_band| image:: _static/NIR-Y.png
+.. |J_band| image:: _static/NIR-J.png
+.. |H_band| image:: _static/NIR-H.png
+.. |RGB_out| image:: _static/RGB.png
 
+.. table::
+   :class: subfigure
+   :widths: 20 20 20 20 20
+
+   +----------+----------+----------+----------+-----------+
+   | |I_band| | |Y_band| | |J_band| | |H_band| | |RGB_out| |
+   +----------+----------+----------+----------+-----------+
+   | I band   | Y band   | J band   | H band   | Output    |
+   +----------+----------+----------+----------+-----------+
+
+The diagram below illustrates the various steps of the algorithm processing a single workdir.
 
 .. plantuml::
    :align: center
@@ -275,7 +290,9 @@ hue is rotated (parameter ``--hue``) and saturation is boosted (``--saturation``
 The intensity of each color channel is then adjusted using splines
 similar to Photoshop and Gimp curves (``--curves``).
 
-All adjustments can be disabled by setting ``--hue 0 --saturation 1 --curves ""``.
+All adjustments can be disabled by setting::
+   
+   --hue 0 --saturation 1 --curves ""
 
 
 Resources and cropping

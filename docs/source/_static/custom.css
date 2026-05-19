@@ -1,4 +1,7 @@
-table.docutils, table.docutils td, table.docutils th, table.docutils tr {
+table.docutils,
+table.docutils td,
+table.docutils th,
+table.docutils tr {
     border: none;
     box-shadow: none;
 }
@@ -65,7 +68,20 @@ div.footer {
     height: 150px;
 }
 
-#arrange-grid tbody tr, #arrange-grid tbody tr td {
+#arrange-grid tbody tr,
+#arrange-grid tbody tr td {
     border: 2px solid #FCC;
     text-align: center;
+}
+
+.subfigure tbody,
+.subfigure tr,
+.subfigure td {
+    border-collapse: collapse !important;
+    border: none !important;
+    padding: 0.5ex !important;
+    border-spacing: 0 !important;
+    background-color: transparent !important;
+    table-layout: fixed !important;
+    text-align: center !important;
 }
