@@ -1,10 +1,12 @@
 A Euclid primer
 ===============
 
+.. image:: https://www.esa.int/var/esa/storage/images/science_exploration/space_science/euclid/24495561-6-eng-GB/Euclid_pillars.png
+   :width: 20%
+   :align: right
+
 The mission
 -----------
-
-As explained `by ESA <https://www.esa.int/Science_Exploration/Space_Science/Euclid>`_:
 
 .. epigraph::
 
@@ -14,14 +16,38 @@ As explained `by ESA <https://www.esa.int/Science_Exploration/Space_Science/Eucl
    Euclid will explore how the Universe has expanded and how structure has formed over cosmic history,
    revealing more about the role of gravity and the nature of dark energy and dark matter.
 
+   -- `ESA <https://www.esa.int/Science_Exploration/Space_Science/Euclid>`_
 
-The images
-----------
+.. |image_1| image:: https://www.euclid-ec.org/wp-content/uploads/59881_A4-1600px.jpg
+.. |image_2| image:: https://www.euclid-ec.org/wp-content/uploads/57296_A4-1600px.jpg
+.. |image_3| image:: https://www.euclid-ec.org/wp-content/uploads/59905_A4-1600px.jpg
+.. |image_4| image:: https://www.euclid-ec.org/wp-content/uploads/41554_A4-1600px.jpg
+
+.. table::
+   :class: subfigure
+   :widths: 24 24 52
+
+   +-----------+-----------+-------------------------------------------------------+
+   | |image_1| | |image_2| | |image_4|                                             |
+   +-----------+-----------+-------------------------------------------------------+
+   | `Euclid testing <https://www.euclid-ec.org/public/image/gallery-telescope/>`_ |
+   | at Thales Alenia Space, Cannes, France. (credit: ESA / M. Pédoussaut)         |
+   +-----------+-----------+-------------------------------------------------------+
+
+
+The instruments
+---------------
+
+.. image:: https://www.euclid-ec.org/wp-content/uploads/2018/07/FM_integration.jpg
+   :width: 50%
+   :align: right
 
 In order to create a "great map of the Universe", Euclid takes a lot of pictures with two instruments: VIS and NISP.
 VIS is a camera sensitive to visible light and outputs a single "color", or band, named **I**
 -- which covers all the shades of the rainbow, like a consumer black-and-white camera would do.
-NISP is a "near-infrared spectro-photometer", and we will only consider the photometer half of it, NIP.
+NISP is the instrument pictured on the right during integration tests at LAM, Marseille, France (credit: Euclid Consortium). 
+This is a `"near-infrared spectro-photometer" <https://www.euclid-ec.org/public/mission/nisp/>`_,
+a term we will not decipher here because we will only consider the photometer half of it, NIP.
 NIP uses color filters to capture three different bands named **Y, J and H**, all of which are in the infrared.
 
 To sum up, only VIS captures colors which could be visible to the human eye, but outputs black-and-white pixels,
@@ -113,9 +139,15 @@ or mosaics in short.
 In general, within Azulero documentation, we call them simply **MER data**,
 because mosaic may be confusing when we also talk about collages.
 
+.. image:: https://img.youtube.com/vi/z1-V0zz4p_s/maxresdefault.jpg
+   :width: 50%
+   :align: right
+   :target: https://www.youtube.com/watch?v=z1-V0zz4p_s
+
 The atomic MER data footprint (the region of the sky it covers) is a **tile**
 and all MER products over a tile (images, masks, catalogs) are properly aligned.
-Tiles are assigned a unique **tile index**, a term you will encounter often in the documentation.
+Tiles are assigned a unique **tile index**, a term you will encounter often in the documentation
+(click on the image on the right to visit one such tile).
 
 There are two main types of tiles: **DEEP and WIDE**.
 DEEP tiles are quite small (17' x 17' in the sky and roughly 10k x 10k pixels in images)
