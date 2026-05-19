@@ -10,7 +10,7 @@
     <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=3140588f" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=ae938352" />
     <script src="_static/documentation_options.js?v=7f41d439"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
@@ -63,6 +63,29 @@ from input MER images generally retrieved with <code class="docutils literal not
 It takes as input workdirs which each contain at least one such MER image per Euclid photometric band (I, Y, J, H),
 and outputs one color rendering per workdir.
 Intermediate files can be written, mostly for debugging purposes.</p>
+<table class="subfigure docutils align-default">
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 20.0%" />
+<col style="width: 20.0%" />
+<col style="width: 20.0%" />
+<col style="width: 20.0%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><img alt="I_band" src="_images/VIS.png" /></p></td>
+<td><p><img alt="Y_band" src="_images/NIR-Y.png" /></p></td>
+<td><p><img alt="J_band" src="_images/NIR-J.png" /></p></td>
+<td><p><img alt="H_band" src="_images/NIR-H.png" /></p></td>
+<td><p><img alt="RGB_out" src="_images/RGB.png" /></p></td>
+</tr>
+<tr class="row-even"><td><p>I band</p></td>
+<td><p>Y band</p></td>
+<td><p>J band</p></td>
+<td><p>H band</p></td>
+<td><p>Output</p></td>
+</tr>
+</tbody>
+</table>
 <p>The diagram below illustrates the various steps of the algorithm processing a single workdir.</p>
 <figure class="align-center">
 <p class="plantuml">
@@ -225,35 +248,38 @@ Typically, the Cat’s eye nebula is best rendered with a white point around 18.
 Special value <code class="docutils literal notranslate"><span class="pre">-w</span> <span class="pre">0</span></code> triggers data-driven tuning based on image statistics.
 It generally gives good results, but using it will prevent stitching multiple images,
 since they will be rendered with inconsistent stretching parameters.</p>
-<figure class="align-center">
-<p class="plantuml">
-<object data="_images/plantuml-dfcddb778ffc7cd7efc4d4164db292b9c4e4e1e7.svg" type="image/svg+xml" style="max-width:100%">
-<img src="_images/plantuml-dfcddb778ffc7cd7efc4d4164db292b9c4e4e1e7.png" alt="&#64;startchart
-title &quot;Stretching curve for various values of a (with w = 22.5 and b = 28.5)&quot;
-h-axis &quot;input&quot; 0 --&gt; 1 spacing 1 label-right
-v-axis &quot;stretched&quot; 0 --&gt; 1 spacing 1 label-top
-line &quot;a = 29&quot; [(0.0, 0.1566693273236386), (0.0025000000000000005, 0.26751941663491213), (0.010000000000000002, 0.42054499330650014), (0.022500000000000006, 0.5213702076810071), (0.04000000000000001, 0.5937424146421468), (0.0625, 0.6500126348281552), (0.09000000000000002, 0.696022297131805), (0.12250000000000003, 0.7349338993349093), (0.16000000000000003, 0.7686449691032505), (0.2025, 0.7983821606048738), (0.25, 0.8249839288823392), (0.30250000000000005, 0.8490486561475633), (0.3600000000000001, 0.871018313242587), (0.42250000000000004, 0.8912286060955338), (0.4900000000000001, 0.9099405182020133), (0.5625, 0.9273609580163409), (0.6400000000000001, 0.9436567350792956), (0.7225000000000001, 0.9589642944866931), (0.81, 0.9733966661283485), (0.9025000000000001, 0.9870485332838725), (1.0, 1.0)] #F88
-line &quot;a = 27&quot; [(0.0, 0.0488784634166931), (0.0025000000000000005, 0.07976275599379179), (0.010000000000000002, 0.1658922792796087), (0.022500000000000006, 0.27484067675024926), (0.04000000000000001, 0.37445609923347567), (0.0625, 0.45798501027078065), (0.09000000000000002, 0.528093480047535), (0.12250000000000003, 0.5880162185258003), (0.16000000000000003, 0.6401835286676365), (0.2025, 0.6863155911936527), (0.25, 0.7276400963687304), (0.30250000000000005, 0.7650535088865191), (0.3600000000000001, 0.7992267100085552), (0.42250000000000004, 0.8306733581107195), (0.4900000000000001, 0.8597948144236073), (0.5625, 0.8869103521523775), (0.6400000000000001, 0.9122779626934736), (0.7225000000000001, 0.9361090171057448), (0.81, 0.9585788175463841), (0.9025000000000001, 0.979834337652556), (1.0, 1.0)] #000
-line &quot;a = 25&quot; [(0.0, 0.01310069295425506), (0.0025000000000000005, 0.021328871364393293), (0.010000000000000002, 0.045962219571342174), (0.022500000000000006, 0.08655093992199117), (0.04000000000000001, 0.14148527048102963), (0.0625, 0.20735322327317474), (0.09000000000000002, 0.2793484775656738), (0.12250000000000003, 0.3527557343730836), (0.16000000000000003, 0.4242178117457414), (0.2025, 0.49195163043381296), (0.25, 0.5553056269589933), (0.30250000000000005, 0.6142556383963345), (0.3600000000000001, 0.6690653320347311), (0.42250000000000004, 0.7201019431888923), (0.4900000000000001, 0.7677479198304585), (0.5625, 0.8123629772920163), (0.6400000000000001, 0.8542705654407106), (0.7225000000000001, 0.8937554628731269), (0.81, 0.9310660589387107), (0.9025000000000001, 0.9664183083145972), (1.0, 1.0)] #8F8
-line &quot;a = 23&quot; [(0.0, 0.005058718071958012), (0.0025000000000000005, 0.00823546215909056), (0.010000000000000002, 0.017765195752798196), (0.022500000000000006, 0.03364343358957012), (0.04000000000000001, 0.0558527714179558), (0.0625, 0.0843482212135041), (0.09000000000000002, 0.11903750218882747), (0.12250000000000003, 0.1597578970576535), (0.16000000000000003, 0.206252637828269), (0.2025, 0.2581512749687633), (0.25, 0.3149594402619159), (0.30250000000000005, 0.3760629533854005), (0.3600000000000001, 0.4407487497313035), (0.42250000000000004, 0.5082409667414367), (0.4900000000000001, 0.5777462176315283), (0.5625, 0.6484995627531843), (0.6400000000000001, 0.7198031103326812), (0.7225000000000001, 0.7910521122756975), (0.81, 0.8617472725981691), (0.9025000000000001, 0.9314951295268422), (1.0, 1.0)] #88F
-legend right
-&#64;endchart"/>
-
-</object></p>
-</figure>
-<figure class="align-default" id="id1">
-<img alt="_images/matrix.png" src="_images/matrix.png" />
-<figcaption>
-<p><span class="caption-text">UGC 11116 rendering for a = 25.75 (top row), 27 (middle row), 28.25 (bottom row)
-and w = 20 (left column), 22.5 (center column), 25 (right column)</span></p>
-</figcaption>
-</figure>
-<p>For the record, this collage was produced with:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">azul<span class="w"> </span>retrieve<span class="w"> </span>-r<span class="w"> </span>1m<span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="w"> </span>UGC11116</span>
-<span class="prompt1"><span class="k">for</span><span class="w"> </span>a<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="m">25</span>.75<span class="w"> </span><span class="m">27</span><span class="w"> </span><span class="m">28</span>.25<span class="p">;</span><span class="w"> </span><span class="k">do</span><span class="w"> </span><span class="k">for</span><span class="w"> </span>w<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="m">20</span><span class="w"> </span><span class="m">22</span>.5<span class="w"> </span><span class="m">25</span><span class="p">;</span><span class="w"> </span><span class="k">do</span><span class="w"> </span><span class="se">\</span>
-azul<span class="w"> </span>process<span class="w"> </span><span class="m">102159776</span>/UGC11116<span class="o">[</span><span class="m">300</span>:1100,:1200<span class="o">]</span><span class="w"> </span>-w<span class="w"> </span><span class="nv">$w</span><span class="w"> </span>-a<span class="w"> </span><span class="nv">$a</span><span class="w"> </span>-o<span class="w"> </span><span class="nv">$w</span>-<span class="nv">$a</span>.png<span class="p">;</span><span class="w"> </span><span class="se">\</span>
-<span class="k">done</span><span class="p">;</span><span class="w"> </span><span class="k">done</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>azul<span class="w"> </span>arrange<span class="w"> </span>-n<span class="w"> </span><span class="m">3</span><span class="w"> </span>--background<span class="w"> </span><span class="m">255</span><span class="w"> </span>-o<span class="w"> </span>matrix.png</span>
-</pre></div></div></section>
+<p>To demonstrate the effect of <code class="docutils literal notranslate"><span class="pre">-w</span></code> and <code class="docutils literal notranslate"><span class="pre">-a</span></code>, below is a matrix of outputs around the default values.</p>
+<table class="subfigure docutils align-default">
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 30.0%" />
+<col style="width: 30.0%" />
+<col style="width: 30.0%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>a = 28.25</p></td>
+<td><p><img alt="200-2825" src="_images/20-28.25.png" /></p></td>
+<td><p><img alt="225-2825" src="_images/22.5-28.25.png" /></p></td>
+<td><p><img alt="250-2825" src="_images/25-28.25.png" /></p></td>
+</tr>
+<tr class="row-even"><td><p>a = 27.00</p></td>
+<td><p><img alt="200-2700" src="_images/20-27.png" /></p></td>
+<td><p><img alt="225-2700" src="_images/22.5-27.png" /></p></td>
+<td><p><img alt="250-2700" src="_images/25-27.png" /></p></td>
+</tr>
+<tr class="row-odd"><td><p>a = 25.75</p></td>
+<td><p><img alt="200-2575" src="_images/20-25.75.png" /></p></td>
+<td><p><img alt="225-2575" src="_images/22.5-25.75.png" /></p></td>
+<td><p><img alt="250-2575" src="_images/25-25.75.png" /></p></td>
+</tr>
+<tr class="row-even"><td></td>
+<td><p>w = 20.0</p></td>
+<td><p>w = 22.5</p></td>
+<td><p>w = 25.0</p></td>
+</tr>
+</tbody>
+</table>
+</section>
 <section id="blending">
 <h2>Blending</h2>
 <figure class="align-center">
@@ -315,7 +341,10 @@ That being said, there is no good or bad approach and you can create your own pa
 hue is rotated (parameter <code class="docutils literal notranslate"><span class="pre">--hue</span></code>) and saturation is boosted (<code class="docutils literal notranslate"><span class="pre">--saturation</span></code>).</p>
 <p>The intensity of each color channel is then adjusted using splines
 similar to Photoshop and Gimp curves (<code class="docutils literal notranslate"><span class="pre">--curves</span></code>).</p>
-<p>All adjustments can be disabled by setting <code class="docutils literal notranslate"><span class="pre">--hue</span> <span class="pre">0</span> <span class="pre">--saturation</span> <span class="pre">1</span> <span class="pre">--curves</span> <span class="pre">&quot;&quot;</span></code>.</p>
+<p>All adjustments can be disabled by setting:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">--</span><span class="n">hue</span> <span class="mi">0</span> <span class="o">--</span><span class="n">saturation</span> <span class="mi">1</span> <span class="o">--</span><span class="n">curves</span> <span class="s2">&quot;&quot;</span>
+</pre></div>
+</div>
 </section>
 <section id="resources-and-cropping">
 <h2>Resources and cropping</h2>
