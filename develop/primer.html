@@ -55,23 +55,45 @@
 
   <section id="a-euclid-primer">
 <h1>A Euclid primer</h1>
+<a class="reference internal image-reference" href="https://www.esa.int/var/esa/storage/images/science_exploration/space_science/euclid/24495561-6-eng-GB/Euclid_pillars.png"><img alt="https://www.esa.int/var/esa/storage/images/science_exploration/space_science/euclid/24495561-6-eng-GB/Euclid_pillars.png" class="align-right" src="https://www.esa.int/var/esa/storage/images/science_exploration/space_science/euclid/24495561-6-eng-GB/Euclid_pillars.png" style="width: 20%;" />
+</a>
 <section id="the-mission">
 <h2>The mission</h2>
-<p>As explained <a class="reference external" href="https://www.esa.int/Science_Exploration/Space_Science/Euclid">by ESA</a>:</p>
 <blockquote class="epigraph">
 <div><p>ESA’s Euclid mission is designed to explore the composition and evolution of the dark Universe.
 The space telescope will create a great map of the large-scale structure of the Universe across space and time
 by observing billions of galaxies out to 10 billion light-years, across more than a third of the sky.
 Euclid will explore how the Universe has expanded and how structure has formed over cosmic history,
 revealing more about the role of gravity and the nature of dark energy and dark matter.</p>
+<p class="attribution">—<a class="reference external" href="https://www.esa.int/Science_Exploration/Space_Science/Euclid">ESA</a></p>
 </div></blockquote>
+<table class="subfigure docutils align-default">
+<colgroup>
+<col style="width: 24.0%" />
+<col style="width: 24.0%" />
+<col style="width: 52.0%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><img alt="image_1" src="https://www.euclid-ec.org/wp-content/uploads/59881_A4-1600px.jpg" /></p></td>
+<td><p><img alt="image_2" src="https://www.euclid-ec.org/wp-content/uploads/57296_A4-1600px.jpg" /></p></td>
+<td><p><img alt="image_4" src="https://www.euclid-ec.org/wp-content/uploads/41554_A4-1600px.jpg" /></p></td>
+</tr>
+<tr class="row-even"><td colspan="3"><p><a class="reference external" href="https://www.euclid-ec.org/public/image/gallery-telescope/">Euclid testing</a>
+at Thales Alenia Space, Cannes, France. (credit: ESA / M. Pédoussaut)</p></td>
+</tr>
+</tbody>
+</table>
 </section>
-<section id="the-images">
-<h2>The images</h2>
+<section id="the-instruments">
+<h2>The instruments</h2>
+<a class="reference internal image-reference" href="https://www.euclid-ec.org/wp-content/uploads/2018/07/FM_integration.jpg"><img alt="https://www.euclid-ec.org/wp-content/uploads/2018/07/FM_integration.jpg" class="align-right" src="https://www.euclid-ec.org/wp-content/uploads/2018/07/FM_integration.jpg" style="width: 50%;" />
+</a>
 <p>In order to create a “great map of the Universe”, Euclid takes a lot of pictures with two instruments: VIS and NISP.
 VIS is a camera sensitive to visible light and outputs a single “color”, or band, named <strong>I</strong>
 – which covers all the shades of the rainbow, like a consumer black-and-white camera would do.
-NISP is a “near-infrared spectro-photometer”, and we will only consider the photometer half of it, NIP.
+NISP is the instrument pictured on the right during integration tests at LAM, Marseille, France (credit: Euclid Consortium).
+This is a <a class="reference external" href="https://www.euclid-ec.org/public/mission/nisp/">“near-infrared spectro-photometer”</a>,
+a term we will not decipher here because we will only consider the photometer half of it, NIP.
 NIP uses color filters to capture three different bands named <strong>Y, J and H</strong>, all of which are in the infrared.</p>
 <p>To sum up, only VIS captures colors which could be visible to the human eye, but outputs black-and-white pixels,
 while NISP data covers three bands which would all appear black to us!
@@ -157,9 +179,12 @@ which results in the data we need!</p>
 or mosaics in short.
 In general, within Azulero documentation, we call them simply <strong>MER data</strong>,
 because mosaic may be confusing when we also talk about collages.</p>
+<a class="reference external image-reference" href="https://www.youtube.com/watch?v=z1-V0zz4p_s"><img alt="https://img.youtube.com/vi/z1-V0zz4p_s/maxresdefault.jpg" class="align-right" src="https://img.youtube.com/vi/z1-V0zz4p_s/maxresdefault.jpg" style="width: 50%;" />
+</a>
 <p>The atomic MER data footprint (the region of the sky it covers) is a <strong>tile</strong>
 and all MER products over a tile (images, masks, catalogs) are properly aligned.
-Tiles are assigned a unique <strong>tile index</strong>, a term you will encounter often in the documentation.</p>
+Tiles are assigned a unique <strong>tile index</strong>, a term you will encounter often in the documentation
+(click on the image on the right to visit one such tile).</p>
 <p>There are two main types of tiles: <strong>DEEP and WIDE</strong>.
 DEEP tiles are quite small (17’ x 17’ in the sky and roughly 10k x 10k pixels in images)
 but covered by several Euclid observations of the same region.
@@ -234,7 +259,7 @@ WIDE tiles are comparatively larger (32’ x 32’, 20k x 20k pixels) and not st
     <ul>
 <li><a class="reference internal" href="#">A Euclid primer</a><ul>
 <li><a class="reference internal" href="#the-mission">The mission</a></li>
-<li><a class="reference internal" href="#the-images">The images</a></li>
+<li><a class="reference internal" href="#the-instruments">The instruments</a></li>
 <li><a class="reference internal" href="#the-science-ground-segment">The Science Ground Segment</a></li>
 <li><a class="reference internal" href="#the-mer-data">The MER data</a></li>
 </ul>
