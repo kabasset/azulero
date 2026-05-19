@@ -194,7 +194,8 @@ Special value ``-w 0`` triggers data-driven tuning based on image statistics.
 It generally gives good results, but using it will prevent stitching multiple images,
 since they will be rendered with inconsistent stretching parameters.
 
-To demonstrate the effect of ``-w`` and ``-a``, below is a matrix of outputs around the default values.
+To demonstrate the effect and sensitivity of ``-w`` and ``-a``,
+below is a matrix of UGC 11116 renderings in which we varied the parameters around their default values.
 
 .. |200-2575| image:: _static/matrix/20-25.75.png
 .. |225-2575| image:: _static/matrix/22.5-25.75.png
@@ -220,6 +221,12 @@ To demonstrate the effect of ``-w`` and ``-a``, below is a matrix of outputs aro
    +-----------+------------+------------+------------+
    |           | w = 20.0   | w = 22.5   | w = 25.0   |
    +-----------+------------+------------+------------+
+
+The effect of ``-w`` is obvious at the heart of the galaxy, which is completely burnt in the rightmost column.
+Note how pushing ``-a`` deeper (top row) intensifies dimmer objects like background galaxies and the outer region of UGC 11116.
+Beware that it also increases noise and may make the background grainy and unpleasant.
+Azulero default values are carefully chosen to limit this phenomenon while keeping room for post-processing.
+
 
 Blending
 --------
