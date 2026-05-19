@@ -108,7 +108,7 @@ which do not need to have the same formats or shapes.</p>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">{first}</span></code></p></td>
 <td><p>The stem of the first input file</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">{sequence}</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">{last}</span></code></p></td>
 <td><p>The stem of the last input file</p></td>
 </tr>
 </tbody>
@@ -116,7 +116,7 @@ which do not need to have the same formats or shapes.</p>
 </section>
 <section id="canvas-initialization">
 <h2>Canvas initialization</h2>
-<p>The canvas is initialized with a format and color.
+<p>A canvas (the background of the collage) is initialized with a format and color.
 First, the width and height of the grid cells are computed
 from the input image sizes and <code class="docutils literal notranslate"><span class="pre">--format</span></code> parameter.</p>
 <p>TODO document <code class="docutils literal notranslate"><span class="pre">--format</span></code></p>
@@ -132,7 +132,7 @@ as well as regions around cells which accommodate small images (see next session
 </section>
 <section id="image-blitting">
 <h2>Image blitting</h2>
-<p>Blitting is the process of copying the input images into the canvas grid cells
+<p>Blitting is the process of copying the input images onto the canvas grid cells
 (for purists here, we do not use Boolean operators to copy images and should probably not use this term).
 Images are centered in their cells and the blit region is the intersection between the cell and image footprints:</p>
 <ul class="simple">

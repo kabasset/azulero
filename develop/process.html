@@ -248,7 +248,8 @@ Typically, the Cat’s eye nebula is best rendered with a white point around 18.
 Special value <code class="docutils literal notranslate"><span class="pre">-w</span> <span class="pre">0</span></code> triggers data-driven tuning based on image statistics.
 It generally gives good results, but using it will prevent stitching multiple images,
 since they will be rendered with inconsistent stretching parameters.</p>
-<p>To demonstrate the effect of <code class="docutils literal notranslate"><span class="pre">-w</span></code> and <code class="docutils literal notranslate"><span class="pre">-a</span></code>, below is a matrix of outputs around the default values.</p>
+<p>To demonstrate the effect and sensitivity of <code class="docutils literal notranslate"><span class="pre">-w</span></code> and <code class="docutils literal notranslate"><span class="pre">-a</span></code>,
+below is a matrix of UGC 11116 renderings in which we varied the parameters around their default values.</p>
 <table class="subfigure docutils align-default">
 <colgroup>
 <col style="width: 10.0%" />
@@ -279,6 +280,10 @@ since they will be rendered with inconsistent stretching parameters.</p>
 </tr>
 </tbody>
 </table>
+<p>The effect of <code class="docutils literal notranslate"><span class="pre">-w</span></code> is obvious at the heart of the galaxy, which is completely burnt in the rightmost column.
+Note how pushing <code class="docutils literal notranslate"><span class="pre">-a</span></code> deeper (top row) intensifies dimmer objects like background galaxies and the outer region of UGC 11116.
+Beware that it also increases noise and may make the background grainy and unpleasant.
+Azulero default values are carefully chosen to limit this phenomenon while keeping room for post-processing.</p>
 </section>
 <section id="blending">
 <h2>Blending</h2>
