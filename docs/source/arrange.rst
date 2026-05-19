@@ -51,14 +51,14 @@ Placeholder name Substitution value
 ================ ==================
 ``{workspace}``  Workspace path
 ``{first}``      The stem of the first input file
-``{sequence}``   The stem of the last input file
+``{last}``       The stem of the last input file
 ================ ==================
 
 
 Canvas initialization
 ---------------------
 
-The canvas is initialized with a format and color.
+A canvas (the background of the collage) is initialized with a format and color.
 First, the width and height of the grid cells are computed
 from the input image sizes and ``--format`` parameter.
 
@@ -80,7 +80,7 @@ as well as regions around cells which accommodate small images (see next session
 Image blitting
 --------------
 
-Blitting is the process of copying the input images into the canvas grid cells
+Blitting is the process of copying the input images onto the canvas grid cells
 (for purists here, we do not use Boolean operators to copy images and should probably not use this term).
 Images are centered in their cells and the blit region is the intersection between the cell and image footprints:
 
