@@ -5,6 +5,7 @@
 from functools import lru_cache
 import logging
 import os
+import shlex
 import sys
 
 
@@ -24,7 +25,7 @@ def parse_envargs(command=None, prefix=os.environ.get("AZULERO_PREFIX", "AZUL"))
 @lru_cache
 def read_pipe_args():
     if not sys.stdin.isatty():
-        args = sys.stdin.read().split()
+        args = shlex.split(sys.stdin.read())  # str.split won't work with quotes
         return args
     return []
 
@@ -35,7 +36,7 @@ def write_pipe_args(args, log=True):
         for a in args:
             logger.bullet(str(a))
     if not sys.stdout.isatty():
-        print("\n".join(str(a) for a in args))
+        print("\n".join(shlex.quote(str(a)) for a in args))
         return True
     return False
 

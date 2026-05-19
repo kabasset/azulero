@@ -69,8 +69,6 @@ In general, spaces can be omitted, though, such that the two following lines are
    azul retrieve "NGC 6505"
    azul retrieve NGC6505
 
-.. warning:: Currently, using spaces in target names may break :doc:`pipelines`.
-
 
 Outputs
 -------
