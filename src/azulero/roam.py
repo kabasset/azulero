@@ -49,11 +49,11 @@ def add_parser(subparsers, help):
     )
     group = parser.add_mutually_exclusive_group(required=False)
     group.add_argument(
-        "--planar",
+        "--ortho",
         metavar="PATH",
         help="""
-        Key frame sequence file for no projection.
-        Only translations and rotations will be applied.
+        Key frame sequence file for orthographic projection.
+        Only scaling and rotation are performed.
         The key frames may be specified as image coordinates,
         or as sky coordinates if the images come with WCS parameters,
         or as a mix of image and sky coordinates.
@@ -63,7 +63,7 @@ def add_parser(subparsers, help):
         "--wcs",
         metavar="PATH",
         help="""
-        Key frame sequence file for WCS to planar projection.
+        Sequence file for WCS projection.
         The input images must come with WCS parameters,
         and only sky coordinates are supported.
         """,
@@ -72,7 +72,7 @@ def add_parser(subparsers, help):
         "--equirectangular",
         metavar="PATH",
         help="""
-        Key frame sequence file for equirectangular to planar projection.
+        Sequence file for equirectangular sky maps.
         The input images must be equirectangular with:
 
         * RA from -180° on the right to 180° on the left,
@@ -85,11 +85,11 @@ def add_parser(subparsers, help):
         "--gaiasky",
         metavar="PATH",
         help="""
-        Key frame sequence file for Gaia Sky.
+        Sequence file for Gaia Sky.
         Only sky coordinates are supported.
 
-        **WARNING: Gaia Sky has to be running before you execute this script!
-        You will be asked to close the application when frames have been generated.**
+        WARNING: Gaia Sky has to be running before you execute this script!
+        You will be asked to close the application when frames have been generated.
         """,
     )
     parser.add_argument(
@@ -102,9 +102,9 @@ def add_parser(subparsers, help):
             """
             Output video file template, where:
             
-            * ``{workspace}`` is replaced by the workspace path,
-            * ``{image}`` is replaced by the image file stem,
-            * ``{sequence}`` is replaced by the sequence file stem.
+            * `{workspace}` is replaced by the workspace path,
+            * `{image}` is replaced by the image file stem,
+            * `{sequence}` is replaced by the sequence file stem.
 
             """
             f"Supported extensions are: {', '.join(supported_codecs)}. "
@@ -118,8 +118,8 @@ def add_parser(subparsers, help):
         metavar="WIDTH,HEIGHT",
         help="""
         Video format as comma-separated width and height or format name.
-        Format names are numbers followed by ``K`` like ``2K`` for 1920 x 1080 pixels
-        or ``4K`` for 3840 x 2160 pixels.
+        Format names are numbers followed by `K` like `2K` for 1920 x 1080 pixels
+        or `4K` for 3840 x 2160 pixels.
         """,
     )
     parser.add_argument(
@@ -165,7 +165,7 @@ def run(args):
 
     ios = Workspace.from_args(args)
     input = ios.workspace / args.images[0]  # FIXME loop over inputs
-    config = Path(args.planar or args.wcs or args.equirectangular or args.gaiasky)
+    config = Path(args.ortho or args.wcs or args.equi or args.gaiasky)
     output = Path(
         ios.output_template.format(
             workspace=ios.workspace, image=input.stem, sequence=config.stem
@@ -224,11 +224,12 @@ def run(args):
         logger.bullet(f"{p} [{i+1}/{len(params)}]")
         if args.gaiasky:
             frame = cv2.imread(gaia_frames[i], cv2.IMREAD_COLOR)
-        elif args.equirectangular:
+        elif args.equi:
             frame = crop_equirectangular(image, p, video_format)
         elif args.wcs:
             frame = wcs_frame(image, wcs, video_format, p)
         else:
+            # FIXME assert args.ortho
             frame = crop_pyramid(
                 pyramid, p.planar(wcs, image_shape), video_format
             )  # FIXME this transforms p inplace

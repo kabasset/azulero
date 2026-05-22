@@ -46,9 +46,9 @@ Gaia Sky
    --stop
    }
    object Capture {
-   --planar
+   --ortho
    --wcs
-   --equirectangular
+   --equi
    --gaiasky
    }
 
@@ -68,7 +68,7 @@ In this version, ``azul roam`` takes as input a single image path,
 given as a positional argument or through ``stdin``.
 
 The key frames are specified through a so-called **sequence file**
-passed to option ``--planar``, ``--wcs``, ``--equirectangular`` or ``--gaiasky``
+passed to option ``--ortho``, ``--wcs``, ``--equi`` or ``--gaiasky``
 depending on the wanted frame capture mode.
 
 
@@ -118,7 +118,7 @@ To this end, we build the mathematical mapping between image and viewport positi
 In general, the positions in the image are not integral and interpolation is needed.
 As a tradeoff between speed and output quality, we use bicubic interpolants.
 
-With ``--planar``, a multiresolution pyramid is first computed for speed and antialiasing.
+With ``--ortho``, a multiresolution pyramid is first computed for speed and antialiasing.
 We plan to expand this to the other capture modes.
 
 
