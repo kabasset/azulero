@@ -8,7 +8,7 @@ Command ``azul process`` generates a defect-inpainted color image of a tile or t
 from input MER images generally retrieved with ``azul retrieve``.
 It takes as input workdirs which each contain at least one such MER image per Euclid photometric band (I, Y, J, H),
 and outputs one color rendering per workdir.
-Intermediate files can be written, mostly for debugging purposes.
+Intermediate files can be written, mostly for investigation.
 
 .. |I_band| image:: _static/iyjh/VIS.png
 .. |Y_band| image:: _static/iyjh/NIR-Y.png
@@ -130,9 +130,11 @@ The latter will be replaced with the name of the intermediate step as follows:
 * ``adjusted`` -- The RGB image after color and curve adjustment, if any.
 
 For example, using the template ``{workspace}/{workdir}/{target}_{tile}_{step}.tiff``,
-the inpainting mask tile 102159776 will be saved as ``Tile_102159776_mask.tiff`` in the workdir.
+the inpainting mask of target 102159776 will be saved as ``Tile_102159776_mask.tiff`` in the workdir.
 If, instead, ``-o {tile}.jpg`` is used, then the output will be a JPG file in the current directory
 accompanied by a ``.wcs`` file, and no intermediate steps will be saved.
+
+For each target, only the path to the final image (not to the intermediate files or WCS file) is streamed to ``stdout``.
 
 
 Stacking
@@ -193,6 +195,12 @@ Typically, the Cat's eye nebula is best rendered with a white point around 18.
 Special value ``-w 0`` triggers data-driven tuning based on image statistics.
 It generally gives good results, but using it will prevent stitching multiple images,
 since they will be rendered with inconsistent stretching parameters.
+If you wish to make automatic parameter tuning the default,
+set the following environment variable:
+
+.. code-block:: bash
+
+   export AZULPROCESS_WHITE=0
 
 To demonstrate the effect and sensitivity of ``-w`` and ``-a``,
 below is a matrix of UGC 11116 renderings in which we varied the parameters around their default values.
@@ -291,9 +299,13 @@ Adjustment
 
 Before combining the intermediate RGB and L channels,
 hue is rotated (parameter ``--hue``) and saturation is boosted (``--saturation``).
+The default hue rotation reduces artificial-looking greens,
+while the default, very light saturation boost aims at highlighting dust lanes.
 
 The intensity of each color channel is then adjusted using splines
 similar to Photoshop and Gimp curves (``--curves``).
+By default, mid-tone blue intensities are increased a bit, which makes outer regions of galaxies stand out
+and gives a subtle blue shade to the background noise.
 
 All adjustments can be disabled by setting::
    

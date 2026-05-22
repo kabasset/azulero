@@ -255,6 +255,4 @@ The message flow is illustrated below:
 * ``echo`` streams the targets toward ``azul retrieve``.
 * ``azul retrieve`` streams the workdirs toward ``azul process``.
 * ``azul process`` streams the paths to the renderings toward ``azul arrange``.
-  Generally, several files are created per workdir: one per active step.
-  For pipelining, only the path to the last step (by default, ``adjusted``) is streamed out.
 * ``azul arrange`` streams the path to the collage file toward ``open``.
