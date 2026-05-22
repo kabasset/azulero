@@ -26,6 +26,13 @@ The former is very memory-greedy but renders much smoother large regions,
 which often occur at the center of galaxies.
 
 
+Sharpening
+----------
+
+By default, we rely on MER's PSF estimates, which are a tad wider than VIS' and NIR's estimates,
+in order to keep overshooting under control.
+
+
 DPS tile lookup
 ---------------
 
