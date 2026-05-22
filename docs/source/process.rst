@@ -141,7 +141,7 @@ Stacking
 --------
 
 If several images are provided for a given band, they are median-stacked.
-No alignment is performed, since we assume the images are already MER-aligned.
+No alignment is performed since we assume the images are already MER-aligned.
 
 
 Inpainting

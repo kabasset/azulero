@@ -26,9 +26,9 @@ Azulero |version|
 Bring colors to Euclid tiles!
 -----------------------------
 
-Azulero is a toolbox for producing stunning color Euclid images.
+Azulero is a toolbox for producing publication-ready color Euclid images.
 
-It cleans and enhances MER data and combines the four Euclid photometric channels (I, Y, J, H) into an sRGB image.
+It cleans and enhances MER data and combines the four Euclid photometric channels (I, Y, J, H) into an RGB image.
 Input data are retrieved from public or private archives, and post-processing commands produce mesmerizing collages and flowing videos.
 
 Azulero is now compatible with Unix and Windows pipelines, which makes batch processing simple,
