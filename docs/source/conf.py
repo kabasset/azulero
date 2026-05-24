@@ -45,7 +45,10 @@ def list_releases(other_versions: dict[str, str] = {}):
     return {**releases, **others}
 
 
-html_context = {"versions": list_releases({"Development version": "develop"})}
+html_context = {
+    "repository": "https://github.com/kabasset/azulero",
+    "versions": list_releases({"Development version": "develop"}),
+}
 
 project = _version.__title__
 version = _version.__version__
