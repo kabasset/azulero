@@ -1,24 +1,36 @@
-# Configuration file for the Sphinx documentation builder.
-#
-# For the full list of built-in configuration values, see the documentation:
-# https://www.sphinx-doc.org/en/master/usage/configuration.html
-
-# -- Project information -----------------------------------------------------
-# https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
-
 import git
-import locale
 import os
 
 from azulero import _version
 
-try:
-    locale.setlocale(locale.LC_TIME, "en_US.utf8")
-except locale.Error as e:
-    print(f"Error: {e}")
+# General configuration
+# =====================
+
+
+extensions = [
+    "sphinx.ext.githubpages",
+    "sphinx_prompt",
+    "sphinxcontrib.plantuml",
+    "sphinx_subfigure",
+    "sphinxcontrib.video",
+    "sphinx_changelog",
+]
+source_suffix = {".rst": "restructuredtext"}
+templates_path = ["_templates"]
+master_doc = "index"
+exclude_patterns = []
+
+
+# Context
+# =======
 
 
 def list_releases(other_versions: dict[str, str] = {}):
+    """
+    List tags which start with 'v' and append versions passed as arguments.
+
+    If the distant repository is not available, the local repository is used.
+    """
 
     repo = git.Repo("../..")
     try:
@@ -66,36 +78,24 @@ rst_prolog = f"""
 
 """
 
-# -- General configuration ---------------------------------------------------
-# https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
-extensions = [
-    "sphinx.ext.githubpages",
-    "sphinx_prompt",
-    "sphinx_copybutton",
-    "sphinxcontrib.plantuml",
-    "sphinx_subfigure",
-    "sphinxcontrib.video",
-    "sphinx_changelog",
-]
-source_suffix = {".rst": "restructuredtext"}
-templates_path = ["_templates"]
-master_doc = "index"
-exclude_patterns = []
-pygments_style = "sphinx"
-copybutton_exclude = ".linenos, .gp"
+# Style
+# =====
 
-# -- Options for HTML output -------------------------------------------------
-# https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = "alabaster"
-html_static_path = ["_static"]
+# Theme
+# -----
+
+html_theme = "sphinxawesome_theme"
 
 html_theme_path = ["_themes"]
-html_logo = "_static/logo.png"
+html_static_path = ["_static"]
+templates_path = ["_templates"]
+
+html_logo = "_static/logo.png"  # FIXME same as favicon with this theme
 html_title = _version.__title__ + " v" + _version.__version__
 # html_favicon = "favicon.png"
-html_css_files = ["custom.css"]
+# html_css_files = ["custom.css"]
 
 html_use_index = False
 html_permalinks = False
@@ -103,26 +103,33 @@ html_copy_source = False
 html_show_sourcelink = False
 html_show_copyright = True
 
-html_theme_options = {
-    # 'fixed_sidebar': True,  # Cannot search if window is too small
-    "show_relbars": True,
-}
-
-templates_path = [
-    "_templates",
-]
-
 html_sidebars = {
     "**": [
-        "searchfield.html",
-        "navigation.html",
-        "relations.html",
-        "localtoc.html",
+        "sidebar_main_nav_links.html",
+        "sidebar_toc.html",
         "versions.html",
     ]
 }
 
-# PlantUml
+
+# Code blocks
+# -----------
+
+
+pygments_style = "github-dark"
+pygments_style_dark = "github-dark"
+
+
+# Links
+# -----
+
+
+awesome_external_links = True
+
+
+# PlantUML
+# ========
+
 
 if "PLANTUML_JAR" in os.environ:
     plantuml = f"java -jar {os.environ.get('PLANTUML_JAR')}"
