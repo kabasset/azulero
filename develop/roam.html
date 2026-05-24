@@ -82,8 +82,8 @@ The Gaia Sky mode is provided for creating seamless transitions between planetar
 </dl>
 <figure class="align-center">
 <p class="plantuml">
-<object data="_images/plantuml-5f6056829de5130933b2cbb716ced3b162a5babb.svg" type="image/svg+xml" style="max-width:100%">
-<img src="_images/plantuml-5f6056829de5130933b2cbb716ced3b162a5babb.png" alt="skinparam backgroundColor transparent
+<object data="_images/plantuml-5597c13fce20e0f17f7b589756413538753a660c.svg" type="image/svg+xml" style="max-width:100%">
+<img src="_images/plantuml-5597c13fce20e0f17f7b589756413538753a660c.png" alt="skinparam backgroundColor transparent
 
 file image {
 }
@@ -95,9 +95,9 @@ object Interpolate {
 --stop
 }
 object Capture {
---planar
+--ortho
 --wcs
---equirectangular
+--equi
 --gaiasky
 }
 
@@ -117,7 +117,7 @@ Capture --&gt; video"/>
 <p>In this version, <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">roam</span></code> takes as input a single image path,
 given as a positional argument or through <code class="docutils literal notranslate"><span class="pre">stdin</span></code>.</p>
 <p>The key frames are specified through a so-called <strong>sequence file</strong>
-passed to option <code class="docutils literal notranslate"><span class="pre">--planar</span></code>, <code class="docutils literal notranslate"><span class="pre">--wcs</span></code>, <code class="docutils literal notranslate"><span class="pre">--equirectangular</span></code> or <code class="docutils literal notranslate"><span class="pre">--gaiasky</span></code>
+passed to option <code class="docutils literal notranslate"><span class="pre">--ortho</span></code>, <code class="docutils literal notranslate"><span class="pre">--wcs</span></code>, <code class="docutils literal notranslate"><span class="pre">--equi</span></code> or <code class="docutils literal notranslate"><span class="pre">--gaiasky</span></code>
 depending on the wanted frame capture mode.</p>
 </section>
 <section id="output">
@@ -168,7 +168,7 @@ in order to avoid unnatural-looking zigzag patterns.</p>
 To this end, we build the mathematical mapping between image and viewport positions according to the capture mode.</p>
 <p>In general, the positions in the image are not integral and interpolation is needed.
 As a tradeoff between speed and output quality, we use bicubic interpolants.</p>
-<p>With <code class="docutils literal notranslate"><span class="pre">--planar</span></code>, a multiresolution pyramid is first computed for speed and antialiasing.
+<p>With <code class="docutils literal notranslate"><span class="pre">--ortho</span></code>, a multiresolution pyramid is first computed for speed and antialiasing.
 We plan to expand this to the other capture modes.</p>
 </section>
 <section id="sequence-file">

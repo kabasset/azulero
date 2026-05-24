@@ -70,6 +70,11 @@ while grayscale images are inpainted with OpenCV’s Navier-Stokes algorithm.
 The former is very memory-greedy but renders much smoother large regions,
 which often occur at the center of galaxies.</p>
 </section>
+<section id="sharpening">
+<h2>Sharpening</h2>
+<p>By default, we rely on MER’s PSF estimates, which are a tad wider than VIS’ and NIR’s estimates,
+in order to keep overshooting under control.</p>
+</section>
 <section id="dps-tile-lookup">
 <h2>DPS tile lookup</h2>
 <p>The DPS does not offer fast-enough spatial queries to find the tiles in which a target lies.
@@ -146,6 +151,7 @@ which may result in undefined behavior for subsequent retrievals.</p>
 <li><a class="reference internal" href="#">Developer notes</a><ul>
 <li><a class="reference internal" href="#image-storage">Image storage</a></li>
 <li><a class="reference internal" href="#inpainting">Inpainting</a></li>
+<li><a class="reference internal" href="#sharpening">Sharpening</a></li>
 <li><a class="reference internal" href="#dps-tile-lookup">DPS tile lookup</a></li>
 <li><a class="reference internal" href="#dps-cutout-service">DPS cutout service</a></li>
 </ul>

@@ -62,7 +62,7 @@
 from input MER images generally retrieved with <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code>.
 It takes as input workdirs which each contain at least one such MER image per Euclid photometric band (I, Y, J, H),
 and outputs one color rendering per workdir.
-Intermediate files can be written, mostly for debugging purposes.</p>
+Intermediate files can be written, mostly for investigation.</p>
 <table class="subfigure docutils align-default">
 <colgroup>
 <col style="width: 20.0%" />
@@ -200,14 +200,15 @@ and grey (resp. blue, green, red) means the I (resp. Y, J, H) channel is bad.</p
 <li><p><code class="docutils literal notranslate"><span class="pre">adjusted</span></code> – The RGB image after color and curve adjustment, if any.</p></li>
 </ul>
 <p>For example, using the template <code class="docutils literal notranslate"><span class="pre">{workspace}/{workdir}/{target}_{tile}_{step}.tiff</span></code>,
-the inpainting mask tile 102159776 will be saved as <code class="docutils literal notranslate"><span class="pre">Tile_102159776_mask.tiff</span></code> in the workdir.
+the inpainting mask of target 102159776 will be saved as <code class="docutils literal notranslate"><span class="pre">Tile_102159776_mask.tiff</span></code> in the workdir.
 If, instead, <code class="docutils literal notranslate"><span class="pre">-o</span> <span class="pre">{tile}.jpg</span></code> is used, then the output will be a JPG file in the current directory
 accompanied by a <code class="docutils literal notranslate"><span class="pre">.wcs</span></code> file, and no intermediate steps will be saved.</p>
+<p>For each target, only the path to the final image (not to the intermediate files or WCS file) is streamed to <code class="docutils literal notranslate"><span class="pre">stdout</span></code>.</p>
 </section>
 <section id="stacking">
 <h2>Stacking</h2>
 <p>If several images are provided for a given band, they are median-stacked.
-No alignment is performed, since we assume the images are already MER-aligned.</p>
+No alignment is performed since we assume the images are already MER-aligned.</p>
 </section>
 <section id="inpainting">
 <h2>Inpainting</h2>
@@ -247,7 +248,12 @@ Scaling is controlled by:</p>
 Typically, the Cat’s eye nebula is best rendered with a white point around 18.
 Special value <code class="docutils literal notranslate"><span class="pre">-w</span> <span class="pre">0</span></code> triggers data-driven tuning based on image statistics.
 It generally gives good results, but using it will prevent stitching multiple images,
-since they will be rendered with inconsistent stretching parameters.</p>
+since they will be rendered with inconsistent stretching parameters.
+If you wish to make automatic parameter tuning the default,
+set the following environment variable:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">AZULPROCESS_WHITE</span><span class="o">=</span><span class="m">0</span>
+</pre></div>
+</div>
 <p>To demonstrate the effect and sensitivity of <code class="docutils literal notranslate"><span class="pre">-w</span></code> and <code class="docutils literal notranslate"><span class="pre">-a</span></code>,
 below is a matrix of UGC 11116 renderings in which we varied the parameters around their default values.</p>
 <table class="subfigure docutils align-default">
@@ -343,9 +349,13 @@ That being said, there is no good or bad approach and you can create your own pa
 <section id="adjustment">
 <h2>Adjustment</h2>
 <p>Before combining the intermediate RGB and L channels,
-hue is rotated (parameter <code class="docutils literal notranslate"><span class="pre">--hue</span></code>) and saturation is boosted (<code class="docutils literal notranslate"><span class="pre">--saturation</span></code>).</p>
+hue is rotated (parameter <code class="docutils literal notranslate"><span class="pre">--hue</span></code>) and saturation is boosted (<code class="docutils literal notranslate"><span class="pre">--saturation</span></code>).
+The default hue rotation reduces artificial-looking greens,
+while the default, very light saturation boost aims at highlighting dust lanes.</p>
 <p>The intensity of each color channel is then adjusted using splines
-similar to Photoshop and Gimp curves (<code class="docutils literal notranslate"><span class="pre">--curves</span></code>).</p>
+similar to Photoshop and Gimp curves (<code class="docutils literal notranslate"><span class="pre">--curves</span></code>).
+By default, mid-tone blue intensities are increased a bit, which makes outer regions of galaxies stand out
+and gives a subtle blue shade to the background noise.</p>
 <p>All adjustments can be disabled by setting:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">--</span><span class="n">hue</span> <span class="mi">0</span> <span class="o">--</span><span class="n">saturation</span> <span class="mi">1</span> <span class="o">--</span><span class="n">curves</span> <span class="s2">&quot;&quot;</span>
 </pre></div>
