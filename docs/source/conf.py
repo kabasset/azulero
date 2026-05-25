@@ -93,7 +93,7 @@ html_static_path = ["_static"]
 templates_path = ["_templates"]
 
 html_logo = "_static/logo.png"  # FIXME same as favicon with this theme
-html_title = _version.__title__ + " v" + _version.__version__
+html_title = _version.__title__ + " " + _version.__version__
 # html_favicon = "favicon.png"
 html_css_files = ["figures.css"]
 
@@ -144,7 +144,7 @@ plantuml_output_format = "svg"
 
 html_theme_options = {
     "show_prev_next": True,
-    "awesome_external_links": True,
+    "awesome_external_links": False,
     "main_nav_links": {
         "News": "news",
         "User guide": "index",

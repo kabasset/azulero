@@ -8,7 +8,7 @@ _split_every_other_comma = lambda text: [
 
 __name_soft__ = pkg_metadata.get("name", "unknown")
 __version__ = pkg_metadata.get("version", "0.0.0")
-__title__ = pkg_metadata.get("name", "unknown")
+__title__ = __name_soft__.capitalize()
 __description__ = pkg_metadata.get("summary", "")
 __url__ = pkg_metadata.get("project-url", "").split(", ")[-1]
 __author__ = _split_every_other_comma(pkg_metadata.get("author", ""))
