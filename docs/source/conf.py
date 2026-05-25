@@ -133,6 +133,9 @@ awesome_external_links = True
 
 if "PLANTUML_JAR" in os.environ:
     plantuml = f"java -jar {os.environ.get('PLANTUML_JAR')}"
+else:
+    plantuml = "plantuml"
+plantuml += " -darkmode"
 plantuml_output_format = "svg"
 
 

@@ -32,8 +32,6 @@ The diagram below illustrates the various steps of the algorithm processing a si
    :align: center
    :max-width: 100%
 
-   skinparam backgroundColor transparent
-
    folder workdir {
    }
    object Stack {
@@ -243,7 +241,6 @@ Blending
    :align: center
    :max-width: 100%
 
-   skinparam backgroundColor transparent
    left to right direction
 
    card L #FFFFFF

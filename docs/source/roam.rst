@@ -34,8 +34,6 @@ Gaia Sky
    :align: center
    :max-width: 100%
 
-   skinparam backgroundColor transparent
-
    file image {
    }
 
@@ -55,8 +53,7 @@ Gaia Sky
    file video {
    }
 
-   image --> Subsample
-   Subsample -> Interpolate
+   image --> Interpolate
    Interpolate -> Capture
    Capture --> video
 

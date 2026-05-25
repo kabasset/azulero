@@ -132,8 +132,6 @@ In these pages, commands are presented graphically, like:
    :align: center
    :max-width: 100%
 
-   skinparam backgroundColor transparent
-
    file input {
    }
 

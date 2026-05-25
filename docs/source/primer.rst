@@ -70,7 +70,6 @@ Here is an outrageously simplified view of the data flow between PFs in the SGS:
    :align: center
    :max-width: 100%
 
-   skinparam backgroundColor transparent
    left to right direction
 
    card telemetry #FF8888 {

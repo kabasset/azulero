@@ -17,8 +17,6 @@ As depicted below, ``azul retrieve`` consists of two main steps:
    :align: center
    :max-width: 100%
 
-   skinparam backgroundColor transparent
-
    card target {
    }
 

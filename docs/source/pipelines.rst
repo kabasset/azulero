@@ -210,7 +210,6 @@ The message flow is illustrated below:
    :align: center
    :max-width: 100%
 
-   skinparam backgroundColor transparent
    skinparam componentstyle rectangle
    left to right direction
 

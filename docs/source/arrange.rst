@@ -11,8 +11,6 @@ possibly with spacing between images and around the collage.
    :align: center
    :max-width: 100%
 
-   skinparam backgroundColor transparent
-
    file images {
    }
 
