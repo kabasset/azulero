@@ -243,16 +243,16 @@ Blending
 
    left to right direction
 
-   card L #FFFFFF
+   card L #777
    card VIS
    card NIR
    card I
    card Y
    card J
    card H
-   card B #8888FF
-   card G #88FF88
-   card R #FF8888
+   card B #007
+   card G #070
+   card R #700
 
    L <-- NIR : nirl
    L <-- VIS

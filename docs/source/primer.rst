@@ -72,16 +72,16 @@ Here is an outrageously simplified view of the data flow between PFs in the SGS:
 
    left to right direction
 
-   card telemetry #FF8888 {
+   card telemetry #700 {
    }
 
-   object LE1 #FF8888 {
+   object LE1 #700 {
    }
-   object VIS #FF8888 {
+   object VIS #700 {
    }
-   object NIR #FF8888 {
+   object NIR #700 {
    }
-   object MER #FF8888 {
+   object MER #700 {
    }
    object SIR {
    }
@@ -94,7 +94,7 @@ Here is an outrageously simplified view of the data flow between PFs in the SGS:
    object LE3 {
    }
 
-   card mosaic #FF8888 {
+   card mosaic #700 {
    }
    card catalog {
    }
