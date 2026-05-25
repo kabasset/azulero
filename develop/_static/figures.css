@@ -1,0 +1,13 @@
+img.align-left, figure.align-left {
+    float: left;
+}
+
+img.align-right, figure.align-right {
+    float: right;
+}
+
+img.align-center, figure.align-center .plantuml * {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
