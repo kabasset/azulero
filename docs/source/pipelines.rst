@@ -210,17 +210,22 @@ The message flow is illustrated below:
    :align: center
    :max-width: 100%
 
-   skinparam componentstyle rectangle
    left to right direction
+
+   skinparam componentstyle rectangle
+   skinparam component {
+   BackgroundColor lightgray
+   FontColor black
+   }
 
    object echo {
    }
-   component targets #FFFFFF [
+   component targets [
    UGC11116 PGC61356 LEDA2697349
    ]
    object "azul retrieve" as retrieve {
    }
-   component workdirs #FFFFFF [
+   component workdirs [
    102159776/UGC11116
    102159776/PGC61356
    102160059/LEDA2697349
@@ -228,7 +233,7 @@ The message flow is illustrated below:
    ]
    object "azul process" as process {
    }
-   component renderings #FFFFFF [
+   component renderings [
    102159776/UGC11116/UGC11116_102159776.tiff
    102159776/PGC61356/PGC61356_102159776.tiff
    102160059/LEDA2697349/LEDA2697349_102160059.tiff
@@ -236,7 +241,7 @@ The message flow is illustrated below:
    ]
    object "azul arrange" as arrange {
    }
-   component collage #FFFFFF [
+   component collage [
    collage_UGC11116_102159776_LEDA2697349_102159776.png
    ]
    object open {
