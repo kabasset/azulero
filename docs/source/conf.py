@@ -65,7 +65,7 @@ html_context = {
 project = _version.__title__
 version = _version.__version__
 license = _version.__license__
-copyright = _version.__copyright__
+copyright = _version.__copyright__ + "."
 author = _version.__author__[0]
 
 rst_prolog = f"""
@@ -92,9 +92,9 @@ html_theme_path = ["_themes"]
 html_static_path = ["_static"]
 templates_path = ["_templates"]
 
-html_logo = "_static/logo.png"  # FIXME same as favicon with this theme
 html_title = _version.__title__ + " " + _version.__version__
-# html_favicon = "favicon.png"
+html_logo = "_static/logo.png"
+html_favicon = html_logo
 html_css_files = ["figures.css"]
 
 html_use_index = False
