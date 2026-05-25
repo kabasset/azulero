@@ -102,6 +102,7 @@ html_permalinks = False
 html_copy_source = False
 html_show_sourcelink = False
 html_show_copyright = True
+html_last_updated_fmt = ""
 
 html_sidebars = {
     "**": [
@@ -116,8 +117,8 @@ html_sidebars = {
 # -----------
 
 
-pygments_style = "github-dark"
-pygments_style_dark = "github-dark"
+pygments_style = "algol"  # FIXME not taken into account; sphinxawesome bug?
+pygments_style_dark = "monokai"
 
 
 # Links
