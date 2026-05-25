@@ -145,6 +145,7 @@ plantuml_output_format = "svg"
 html_theme_options = {
     "show_prev_next": True,
     "awesome_external_links": False,
+    "show_breadcrumbs": False,
     "main_nav_links": {
         "News": "news",
         "User guide": "index",
