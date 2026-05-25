@@ -95,7 +95,7 @@ templates_path = ["_templates"]
 html_logo = "_static/logo.png"  # FIXME same as favicon with this theme
 html_title = _version.__title__ + " v" + _version.__version__
 # html_favicon = "favicon.png"
-# html_css_files = ["custom.css"]
+html_css_files = ["figures.css"]
 
 html_use_index = False
 html_permalinks = False
