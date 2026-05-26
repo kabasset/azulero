@@ -14,3 +14,19 @@ img.align-center, figure.align-center .plantuml *, figure.align-center video {
 .plantuml, video {
     margin-top: calc(var(--spacing)*6);
 }
+
+table.subfigure tbody,
+table.subfigure tr,
+table.subfigure td {
+    border-collapse: collapse !important;
+    border: none !important;
+    padding: 0.5ex !important;
+    border-spacing: 0 !important;
+    background-color: transparent !important;
+    table-layout: fixed !important;
+    text-align: center !important;
+}
+
+table.subfigure img {
+    margin: 0 !important;
+}

@@ -42,7 +42,6 @@ dev = [
   "sphinxawesome-theme",
   "sphinx-changelog",
   "sphinxcontrib-plantuml",
-  "sphinx-subfigure",
   "sphinxcontrib-video",
   "gitpython",
 ]

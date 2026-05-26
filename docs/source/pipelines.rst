@@ -54,14 +54,15 @@ which is the case for those two galaxies in `Q1 tile 102159776 <https://www.yout
 
 The above command will generate two images:
 
-.. subfigure:: AB
-   :gap: 1em
+.. |ugc_rendering| image:: _static/UGC11116_102159776_adjusted.jpg
+.. |pgc_rendering| image:: _static/PGC61356_102159776_adjusted.jpg
 
-   .. image:: _static/UGC11116_102159776_adjusted.jpg
+.. table::
+   :class: subfigure
 
-   .. image:: _static/PGC61356_102159776_adjusted.jpg
-
-   Color rendering of 2' x 2' cutouts around UGC11116 and PGC61356.
+   +-----------------+-----------------+
+   | |ugc_rendering| | |pgc_rendering| |
+   +-----------------+-----------------+
 
 The resulting workspace contains two workdirs which share a common tile folder:
 
