@@ -93,6 +93,7 @@ templates_path = ["_templates"]
 html_css_files = [
     "code.css",
     "figures.css",
+    "lists.css",
 ]
 
 html_title = _version.__title__ + " " + _version.__version__

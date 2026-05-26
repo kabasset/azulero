@@ -278,20 +278,15 @@ Consider the following sequence:
 
    - t: +1s
 
-It consists in eight key frames.
-The video starts with a full-height, centered and horizontal viewport.
+It consists in eight key frames:
 
-For one second, there is only a viewport rotation
--- which will run continuously until the sixth key frame to reach 90° clockwise rotation of the image.
-
-Then, in ten seconds, the viewport moves to position (87%, 57%) relative to the image extents,
-and we zoom until we the viewport width reaches 20% of the image width.
-
-For the next five seconds, only the orientation continues to evolve.
-
-For ten seconds, we pan to position (60%, 72%) and zoom to 100% pixel size.
-
-Five seconds later, rotation stops.
-
-In the next five seconds, we go back to the center of the image and zoom out to reach full image height again.
-The video finally stays still for one second.
+#. The video starts with a full-height, centered and horizontal viewport.
+#. For one second, there is only a viewport rotation
+   -- which will run continuously until the sixth key frame to reach 90° clockwise rotation of the image.
+#. Then, in ten seconds, the viewport moves to position (87%, 57%) relative to the image extents,
+   and we zoom until we the viewport width reaches 20% of the image width.
+#. For the next five seconds, only the orientation continues to evolve.
+#. For ten seconds, we pan to position (60%, 72%) and zoom to 100% pixel size.
+#. Five seconds later, rotation stops.
+#. In the next five seconds, we go back to the center of the image and zoom out to reach full image height again.
+#. The video finally stays still for one second.
