@@ -207,20 +207,19 @@ Images are centered in their cells and the blit region is the intersection betwe
 <p>Images are row-major ordered from left to right and from top to bottom,
 such that the leftmost image of the second top row is indexed <code class="docutils literal notranslate"><span class="pre">-n</span></code> in the input list.
 The last row may be incomplete.
-For example, here is how 5 images would be ordered with <code class="docutils literal notranslate"><span class="pre">-n</span> <span class="pre">3</span></code>
-(5-pixel margins are shown in blue and 2-pixel gaps in red):</p>
-<table class="docutils align-default" id="arrange-grid">
-<tbody>
-<tr class="row-odd"><td><p>0</p></td>
-<td><p>1</p></td>
-<td><p>2</p></td>
+For example, here is how 5 images would be ordered with <code class="docutils literal notranslate"><span class="pre">-n</span> <span class="pre">3</span></code>:</p>
+<table style="width: 150px; margin-left: auto; margin-right: auto; text-align: center; border: 5px solid gray;">
+<tr>
+<td style="width: 50px; height: 50px; padding: 0; border: 2px solid gray">0</td>
+<td style="width: 50px; height: 50px; padding: 0; border: 2px solid gray">1</td>
+<td style="width: 50px; height: 50px; padding: 0; border: 2px solid gray">2</td>
 </tr>
-<tr class="row-even"><td><p>3</p></td>
-<td><p>4</p></td>
-<td></td>
+<tr>
+<td style="width: 50px; height: 50px; padding: 0; border: 2px solid gray">3</td>
+<td style="width: 50px; height: 50px; padding: 0; border: 2px solid gray">4</td>
+<td style="width: 50px; height: 50px; padding: 0; border: 2px solid gray; background: gray;"></td>
 </tr>
-</tbody>
-</table>
+</table><p>For demonstration, we used 5-pixel margins and 2-pixel gaps with a gray background.</p>
 </section>
 </section>
 </div><div class="flex justify-between items-center pt-6 mt-12 border-t border-border gap-4">
