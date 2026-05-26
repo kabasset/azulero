@@ -218,8 +218,8 @@ def process_target(ios: Workspace, target: str, transform: color.Transform):
 
     target, slicing = io.parse_target(target)
     parts = Path(target).parts
-    tile = parts[0] if len(parts) > 1 else "Tile"
-    name = parts[-1]
+    name = parts[-1] if len(parts) > 1 else "Tile"
+    tile = parts[0]
     if slicing:
         slicing_str = f"{slicing[0].start or ''}:{slicing[0].stop or ''},{slicing[1].start or ''}:{slicing[1].stop or ''}"
     else:
