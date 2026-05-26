@@ -123,202 +123,256 @@
 <div id="content" role="main">
 <section id="change-log">
 <h1>Change log</h1>
-<p># 2.0</p>
-<p>## Breaking changes</p>
+<section id="id1">
+<h2>2.0</h2>
+<section id="breaking-changes">
+<h3>Breaking changes</h3>
 <ul class="simple">
-<li><p>The following commands are deprecated:
-* <cite>find</cite> (merged into <cite>retrieve</cite>),
-* <cite>crop</cite> (partially replaced with cutout retrieval, to be fully replaced later),
-* <cite>assemble</cite> (previously experimental, replaced with <cite>arrange</cite>),
-* <cite>tune</cite> (previously experimental, to be merged into <cite>process</cite> later).</p></li>
+<li><p>The following commands are deprecated:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">find</span></code> (merged into <code class="docutils literal notranslate"><span class="pre">retrieve</span></code>),</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">crop</span></code> (partially replaced with cutout retrieval, to be fully replaced later),</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">assemble</span></code> (previously experimental, replaced with <code class="docutils literal notranslate"><span class="pre">arrange</span></code>),</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tune</span></code> (previously experimental, to be merged into <code class="docutils literal notranslate"><span class="pre">process</span></code> later).</p></li>
 </ul>
-<p><cite>azul retrieve</cite></p>
+</li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code></p>
 <ul class="simple">
-<li><p>Data provider <cite>sas</cite> was renamed as <cite>pdr</cite>.</p></li>
+<li><p>Data provider <code class="docutils literal notranslate"><span class="pre">sas</span></code> was renamed as <code class="docutils literal notranslate"><span class="pre">pdr</span></code>.</p></li>
 </ul>
-<p><cite>azul process</cite></p>
+<p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code></p>
 <ul class="simple">
 <li><p>Default dynamic range parameters were updated to increase SNR.</p></li>
-<li><p>Option <cite>–wcs</cite> was removed:
-* For FITS files, standard WCS records are used;
-* For TIFF files, the parameters are saved as standard metadata;
-* For other formats, the parameters are written following the output name with extension <cite>.wcs</cite>.</p></li>
+<li><p>Option <code class="docutils literal notranslate"><span class="pre">--wcs</span></code> was removed:</p>
+<ul>
+<li><p>For FITS files, standard WCS records are used;</p></li>
+<li><p>For TIFF files, the parameters are saved as standard metadata;</p></li>
+<li><p>For other formats, the parameters are written following the output name with extension <code class="docutils literal notranslate"><span class="pre">.wcs</span></code>.</p></li>
 </ul>
-<p><cite>azul roam</cite></p>
+</li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">roam</span></code></p>
 <ul class="simple">
 <li><p>The key frames file is passed as a named option.</p></li>
 </ul>
-<p>## Bug fixes</p>
-<p><cite>azul process</cite></p>
+</section>
+<section id="bug-fixes">
+<h3>Bug fixes</h3>
+<p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code></p>
 <ul class="simple">
-<li><p>In some systems and environments, the script was crashing when <cite>–wcs</cite> was enabled and no slicing was performed.</p></li>
+<li><p>In some systems and environments, the script was crashing when <code class="docutils literal notranslate"><span class="pre">--wcs</span></code> was enabled and no slicing was performed.</p></li>
 <li><p>Masked saturated stars were rendered too dim.</p></li>
 </ul>
-<p>## New features</p>
+</section>
+<section id="new-features">
+<h3>New features</h3>
 <ul class="simple">
-<li><p>The following commands were added: <cite>arrange</cite>, <cite>cite</cite>.</p></li>
-<li><p>The following commands support piping:
-* <cite>retrieve</cite> can read targets from <cite>stdin</cite>, write workdirs to <cite>stdout</cite>,
-* <cite>process</cite> can read workdirs from <cite>stdout</cite>, write render filenames to <cite>stdout</cite>,
-* <cite>arrange</cite> can read inputs from <cite>stdin</cite>, write collage filename to <cite>stdout</cite>,
-* <cite>roam</cite> can read input from <cite>stdin</cite>, write video filename to <cite>stdout</cite>.</p></li>
+<li><p>The following commands were added: <code class="docutils literal notranslate"><span class="pre">arrange</span></code>, <code class="docutils literal notranslate"><span class="pre">cite</span></code>.</p></li>
+<li><p>The following commands support piping:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">retrieve</span></code> can read targets from <code class="docutils literal notranslate"><span class="pre">stdin</span></code>, write workdirs to <code class="docutils literal notranslate"><span class="pre">stdout</span></code>,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">process</span></code> can read workdirs from <code class="docutils literal notranslate"><span class="pre">stdout</span></code>, write render filenames to <code class="docutils literal notranslate"><span class="pre">stdout</span></code>,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">arrange</span></code> can read inputs from <code class="docutils literal notranslate"><span class="pre">stdin</span></code>, write collage filename to <code class="docutils literal notranslate"><span class="pre">stdout</span></code>,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">roam</span></code> can read input from <code class="docutils literal notranslate"><span class="pre">stdin</span></code>, write video filename to <code class="docutils literal notranslate"><span class="pre">stdout</span></code>.</p></li>
+</ul>
+</li>
 <li><p>Default arguments can be overloaded with environment variables.</p></li>
 </ul>
-<p><cite>azul retrieve</cite></p>
+<p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code></p>
 <ul class="simple">
 <li><p>Retrieve named objects.</p></li>
 <li><p>Retrieve coordinates.</p></li>
-<li><p>Retrieve cutouts (option <cite>-r</cite>).</p></li>
-<li><p>Option <cite>-n</cite> limits the number of tiles per target.</p></li>
-<li><p>Option <cite>-q</cite> performs queries only (no download).</p></li>
-<li><p>Option <cite>-f</cite> with no argument forces all downloads.</p></li>
+<li><p>Retrieve cutouts (option <code class="docutils literal notranslate"><span class="pre">-r</span></code>).</p></li>
+<li><p>Option <code class="docutils literal notranslate"><span class="pre">-n</span></code> limits the number of tiles per target.</p></li>
+<li><p>Option <code class="docutils literal notranslate"><span class="pre">-q</span></code> performs queries only (no download).</p></li>
+<li><p>Option <code class="docutils literal notranslate"><span class="pre">-f</span></code> with no argument forces all downloads.</p></li>
 </ul>
-<p><cite>azul process</cite></p>
+<p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code></p>
 <ul class="simple">
 <li><p>Process a sequence of workdirs.</p></li>
-<li><p>Accept workdirs with subfolders.</p></li>
-<li><p>Auto-tune white point with <cite>-w 0</cite>.</p></li>
-<li><p>Clipping is enabled by <cite>–curves</cite>.</p></li>
+<li><p>Accept workdirs with subdirectories.</p></li>
+<li><p>Auto-tune white point with <code class="docutils literal notranslate"><span class="pre">-w</span> <span class="pre">0</span></code>.</p></li>
+<li><p>Clipping is enabled by <code class="docutils literal notranslate"><span class="pre">--curves</span></code>.</p></li>
 </ul>
-<p><cite>azul arrange</cite></p>
+<p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">arrange</span></code></p>
 <ul class="simple">
 <li><p>Arrange a collection of images into a regular grid.</p></li>
 </ul>
-<p><cite>azul roam</cite></p>
+<p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">roam</span></code></p>
 <ul class="simple">
 <li><p>Add WCS to planar projection.</p></li>
 </ul>
-<p><cite>azul cite</cite></p>
+<p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">cite</span></code></p>
 <ul class="simple">
 <li><p>Print citation instructions.</p></li>
 </ul>
-<p>## Cleaning</p>
+</section>
+<section id="cleaning">
+<h3>Cleaning</h3>
 <ul class="simple">
-<li><p>Logs are written to <cite>stderr</cite> with a proper logger, which also supports log levels (option <cite>–log</cite>).</p></li>
+<li><p>Logs are written to <code class="docutils literal notranslate"><span class="pre">stderr</span></code> with a proper logger, which also supports log levels (option <code class="docutils literal notranslate"><span class="pre">--log</span></code>).</p></li>
 <li><p>Documentation uses proper HTML pages (which include CLI documentation).</p></li>
 <li><p>Video tutorials are published.</p></li>
-<li><p>Packaging is handled with <cite>uv</cite>.</p></li>
-<li><p>Merged <cite>AstroQuery</cite> class into <cite>SAS</cite>.</p></li>
+<li><p>Packaging is handled with <code class="docutils literal notranslate"><span class="pre">uv</span></code>.</p></li>
+<li><p>Merged <code class="docutils literal notranslate"><span class="pre">AstroQuery</span></code> class into <code class="docutils literal notranslate"><span class="pre">SAS</span></code>.</p></li>
 <li><p>Pixel ordering is consistent.</p></li>
 </ul>
-<p># 1.2.0</p>
-<p>## New features</p>
-<p><cite>azul find</cite></p>
+</section>
+</section>
+<section id="id2">
+<h2>1.2.0</h2>
+<section id="id3">
+<h3>New features</h3>
+<p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">find</span></code></p>
 <ul class="simple">
-<li><p>FITS files and WCS files are supported as input with option <cite>–wcs</cite>,
+<li><p>FITS files and WCS files are supported as input with option <code class="docutils literal notranslate"><span class="pre">--wcs</span></code>,
 in which case the location is returned in pixel coordinates,
-and an <cite>azul process</cite> command is proposed to process the region around the location.</p></li>
+and an <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code> command is proposed to process the region around the location.</p></li>
 </ul>
-<p><cite>azul process</cite></p>
+<p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code></p>
 <ul class="simple">
 <li><p>Outputs can be saved as FITS files, in which case WCS records are written to the header.</p></li>
-<li><p>For all output formats, a WCS file can be saved with option <cite>–wcs</cite>.</p></li>
+<li><p>For all output formats, a WCS file can be saved with option <code class="docutils literal notranslate"><span class="pre">--wcs</span></code>.</p></li>
 </ul>
-<p><cite>azul roam</cite></p>
+<p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">roam</span></code></p>
 <ul class="simple">
-<li><p>A FITS file or WCS file can be passed to option <cite>–wcs</cite>.</p></li>
+<li><p>A FITS file or WCS file can be passed to option <code class="docutils literal notranslate"><span class="pre">--wcs</span></code>.</p></li>
 <li><p>Equirectangular images are supported as input.</p></li>
 <li><p>Gaia Sky is supported as input.</p></li>
-<li><p>RA/dec coordinates are supported for equirectangular images, Gaia Sky, or with option <cite>–wcs</cite>.</p></li>
-<li><p>Zoom can be specified as a horizontal field of view for equirectangular images, Gaia Sky, or with option <cite>–wcs</cite>.</p></li>
+<li><p>RA/dec coordinates are supported for equirectangular images, Gaia Sky, or with option <code class="docutils literal notranslate"><span class="pre">--wcs</span></code>.</p></li>
+<li><p>Zoom can be specified as a horizontal field of view for equirectangular images, Gaia Sky, or with option <code class="docutils literal notranslate"><span class="pre">--wcs</span></code>.</p></li>
 <li><p>Low-pass filter is applied for wide fields of view to prevent aliasing.</p></li>
 </ul>
-<p>## Improvements</p>
-<p><cite>azul process</cite></p>
+</section>
+<section id="improvements">
+<h3>Improvements</h3>
+<p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code></p>
 <ul class="simple">
-<li><p>Arbitrary output paths can be configured with new placeholder <cite>{workspace}</cite>.</p></li>
+<li><p>Arbitrary output paths can be configured with new placeholder <code class="docutils literal notranslate"><span class="pre">{workspace}</span></code>.</p></li>
 </ul>
-<p><cite>azul roam</cite></p>
+<p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">roam</span></code></p>
 <ul class="simple">
 <li><p>Output name is built from input names.</p></li>
 <li><p>Default FPS is 25.</p></li>
 </ul>
-<p>## Optimization</p>
-<p><cite>azul roam</cite></p>
+</section>
+<section id="optimization">
+<h3>Optimization</h3>
+<p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">roam</span></code></p>
 <ul class="simple">
 <li><p>Image pyramids are built to speed up rendering of frames with wide fields of view.</p></li>
 </ul>
-<p>## Known issues</p>
-<p><cite>azul find</cite></p>
+</section>
+<section id="known-issues">
+<h3>Known issues</h3>
+<p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">find</span></code></p>
 <ul class="simple">
-<li><p>kabasset/azulero#35 - Cartesian coordinates are used,
+<li><p>#35 – Cartesian coordinates are used,
 which cannot handle positions around RA = 0° = 360° or dec = +/-90°
 (where there are no Euclid data anyway).</p></li>
 </ul>
-<p><cite>azul process</cite></p>
+<p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code></p>
 <ul class="simple">
-<li><p>kabasset/azulero#16 - Inpainted saturated pixel are rendered too dim.</p></li>
+<li><p>#16 – Inpainted saturated pixel are rendered too dim.</p></li>
 </ul>
-<p><cite>azul roam</cite></p>
+<p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">roam</span></code></p>
 <ul class="simple">
-<li><p>kabasset/azulero#55 - Zoom &lt; 1° is not supported for Gaia Sky.</p></li>
-<li><p>kabasset/azulero#31 - Zoom &gt; 100% is not supported.</p></li>
+<li><p>#55 – Zoom &lt; 1° is not supported for Gaia Sky.</p></li>
+<li><p>#31 – Zoom &gt; 100% is not supported.</p></li>
 </ul>
-<p># 1.1.1</p>
-<p>## Bug fixes</p>
-<p><cite>azul process</cite></p>
+</section>
+</section>
+<section id="id4">
+<h2>1.1.1</h2>
+<section id="id5">
+<h3>Bug fixes</h3>
+<p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code></p>
 <ul class="simple">
-<li><p>Command did crash when output template contained <cite>{step}</cite>.</p></li>
+<li><p>Command did crash when output template contained <code class="docutils literal notranslate"><span class="pre">{step}</span></code>.</p></li>
 </ul>
-<p># 1.1.0</p>
-<p>## Bug fixes</p>
-<p><cite>azul crop</cite></p>
+</section>
+</section>
+<section id="id6">
+<h2>1.1.0</h2>
+<section id="id7">
+<h3>Bug fixes</h3>
+<p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">crop</span></code></p>
 <ul class="simple">
 <li><p>Command did crash when reading the image.</p></li>
 </ul>
-<p>## New features</p>
-<p><cite>azul retrieve</cite></p>
+</section>
+<section id="id8">
+<h3>New features</h3>
+<p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code></p>
 <ul class="simple">
-<li><p>New, SAS-based data provider for Internal Data Releases (default provider).</p></li>
+<li><p>New, SAS-based data provider for Internal Data Releases (default
+provider).</p></li>
 </ul>
-<p>## Improvements</p>
-<p><cite>azul process</cite></p>
+</section>
+<section id="id9">
+<h3>Improvements</h3>
+<p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code></p>
 <ul class="simple">
 <li><p>Stacking of multiple inputs per channel relies on median instead of mean.</p></li>
 <li><p>Ouput(s) can be written anywhere, not only in the tile folder.</p></li>
 </ul>
-<p>## Optimization</p>
-<p><cite>azul process</cite></p>
+</section>
+<section id="id10">
+<h3>Optimization</h3>
+<p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code></p>
 <ul class="simple">
 <li><p>Inpainting is a bit less memory-greedy.</p></li>
 </ul>
-<p># 1.0.0</p>
-<p>## Initial features</p>
-<p><cite>azul find</cite></p>
+</section>
+</section>
+<section id="id11">
+<h2>1.0.0</h2>
+<section id="initial-features">
+<h3>Initial features</h3>
+<p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">find</span></code></p>
 <ul class="simple">
 <li><p>[Requires internet] Find object coordinates.</p></li>
-<li><p>[Euclid members] Find index of tiles containing given objects or coordinates.</p></li>
+<li><p>[Euclid members] Find index of tiles containing given objects or
+coordinates.</p></li>
 </ul>
-<p><cite>azul retrieve</cite></p>
+<p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code></p>
 <ul class="simple">
 <li><p>[Requires internet] Download input data for a collection of tiles.</p></li>
 </ul>
-<p><cite>azul crop</cite></p>
+<p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">crop</span></code></p>
 <ul class="simple">
-<li><p>Select the region to be rendered with a rudimentary graphical interface.</p></li>
+<li><p>Select the region to be rendered with a rudimentary graphical
+interface.</p></li>
 </ul>
-<p><cite>azul process</cite></p>
+<p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code></p>
 <ul class="simple">
 <li><p>Render a color image from MER data.</p></li>
 </ul>
-<p><cite>azul roam</cite></p>
+<p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">roam</span></code></p>
 <ul class="simple">
 <li><p>Produce a pan-and-zoom video from an image.</p></li>
 </ul>
-<p>## Known issues</p>
-<p><cite>azul find</cite></p>
+</section>
+<section id="id12">
+<h3>Known issues</h3>
+<p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">find</span></code></p>
 <ul class="simple">
-<li><p>kabasset/azulero#35 - Cartesian coordinates are used, which cannot handle positions around RA = 0° = 360° or dec = +/-90° (where there are no Euclid data anyway).</p></li>
+<li><p>#35 – Cartesian coordinates are used,
+which cannot handle positions around RA = 0° = 360° or dec = +/-90°
+(where there are no Euclid data anyway).</p></li>
 </ul>
-<p><cite>azul process</cite></p>
+<p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code></p>
 <ul class="simple">
-<li><p>kabasset/azulero#16 - Inpainted saturated pixel are rendered too dim.</p></li>
-<li><p>kabasset/azulero#19 - Missing values are badly handled when multiple inputs are provided for a channel.</p></li>
+<li><p>#16 – Inpainted saturated pixel are rendered too dim.</p></li>
+<li><p>#19 – Missing values are badly handled when multiple inputs are provided for a channel.</p></li>
 </ul>
-<p><cite>azul roam</cite></p>
+<p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">roam</span></code></p>
 <ul class="simple">
-<li><p>kabasset/azulero#31 - Zoom &gt; 100% is not supported.</p></li>
+<li><p>#31 – Zoom &gt; 100% is not supported.</p></li>
 </ul>
+</section>
+</section>
 </section>
 </div><div class="flex justify-between items-center pt-6 mt-12 border-t border-border gap-4">
 <div class="mr-auto">
@@ -337,7 +391,42 @@ which cannot handle positions around RA = 0° = 360° or dec = +/-90°
 </svg>
 </a>
 </div>
-</div></div>
+</div></div><aside class="hidden text-sm xl:block" id="right-sidebar">
+<div class="sticky top-16 -mt-10 max-h-[calc(100vh-5rem)] h-full overflow-y-auto pt-6 space-y-2"><p class="font-medium">On this page</p>
+<ul>
+<li><a :data-current="activeSection === '#id1'" class="reference internal" href="#id1">2.0</a><ul>
+<li><a :data-current="activeSection === '#breaking-changes'" class="reference internal" href="#breaking-changes">Breaking changes</a></li>
+<li><a :data-current="activeSection === '#bug-fixes'" class="reference internal" href="#bug-fixes">Bug fixes</a></li>
+<li><a :data-current="activeSection === '#new-features'" class="reference internal" href="#new-features">New features</a></li>
+<li><a :data-current="activeSection === '#cleaning'" class="reference internal" href="#cleaning">Cleaning</a></li>
+</ul>
+</li>
+<li><a :data-current="activeSection === '#id2'" class="reference internal" href="#id2">1.2.0</a><ul>
+<li><a :data-current="activeSection === '#id3'" class="reference internal" href="#id3">New features</a></li>
+<li><a :data-current="activeSection === '#improvements'" class="reference internal" href="#improvements">Improvements</a></li>
+<li><a :data-current="activeSection === '#optimization'" class="reference internal" href="#optimization">Optimization</a></li>
+<li><a :data-current="activeSection === '#known-issues'" class="reference internal" href="#known-issues">Known issues</a></li>
+</ul>
+</li>
+<li><a :data-current="activeSection === '#id4'" class="reference internal" href="#id4">1.1.1</a><ul>
+<li><a :data-current="activeSection === '#id5'" class="reference internal" href="#id5">Bug fixes</a></li>
+</ul>
+</li>
+<li><a :data-current="activeSection === '#id6'" class="reference internal" href="#id6">1.1.0</a><ul>
+<li><a :data-current="activeSection === '#id7'" class="reference internal" href="#id7">Bug fixes</a></li>
+<li><a :data-current="activeSection === '#id8'" class="reference internal" href="#id8">New features</a></li>
+<li><a :data-current="activeSection === '#id9'" class="reference internal" href="#id9">Improvements</a></li>
+<li><a :data-current="activeSection === '#id10'" class="reference internal" href="#id10">Optimization</a></li>
+</ul>
+</li>
+<li><a :data-current="activeSection === '#id11'" class="reference internal" href="#id11">1.0.0</a><ul>
+<li><a :data-current="activeSection === '#initial-features'" class="reference internal" href="#initial-features">Initial features</a></li>
+<li><a :data-current="activeSection === '#id12'" class="reference internal" href="#id12">Known issues</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</aside>
 </main>
 </div>
 </div><footer class="py-6 border-t border-border md:py-0">
