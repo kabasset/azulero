@@ -88,15 +88,21 @@ Images are centered in their cells and the blit region is the intersection betwe
 Images are row-major ordered from left to right and from top to bottom,
 such that the leftmost image of the second top row is indexed ``-n`` in the input list.
 The last row may be incomplete.
-For example, here is how 5 images would be ordered with ``-n 3``
-(5-pixel margins are shown in blue and 2-pixel gaps in red):
+For example, here is how 5 images would be ordered with ``-n 3``:
 
-.. table::
-   :name: arrange-grid
+.. raw:: html
 
-   +---+---+---+
-   | 0 | 1 | 2 |
-   +---+---+---+
-   | 3 | 4 |   |
-   +---+---+---+
+   <table style="width: 150px; margin-left: auto; margin-right: auto; text-align: center; border: 5px solid gray;">
+   <tr>
+   <td style="width: 50px; height: 50px; padding: 0; border: 2px solid gray">0</td>
+   <td style="width: 50px; height: 50px; padding: 0; border: 2px solid gray">1</td>
+   <td style="width: 50px; height: 50px; padding: 0; border: 2px solid gray">2</td>
+   </tr>
+   <tr>
+   <td style="width: 50px; height: 50px; padding: 0; border: 2px solid gray">3</td>
+   <td style="width: 50px; height: 50px; padding: 0; border: 2px solid gray">4</td>
+   <td style="width: 50px; height: 50px; padding: 0; border: 2px solid gray; background: gray;"></td>
+   </tr>
+   </table>
 
+For demonstration, we used 5-pixel margins and 2-pixel gaps with a gray background.
