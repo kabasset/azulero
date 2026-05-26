@@ -1,3 +1,7 @@
+.. raw:: html
+
+   <img src="_static/favicon.png" class="align-left" style="height: 40px; margin: 0; margin-right: 16px"/>
+
 Azulero |version|
 =================
 

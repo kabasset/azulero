@@ -97,8 +97,7 @@ html_css_files = [
 ]
 
 html_title = _version.__title__ + " " + _version.__version__
-html_logo = "_static/logo.png"
-html_favicon = html_logo
+html_favicon = "_static/favicon.png"
 
 html_use_index = False
 html_permalinks = False
@@ -154,6 +153,8 @@ html_theme_options = {
     "show_prev_next": True,
     "awesome_external_links": False,
     "show_breadcrumbs": False,
+    "logo_light": html_favicon,
+    "logo_dark": html_favicon,
     "main_nav_links": {
         "News": "news",
         "User guide": "index",
