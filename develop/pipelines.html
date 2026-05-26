@@ -27,7 +27,7 @@
 <link href="_static/pygments.css?v=e72c8e07" rel="stylesheet" type="text/css"/>
 <link href="_static/theme.css?v=979577e3" rel="stylesheet" type="text/css"/>
 <link href="_static/code.css?v=7b0d5e71" rel="stylesheet" type="text/css"/>
-<link href="_static/figures.css?v=9a2e4103" rel="stylesheet" type="text/css"/>
+<link href="_static/figures.css?v=e9209c3b" rel="stylesheet" type="text/css"/>
 <link href="_static/lists.css?v=79f77f08" rel="stylesheet" type="text/css"/>
 <link href="_static/favicon.png" rel="icon"/>
 <link href="search.html" rel="search" title="Search"/>
@@ -121,9 +121,6 @@
 <main class="relative py-6 lg:gap-10 lg:py-8 xl:grid xl:grid-cols-[1fr_300px]">
 <div class="w-full min-w-0 mx-auto">
 <div id="content" role="main">
-<style>
-  .ss-layout-default-AB { grid-template-areas: 'A B'; }
-</style>
 <section id="pipelines">
 <h1>Pipelines</h1>
 <section id="introduction">
@@ -165,19 +162,13 @@ If this is unwanted, set option <code class="docutils literal notranslate"><span
 Conversely, several targets may belong the same tile,
 which is the case for those two galaxies in <a class="reference external" href="https://www.youtube.com/watch?v=z1-V0zz4p_s">Q1 tile 102159776</a>.</p>
 <p>The above command will generate two images:</p>
-<figure class="sphinx-subfigure align-default" id="id1">
-<div class="sphinx-subfigure-grid ss-layout-default-AB" style="display: grid; gap: 1em; grid-gap: 1em;">
-<div class="sphinx-subfigure-area" style="display: flex; flex-direction: column; justify-content: center; align-items: center; grid-area: A;">
-<img alt="_images/UGC11116_102159776_adjusted.jpg" src="_images/UGC11116_102159776_adjusted.jpg"/>
-</div>
-<div class="sphinx-subfigure-area" style="display: flex; flex-direction: column; justify-content: center; align-items: center; grid-area: B;">
-<img alt="_images/PGC61356_102159776_adjusted.jpg" src="_images/PGC61356_102159776_adjusted.jpg"/>
-</div>
-</div>
-<figcaption>
-<p><span class="caption-text">Color rendering of 2’ x 2’ cutouts around UGC11116 and PGC61356.</span></p>
-</figcaption>
-</figure>
+<table class="subfigure docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><img alt="ugc_rendering" src="_images/UGC11116_102159776_adjusted.jpg"/></p></td>
+<td><p><img alt="pgc_rendering" src="_images/PGC61356_102159776_adjusted.jpg"/></p></td>
+</tr>
+</tbody>
+</table>
 <p>The resulting workspace contains two workdirs which share a common tile folder:</p>
 <p class="plantuml">
 <object data="_images/plantuml-1903c213285ae3478b5e8646ec4e2fa84fe929e5.svg" style="max-width:100%" type="image/svg+xml">
@@ -237,7 +228,7 @@ and generate a similar output in one pipeline:</p>
 <li><p>arrange renderings into a 14-column grid,</p></li>
 <li><p>display the resulting collage:</p></li>
 </ul>
-<figure class="align-default" id="id2">
+<figure class="align-default" id="id1">
 <img alt="_images/collage_56.46762095259402%2C-49.45093443791871_102020055_adjusted_56.46762095259402%2C-49.45093443791871_102020055_adjusted.png" src="_images/collage_56.46762095259402%2C-49.45093443791871_102020055_adjusted_56.46762095259402%2C-49.45093443791871_102020055_adjusted.png"/>
 <figcaption>
 <p><span class="caption-text">Collage of 10” x 10” cutouts around Q1 strong lenses.</span></p>
@@ -290,7 +281,7 @@ The pipeline will be fed by the clipboard, therefore we will just select the tab
 </span></code></pre></div>
 </div>
 <p>which gives:</p>
-<figure class="align-default" id="id3">
+<figure class="align-default" id="id2">
 <img alt="_images/collage_UGC11116_102159776_adjusted_LEDA2697349_102159776_adjusted.png" src="_images/collage_UGC11116_102159776_adjusted_LEDA2697349_102159776_adjusted.png"/>
 <figcaption>
 <p><span class="caption-text">Collage of 2’ x 2’ cutouts around UGC11116, PGC61356 and LEDA2697349.</span></p>
