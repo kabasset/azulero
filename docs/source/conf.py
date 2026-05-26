@@ -156,9 +156,9 @@ html_theme_options = {
     "logo_light": html_favicon,
     "logo_dark": html_favicon,
     "main_nav_links": {
-        "News": "news",
-        "User guide": "index",
-        "Developer notes": "devnotes",
+        "Versions": "https://kabasset.github.io/azulero/index.html",
+        "New issue": "https://github.com/kabasset/azulero/issues/new",
+        # TODO add gallery
     },
     "extra_header_link_icons": {
         "repository on GitHub": {
