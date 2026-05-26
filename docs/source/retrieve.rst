@@ -55,17 +55,19 @@ Named objects
 
 For example, the following command would retrieve the tiles covering targets of each type:
 
-.. prompt:: bash
+.. code-block:: console
+   :emphasize-text: NGC6505 270.93,67.05 102157949
 
-   azul retrieve NGC6505 270.93,67.05 102157949
+   $ azul retrieve NGC6505 270.93,67.05 102157949
 
 If the target *has to* contain spaces or special characters, the argument must be given between quotes.
 In general, spaces can be omitted, though, such that the two following lines are equivalent:
 
-.. prompt:: bash
+.. code-block:: console
+   :emphasize-text: "
 
-   azul retrieve "NGC 6505"
-   azul retrieve NGC6505
+   $ azul retrieve "NGC 6505"
+   $ azul retrieve NGC6505
 
 
 Outputs
@@ -75,9 +77,10 @@ The files are downloaded into a dedicated **workdir** for each target, inside so
 By default, the workspace is the current directory (``.``).
 It can be configured with global option ``--workspace``:
 
-.. prompt:: bash
+.. code-block:: console
+   :emphasize-text: --workspace
 
-   azul --workspace /tmp retrieve NGC6505 270.93,67.05 102157949 PGC61356
+   $ azul --workspace /tmp retrieve NGC6505 270.93,67.05 102157949 PGC61356
 
 By default, the workdirs are named after the targets, grouped by tile index.
 At the time of writing, the above command creates the following workdirs inside workspace ``/tmp``:
@@ -123,9 +126,10 @@ This step relies on what we call a **data provider**, passed to option ``--from`
 (or through environment variable ``AZULRETRIEVE_FROM``).
 and applies to all of the targets of the command line:
 
-.. prompt:: bash
+.. code-block:: console
+   :emphasize-text: --from
 
-   azul retrieve NGC6505 270.93,67.05 102157949 --from pdr
+   $ azul retrieve NGC6505 270.93,67.05 102157949 --from pdr
 
 There are several such providers, which store different sets of data:
 
@@ -164,9 +168,10 @@ The radius applies to all coordinates and named objects of the command line,
 but not to the tile targets.
 Therefore, the following line:
 
-.. prompt:: bash
+.. code-block:: console
+   :emphasize-text: -r
 
-   azul retrieve NGC6505 270.93,67.05 102157949 -r 1m
+   $ azul retrieve NGC6505 270.93,67.05 102157949 -r 1m
 
 downloads 2' x 2' regions for NGC6505 and (270.93, 67.05), as well as the whole 102157949 tile.
 
@@ -207,6 +212,5 @@ Therefore, selecting provider DSS means accessing metadata from the DPS and data
 Only the latter is specified to ``azul retrieve``, and the former is deduced
 (same goes for the other data providers with the SAS).
 
-TODO: DSS tile query and cutout retrieval
 
 .. _CDS name resolver: https://cds.unistra.fr/cgi-bin/Sesame

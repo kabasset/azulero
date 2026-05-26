@@ -23,12 +23,14 @@ the last section dissects the data flow of a simple pipeline.
 The results will be presented for public Q1 data only;
 set the following environment variables in order to reproduce the images exactly (see :ref:`named_options`):
 
-.. prompt:: bash
+.. code-block:: console
+   :emphasize-text: AZULRETRIEVE_FROM AZULRETRIEVE_DSR
 
-   export AZULRETRIEVE_FROM=pdr
-   export AZULRETRIEVE_DSR=Q1_R1
+   $ export AZULRETRIEVE_FROM=pdr
+   $ export AZULRETRIEVE_DSR=Q1_R1
 
-Credit for all images and videos in this page:
+.. admonition:: Credit for all images in this page:
+   :class: hint
 
    ESA Euclid / Euclid Consortium / NASA / Q1-2025 / Antoine Basset (CNES).
 
@@ -39,9 +41,10 @@ Pipeline: Object names to color images
 The simplest use case for an Azulero pipeline is to download MER data and render color images.
 In this example, we will use galaxy names as input:
 
-.. prompt:: bash
+.. code-block:: console
+   :emphasize-text: azul retrieve process
 
-   azul retrieve UGC11116 PGC61356 -r 1m | azul process
+   $ azul retrieve UGC11116 PGC61356 -r 1m | azul process
 
 Note that several MER tiles may contain a given target,
 such that more than two images may be rendered.
@@ -81,9 +84,10 @@ The resulting workspace contains two workdirs which share a common tile folder:
 We have generated the color images one after the other by executing a single ``azul process`` command,
 but it is possible to parallelize the pipeline, for example with ``xargs``:
 
-.. prompt:: bash
+.. code-block:: console
+   :emphasize-text: xargs -n -P
 
-   azul retrieve UGC11116 PGC61356 -r 1m \
+   $ azul retrieve UGC11116 PGC61356 -r 1m \
    | xargs -n 1 -P 4 azul process
 
 where ``-n 1`` is the number of targets passed to each ``azul process`` command,
@@ -91,9 +95,10 @@ and ``-P 4`` is the maximum number of parallel executions.
 
 Similarly, the retrieval can be parallelized:
 
-.. prompt:: bash
+.. code-block:: console
+   :emphasize-text: xargs -n -P
 
-   echo UGC11116 PGC61356 \
+   $ echo UGC11116 PGC61356 \
    | xargs -n 1 -P 4 azul retrieve -r 1m \
    | xargs -n 1 -P 4 azul process
 
@@ -105,9 +110,10 @@ Let us run Azulero on the lens catalog which was used to render
 `the Q1 strong lensing collage <https://www.esa.int/ESA_Multimedia/Images/2025/03/Strong_gravitational_lenses_captured_by_Euclid>`_
 and generate a similar output in one pipeline:
 
-.. prompt:: bash
+.. code-block:: console
+   :emphasize-text: azul retrieve process arrange
 
-   wget -q -O - https://zenodo.org/records/15025832/files/q1_discovery_engine_lens_catalog.csv \
+   $ wget -q -O - https://zenodo.org/records/15025832/files/q1_discovery_engine_lens_catalog.csv \
    | tail -n+2 \
    | sort -r -t ',' -k 8 \
    | head -112 \
@@ -141,9 +147,10 @@ This example is a bit more exotic than the others, but parts of it may come in h
 We will get the list of targets from the clipboard and generate a video from the renderings.
 To this end, we will rely on ImageMagick's ``convert``, which can turn a sequence of images into a video as follows:
 
-.. code-block:: xml
+.. code-block:: console
+   :emphasize-text: duration images video
 
-   convert -delay <duration> <images> <video>
+   $ convert -delay <duration> <images> <video>
 
 where:
 
@@ -155,9 +162,10 @@ As targets, we will use Q1 nearby galaxies.
 The pipeline will be fed by the clipboard, therefore we will just select the table at the bottom of
 `this page <https://www.cosmos.esa.int/web/euclid/euclid-nearby-galaxies-collage>`_ and run:
 
-.. prompt:: bash
+.. code-block:: console
+   :emphasize-text: azul retrieve process convert
 
-   xclip -o \
+   $ xclip -o \
    | sed 's/ //g' \
    | azul retrieve -n 1 -r 30s \
    | azul process \
@@ -183,9 +191,10 @@ Dissecting a pipeline
 
 Let us introduce a simple and typical example pipeline:
 
-.. prompt:: bash
+.. code-block:: console
+   :emphasize-text: echo azul retrieve process arrange open
 
-   echo UGC11116 PGC61356 LEDA2697349 \
+   $ echo UGC11116 PGC61356 LEDA2697349 \
    | azul retrieve -r 1m \
    | azul process \
    | azul arrange --format max \

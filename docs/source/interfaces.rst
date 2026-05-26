@@ -12,9 +12,12 @@ Commands
 The only executable of Azulero is ``azul``.
 It supports a variety of so-called **commands**,
 such as ``retrieve`` to download datafiles or ``process`` to render color images.
-All commands follow the same pattern::
+All commands follow the same pattern:
 
-   azul [global_options] <command> <inputs> [options]
+.. code-block:: console
+   :emphasize-text: azul global_options command inputs options
+
+   $ azul [global_options] <command> <inputs> [options]
 
 with:
 
@@ -35,9 +38,9 @@ Option ``-o <output>`` exists for all commands.
 Here is an example command line with global and command options,
 a list of inputs and an output specification:
 
-.. prompt:: bash
+.. code-block:: console
 
-   azul --log DEBUG retrieve -r 1m -n 1 UGC11116 PGC61356 -o {target}
+   $ azul --log DEBUG retrieve -r 1m -n 1 UGC11116 PGC61356 -o {target}
 
 
 .. _workspace:
@@ -109,7 +112,8 @@ For pipelining and batch processing, Azulero offers an environment-level mechani
 for setting named options like global option ``--log`` or :doc:`retrieve` option ``--from``.
 Each named option can be read from an environment variable named as follows:
 
-.. code-block:: xml
+.. code-block:: console
+   :emphasize-text: COMMAND OPTION
 
    AZUL<COMMAND>_<OPTION>
 
@@ -124,11 +128,11 @@ with:
 
 For example:
 
-.. prompt:: bash
+.. code-block:: console
 
-   export AZUL_LOG=DEBUG
-   export AZULRETRIEVE_FROM=pdr
-   export AZULRETRIEVE_RADIUS=1m
+   $ export AZUL_LOG=DEBUG
+   $ export AZULRETRIEVE_FROM=pdr
+   $ export AZULRETRIEVE_RADIUS=1m
 
 sets the log level to ``DEBUG`` for all commands,
 and sets the data provider to ``pdr`` and crop radius to 1 arcmin for :doc:`retrieve`.
@@ -136,10 +140,11 @@ These parameters are overloaded by command line arguments.
 
 Within this context, the following lines are equivalent:
 
-.. prompt:: bash
+.. code-block:: console
+   :emphasize-text: --log DEBUG -r 1m --from pdr
 
-   azul retrieve NGC6505 UGC11116 | azul process
-   azul --log DEBUG retrieve NGC6505 UGC11116 -r 1m --from pdr -f | azul --log DEBUG process
+   $ azul retrieve NGC6505 UGC11116 | azul process
+   $ azul --log DEBUG retrieve NGC6505 UGC11116 -r 1m --from pdr | azul --log DEBUG process
 
 
 Command line help
@@ -148,11 +153,18 @@ Command line help
 We tried our best to write a complete-enough documentation.
 However, we may have omitted a few details.
 For an exhaustive description of global and command options,
-``azul`` and each of its commands feature an option ``-h``, or ``--help``.
+``azul`` and each of its commands feature an option ``-h``, or ``--help``:
+
+.. code-block:: console
+   :emphasize-text: -h
+
+   $ azul -h
+   $ azul process -h
+
 In particular, the commands are documented in terms of short-form options when they exist.
 Check the help messages in order to find the long-from options (typically, to know the environment variable names).
 
-.. note::
+.. error::
 
    If you find discrepancies between the documentation and help messages,
    please `open issues <https://github.com/kabasset/azulero/issues/new>`_ or contact us.

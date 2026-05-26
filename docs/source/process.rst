@@ -89,9 +89,10 @@ Inputs
 Input files are discovered according to their names in the workdir (see :ref:`workspace`) and a glob pattern.
 For more details, see help messages of global options ``--workspace`` and ``--input``:
 
-.. prompt:: bash
+.. code-block:: console
+   :emphasize-text: -h
 
-   azul -h
+   $ azul -h
 
 
 Outputs
@@ -196,9 +197,10 @@ since they will be rendered with inconsistent stretching parameters.
 If you wish to make automatic parameter tuning the default,
 set the following environment variable:
 
-.. code-block:: bash
+.. code-block:: console
+   :emphasize-text: AZULPROCESS_WHITE
 
-   export AZULPROCESS_WHITE=0
+   $ export AZULPROCESS_WHITE=0
 
 To demonstrate the effect and sensitivity of ``-w`` and ``-a``,
 below is a matrix of UGC 11116 renderings in which we varied the parameters around their default values.
@@ -304,8 +306,11 @@ similar to Photoshop and Gimp curves (``--curves``).
 By default, mid-tone blue intensities are increased a bit, which makes outer regions of galaxies stand out
 and gives a subtle blue shade to the background noise.
 
-All adjustments can be disabled by setting::
-   
+All adjustments can be disabled by setting:
+
+.. code-block:: console
+   :emphasize-text: --hue --saturation --curves
+
    --hue 0 --saturation 1 --curves ""
 
 
@@ -334,15 +339,17 @@ Scalability is roughly linear, such that you should be able to interpolate the n
 In order to lower the memory consumption, it is possible to crop the image with numpy's syntax,
 e.g. for the top-left quarter (x < 5000, y >= 5000):
 
-.. prompt:: bash
+.. code-block:: console
+   :emphasize-text: [ ] : ,
 
-   azul process 102159776[5000:,:5000]
+   $ azul process 102159776[5000:,:5000]
 
 Depending on your system, it may be necessary to add quotes:
 
-.. prompt:: bash
+.. code-block:: console
+   :emphasize-text: "
 
-   azul process "102159776[5000:,:5000]"
+   $ azul process "102159776[5000:,:5000]"
 
 
 .. _eummy: https://github.com/schirmermischa/eummy

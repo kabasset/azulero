@@ -8,8 +8,7 @@ from azulero import _version
 
 
 extensions = [
-    "sphinx.ext.githubpages",
-    "sphinx_prompt",
+    "sphinx.ext.githubpages",  # Add .nojekyll file
     "sphinxcontrib.plantuml",
     "sphinx_subfigure",
     "sphinxcontrib.video",
@@ -32,7 +31,7 @@ def list_releases(other_versions: dict[str, str] = {}):
     If the distant repository is not available, the local repository is used.
     """
 
-    repo = git.Repo("../..")
+    repo = git.Repo(".", search_parent_directories=True)
     try:
         tags = repo.git.ls_remote("--tags", "origin")
     except git.GitCommandError as e:
@@ -91,11 +90,14 @@ html_theme = "sphinxawesome_theme"
 html_theme_path = ["_themes"]
 html_static_path = ["_static"]
 templates_path = ["_templates"]
+html_css_files = [
+    "code.css",
+    "figures.css",
+]
 
 html_title = _version.__title__ + " " + _version.__version__
 html_logo = "_static/logo.png"
 html_favicon = html_logo
-html_css_files = ["figures.css"]
 
 html_use_index = False
 html_permalinks = False
@@ -116,9 +118,13 @@ html_sidebars = {
 # Code blocks
 # -----------
 
+# pygments_style is not taken into account when pygments_style_dark is specified; sphinxawesome bug?
+# Anyway, since we mostly rely on command lines, with very few highlighting,
+# and there are many "false positives" (e.g. whole part of floats is highlighted),
+# we prefer relying on manual highlighting of the words.
 
-pygments_style = "algol"  # FIXME not taken into account; sphinxawesome bug?
-pygments_style_dark = "monokai"
+# pygments_style = "algol"
+# pygments_style_dark = "monokai"
 
 
 # Links

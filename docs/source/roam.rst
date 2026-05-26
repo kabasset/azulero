@@ -141,6 +141,7 @@ The sequence file is in YAML format, which is very compact but requires space di
 A typical key frame specification looks like this:
 
 .. code-block:: yaml
+   :emphasize-text: t c z r
 
    - t: +10s
      c: UGC 11116
@@ -222,6 +223,7 @@ They are specified by providing ``c`` only (no time or any other parameter has t
 The following example is a ten-second circular trajectory with three intermediate knots:
 
 .. code-block:: yaml
+   :emphasize-text: t c z r
 
    - t: 0s
      c: 70%, 50%
@@ -244,6 +246,7 @@ Example
 Consider the following sequence:
 
 .. code-block:: yaml
+   :emphasize-text: t c z r
 
    - t: 0s
      c: 50%, 50%

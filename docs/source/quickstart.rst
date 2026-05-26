@@ -10,15 +10,17 @@ Latest release
 Azulero is a Python package deployed to `PyPI <https://pypi.org/project/azulero/>`_.
 The simplest way to install it is with ``pip``:
 
-.. prompt:: bash
+.. code-block:: console
+   :emphasize-text: azulero
 
-   pip install azulero
+   $ pip install azulero
 
 If you already have an old version installed, use:
 
-.. prompt:: bash
+.. code-block:: console
+   :emphasize-text: --upgrade
 
-   pip install --upgrade azulero
+   $ pip install --upgrade azulero
 
 
 Development version
@@ -26,27 +28,28 @@ Development version
 
 If you simply want to get the development version from time to time, use:
 
-.. prompt:: bash
+.. code-block:: console
 
-   pip install git+https://github.com/kabasset/azulero
+   $ pip install git+https://github.com/kabasset/azulero
 
 If instead, you want to modify the sources or update very often,
 better clone the repository locally:
 
-.. prompt:: bash
-
-   git clone https://github.com/kabasset/azulero
-   cd azulero
-   pip install .
+.. code-block:: console
+   
+   $ git clone https://github.com/kabasset/azulero
+   $ cd azulero
+   $ pip install .
 
 Azulero is packaged with `uv <https://docs.astral.sh/uv/>`_.
 Hence, there is no need to install the package in order to execute the scripts.
 Instead, from the clone directory, you can prepend commands with ``uv run``.
 For example, to download a cutout without installing, launch:
 
-.. prompt:: bash
+.. code-block:: console
+   :emphasize-text: uv run
 
-    uv run azul retrieve NGC6505 -r 1m
+   $ uv run azul retrieve NGC6505 -r 1m
 
 
 Setup
@@ -60,26 +63,26 @@ Accessing public data requires no configuration.
 Internal data retrieval requires authentication,
 which is set up in the netrc configuration file (``~/.netrc`` on Unix, ``%HOMEPATH%\_netrc`` on Windows) as follows:
 
-* For internal SAS data:
+* For internal SAS data, use your LDAP credentials:
 
-   .. code-block:: xml
+  .. code-block::
+     :emphasize-text: LDAP_login LDAP_password
 
-      machine easidr.esac.esa.int
-      login <login>
-      password <password>
+     machine easidr.esac.esa.int
+       login <LDAP_login>
+       password <LDAP_password>
 
-* For DSS data:
+* For DSS data, use your archive credentials:
 
-   .. code-block:: xml
+  .. code-block::
+     :emphasize-text: EC_login EC_password
 
-      machine eas-dps-rest-ops.esac.esa.int
-      login <login>
-      password <password>
-      machine euclidsoc.esac.esa.int
-      login <login>
-      password <password>
-
-TODO: Tiling file for DSS
+     machine eas-dps-rest-ops.esac.esa.int
+       login <EC_login>
+       password <EC_password>
+     machine euclidsoc.esac.esa.int
+       login <EC_login>
+       password <EC_password>
 
 
 For other users
@@ -89,9 +92,12 @@ Because you will retrieve only public data,
 you can setup your environment to always restrict queries to the public archive.
 To do so, simply set the environment variable ``AZULRETRIEVE_FROM`` to ``pdr``
 (see :doc:`retrieve` and :ref:`named_options` to understand why).
-Typically, Bash users may add the following to the ``.bashrc`` file::
+Typically, Bash users may add the following to the ``.bashrc`` file:
 
-   export AZULRETRIEVE_FROM=pdr
+.. code-block:: console
+   :emphasize-text: pdr
+
+   $ export AZULRETRIEVE_FROM=pdr
 
 No other configuration is needed for public data.
 
@@ -106,9 +112,10 @@ We will start by downloading some Euclid data around a colorful and large-enough
 `UGC 11169 <https://www.cosmos.esa.int/web/euclid/euclid-nearby-galaxies-collage>`_.
 Go to your favorite directory and run:
 
-.. prompt:: bash
+.. code-block:: console
+   :emphasize-text: retrieve process
 
-   azul retrieve UGC11169 -r 30s | azul process -w 0
+   $ azul retrieve UGC11169 -r 30s | azul process -w 0
 
 This will retrieve and process an area of 1' x 1' or roughly 600 x 600 pixels around the galaxy core.
 Wait for a few seconds for the commands to complete...
