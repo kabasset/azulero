@@ -96,7 +96,7 @@ def add_parser(subparsers, help):
         "--output",
         "-o",
         type=str,
-        default="{workspace}/{sequence}_{image}.mkv",
+        default="{workspace}/{sequence}_{image}.mp4",
         metavar="TEMPLATE",
         help=(
             """
