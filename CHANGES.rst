@@ -27,6 +27,7 @@ Breaking changes
 ``azul roam``
 
 - The key frames file is passed as a named option.
+- The origin of the image coordinates is the bottom left corner (instead of top left).
 
 Bug fixes
 ^^^^^^^^^

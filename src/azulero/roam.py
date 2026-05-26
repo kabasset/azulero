@@ -223,19 +223,17 @@ def run(args):
     for i, p in enumerate(params):
         logger.bullet(f"{p} [{i+1}/{len(params)}]")
         if args.gaiasky:
-            frame = cv2.imread(gaia_frames[i], cv2.IMREAD_COLOR)
+            frame = cv2.imread(gaia_frames[i], cv2.IMREAD_COLOR)  # FIXME read_data
         elif args.equi:
             frame = crop_equirectangular(image, p, video_format)
         elif args.wcs:
             frame = wcs_frame(image, wcs, video_format, p)
         else:
             # FIXME assert args.ortho
-            frame = crop_pyramid(
-                pyramid, p.planar(wcs, image_shape), video_format
-            )  # FIXME this transforms p inplace
+            frame = crop_pyramid(pyramid, p.planar(wcs, image_shape), video_format)
         if scale.width > 0:
             scale.draw(frame, 100.0 * p.hfov)
-        writer.write(frame)
+        writer.write(np.flipud(frame))
 
     writer.release()
     logger.bullet(f"Wrote: {output.name}")
@@ -296,7 +294,7 @@ def crop_planar(
     scaling = video_format[0] / params.hfov
     viewport_format = np.array([params.hfov, video_format[1] / scaling])
     orientation = params.orientation_in_degrees() % 360
-    viewport = cv2.RotatedRect(params.center, viewport_format, -orientation)
+    viewport = cv2.RotatedRect(params.center, viewport_format, orientation)
     x0, y0, w, h = viewport.boundingRect()
     # FIXME if bbox outside image, return black frame
     vertical = w < h
@@ -304,7 +302,6 @@ def crop_planar(
         # OpenCV unhappy!
         x0, y0, w, h = y0, x0, h, w
         image = np.swapaxes(image, 0, 1)
-        orientation = 90 - orientation
         center = np.flip(center)
     x1 = x0 + w
     y1 = y0 + h
@@ -324,7 +321,7 @@ def crop_planar(
         return np.zeros([video_format[1], video_format[0], 3], dtype=image.dtype)
     offset = np.array([x0, y0])
     patch = image[y0:y1, x0:x1]
-    rotation = cv2.getRotationMatrix2D(center - offset, orientation, scaling)
+    rotation = cv2.getRotationMatrix2D(center - offset, -orientation, scaling)
     rotation_format = (w, h)
     rotated_image = cv2.warpAffine(
         patch, rotation, rotation_format, flags=cv2.INTER_LINEAR
