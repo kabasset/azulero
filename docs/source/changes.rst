@@ -2,4 +2,4 @@ Change log
 ==========
 
 .. changelog::
-   :changelog_file: ../../CHANGES.md
+   :changelog_file: ../../CHANGES.rst
