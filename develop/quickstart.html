@@ -24,9 +24,9 @@
 <title>Quick start | Azulero 2.0</title>
 <meta content="Quick start | Azulero 2.0" property="og:title"/>
 <meta content="Quick start | Azulero 2.0" name="twitter:title"/>
-<link href="_static/pygments.css?v=9e084e5f" rel="stylesheet" type="text/css"/>
-<link href="_static/pygments_dark.css" id="pygments_dark_css" media="(prefers-color-scheme: dark)" rel="stylesheet" type="text/css"/>
+<link href="_static/pygments.css?v=e72c8e07" rel="stylesheet" type="text/css"/>
 <link href="_static/theme.css?v=979577e3" rel="stylesheet" type="text/css"/>
+<link href="_static/code.css?v=7b0d5e71" rel="stylesheet" type="text/css"/>
 <link href="_static/figures.css?v=5ca7d70c" rel="stylesheet" type="text/css"/>
 <link href="_static/logo.png" rel="icon"/>
 <link href="search.html" rel="search" title="Search"/>
@@ -128,29 +128,35 @@
 <h3>Latest release</h3>
 <p>Azulero is a Python package deployed to <a class="reference external" href="https://pypi.org/project/azulero/">PyPI</a>.
 The simplest way to install it is with <code class="docutils literal notranslate"><span class="pre">pip</span></code>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><style type="text/css">
-span.prompt1:before {
-  content: "$ ";
-}
-</style><span class="prompt1">pip<span class="w"> </span>install<span class="w"> </span>azulero</span>
-</pre></div></div><p>If you already have an old version installed, use:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">pip<span class="w"> </span>install<span class="w"> </span>--upgrade<span class="w"> </span>azulero</span>
-</pre></div></div></section>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">$ </span>pip<span class="w"> </span>install<span class="w"> </span><span class="ge">azulero</span>
+</span></code></pre></div>
+</div>
+<p>If you already have an old version installed, use:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">$ </span>pip<span class="w"> </span>install<span class="w"> </span><span class="ge">--upgrade</span><span class="w"> </span>azulero
+</span></code></pre></div>
+</div>
+</section>
 <section id="development-version">
 <h3>Development version</h3>
 <p>If you simply want to get the development version from time to time, use:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">pip<span class="w"> </span>install<span class="w"> </span>git+https://github.com/kabasset/azulero</span>
-</pre></div></div><p>If instead, you want to modify the sources or update very often,
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">$ </span>pip<span class="w"> </span>install<span class="w"> </span>git+https://github.com/kabasset/azulero
+</span></code></pre></div>
+</div>
+<p>If instead, you want to modify the sources or update very often,
 better clone the repository locally:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">git<span class="w"> </span>clone<span class="w"> </span>https://github.com/kabasset/azulero</span>
-<span class="prompt1"><span class="nb">cd</span><span class="w"> </span>azulero</span>
-<span class="prompt1">pip<span class="w"> </span>install<span class="w"> </span>.</span>
-</pre></div></div><p>Azulero is packaged with <a class="reference external" href="https://docs.astral.sh/uv/">uv</a>.
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">$ </span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/kabasset/azulero
+</span><span id="line-2"><span class="gp">$ </span><span class="nb">cd</span><span class="w"> </span>azulero
+</span><span id="line-3"><span class="gp">$ </span>pip<span class="w"> </span>install<span class="w"> </span>.
+</span></code></pre></div>
+</div>
+<p>Azulero is packaged with <a class="reference external" href="https://docs.astral.sh/uv/">uv</a>.
 Hence, there is no need to install the package in order to execute the scripts.
 Instead, from the clone directory, you can prepend commands with <code class="docutils literal notranslate"><span class="pre">uv</span> <span class="pre">run</span></code>.
 For example, to download a cutout without installing, launch:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">uv<span class="w"> </span>run<span class="w"> </span>azul<span class="w"> </span>retrieve<span class="w"> </span>NGC6505<span class="w"> </span>-r<span class="w"> </span>1m</span>
-</pre></div></div></section>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">$ </span><span class="ge">uv</span><span class="w"> </span><span class="ge">run</span><span class="w"> </span>azul<span class="w"> </span>retrieve<span class="w"> </span>NGC6505<span class="w"> </span>-r<span class="w"> </span>1m
+</span></code></pre></div>
+</div>
+</section>
 </section>
 <section id="setup">
 <h2>Setup</h2>
@@ -160,29 +166,24 @@ For example, to download a cutout without installing, launch:</p>
 <p>Internal data retrieval requires authentication,
 which is set up in the netrc configuration file (<code class="docutils literal notranslate"><span class="pre">~/.netrc</span></code> on Unix, <code class="docutils literal notranslate"><span class="pre">%HOMEPATH%\_netrc</span></code> on Windows) as follows:</p>
 <ul>
-<li><p>For internal SAS data:</p>
-<blockquote>
-<div><div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><code><span id="line-1">machine<span class="w"> </span>easidr.esac.esa.int
-</span><span id="line-2">login<span class="w"> </span><span class="nt">&lt;login&gt;</span>
-</span><span id="line-3">password<span class="w"> </span><span class="nt">&lt;password&gt;</span>
+<li><p>For internal SAS data, use your LDAP credentials:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="n">machine</span> <span class="n">easidr</span><span class="o">.</span><span class="n">esac</span><span class="o">.</span><span class="n">esa</span><span class="o">.</span><span class="n">int</span>
+</span><span id="line-2">  <span class="n">login</span> <span class="o">&lt;</span><span class="ge">LDAP_login</span><span class="o">&gt;</span>
+</span><span id="line-3">  <span class="n">password</span> <span class="o">&lt;</span><span class="ge">LDAP_password</span><span class="o">&gt;</span>
 </span></code></pre></div>
 </div>
-</div></blockquote>
 </li>
-<li><p>For DSS data:</p>
-<blockquote>
-<div><div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><code><span id="line-1">machine<span class="w"> </span>eas-dps-rest-ops.esac.esa.int
-</span><span id="line-2">login<span class="w"> </span><span class="nt">&lt;login&gt;</span>
-</span><span id="line-3">password<span class="w"> </span><span class="nt">&lt;password&gt;</span>
-</span><span id="line-4">machine<span class="w"> </span>euclidsoc.esac.esa.int
-</span><span id="line-5">login<span class="w"> </span><span class="nt">&lt;login&gt;</span>
-</span><span id="line-6">password<span class="w"> </span><span class="nt">&lt;password&gt;</span>
+<li><p>For DSS data, use your archive credentials:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="n">machine</span> <span class="n">eas</span><span class="o">-</span><span class="n">dps</span><span class="o">-</span><span class="n">rest</span><span class="o">-</span><span class="n">ops</span><span class="o">.</span><span class="n">esac</span><span class="o">.</span><span class="n">esa</span><span class="o">.</span><span class="n">int</span>
+</span><span id="line-2">  <span class="n">login</span> <span class="o">&lt;</span><span class="ge">EC_login</span><span class="o">&gt;</span>
+</span><span id="line-3">  <span class="n">password</span> <span class="o">&lt;</span><span class="ge">EC_password</span><span class="o">&gt;</span>
+</span><span id="line-4"><span class="n">machine</span> <span class="n">euclidsoc</span><span class="o">.</span><span class="n">esac</span><span class="o">.</span><span class="n">esa</span><span class="o">.</span><span class="n">int</span>
+</span><span id="line-5">  <span class="n">login</span> <span class="o">&lt;</span><span class="ge">EC_login</span><span class="o">&gt;</span>
+</span><span id="line-6">  <span class="n">password</span> <span class="o">&lt;</span><span class="ge">EC_password</span><span class="o">&gt;</span>
 </span></code></pre></div>
 </div>
-</div></blockquote>
 </li>
 </ul>
-<p>TODO: Tiling file for DSS</p>
 </section>
 <section id="for-other-users">
 <h3>For other users</h3>
@@ -191,7 +192,7 @@ you can setup your environment to always restrict queries to the public archive.
 To do so, simply set the environment variable <code class="docutils literal notranslate"><span class="pre">AZULRETRIEVE_FROM</span></code> to <code class="docutils literal notranslate"><span class="pre">pdr</span></code>
 (see <a class="reference internal" href="retrieve.html"><span class="doc">azul retrieve</span></a> and <a class="reference internal" href="interfaces.html#named-options"><span class="std std-ref">Named options</span></a> to understand why).
 Typically, Bash users may add the following to the <code class="docutils literal notranslate"><span class="pre">.bashrc</span></code> file:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="n">export</span> <span class="n">AZULRETRIEVE_FROM</span><span class="o">=</span><span class="n">pdr</span>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">$ </span><span class="nb">export</span><span class="w"> </span><span class="nv">AZULRETRIEVE_FROM</span><span class="o">=</span><span class="ge">pdr</span>
 </span></code></pre></div>
 </div>
 <p>No other configuration is needed for public data.</p>
@@ -204,8 +205,10 @@ we propose to create an image before (carefully) reading the next pages!</p>
 <p>We will start by downloading some Euclid data around a colorful and large-enough-but-not-too-large galaxy:
 <a class="reference external" href="https://www.cosmos.esa.int/web/euclid/euclid-nearby-galaxies-collage">UGC 11169</a>.
 Go to your favorite directory and run:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">azul<span class="w"> </span>retrieve<span class="w"> </span>UGC11169<span class="w"> </span>-r<span class="w"> </span>30s<span class="w"> </span><span class="p">|</span><span class="w"> </span>azul<span class="w"> </span>process<span class="w"> </span>-w<span class="w"> </span><span class="m">0</span></span>
-</pre></div></div><p>This will retrieve and process an area of 1’ x 1’ or roughly 600 x 600 pixels around the galaxy core.
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">$ </span>azul<span class="w"> </span><span class="ge">retrieve</span><span class="w"> </span>UGC11169<span class="w"> </span>-r<span class="w"> </span>30s<span class="w"> </span><span class="p">|</span><span class="w"> </span>azul<span class="w"> </span><span class="ge">process</span><span class="w"> </span>-w<span class="w"> </span><span class="m">0</span>
+</span></code></pre></div>
+</div>
+<p>This will retrieve and process an area of 1’ x 1’ or roughly 600 x 600 pixels around the galaxy core.
 Wait for a few seconds for the commands to complete…
 At the end of the logs, you should see the path to which the glorious color image was written,
 which you can already open and admire!</p>
@@ -294,7 +297,7 @@ Additional sections may dive deeper on a case-by-case basis.</p>
 </div><footer class="py-6 border-t border-border md:py-0">
 <div class="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
 <div class="flex flex-col items-center gap-4 px-8 md:flex-row md:gap-2 md:px-0">
-<p class="text-sm leading-loose text-center text-muted-foreground md:text-left">© 2025-2026, Antoine Basset (CNES) and contributors. Last updated: May 25, 2026. Built with <a class="font-medium underline underline-offset-4" href="https://www.sphinx-doc.org" rel="noreferrer">Sphinx 9.1.0</a></p>
+<p class="text-sm leading-loose text-center text-muted-foreground md:text-left">© 2025-2026, Antoine Basset (CNES) and contributors. Last updated: May 26, 2026. Built with <a class="font-medium underline underline-offset-4" href="https://www.sphinx-doc.org" rel="noreferrer">Sphinx 9.1.0</a></p>
 </div>
 </div>
 </footer>

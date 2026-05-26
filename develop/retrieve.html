@@ -24,9 +24,9 @@
 <title>azul retrieve | Azulero 2.0</title>
 <meta content="azul retrieve | Azulero 2.0" property="og:title"/>
 <meta content="azul retrieve | Azulero 2.0" name="twitter:title"/>
-<link href="_static/pygments.css?v=9e084e5f" rel="stylesheet" type="text/css"/>
-<link href="_static/pygments_dark.css" id="pygments_dark_css" media="(prefers-color-scheme: dark)" rel="stylesheet" type="text/css"/>
+<link href="_static/pygments.css?v=e72c8e07" rel="stylesheet" type="text/css"/>
 <link href="_static/theme.css?v=979577e3" rel="stylesheet" type="text/css"/>
+<link href="_static/code.css?v=7b0d5e71" rel="stylesheet" type="text/css"/>
 <link href="_static/figures.css?v=5ca7d70c" rel="stylesheet" type="text/css"/>
 <link href="_static/logo.png" rel="icon"/>
 <link href="search.html" rel="search" title="Search"/>
@@ -172,23 +172,25 @@ Their coordinates are looked up in the <a class="reference external" href="https
 </dd>
 </dl>
 <p>For example, the following command would retrieve the tiles covering targets of each type:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><style type="text/css">
-span.prompt1:before {
-  content: "$ ";
-}
-</style><span class="prompt1">azul<span class="w"> </span>retrieve<span class="w"> </span>NGC6505<span class="w"> </span><span class="m">270</span>.93,67.05<span class="w"> </span><span class="m">102157949</span></span>
-</pre></div></div><p>If the target <em>has to</em> contain spaces or special characters, the argument must be given between quotes.
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">$ </span>azul<span class="w"> </span>retrieve<span class="w"> </span><span class="ge">NGC6505</span><span class="w"> </span><span class="m">270</span>.93,67.05<span class="w"> </span><span class="ge">102157949</span>
+</span></code></pre></div>
+</div>
+<p>If the target <em>has to</em> contain spaces or special characters, the argument must be given between quotes.
 In general, spaces can be omitted, though, such that the two following lines are equivalent:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">azul<span class="w"> </span>retrieve<span class="w"> </span><span class="s2">"NGC 6505"</span></span>
-<span class="prompt1">azul<span class="w"> </span>retrieve<span class="w"> </span>NGC6505</span>
-</pre></div></div></section>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">$ </span>azul<span class="w"> </span>retrieve<span class="w"> </span><span class="ge">"</span><span class="s2">NGC 6505</span><span class="ge">"</span>
+</span><span id="line-2"><span class="gp">$ </span>azul<span class="w"> </span>retrieve<span class="w"> </span>NGC6505
+</span></code></pre></div>
+</div>
+</section>
 <section id="outputs">
 <h2>Outputs</h2>
 <p>The files are downloaded into a dedicated <strong>workdir</strong> for each target, inside some parent <strong>workspace</strong>.
 By default, the workspace is the current directory (<code class="docutils literal notranslate"><span class="pre">.</span></code>).
 It can be configured with global option <code class="docutils literal notranslate"><span class="pre">--workspace</span></code>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">azul<span class="w"> </span>--workspace<span class="w"> </span>/tmp<span class="w"> </span>retrieve<span class="w"> </span>NGC6505<span class="w"> </span><span class="m">270</span>.93,67.05<span class="w"> </span><span class="m">102157949</span><span class="w"> </span>PGC61356</span>
-</pre></div></div><p>By default, the workdirs are named after the targets, grouped by tile index.
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">$ </span>azul<span class="w"> </span><span class="ge">--workspace</span><span class="w"> </span>/tmp<span class="w"> </span>retrieve<span class="w"> </span>NGC6505<span class="w"> </span><span class="m">270</span>.93,67.05<span class="w"> </span><span class="m">102157949</span><span class="w"> </span>PGC61356
+</span></code></pre></div>
+</div>
+<p>By default, the workdirs are named after the targets, grouped by tile index.
 At the time of writing, the above command creates the following workdirs inside workspace <code class="docutils literal notranslate"><span class="pre">/tmp</span></code>:</p>
 <p class="plantuml">
 <object data="_images/plantuml-93e04f04a754646785c4285da549496a43edde29.svg" style="max-width:100%" type="image/svg+xml">
@@ -235,8 +237,10 @@ as well as the names of the files to be downloaded.</p>
 <p>This step relies on what we call a <strong>data provider</strong>, passed to option <code class="docutils literal notranslate"><span class="pre">--from</span></code>
 (or through environment variable <code class="docutils literal notranslate"><span class="pre">AZULRETRIEVE_FROM</span></code>).
 and applies to all of the targets of the command line:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">azul<span class="w"> </span>retrieve<span class="w"> </span>NGC6505<span class="w"> </span><span class="m">270</span>.93,67.05<span class="w"> </span><span class="m">102157949</span><span class="w"> </span>--from<span class="w"> </span>pdr</span>
-</pre></div></div><p>There are several such providers, which store different sets of data:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">$ </span>azul<span class="w"> </span>retrieve<span class="w"> </span>NGC6505<span class="w"> </span><span class="m">270</span>.93,67.05<span class="w"> </span><span class="m">102157949</span><span class="w"> </span><span class="ge">--from</span><span class="w"> </span>pdr
+</span></code></pre></div>
+</div>
+<p>There are several such providers, which store different sets of data:</p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">pdr</span></code> (Public Data Releases)</dt><dd><p>Contains all public data.
 This is the only provider which does not require authentication.</p>
@@ -269,8 +273,10 @@ All formats handled by Astropy’s <code class="docutils literal notranslate"><s
 <p>The radius applies to all coordinates and named objects of the command line,
 but not to the tile targets.
 Therefore, the following line:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">azul<span class="w"> </span>retrieve<span class="w"> </span>NGC6505<span class="w"> </span><span class="m">270</span>.93,67.05<span class="w"> </span><span class="m">102157949</span><span class="w"> </span>-r<span class="w"> </span>1m</span>
-</pre></div></div><p>downloads 2’ x 2’ regions for NGC6505 and (270.93, 67.05), as well as the whole 102157949 tile.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">$ </span>azul<span class="w"> </span>retrieve<span class="w"> </span>NGC6505<span class="w"> </span><span class="m">270</span>.93,67.05<span class="w"> </span><span class="m">102157949</span><span class="w"> </span><span class="ge">-r</span><span class="w"> </span>1m
+</span></code></pre></div>
+</div>
+<p>downloads 2’ x 2’ regions for NGC6505 and (270.93, 67.05), as well as the whole 102157949 tile.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>Provider <code class="docutils literal notranslate"><span class="pre">dss</span></code> does not natively support the cutout service.</p>
@@ -303,7 +309,6 @@ The other providers are associated to the SAS.
 Therefore, selecting provider DSS means accessing metadata from the DPS and data from the DSS.
 Only the latter is specified to <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code>, and the former is deduced
 (same goes for the other data providers with the SAS).</p>
-<p>TODO: DSS tile query and cutout retrieval</p>
 </section>
 </section>
 </div><div class="flex justify-between items-center pt-6 mt-12 border-t border-border gap-4">
@@ -340,7 +345,7 @@ Only the latter is specified to <code class="docutils literal notranslate"><span
 </div><footer class="py-6 border-t border-border md:py-0">
 <div class="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
 <div class="flex flex-col items-center gap-4 px-8 md:flex-row md:gap-2 md:px-0">
-<p class="text-sm leading-loose text-center text-muted-foreground md:text-left">© 2025-2026, Antoine Basset (CNES) and contributors. Last updated: May 25, 2026. Built with <a class="font-medium underline underline-offset-4" href="https://www.sphinx-doc.org" rel="noreferrer">Sphinx 9.1.0</a></p>
+<p class="text-sm leading-loose text-center text-muted-foreground md:text-left">© 2025-2026, Antoine Basset (CNES) and contributors. Last updated: May 26, 2026. Built with <a class="font-medium underline underline-offset-4" href="https://www.sphinx-doc.org" rel="noreferrer">Sphinx 9.1.0</a></p>
 </div>
 </div>
 </footer>

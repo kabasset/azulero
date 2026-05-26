@@ -24,9 +24,9 @@
 <title>Pipelines | Azulero 2.0</title>
 <meta content="Pipelines | Azulero 2.0" property="og:title"/>
 <meta content="Pipelines | Azulero 2.0" name="twitter:title"/>
-<link href="_static/pygments.css?v=9e084e5f" rel="stylesheet" type="text/css"/>
-<link href="_static/pygments_dark.css" id="pygments_dark_css" media="(prefers-color-scheme: dark)" rel="stylesheet" type="text/css"/>
+<link href="_static/pygments.css?v=e72c8e07" rel="stylesheet" type="text/css"/>
 <link href="_static/theme.css?v=979577e3" rel="stylesheet" type="text/css"/>
+<link href="_static/code.css?v=7b0d5e71" rel="stylesheet" type="text/css"/>
 <link href="_static/figures.css?v=5ca7d70c" rel="stylesheet" type="text/css"/>
 <link href="_static/logo.png" rel="icon"/>
 <link href="search.html" rel="search" title="Search"/>
@@ -142,23 +142,23 @@ Translation to Windows is left as an exercise!</p>
 the last section dissects the data flow of a simple pipeline.</p>
 <p>The results will be presented for public Q1 data only;
 set the following environment variables in order to reproduce the images exactly (see <a class="reference internal" href="interfaces.html#named-options"><span class="std std-ref">Named options</span></a>):</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><style type="text/css">
-span.prompt1:before {
-  content: "$ ";
-}
-</style><span class="prompt1"><span class="nb">export</span><span class="w"> </span><span class="nv">AZULRETRIEVE_FROM</span><span class="o">=</span>pdr</span>
-<span class="prompt1"><span class="nb">export</span><span class="w"> </span><span class="nv">AZULRETRIEVE_DSR</span><span class="o">=</span>Q1_R1</span>
-</pre></div></div><p>Credit for all images and videos in this page:</p>
-<blockquote>
-<div><p>ESA Euclid / Euclid Consortium / NASA / Q1-2025 / Antoine Basset (CNES).</p>
-</div></blockquote>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">$ </span><span class="nb">export</span><span class="w"> </span><span class="ge">AZULRETRIEVE_FROM</span><span class="o">=</span>pdr
+</span><span id="line-2"><span class="gp">$ </span><span class="nb">export</span><span class="w"> </span><span class="ge">AZULRETRIEVE_DSR</span><span class="o">=</span>Q1_R1
+</span></code></pre></div>
+</div>
+<div class="hint admonition">
+<p class="admonition-title">Credit for all images in this page:</p>
+<p>ESA Euclid / Euclid Consortium / NASA / Q1-2025 / Antoine Basset (CNES).</p>
+</div>
 </section>
 <section id="pipeline-object-names-to-color-images">
 <h2>Pipeline: Object names to color images</h2>
 <p>The simplest use case for an Azulero pipeline is to download MER data and render color images.
 In this example, we will use galaxy names as input:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">azul<span class="w"> </span>retrieve<span class="w"> </span>UGC11116<span class="w"> </span>PGC61356<span class="w"> </span>-r<span class="w"> </span>1m<span class="w"> </span><span class="p">|</span><span class="w"> </span>azul<span class="w"> </span>process</span>
-</pre></div></div><p>Note that several MER tiles may contain a given target,
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">$ </span><span class="ge">azul</span><span class="w"> </span><span class="ge">retrieve</span><span class="w"> </span>UGC11116<span class="w"> </span>PGC61356<span class="w"> </span>-r<span class="w"> </span>1m<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="ge">azul</span><span class="w"> </span><span class="ge">process</span>
+</span></code></pre></div>
+</div>
+<p>Note that several MER tiles may contain a given target,
 such that more than two images may be rendered.
 If this is unwanted, set option <code class="docutils literal notranslate"><span class="pre">-n</span> <span class="pre">1</span></code>.
 Conversely, several targets may belong the same tile,
@@ -195,30 +195,36 @@ which is the case for those two galaxies in <a class="reference external" href="
 </object></p>
 <p>We have generated the color images one after the other by executing a single <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code> command,
 but it is possible to parallelize the pipeline, for example with <code class="docutils literal notranslate"><span class="pre">xargs</span></code>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">azul<span class="w"> </span>retrieve<span class="w"> </span>UGC11116<span class="w"> </span>PGC61356<span class="w"> </span>-r<span class="w"> </span>1m<span class="w"> </span><span class="se">\</span>
-<span class="p">|</span><span class="w"> </span>xargs<span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="w"> </span>-P<span class="w"> </span><span class="m">4</span><span class="w"> </span>azul<span class="w"> </span>process</span>
-</pre></div></div><p>where <code class="docutils literal notranslate"><span class="pre">-n</span> <span class="pre">1</span></code> is the number of targets passed to each <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code> command,
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">$ </span>azul<span class="w"> </span>retrieve<span class="w"> </span>UGC11116<span class="w"> </span>PGC61356<span class="w"> </span>-r<span class="w"> </span>1m<span class="w"> </span><span class="se">\</span>
+</span><span id="line-2"><span class="p">|</span><span class="w"> </span><span class="ge">xargs</span><span class="w"> </span><span class="ge">-n</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="ge">-P</span><span class="w"> </span><span class="m">4</span><span class="w"> </span>azul<span class="w"> </span>process
+</span></code></pre></div>
+</div>
+<p>where <code class="docutils literal notranslate"><span class="pre">-n</span> <span class="pre">1</span></code> is the number of targets passed to each <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code> command,
 and <code class="docutils literal notranslate"><span class="pre">-P</span> <span class="pre">4</span></code> is the maximum number of parallel executions.</p>
 <p>Similarly, the retrieval can be parallelized:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1"><span class="nb">echo</span><span class="w"> </span>UGC11116<span class="w"> </span>PGC61356<span class="w"> </span><span class="se">\</span>
-<span class="p">|</span><span class="w"> </span>xargs<span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="w"> </span>-P<span class="w"> </span><span class="m">4</span><span class="w"> </span>azul<span class="w"> </span>retrieve<span class="w"> </span>-r<span class="w"> </span>1m<span class="w"> </span><span class="se">\</span>
-<span class="p">|</span><span class="w"> </span>xargs<span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="w"> </span>-P<span class="w"> </span><span class="m">4</span><span class="w"> </span>azul<span class="w"> </span>process</span>
-</pre></div></div></section>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">$ </span><span class="nb">echo</span><span class="w"> </span>UGC11116<span class="w"> </span>PGC61356<span class="w"> </span><span class="se">\</span>
+</span><span id="line-2"><span class="p">|</span><span class="w"> </span><span class="ge">xargs</span><span class="w"> </span><span class="ge">-n</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="ge">-P</span><span class="w"> </span><span class="m">4</span><span class="w"> </span>azul<span class="w"> </span>retrieve<span class="w"> </span>-r<span class="w"> </span>1m<span class="w"> </span><span class="se">\</span>
+</span><span id="line-3"><span class="p">|</span><span class="w"> </span><span class="ge">xargs</span><span class="w"> </span><span class="ge">-n</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="ge">-P</span><span class="w"> </span><span class="m">4</span><span class="w"> </span>azul<span class="w"> </span>process
+</span></code></pre></div>
+</div>
+</section>
 <section id="pipeline-online-catalog-to-collage">
 <h2>Pipeline: Online catalog to collage</h2>
 <p>Let us run Azulero on the lens catalog which was used to render
 <a class="reference external" href="https://www.esa.int/ESA_Multimedia/Images/2025/03/Strong_gravitational_lenses_captured_by_Euclid">the Q1 strong lensing collage</a>
 and generate a similar output in one pipeline:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">wget<span class="w"> </span>-q<span class="w"> </span>-O<span class="w"> </span>-<span class="w"> </span>https://zenodo.org/records/15025832/files/q1_discovery_engine_lens_catalog.csv<span class="w"> </span><span class="se">\</span>
-<span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-n+2<span class="w"> </span><span class="se">\</span>
-<span class="p">|</span><span class="w"> </span>sort<span class="w"> </span>-r<span class="w"> </span>-t<span class="w"> </span><span class="s1">','</span><span class="w"> </span>-k<span class="w"> </span><span class="m">8</span><span class="w"> </span><span class="se">\</span>
-<span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-112<span class="w"> </span><span class="se">\</span>
-<span class="p">|</span><span class="w"> </span>cut<span class="w"> </span>-d<span class="w"> </span><span class="s1">','</span><span class="w"> </span>-f<span class="w"> </span><span class="m">5</span>,6<span class="w"> </span><span class="se">\</span>
-<span class="p">|</span><span class="w"> </span>azul<span class="w"> </span>retrieve<span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="w"> </span>-r<span class="w"> </span>5s<span class="w"> </span><span class="se">\</span>
-<span class="p">|</span><span class="w"> </span>azul<span class="w"> </span>process<span class="w"> </span><span class="se">\</span>
-<span class="p">|</span><span class="w"> </span>azul<span class="w"> </span>arrange<span class="w"> </span>-n<span class="w"> </span><span class="m">14</span><span class="w"> </span><span class="se">\</span>
-<span class="p">|</span><span class="w"> </span>xargs<span class="w"> </span>open</span>
-</pre></div></div><p>The above pipeline performs the following:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">$ </span>wget<span class="w"> </span>-q<span class="w"> </span>-O<span class="w"> </span>-<span class="w"> </span>https://zenodo.org/records/15025832/files/q1_discovery_engine_lens_catalog.csv<span class="w"> </span><span class="se">\</span>
+</span><span id="line-2"><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-n+2<span class="w"> </span><span class="se">\</span>
+</span><span id="line-3"><span class="p">|</span><span class="w"> </span>sort<span class="w"> </span>-r<span class="w"> </span>-t<span class="w"> </span><span class="s1">','</span><span class="w"> </span>-k<span class="w"> </span><span class="m">8</span><span class="w"> </span><span class="se">\</span>
+</span><span id="line-4"><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-112<span class="w"> </span><span class="se">\</span>
+</span><span id="line-5"><span class="p">|</span><span class="w"> </span>cut<span class="w"> </span>-d<span class="w"> </span><span class="s1">','</span><span class="w"> </span>-f<span class="w"> </span><span class="m">5</span>,6<span class="w"> </span><span class="se">\</span>
+</span><span id="line-6"><span class="p">|</span><span class="w"> </span><span class="ge">azul</span><span class="w"> </span><span class="ge">retrieve</span><span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="w"> </span>-r<span class="w"> </span>5s<span class="w"> </span><span class="se">\</span>
+</span><span id="line-7"><span class="p">|</span><span class="w"> </span><span class="ge">azul</span><span class="w"> </span><span class="ge">process</span><span class="w"> </span><span class="se">\</span>
+</span><span id="line-8"><span class="p">|</span><span class="w"> </span><span class="ge">azul</span><span class="w"> </span><span class="ge">arrange</span><span class="w"> </span>-n<span class="w"> </span><span class="m">14</span><span class="w"> </span><span class="se">\</span>
+</span><span id="line-9"><span class="p">|</span><span class="w"> </span>xargs<span class="w"> </span>open
+</span></code></pre></div>
+</div>
+<p>The above pipeline performs the following:</p>
 <ul class="simple">
 <li><p>download the catalog into <code class="docutils literal notranslate"><span class="pre">stdout</span></code>,</p></li>
 <li><p>remove the header row,</p></li>
@@ -242,7 +248,7 @@ and generate a similar output in one pipeline:</p>
 <p>This example is a bit more exotic than the others, but parts of it may come in handy.
 We will get the list of targets from the clipboard and generate a video from the renderings.
 To this end, we will rely on ImageMagick’s <code class="docutils literal notranslate"><span class="pre">convert</span></code>, which can turn a sequence of images into a video as follows:</p>
-<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><code><span id="line-1">convert<span class="w"> </span>-delay<span class="w"> </span><span class="nt">&lt;duration&gt;</span><span class="w"> </span><span class="nt">&lt;images&gt;</span><span class="w"> </span><span class="nt">&lt;video&gt;</span>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">$ </span>convert<span class="w"> </span>-delay<span class="w"> </span>&lt;<span class="ge">duration</span>&gt;<span class="w"> </span>&lt;<span class="ge">images</span>&gt;<span class="w"> </span>&lt;<span class="ge">video</span>&gt;
 </span></code></pre></div>
 </div>
 <p>where:</p>
@@ -254,13 +260,15 @@ To this end, we will rely on ImageMagick’s <code class="docutils literal notra
 <p>As targets, we will use Q1 nearby galaxies.
 The pipeline will be fed by the clipboard, therefore we will just select the table at the bottom of
 <a class="reference external" href="https://www.cosmos.esa.int/web/euclid/euclid-nearby-galaxies-collage">this page</a> and run:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">xclip<span class="w"> </span>-o<span class="w"> </span><span class="se">\</span>
-<span class="p">|</span><span class="w"> </span>sed<span class="w"> </span><span class="s1">'s/ //g'</span><span class="w"> </span><span class="se">\</span>
-<span class="p">|</span><span class="w"> </span>azul<span class="w"> </span>retrieve<span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="w"> </span>-r<span class="w"> </span>30s<span class="w"> </span><span class="se">\</span>
-<span class="p">|</span><span class="w"> </span>azul<span class="w"> </span>process<span class="w"> </span><span class="se">\</span>
-<span class="p">|</span><span class="w"> </span>cat<span class="w"> </span>-<span class="w"> </span>&lt;<span class="o">(</span><span class="nb">echo</span><span class="w"> </span><span class="s2">" slideshow.mp4"</span><span class="o">)</span><span class="w"> </span><span class="se">\</span>
-<span class="p">|</span><span class="w"> </span>xargs<span class="w"> </span>convert<span class="w"> </span>-delay<span class="w"> </span><span class="m">50</span></span>
-</pre></div></div><p>where:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">$ </span>xclip<span class="w"> </span>-o<span class="w"> </span><span class="se">\</span>
+</span><span id="line-2"><span class="p">|</span><span class="w"> </span>sed<span class="w"> </span><span class="s1">'s/ //g'</span><span class="w"> </span><span class="se">\</span>
+</span><span id="line-3"><span class="p">|</span><span class="w"> </span><span class="ge">azul</span><span class="w"> </span><span class="ge">retrieve</span><span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="w"> </span>-r<span class="w"> </span>30s<span class="w"> </span><span class="se">\</span>
+</span><span id="line-4"><span class="p">|</span><span class="w"> </span><span class="ge">azul</span><span class="w"> </span><span class="ge">process</span><span class="w"> </span><span class="se">\</span>
+</span><span id="line-5"><span class="p">|</span><span class="w"> </span>cat<span class="w"> </span>-<span class="w"> </span>&lt;<span class="o">(</span><span class="nb">echo</span><span class="w"> </span><span class="s2">" slideshow.mp4"</span><span class="o">)</span><span class="w"> </span><span class="se">\</span>
+</span><span id="line-6"><span class="p">|</span><span class="w"> </span>xargs<span class="w"> </span><span class="ge">convert</span><span class="w"> </span>-delay<span class="w"> </span><span class="m">50</span>
+</span></code></pre></div>
+</div>
+<p>where:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">xclip</span></code> (which you may need to install) prints the selection to <code class="docutils literal notranslate"><span class="pre">stdout</span></code>;</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">sed</span></code> removes spurious spaces, e.g. <code class="docutils literal notranslate"><span class="pre">PGC</span> <span class="pre">2693358</span></code> is transformed into <code class="docutils literal notranslate"><span class="pre">PGC2693358</span></code>;</p></li>
@@ -273,12 +281,14 @@ The pipeline will be fed by the clipboard, therefore we will just select the tab
 <section id="dissecting-a-pipeline">
 <h2>Dissecting a pipeline</h2>
 <p>Let us introduce a simple and typical example pipeline:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1"><span class="nb">echo</span><span class="w"> </span>UGC11116<span class="w"> </span>PGC61356<span class="w"> </span>LEDA2697349<span class="w"> </span><span class="se">\</span>
-<span class="p">|</span><span class="w"> </span>azul<span class="w"> </span>retrieve<span class="w"> </span>-r<span class="w"> </span>1m<span class="w"> </span><span class="se">\</span>
-<span class="p">|</span><span class="w"> </span>azul<span class="w"> </span>process<span class="w"> </span><span class="se">\</span>
-<span class="p">|</span><span class="w"> </span>azul<span class="w"> </span>arrange<span class="w"> </span>--format<span class="w"> </span>max<span class="w"> </span><span class="se">\</span>
-<span class="p">|</span><span class="w"> </span>xargs<span class="w"> </span>open</span>
-</pre></div></div><p>which gives:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">$ </span><span class="ge">echo</span><span class="w"> </span>UGC11116<span class="w"> </span>PGC61356<span class="w"> </span>LEDA2697349<span class="w"> </span><span class="se">\</span>
+</span><span id="line-2"><span class="p">|</span><span class="w"> </span><span class="ge">azul</span><span class="w"> </span><span class="ge">retrieve</span><span class="w"> </span>-r<span class="w"> </span>1m<span class="w"> </span><span class="se">\</span>
+</span><span id="line-3"><span class="p">|</span><span class="w"> </span><span class="ge">azul</span><span class="w"> </span><span class="ge">process</span><span class="w"> </span><span class="se">\</span>
+</span><span id="line-4"><span class="p">|</span><span class="w"> </span><span class="ge">azul</span><span class="w"> </span><span class="ge">arrange</span><span class="w"> </span>--format<span class="w"> </span>max<span class="w"> </span><span class="se">\</span>
+</span><span id="line-5"><span class="p">|</span><span class="w"> </span>xargs<span class="w"> </span><span class="ge">open</span>
+</span></code></pre></div>
+</div>
+<p>which gives:</p>
 <figure class="align-default" id="id3">
 <img alt="_images/collage_UGC11116_102159776_adjusted_LEDA2697349_102159776_adjusted.png" src="_images/collage_UGC11116_102159776_adjusted_LEDA2697349_102159776_adjusted.png"/>
 <figcaption>
@@ -383,7 +393,7 @@ collage -&gt; open' src="_images/plantuml-89f6e558cfca0d4a1224da1ce5abc4faf6dfd4
 </div><footer class="py-6 border-t border-border md:py-0">
 <div class="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
 <div class="flex flex-col items-center gap-4 px-8 md:flex-row md:gap-2 md:px-0">
-<p class="text-sm leading-loose text-center text-muted-foreground md:text-left">© 2025-2026, Antoine Basset (CNES) and contributors. Last updated: May 25, 2026. Built with <a class="font-medium underline underline-offset-4" href="https://www.sphinx-doc.org" rel="noreferrer">Sphinx 9.1.0</a></p>
+<p class="text-sm leading-loose text-center text-muted-foreground md:text-left">© 2025-2026, Antoine Basset (CNES) and contributors. Last updated: May 26, 2026. Built with <a class="font-medium underline underline-offset-4" href="https://www.sphinx-doc.org" rel="noreferrer">Sphinx 9.1.0</a></p>
 </div>
 </div>
 </footer>

@@ -24,9 +24,9 @@
 <title>General interface design | Azulero 2.0</title>
 <meta content="General interface design | Azulero 2.0" property="og:title"/>
 <meta content="General interface design | Azulero 2.0" name="twitter:title"/>
-<link href="_static/pygments.css?v=9e084e5f" rel="stylesheet" type="text/css"/>
-<link href="_static/pygments_dark.css" id="pygments_dark_css" media="(prefers-color-scheme: dark)" rel="stylesheet" type="text/css"/>
+<link href="_static/pygments.css?v=e72c8e07" rel="stylesheet" type="text/css"/>
 <link href="_static/theme.css?v=979577e3" rel="stylesheet" type="text/css"/>
+<link href="_static/code.css?v=7b0d5e71" rel="stylesheet" type="text/css"/>
 <link href="_static/figures.css?v=5ca7d70c" rel="stylesheet" type="text/css"/>
 <link href="_static/logo.png" rel="icon"/>
 <link href="search.html" rel="search" title="Search"/>
@@ -132,7 +132,7 @@
 It supports a variety of so-called <strong>commands</strong>,
 such as <code class="docutils literal notranslate"><span class="pre">retrieve</span></code> to download datafiles or <code class="docutils literal notranslate"><span class="pre">process</span></code> to render color images.
 All commands follow the same pattern:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="n">azul</span> <span class="p">[</span><span class="n">global_options</span><span class="p">]</span> <span class="o">&lt;</span><span class="n">command</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">inputs</span><span class="o">&gt;</span> <span class="p">[</span><span class="n">options</span><span class="p">]</span>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">$ </span><span class="ge">azul</span><span class="w"> </span><span class="o">[</span><span class="ge">global_options</span><span class="o">]</span><span class="w"> </span>&lt;<span class="ge">command</span>&gt;<span class="w"> </span>&lt;<span class="ge">inputs</span>&gt;<span class="w"> </span><span class="o">[</span><span class="ge">options</span><span class="o">]</span>
 </span></code></pre></div>
 </div>
 <p>with:</p>
@@ -152,12 +152,10 @@ and command options are passed <em>after</em> the command name, before or after 
 Option <code class="docutils literal notranslate"><span class="pre">-o</span> <span class="pre">&lt;output&gt;</span></code> exists for all commands.</p>
 <p>Here is an example command line with global and command options,
 a list of inputs and an output specification:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><style type="text/css">
-span.prompt1:before {
-  content: "$ ";
-}
-</style><span class="prompt1">azul<span class="w"> </span>--log<span class="w"> </span>DEBUG<span class="w"> </span>retrieve<span class="w"> </span>-r<span class="w"> </span>1m<span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="w"> </span>UGC11116<span class="w"> </span>PGC61356<span class="w"> </span>-o<span class="w"> </span><span class="o">{</span>target<span class="o">}</span></span>
-</pre></div></div></section>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">$ </span>azul<span class="w"> </span>--log<span class="w"> </span>DEBUG<span class="w"> </span>retrieve<span class="w"> </span>-r<span class="w"> </span>1m<span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="w"> </span>UGC11116<span class="w"> </span>PGC61356<span class="w"> </span>-o<span class="w"> </span><span class="o">{</span>target<span class="o">}</span>
+</span></code></pre></div>
+</div>
+</section>
 <section id="workspace-input-and-output-paths">
 <span id="workspace"></span><h2>Workspace, input and output paths</h2>
 <p>Azulero defines three types of directories:</p>
@@ -216,7 +214,7 @@ for further use by commands down a pipeline.</p>
 <p>For pipelining and batch processing, Azulero offers an environment-level mechanism
 for setting named options like global option <code class="docutils literal notranslate"><span class="pre">--log</span></code> or <a class="reference internal" href="retrieve.html"><span class="doc">azul retrieve</span></a> option <code class="docutils literal notranslate"><span class="pre">--from</span></code>.
 Each named option can be read from an environment variable named as follows:</p>
-<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><code><span id="line-1">AZUL<span class="nt">&lt;COMMAND&gt;</span>_<span class="nt">&lt;OPTION&gt;</span>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="go">AZUL&lt;</span><span class="ge">COMMAND</span><span class="go">&gt;_&lt;</span><span class="ge">OPTION</span><span class="go">&gt;</span>
 </span></code></pre></div>
 </div>
 <p>with:</p>
@@ -229,26 +227,34 @@ or <code class="docutils literal notranslate"><span class="pre">RADIUS</span></c
 </dd>
 </dl>
 <p>For example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1"><span class="nb">export</span><span class="w"> </span><span class="nv">AZUL_LOG</span><span class="o">=</span>DEBUG</span>
-<span class="prompt1"><span class="nb">export</span><span class="w"> </span><span class="nv">AZULRETRIEVE_FROM</span><span class="o">=</span>pdr</span>
-<span class="prompt1"><span class="nb">export</span><span class="w"> </span><span class="nv">AZULRETRIEVE_RADIUS</span><span class="o">=</span>1m</span>
-</pre></div></div><p>sets the log level to <code class="docutils literal notranslate"><span class="pre">DEBUG</span></code> for all commands,
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">$ </span><span class="nb">export</span><span class="w"> </span><span class="nv">AZUL_LOG</span><span class="o">=</span>DEBUG
+</span><span id="line-2"><span class="gp">$ </span><span class="nb">export</span><span class="w"> </span><span class="nv">AZULRETRIEVE_FROM</span><span class="o">=</span>pdr
+</span><span id="line-3"><span class="gp">$ </span><span class="nb">export</span><span class="w"> </span><span class="nv">AZULRETRIEVE_RADIUS</span><span class="o">=</span>1m
+</span></code></pre></div>
+</div>
+<p>sets the log level to <code class="docutils literal notranslate"><span class="pre">DEBUG</span></code> for all commands,
 and sets the data provider to <code class="docutils literal notranslate"><span class="pre">pdr</span></code> and crop radius to 1 arcmin for <a class="reference internal" href="retrieve.html"><span class="doc">azul retrieve</span></a>.
 These parameters are overloaded by command line arguments.</p>
 <p>Within this context, the following lines are equivalent:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">azul<span class="w"> </span>retrieve<span class="w"> </span>NGC6505<span class="w"> </span>UGC11116<span class="w"> </span><span class="p">|</span><span class="w"> </span>azul<span class="w"> </span>process</span>
-<span class="prompt1">azul<span class="w"> </span>--log<span class="w"> </span>DEBUG<span class="w"> </span>retrieve<span class="w"> </span>NGC6505<span class="w"> </span>UGC11116<span class="w"> </span>-r<span class="w"> </span>1m<span class="w"> </span>--from<span class="w"> </span>pdr<span class="w"> </span>-f<span class="w"> </span><span class="p">|</span><span class="w"> </span>azul<span class="w"> </span>--log<span class="w"> </span>DEBUG<span class="w"> </span>process</span>
-</pre></div></div></section>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">$ </span>azul<span class="w"> </span>retrieve<span class="w"> </span>NGC6505<span class="w"> </span>UGC11116<span class="w"> </span><span class="p">|</span><span class="w"> </span>azul<span class="w"> </span>process
+</span><span id="line-2"><span class="gp">$ </span>azul<span class="w"> </span><span class="ge">--log</span><span class="w"> </span><span class="ge">DEBUG</span><span class="w"> </span>retrieve<span class="w"> </span>NGC6505<span class="w"> </span>UGC11116<span class="w"> </span><span class="ge">-r</span><span class="w"> </span><span class="ge">1m</span><span class="w"> </span><span class="ge">--from</span><span class="w"> </span><span class="ge">pdr</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>azul<span class="w"> </span><span class="ge">--log</span><span class="w"> </span><span class="ge">DEBUG</span><span class="w"> </span>process
+</span></code></pre></div>
+</div>
+</section>
 <section id="command-line-help">
 <h2>Command line help</h2>
 <p>We tried our best to write a complete-enough documentation.
 However, we may have omitted a few details.
 For an exhaustive description of global and command options,
-<code class="docutils literal notranslate"><span class="pre">azul</span></code> and each of its commands feature an option <code class="docutils literal notranslate"><span class="pre">-h</span></code>, or <code class="docutils literal notranslate"><span class="pre">--help</span></code>.
-In particular, the commands are documented in terms of short-form options when they exist.
+<code class="docutils literal notranslate"><span class="pre">azul</span></code> and each of its commands feature an option <code class="docutils literal notranslate"><span class="pre">-h</span></code>, or <code class="docutils literal notranslate"><span class="pre">--help</span></code>:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">$ </span>azul<span class="w"> </span><span class="ge">-h</span>
+</span><span id="line-2"><span class="gp">$ </span>azul<span class="w"> </span>process<span class="w"> </span><span class="ge">-h</span>
+</span></code></pre></div>
+</div>
+<p>In particular, the commands are documented in terms of short-form options when they exist.
 Check the help messages in order to find the long-from options (typically, to know the environment variable names).</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
+<div class="admonition error">
+<p class="admonition-title">Error</p>
 <p>If you find discrepancies between the documentation and help messages,
 please <a class="reference external" href="https://github.com/kabasset/azulero/issues/new">open issues</a> or contact us.
 This really helps!</p>
@@ -290,7 +296,7 @@ This really helps!</p>
 </div><footer class="py-6 border-t border-border md:py-0">
 <div class="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
 <div class="flex flex-col items-center gap-4 px-8 md:flex-row md:gap-2 md:px-0">
-<p class="text-sm leading-loose text-center text-muted-foreground md:text-left">© 2025-2026, Antoine Basset (CNES) and contributors. Last updated: May 25, 2026. Built with <a class="font-medium underline underline-offset-4" href="https://www.sphinx-doc.org" rel="noreferrer">Sphinx 9.1.0</a></p>
+<p class="text-sm leading-loose text-center text-muted-foreground md:text-left">© 2025-2026, Antoine Basset (CNES) and contributors. Last updated: May 26, 2026. Built with <a class="font-medium underline underline-offset-4" href="https://www.sphinx-doc.org" rel="noreferrer">Sphinx 9.1.0</a></p>
 </div>
 </div>
 </footer>
