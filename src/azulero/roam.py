@@ -69,7 +69,7 @@ def add_parser(subparsers, help):
         """,
     )
     group.add_argument(
-        "--equirectangular",
+        "--equi",
         metavar="PATH",
         help="""
         Sequence file for equirectangular sky maps.
@@ -278,9 +278,6 @@ def crop_pyramid(
     factor = pyramid.atleast_wide(
         pyramid[1].shape[1] / params.hfov * video_format[0] * 2
     )  # FIXME handle rotation
-    logger.header(
-        2, f"- Reduction factor: {params.hfov / pyramid[1].shape[1]} -> {factor}"
-    )  # FIXME rm
     scaled_params = sequence.Frame(
         params.index, params.center / factor, params.hfov / factor, params.orientation
     )
@@ -312,16 +309,16 @@ def crop_planar(
     x1 = x0 + w
     y1 = y0 + h
     if x0 < 0:
-        logger.header(2, f"WARNING: min(x) < 0 ({x0})")
+        logger.warning(f"min(x) < 0 ({x0})")
         x0 = 0
     if y0 < 0:
-        logger.header(2, f"WARNING: min(y) < 0 ({y0})")
+        logger.warning(f"min(y) < 0 ({y0})")
         y0 = 0
     if x1 > image.shape[1]:
-        logger.header(2, f"WARNING: max(x) > {image.shape[1]-1} ({x1-1})")
+        logger.warning(f"max(x) > {image.shape[1]-1} ({x1-1})")
         x1 = image.shape[0]
     if y1 > image.shape[0]:
-        logger.header(2, f"WARNING: max(y) > {image.shape[0]-1} ({y1-1})")
+        logger.warning(f"max(y) > {image.shape[0]-1} ({y1-1})")
         y1 = image.shape[1]
     if x0 >= image.shape[1] or y0 >= image.shape[0] or x1 <= 0 or y1 <= 0:
         return np.zeros([video_format[1], video_format[0], 3], dtype=image.dtype)
