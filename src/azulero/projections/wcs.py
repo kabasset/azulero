@@ -11,12 +11,23 @@ from astropy.wcs import WCS
 from azulero.video.sequence import Frame
 
 
+def vfov_in_radians(hfov_in_radians, video_format):
+    """
+    Get vertical FOV from horizontal FOV and video format.
+    """
+    # hfov = 2 * atan(width / (2 * f))
+    # => 1 / (2 * f) = tan(hfov / 2) / width
+    # vfov = 2 * atan(height / (2 * f))
+    #      = 2 * atan(tan(hfov / 2) * height / width)
+    return 2 * np.atan(np.tan(hfov_in_radians / 2) * video_format[1] / video_format[0])
+
+
 def capture_frame(
     image: np.ndarray, wcs: WCS, video_format: tuple[int, int], frame: Frame
 ):
-    hfov = frame.hfov_in_degrees()
-    vfov = 2 * np.atan(np.tan(hfov / 2) * video_format[1] / video_format[0])
-    fov = np.deg2rad([hfov, vfov])
+    hfov = np.deg2rad(frame.hfov)
+    vfov = vfov_in_radians(hfov, video_format)
+    fov = Angle([hfov, vfov], unit="rad")
     xyz = _xyzpers(fov, np.deg2rad(frame.center), video_format, np.deg2rad(frame.roll))
     u, v = _xyz2uv(xyz)
     ra = 360 - np.rad2deg(u)
@@ -35,10 +46,10 @@ def capture_frame(
 
 
 def _xyzpers(
-    fov: tuple[float, float],
+    fov: Angle,
     center: Angle,
     video_format: tuple[int, int],
-    roll: float,
+    roll: Angle,
 ) -> np.ndarray:
     out = np.ones((video_format[1], video_format[0], 3), np.float32)
     x_max = np.tan(fov[0] / 2)
@@ -85,7 +96,7 @@ def _xyz2uv(xyz: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     return u, v
 
 
-def rotation_matrix(rad: float, ax: int | np.ndarray | list):
+def rotation_matrix(rad: Angle, ax: int | np.ndarray | list):
     if isinstance(ax, int):
         ax = (np.arange(3) == ax).astype(float)
     ax = np.array(ax)

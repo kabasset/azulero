@@ -285,7 +285,7 @@ def _planar_hfov(hfov: float | Angle, context: RoamingContext) -> float:
     half_width = context.image_shape[1] // 2
     center = context.wcs.pixel_to_world(half_width, half_height)
     left = center.ra + hfov / 2
-    right = center.ra - hfov / 2
+    right = left - hfov
     dec = center.dec
     min = context.wcs.world_to_pixel(SkyCoord(ra=left, dec=dec, frame="icrs"))[0]
     max = context.wcs.world_to_pixel(SkyCoord(ra=right, dec=dec, frame="icrs"))[0]
@@ -300,8 +300,10 @@ def _spherical_hfov(hfov: float | Angle, context: RoamingContext) -> Angle:
     # Using viewport center would be ideal but the difference is minimal at this scale
     half_height = context.image_shape[0] // 2
     half_width = context.image_shape[1] // 2
-    max = context.wcs.pixel_to_world(half_width - hfov // 2, half_height)
-    min = context.wcs.pixel_to_world(half_width - hfov // 2 + hfov, half_height)
+    left = half_width - hfov // 2
+    right = left + hfov
+    max = context.wcs.pixel_to_world(left, half_height)
+    min = context.wcs.pixel_to_world(right, half_height)
     return max.ra - min.ra
 
 
