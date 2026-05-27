@@ -24,7 +24,7 @@ class CameraRunnable:
                     p.center[0].value,  # FIXME always in degrees?
                     p.center[1].value,
                     p.hfov.value,
-                    p.orientation.value,
+                    p.roll.value,
                 )
             ]
             for p in params
@@ -48,8 +48,8 @@ class CameraRunnable:
         implements = ["java.lang.Runnable"]
 
 
-def camera_up(pointing, orientation):
-    rad = np.deg2rad(orientation)
+def camera_up(pointing, roll):
+    rad = np.deg2rad(roll)
     up = np.array([-np.sin(rad), np.cos(rad), 0])
     up_xyz = up - np.dot(up, pointing) * pointing
     return up_xyz / np.linalg.norm(up_xyz)

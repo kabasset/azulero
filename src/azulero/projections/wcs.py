@@ -17,7 +17,7 @@ def capture_frame(
     hfov = frame.hfov_in_degrees()
     vfov = 2 * np.atan(np.tan(hfov / 2) * video_format[1] / video_format[0])
     fov = np.deg2rad([hfov, vfov])
-    xyz = _xyzpers(fov, np.deg2rad(frame.center), video_format, frame.orientation)
+    xyz = _xyzpers(fov, np.deg2rad(frame.center), video_format, np.deg2rad(frame.roll))
     u, v = _xyz2uv(xyz)
     ra = 360 - np.rad2deg(u)
     dec = np.rad2deg(v)
@@ -38,7 +38,7 @@ def _xyzpers(
     fov: tuple[float, float],
     center: Angle,
     video_format: tuple[int, int],
-    orientation: float,
+    roll: float,
 ) -> np.ndarray:
     out = np.ones((video_format[1], video_format[0], 3), np.float32)
     x_max = np.tan(fov[0] / 2)
@@ -48,7 +48,7 @@ def _xyzpers(
     out[..., :2] = np.stack(np.meshgrid(x_ticks, -y_ticks), -1)
     yaw = rotation_matrix(center[0], 1)
     pitch = rotation_matrix(center[1], 0)
-    roll = rotation_matrix(orientation, np.array([0.0, 0.0, 1.0]).dot(pitch).dot(yaw))
+    roll = rotation_matrix(roll, np.array([0.0, 0.0, 1.0]).dot(pitch).dot(yaw))
 
     return out.dot(pitch).dot(yaw).dot(roll).astype(np.float32)
 

@@ -12,9 +12,11 @@ from azulero.image import io
 from azulero.projections.equirectangular import Projection  # FIXME
 from azulero.projections.wcs import capture_frame as wcs_frame
 from azulero.tools.messaging import logger, read_pipe_args, write_pipe_args
+from azulero.tools import parsing
 from azulero.tools.timing import Timer
 from azulero.tools.workspace import Workspace
 from azulero.video import sequence
+from azulero.video import interp
 from azulero.video.gaiasky import roam_gaiasky
 
 supported_codecs = {".mp4": "mp4v", ".avi": "xvid", ".mkv": "ffv1"}
@@ -47,7 +49,7 @@ def add_parser(subparsers, help):
         default=read_pipe_args(),
         help="Space separated list of image files or any name for Gaia Sky.",
     )
-    group = parser.add_mutually_exclusive_group(required=False)
+    group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument(
         "--ortho",
         metavar="PATH",
@@ -153,11 +155,11 @@ def add_parser(subparsers, help):
 def parse_format(text):
     if "," in text:
         w, h = text.split(",")
-    elif value := sequence.match_suffix("K", text):
+    elif value := parsing.match_suffix("K", text):
         w = float(value) * 960
         h = float(value) * 540
     else:
-        raise RuntimeError(f"Unrecognized format: {text}")
+        raise parsing.ParseError("format", text)
     return int(w), int(h)
 
 
@@ -175,11 +177,14 @@ def run(args):
     timer = Timer()
 
     if args.gaiasky:
-        image_shape = [0, 0]
+        image_shape = (0, 0)
+        wcs = None
     else:
         logger.header(2, f"Read input image: {input.name}")
         image, wcs = io.read_product(input)
-        image_shape = image.shape[:2]
+        if image is None:
+            raise RuntimeError(f"Image not found: {input}")
+        image_shape = (image.shape[0], image.shape[1])
         logger.bullet(f"Shape: {image_shape[0]} x {image_shape[1]}")
         pyramid = Pyramid(image, 8)  # TODO deduce amount from shape and format
         logger.bullet(f"Pyramid levels: {len(pyramid)}")
@@ -188,17 +193,18 @@ def run(args):
     logger.header(2, f"Read sequence of key frames: {config.name}")
     video_format = parse_format(args.format)
     logger.bullet(f"Video format: {video_format[0]} x {video_format[1]}")
-    params = sequence.read_key_frames(
-        ios.workspace / config, image_shape, args.fps, video_format
-    )
+    mode = "planar" if args.ortho else "spherical"
+    context = sequence.RoamingContext(image_shape, video_format, args.fps, wcs, mode)
+
+    params = sequence.read_key_frames(ios.workspace / config, context)
     logger.bullet(f"Key frames: {len(params)}")
-    centers = sequence.sin_sequence(params.centers)
-    hfovs = sequence.sin_sequence(params.hfovs)
-    orientations = sequence.sin_sequence(params.orientations)
+    centers = interp.sin_sequence(params.centers)
+    hfovs = interp.sin_sequence(params.hfovs)
+    rolls = interp.sin_sequence(params.rolls)
     logger.bullet(f"Total frames: {len(centers)}")
     params = [
         sequence.Frame(i, c, z, a)
-        for i, c, z, a in zip(range(len(centers)), centers, hfovs, orientations)
+        for i, c, z, a in zip(range(len(centers)), centers, hfovs, rolls)
     ][args.start : args.stop]
     logger.bullet(f"Rendering range: [{args.start}, {args.stop})")
     timer.tic_log()
@@ -223,14 +229,13 @@ def run(args):
     for i, p in enumerate(params):
         logger.bullet(f"{p} [{i+1}/{len(params)}]")
         if args.gaiasky:
-            frame = cv2.imread(gaia_frames[i], cv2.IMREAD_COLOR)  # FIXME read_data
+            frame = io.read_data(gaia_frames[i])
         elif args.equi:
             frame = crop_equirectangular(image, p, video_format)
         elif args.wcs:
             frame = wcs_frame(image, wcs, video_format, p)
-        else:
-            # FIXME assert args.ortho
-            frame = crop_pyramid(pyramid, p.planar(wcs, image_shape), video_format)
+        elif args.ortho:
+            frame = crop_pyramid(pyramid, p, video_format)
         if scale.width > 0:
             scale.draw(frame, 100.0 * p.hfov)
         writer.write(np.flipud(frame))
@@ -277,7 +282,7 @@ def crop_pyramid(
         pyramid[1].shape[1] / params.hfov * video_format[0] * 2
     )  # FIXME handle rotation
     scaled_params = sequence.Frame(
-        params.index, params.center / factor, params.hfov / factor, params.orientation
+        params.index, params.center / factor, params.hfov / factor, params.roll
     )
     return crop_planar(pyramid[factor], scaled_params, video_format)
 
@@ -293,8 +298,8 @@ def crop_planar(
     center = params.center
     scaling = video_format[0] / params.hfov
     viewport_format = np.array([params.hfov, video_format[1] / scaling])
-    orientation = params.orientation_in_degrees() % 360
-    viewport = cv2.RotatedRect(params.center, viewport_format, orientation)
+    roll = params.roll_in_degrees() % 360
+    viewport = cv2.RotatedRect(params.center, viewport_format, roll)
     x0, y0, w, h = viewport.boundingRect()
     # FIXME if bbox outside image, return black frame
     vertical = w < h
@@ -321,7 +326,7 @@ def crop_planar(
         return np.zeros([video_format[1], video_format[0], 3], dtype=image.dtype)
     offset = np.array([x0, y0])
     patch = image[y0:y1, x0:x1]
-    rotation = cv2.getRotationMatrix2D(center - offset, -orientation, scaling)
+    rotation = cv2.getRotationMatrix2D(center - offset, -roll, scaling)
     rotation_format = (w, h)
     rotated_image = cv2.warpAffine(
         patch, rotation, rotation_format, flags=cv2.INTER_LINEAR
@@ -343,7 +348,7 @@ def crop_equirectangular(
     vfov = 2 * np.atan(np.tan(hfov / 2) * h / w)
     u = float(np.deg2rad(params.center[0].value))
     v = float(np.deg2rad(params.center[1].value))
-    a = float(np.deg2rad(params.orientation_in_degrees()))
+    a = float(np.deg2rad(params.roll_in_degrees()))
     proj = Projection.from_perspective(
         (hfov, vfov),
         (u, v),

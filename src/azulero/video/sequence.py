@@ -9,8 +9,15 @@ from astropy.wcs import WCS
 from dataclasses import dataclass
 import numpy as np
 from pathlib import Path
-import scipy.interpolate as interp
 import yaml
+
+from azulero.tools import parsing
+
+
+class MissingWCS(Exception):
+
+    def __str__(self) -> str:
+        return "Missing WCS parameters."
 
 
 @dataclass
@@ -22,7 +29,7 @@ class Frame:
     index: int  #: Frame index
     center: np.ndarray | Angle  #: Center in pixels or sky coordinates
     hfov: float | Angle  #: Horizontal field of view in pixels or solid angle
-    orientation: Angle  #: Viewport orientation angle
+    roll: Angle  #: Viewport roll angle
 
     def planar(self, wcs: WCS, image_shape: tuple[int, int]):
         """
@@ -68,11 +75,11 @@ class Frame:
         assert self.hfov_is_solid_angle()
         return float(self.hfov / u.deg)
 
-    def orientation_in_degrees(self):
+    def roll_in_degrees(self):
         """
-        Get the orientation in degrees.
+        Get the roll angle in degrees.
         """
-        return float(self.orientation / u.deg)
+        return float(self.roll / u.deg)
 
     def __repr__(self) -> str:
         res = f"{self.index}: "
@@ -84,12 +91,12 @@ class Frame:
             res += f"{self.hfov_in_degrees():0.2f}°, "
         else:
             res += f"{self.hfov:0.2f}, "
-        res += f"{self.orientation_in_degrees():0.2f}°"
+        res += f"{self.roll_in_degrees():0.2f}°"
         return res
 
 
 @dataclass
-class FrameParam:
+class IndexedValue:
     index: int  #: Frame index
     value: Any  #: Parameter value
 
@@ -100,23 +107,23 @@ class KeyFrames:
     Viewport parameters for key frames.
     """
 
-    centers: list[FrameParam]
-    hfovs: list[FrameParam]
-    orientations: list[FrameParam]
+    centers: list[IndexedValue]
+    hfovs: list[IndexedValue]
+    rolls: list[IndexedValue]
 
     def __len__(self):
         return len(self.centers)
 
-    def append(self, frame, center, hfov, orientation):
+    def append(self, frame, center, hfov, roll):
         """
         Append a key frame.
         """
 
         def _repeat(param):
-            param.append(FrameParam(frame, param[-1].value))
+            param.append(IndexedValue(frame, param[-1].value))
 
         def _append(param, value):
-            param.append(FrameParam(frame, value))
+            param.append(IndexedValue(frame, value))
 
         if center is None:
             _repeat(self.centers)
@@ -128,23 +135,32 @@ class KeyFrames:
         elif not np.isnan(hfov):
             _append(self.hfovs, hfov)
 
-        if orientation is None:
-            _repeat(self.orientations)
-        elif not np.isnan(orientation):
-            _append(self.orientations, orientation)
+        if roll is None:
+            _repeat(self.rolls)
+        elif not np.isnan(roll):
+            _append(self.rolls, roll)
 
         return self
 
 
-def read_key_frames(config: Path, image_shape: list, fps: float, video_format: list):
+@dataclass
+class RoamingContext:
+    image_shape: tuple[int, int]
+    video_format: tuple[int, int]
+    fps: float
+    wcs: WCS | None
+    mode: str  #: "planar" or "spherical"
+
+
+def read_key_frames(config: Path, context: RoamingContext) -> KeyFrames:
     """
     Read the key frames from a configuration file.
     """
     with open(config) as f:
-        return parse_key_frames(yaml.safe_load(f), image_shape, fps, video_format)
+        return parse_key_frames(yaml.safe_load(f), context)
 
 
-def parse_key_frames(sequence: dict, image_shape: list, fps: float, video_format: list):
+def parse_key_frames(sequence: dict, context: RoamingContext) -> KeyFrames:
     """
     Parse the key frames in a dictionary.
     """
@@ -152,21 +168,14 @@ def parse_key_frames(sequence: dict, image_shape: list, fps: float, video_format
     frame = 0
     for step in sequence:
         if not "t" in step:
-            center = parse_center((step["x"], step["y"]), image_shape)
+            center = parse_center(step["c"], context)
             add_knot(res, center)
         else:
-            frame = parse_frame(step["t"], fps, frame)
-            if "x" not in step and "y" not in step:
-                center = None
-            else:
-                center = parse_center((step["x"], step["y"]), image_shape)
-            hfov = (
-                None
-                if "z" not in step
-                else parse_hfov(step["z"], image_shape, video_format)
-            )
-            orientation = None if "a" not in step else parse_angle(step["a"])
-            res.append(frame, center, hfov, orientation)
+            frame = parse_frame(step["t"], context.fps, frame)
+            center = None if "c" not in step else parse_center(step["c"], context)
+            hfov = None if "s" not in step else parse_hfov(step["s"], context)
+            roll = None if "r" not in step else parse_roll(step["r"])
+            res.append(frame, center, hfov, roll)
     return res
 
 
@@ -181,157 +190,126 @@ def add_knot(sequence, center):
         sequence.centers[-1].value = [knots, center]
 
 
-def sin_sequence(key_frames: list[FrameParam]):
+def _project(param_name, param, context: RoamingContext):
     """
-    Interpolate parameters over a sequence of frames with sine sampling.
+    Call function `_{context.mode}_{param_name}({param}, {context})`,
+    for example `_spherical_center(param, context)`.
     """
-    res = []
-    for start, stop in zip(key_frames[:-1], key_frames[1:]):
-        if isinstance(start.value, list):
-            res += [*sin_spline(start, stop)]
-        else:
-            res += sin_step(start, stop)
-    # TODO prepend first value if first frame > 0
-    return res
+    func = globals()[f"_{context.mode}_{param_name}"]
+    return func(param, context)
 
 
-def sin_step(start: FrameParam, stop: FrameParam):
-    """
-    Linearly interpolate parameters between two frames with sine sampling.
-    """
-    stop_value = stop.value[0] if isinstance(stop.value, list) else stop.value
-    return [
-        lerp(1 - u, start.value, stop_value)
-        for u in sin_sampling(start.index, stop.index)
-    ]
-
-
-def lerp(x, a, b):  # FIXME to interp.py
-    if x == 0:
-        return b
-    if x == 1:
-        return a
-    # if isinstance(a, Angle) or isinstance(b, Angle):
-    #     return Angle(lerp(x, a[0], b[0]), lerp(x, a[1], b[1]), frame="icrs")
-    return x * a + (1 - x) * b
-
-
-def sin_spline(start: FrameParam, stop: FrameParam):
-    """
-    Spline-interpolate trajectory between knots with sine sampling.
-    """
-    knots = np.stack([*start.value, stop.value])
-    b = interp.make_interp_spline(
-        np.linspace(0, 1, len(knots)), knots, k=min(3, len(knots) - 1)
-    )
-    u = sin_sampling(start.index, stop.index)
-    return b(u)
-
-
-def sin_sampling(start, stop):
-    """
-    Sine sampling between two bounds.
-
-    Args:
-        start: Start frame index.
-        stop: Stop frame index.
-
-    Returns:
-        An array of sine-spaced values between 0 and 1.
-    """
-    return np.sin(np.linspace(0, 1, stop - start) * np.pi - np.pi / 2) / 2 + 0.5
-
-
-def match_suffix(suffix: str, text: str):
-    """
-    Test whether a string ends with some suffix.
-    If it does, return the beginning of the string.
-    Otherwise, return `None`.
-    """
-    if text.endswith(suffix):
-        return text[: -len(suffix)]
-    return None
-
-
-def parse_frame(text: str, fps: float, ref_frame: int):
+def parse_frame(text: str, fps: float, ref_frame: int) -> int:
     """
     Parse frame index or time.
     If last char is "f", return the value.
     If it is "s", multiply by `fps`.
     If the first char is "+", add `ref_frame`.
     """
-    if match := match_suffix("f", text):
+    if match := parsing.match_suffix("f", text):
         value = int(match)
-    elif match := match_suffix("s", text):
+    elif match := parsing.match_suffix("s", text):
         value = int(float(match) * fps)
     else:
-        raise ValueError(f"Unrecognized time: {text}")
+        raise parsing.ParseError("time", text)
     return value + ref_frame if text[0] == "+" else value
 
 
-def parse_center(text_xy: tuple, image_shape: tuple):
+def parse_center(text: str, context: RoamingContext) -> np.ndarray | Angle:
     """
     Parse the center as sky or pixel coordinates.
-    If the values of both `x` and `y` end with "°", they are considered sky coordinates.
+    If there is no comma, parse an object name.
+    Otherwise, try parsing spherical coordinates.
     Otherwise, each of them is parsed as a planar coordinate.
     """
-    if (x := match_suffix("°", text_xy[0])) and (y := match_suffix("°", text_xy[1])):
-        return Angle([float(x) * u.deg, float(y) * u.deg])
-    x = _parse_planar_coord(text_xy[0], image_shape[1])
-    y = _parse_planar_coord(text_xy[1], image_shape[0])
-    return np.array([x, y])
-
-
-def _parse_planar_coord(text: str, image_extent):
-    """
-    Parse a planar coordinate.
-    If last char is "%", coordinate is relative to the image extent.
-    If value is negative, index backward.
-    """
-    if value := match_suffix("px", text):
-        px = float(value)
-    elif value := match_suffix("%", text):
-        px = float(value) / 100 * image_extent
+    if "," not in text:
+        coord = SkyCoord.from_name(text)
+        center = Angle([coord.ra, coord.dec])
     else:
-        raise ValueError(f"Unrecognized coordinate: {text}")
-    if px < 0:
-        px += image_extent
-    return px
+        center = parsing.parse_lengths_or_angles(
+            text, (context.image_shape[1], context.image_shape[0])
+        )
+    return _project("center", center, context)
 
 
-def parse_hfov(text: str, image_shape: list, video_format: list):
+def _planar_center(center: np.ndarray | Angle, context: RoamingContext) -> np.ndarray:
+    if isinstance(center, Angle):
+        if context.wcs is None:
+            raise MissingWCS()
+        xy = context.wcs.world_to_pixel(
+            SkyCoord(ra=center[0], dec=center[1], frame="icrs")
+        )
+        return np.array(xy)
+    return center
+
+
+def _spherical_center(center: np.ndarray | Angle, context: RoamingContext) -> Angle:
+    if isinstance(center, Angle):
+        return center
+    if context.wcs is None:
+        raise MissingWCS()
+    radec = context.wcs.pixel_to_world(*center)
+    return Angle([radec.ra, radec.dec])
+
+
+def parse_hfov(text: str, context: RoamingContext) -> float | Angle:
     """
     Parse the zoom.
     If last char is "w" (resp. "h"), zoom is relative to the image width (resp. height).
     If last char is "%", zoom is relative to the pixel size.
-    If last char is "°", zoom is a horizontal field of view of an equirectangular input.
+    Otherwise, the value is parsed as an angular horizontal field of view.
     """
     if text == "...":
         return np.nan
-    if match := match_suffix("w", text):
-        return float(match) * image_shape[1]
-    if match := match_suffix("h", text):
-        vfov = float(match) * image_shape[0]
-        return vfov * video_format[0] / video_format[1]
-    if match := match_suffix("%", text):
-        return 100 / float(match) * video_format[0]
-    if match := match_suffix("px", text):
-        return float(match)
-    if match := match_suffix("°", text):
-        return Angle(float(match) * u.deg)
-    raise ValueError(f"Unrecognized zoom: {text}")
+    if match := parsing.match_suffix("w", text):
+        hfov = parsing.parse_length(match, context.image_shape[1])
+    elif match := parsing.match_suffix("h", text):
+        vfov = parsing.parse_length(match, context.image_shape[0])
+        hfov = vfov * context.video_format[0] / context.video_format[1]
+    elif match := parsing.match_suffix(
+        "%", text
+    ):  # FIXME this is a zoom factor, not an hfov => change key?
+        hfov = 100 / float(match) * context.video_format[0]
+    else:
+        hfov = parsing.parse_length_or_angle(text)
+    return _project("hfov", hfov, context)
 
 
-def parse_angle(text: str):
+def _planar_hfov(hfov: float | Angle, context: RoamingContext) -> float:
+    if isinstance(hfov, float):
+        return hfov
+    if context.wcs is None:
+        raise MissingWCS()
+    # Using viewport center would be ideal but the difference is minimal at this scale
+    half_height = context.image_shape[0] // 2
+    half_width = context.image_shape[1] // 2
+    center = context.wcs.pixel_to_world(half_width, half_height)
+    left = center.ra + hfov / 2
+    right = center.ra - hfov / 2
+    dec = center.dec
+    min = context.wcs.world_to_pixel(SkyCoord(ra=left, dec=dec, frame="icrs"))[0]
+    max = context.wcs.world_to_pixel(SkyCoord(ra=right, dec=dec, frame="icrs"))[0]
+    return max - min
+
+
+def _spherical_hfov(hfov: float | Angle, context: RoamingContext) -> Angle:
+    if isinstance(hfov, Angle):
+        return hfov
+    if context.wcs is None:
+        raise MissingWCS()
+    # Using viewport center would be ideal but the difference is minimal at this scale
+    half_height = context.image_shape[0] // 2
+    half_width = context.image_shape[1] // 2
+    max = context.wcs.pixel_to_world(half_width - hfov // 2, half_height)
+    min = context.wcs.pixel_to_world(half_width - hfov // 2 + hfov, half_height)
+    return max.ra - min.ra
+
+
+def parse_roll(text: str) -> float | Angle:
     """
-    Parse the angle in degrees.
-    If last char is "°", forward the value.
-    If text ends with "pi", multiply by 180.
+    Parse the roll angle in degrees.
+    If text ends with "pi", multiply the value by 180°.
     """
     if text == "...":
         return np.nan
-    if match := match_suffix("°", text):
-        return Angle(float(match) * u.deg)
-    elif match := match_suffix("pi", text):
-        return Angle(float(match) * 180 * u.deg)
-    raise ValueError(f"Unrecognized angle: {text}")
+    return parsing.parse_angle(text)
