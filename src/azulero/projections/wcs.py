@@ -45,7 +45,7 @@ def _xyzpers(
     y_max = np.tan(fov[1] / 2)
     x_ticks = np.linspace(-x_max, x_max, num=video_format[0], dtype=np.float32)
     y_ticks = np.linspace(-y_max, y_max, num=video_format[1], dtype=np.float32)
-    out[..., :2] = np.stack(np.meshgrid(x_ticks, -y_ticks), -1)
+    out[..., :2] = np.stack(np.meshgrid(x_ticks, y_ticks), -1)
     yaw = rotation_matrix(center[0], 1)
     pitch = rotation_matrix(center[1], 0)
     roll = rotation_matrix(roll, np.array([0.0, 0.0, 1.0]).dot(pitch).dot(yaw))
