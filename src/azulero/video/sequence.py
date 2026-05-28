@@ -284,11 +284,12 @@ def _planar_hfov(hfov: float | Angle, context: RoamingContext) -> float:
     half_height = context.image_shape[0] // 2
     half_width = context.image_shape[1] // 2
     center = context.wcs.pixel_to_world(half_width, half_height)
-    left = center.ra + hfov / 2
-    right = left - hfov
-    dec = center.dec
-    min = context.wcs.world_to_pixel(SkyCoord(ra=left, dec=dec, frame="icrs"))[0]
-    max = context.wcs.world_to_pixel(SkyCoord(ra=right, dec=dec, frame="icrs"))[0]
+    top = center.dec + hfov / 2
+    bottom = top - hfov
+    max = context.wcs.world_to_pixel(SkyCoord(ra=center.ra, dec=top, frame="icrs"))[1]
+    min = context.wcs.world_to_pixel(SkyCoord(ra=center.ra, dec=bottom, frame="icrs"))[
+        1
+    ]
     return max - min
 
 
@@ -300,11 +301,11 @@ def _spherical_hfov(hfov: float | Angle, context: RoamingContext) -> Angle:
     # Using viewport center would be ideal but the difference is minimal at this scale
     half_height = context.image_shape[0] // 2
     half_width = context.image_shape[1] // 2
-    left = half_width - hfov // 2
-    right = left + hfov
-    max = context.wcs.pixel_to_world(left, half_height)
-    min = context.wcs.pixel_to_world(right, half_height)
-    return max.ra - min.ra
+    top = half_height + hfov // 2
+    bottom = top - hfov
+    max = context.wcs.pixel_to_world(half_width, top)
+    min = context.wcs.pixel_to_world(half_width, bottom)
+    return max.dec - min.dec
 
 
 def parse_roll(text: str) -> float | Angle:
