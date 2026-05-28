@@ -254,9 +254,9 @@ from a scale relative to the image pixel size, or relatively to the image extent
 <p>For each key frame but the first one, omitted parameters are copied from the previous key frame.
 The sequence file is in YAML format, which is very compact but requires space discipline!
 A typical key frame specification looks like this:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="p p-Indicator">-</span><span class="w"> </span><span class="ge">t</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">+10s</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="p p-Indicator">-</span><span class="w"> </span><span class="ge">t</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">+10</span><span class="ge">s</span>
 </span><span id="line-2"><span class="w">  </span><span class="ge">c</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">UGC 11116</span>
-</span><span id="line-3"><span class="w">  </span><span class="ge">z</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80%</span>
+</span><span id="line-3"><span class="w">  </span><span class="ge">s</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80%</span>
 </span><span id="line-4"><span class="w">  </span><span class="ge">r</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">15°</span>
 </span></code></pre></div>
 </div>
@@ -285,13 +285,13 @@ Typically, the viewport is centered with <code class="docutils literal notransla
 </section>
 <section id="field-of-view">
 <h3>Field of view</h3>
-<p>The viewport size is specified either as a scale factor or horizontal field of view, with key <code class="docutils literal notranslate"><span class="pre">z</span></code>:</p>
+<p>The viewport size is specified either as a scale factor or horizontal field of view, with key <code class="docutils literal notranslate"><span class="pre">s</span></code>:</p>
 <ul class="simple">
 <li><p>When suffixed with <code class="docutils literal notranslate"><span class="pre">%</span></code>, the parameter is interpreted as relative to the pixel size,
-such that <code class="docutils literal notranslate"><span class="pre">z:</span> <span class="pre">100%</span></code> (resp. <code class="docutils literal notranslate"><span class="pre">z:</span> <span class="pre">50%</span></code>) means that one pixel in the output frame
+such that <code class="docutils literal notranslate"><span class="pre">s:</span> <span class="pre">100%</span></code> (resp. <code class="docutils literal notranslate"><span class="pre">s:</span> <span class="pre">50%</span></code>) means that one pixel in the output frame
 corresponds to one pixel (resp. two pixels) in the input image.</p></li>
 <li><p>When suffixed with <code class="docutils literal notranslate"><span class="pre">w</span></code> (resp. <code class="docutils literal notranslate"><span class="pre">h</span></code>), the parameter value is a factor wrt. the image width (resp. height).
-Typically, a full-width viewport is specified as <code class="docutils literal notranslate"><span class="pre">z:</span> <span class="pre">1w</span></code> and a full-height viewport is specified as <code class="docutils literal notranslate"><span class="pre">z:</span> <span class="pre">1h</span></code>.</p></li>
+Typically, a full-width viewport is specified as <code class="docutils literal notranslate"><span class="pre">s:</span> <span class="pre">1w</span></code> and a full-height viewport is specified as <code class="docutils literal notranslate"><span class="pre">s:</span> <span class="pre">1h</span></code>.</p></li>
 <li><p>Angular quantities (e.g. suffixed with <code class="docutils literal notranslate"><span class="pre">°</span></code>) indicate a horizontal field of view as a solid angle.</p></li>
 </ul>
 <div class="admonition warning">
@@ -323,9 +323,9 @@ Several successive key frames can be eluded, as demonstrated in the example belo
 which are positions the center must pass through between key frames.
 They are specified by providing <code class="docutils literal notranslate"><span class="pre">c</span></code> only (no time or any other parameter has to be specified).
 The following example is a ten-second circular trajectory with three intermediate knots:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="p p-Indicator">-</span><span class="w"> </span><span class="ge">t</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0s</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="p p-Indicator">-</span><span class="w"> </span><span class="ge">t</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span><span class="ge">s</span>
 </span><span id="line-2"><span class="w">  </span><span class="ge">c</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">70%, 50%</span>
-</span><span id="line-3"><span class="w">  </span><span class="ge">z</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100%</span>
+</span><span id="line-3"><span class="w">  </span><span class="ge">s</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100%</span>
 </span><span id="line-4"><span class="w">  </span><span class="ge">r</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0°</span>
 </span><span id="line-5">
 </span><span id="line-6"><span class="p p-Indicator">-</span><span class="w"> </span><span class="ge">c</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50%, 70%</span>
@@ -334,7 +334,7 @@ The following example is a ten-second circular trajectory with three intermediat
 </span><span id="line-9">
 </span><span id="line-10"><span class="p p-Indicator">-</span><span class="w"> </span><span class="ge">c</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50%, 30%</span>
 </span><span id="line-11">
-</span><span id="line-12"><span class="p p-Indicator">-</span><span class="w"> </span><span class="ge">t</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10s</span>
+</span><span id="line-12"><span class="p p-Indicator">-</span><span class="w"> </span><span class="ge">t</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span><span class="ge">s</span>
 </span><span id="line-13"><span class="w">  </span><span class="ge">c</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">70%, 50%</span>
 </span></code></pre></div>
 </div>
@@ -343,35 +343,35 @@ The following example is a ten-second circular trajectory with three intermediat
 <section id="example">
 <h2>Example</h2>
 <p>Consider the following sequence:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="p p-Indicator">-</span><span class="w"> </span><span class="ge">t</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0s</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="p p-Indicator">-</span><span class="w"> </span><span class="ge">t</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span><span class="ge">s</span>
 </span><span id="line-2"><span class="w">  </span><span class="ge">c</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50%, 50%</span>
-</span><span id="line-3"><span class="w">  </span><span class="ge">z</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1h</span>
+</span><span id="line-3"><span class="w">  </span><span class="ge">s</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1h</span>
 </span><span id="line-4"><span class="w">  </span><span class="ge">r</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0°</span>
 </span><span id="line-5">
-</span><span id="line-6"><span class="p p-Indicator">-</span><span class="w"> </span><span class="ge">t</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">+1s</span>
+</span><span id="line-6"><span class="p p-Indicator">-</span><span class="w"> </span><span class="ge">t</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">+1</span><span class="ge">s</span>
 </span><span id="line-7"><span class="w">  </span><span class="ge">r</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
 </span><span id="line-8">
-</span><span id="line-9"><span class="p p-Indicator">-</span><span class="w"> </span><span class="ge">t</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">+10s</span>
+</span><span id="line-9"><span class="p p-Indicator">-</span><span class="w"> </span><span class="ge">t</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">+10</span><span class="ge">s</span>
 </span><span id="line-10"><span class="w">  </span><span class="ge">c</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">87%, 57%</span>
-</span><span id="line-11"><span class="w">  </span><span class="ge">z</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.2w</span>
+</span><span id="line-11"><span class="w">  </span><span class="ge">s</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.2w</span>
 </span><span id="line-12"><span class="w">  </span><span class="ge">r</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
 </span><span id="line-13">
-</span><span id="line-14"><span class="p p-Indicator">-</span><span class="w"> </span><span class="ge">t</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">+5s</span>
+</span><span id="line-14"><span class="p p-Indicator">-</span><span class="w"> </span><span class="ge">t</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">+5</span><span class="ge">s</span>
 </span><span id="line-15"><span class="w">  </span><span class="ge">r</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
 </span><span id="line-16">
-</span><span id="line-17"><span class="p p-Indicator">-</span><span class="w"> </span><span class="ge">t</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">+10s</span>
+</span><span id="line-17"><span class="p p-Indicator">-</span><span class="w"> </span><span class="ge">t</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">+10</span><span class="ge">s</span>
 </span><span id="line-18"><span class="w">  </span><span class="ge">c</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">60%, 72%</span>
-</span><span id="line-19"><span class="w">  </span><span class="ge">z</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100%</span>
+</span><span id="line-19"><span class="w">  </span><span class="ge">s</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100%</span>
 </span><span id="line-20"><span class="w">  </span><span class="ge">r</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
 </span><span id="line-21">
-</span><span id="line-22"><span class="p p-Indicator">-</span><span class="w"> </span><span class="ge">t</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">+5s</span>
+</span><span id="line-22"><span class="p p-Indicator">-</span><span class="w"> </span><span class="ge">t</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">+5</span><span class="ge">s</span>
 </span><span id="line-23"><span class="w">  </span><span class="ge">r</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">-90°</span>
 </span><span id="line-24">
-</span><span id="line-25"><span class="p p-Indicator">-</span><span class="w"> </span><span class="ge">t</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">+5s</span>
+</span><span id="line-25"><span class="p p-Indicator">-</span><span class="w"> </span><span class="ge">t</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">+5</span><span class="ge">s</span>
 </span><span id="line-26"><span class="w">  </span><span class="ge">c</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50%, 50%</span>
-</span><span id="line-27"><span class="w">  </span><span class="ge">z</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1h</span>
+</span><span id="line-27"><span class="w">  </span><span class="ge">s</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1h</span>
 </span><span id="line-28">
-</span><span id="line-29"><span class="p p-Indicator">-</span><span class="w"> </span><span class="ge">t</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">+1s</span>
+</span><span id="line-29"><span class="p p-Indicator">-</span><span class="w"> </span><span class="ge">t</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">+1</span><span class="ge">s</span>
 </span></code></pre></div>
 </div>
 <p>It consists in eight key frames:</p>
