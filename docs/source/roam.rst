@@ -141,11 +141,11 @@ The sequence file is in YAML format, which is very compact but requires space di
 A typical key frame specification looks like this:
 
 .. code-block:: yaml
-   :emphasize-text: t c z r
+   :emphasize-text: t c s r
 
    - t: +10s
      c: UGC 11116
-     z: 80%
+     s: 80%
      r: 15°
 
 
@@ -179,13 +179,13 @@ Named object
 Field of view
 ^^^^^^^^^^^^^
 
-The viewport size is specified either as a scale factor or horizontal field of view, with key ``z``:
+The viewport size is specified either as a scale factor or horizontal field of view, with key ``s``:
 
 * When suffixed with ``%``, the parameter is interpreted as relative to the pixel size,
-  such that ``z: 100%`` (resp. ``z: 50%``) means that one pixel in the output frame
+  such that ``s: 100%`` (resp. ``s: 50%``) means that one pixel in the output frame
   corresponds to one pixel (resp. two pixels) in the input image.
 * When suffixed with ``w`` (resp. ``h``), the parameter value is a factor wrt. the image width (resp. height).
-  Typically, a full-width viewport is specified as ``z: 1w`` and a full-height viewport is specified as ``z: 1h``.
+  Typically, a full-width viewport is specified as ``s: 1w`` and a full-height viewport is specified as ``s: 1h``.
 * Angular quantities (e.g. suffixed with ``°``) indicate a horizontal field of view as a solid angle.
 
 .. warning:: In pan-and-zoom mode, zoom levels higher than 100% are not supported.
@@ -223,11 +223,11 @@ They are specified by providing ``c`` only (no time or any other parameter has t
 The following example is a ten-second circular trajectory with three intermediate knots:
 
 .. code-block:: yaml
-   :emphasize-text: t c z r
+   :emphasize-text: t c s r
 
    - t: 0s
      c: 70%, 50%
-     z: 100%
+     s: 100%
      r: 0°
 
    - c: 50%, 70%
@@ -246,11 +246,11 @@ Example
 Consider the following sequence:
 
 .. code-block:: yaml
-   :emphasize-text: t c z r
+   :emphasize-text: t c s r
 
    - t: 0s
      c: 50%, 50%
-     z: 1h
+     s: 1h
      r: 0°
 
    - t: +1s
@@ -258,7 +258,7 @@ Consider the following sequence:
 
    - t: +10s
      c: 87%, 57%
-     z: 0.2w
+     s: 0.2w
      r: ...
 
    - t: +5s
@@ -266,7 +266,7 @@ Consider the following sequence:
 
    - t: +10s
      c: 60%, 72%
-     z: 100%
+     s: 100%
      r: ...
 
    - t: +5s
@@ -274,7 +274,7 @@ Consider the following sequence:
 
    - t: +5s
      c: 50%, 50%
-     z: 1h
+     s: 1h
 
    - t: +1s
 

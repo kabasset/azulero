@@ -10,9 +10,9 @@ from the lowest level (pixel ordering, logging, code quality)
 to the highest level (parametrization, documentation, workflow).
 The result is a much cleaner and more extensible design, able to accommodate novel features more efficiently.
 Speaking of which, the purpose of this release is mass production of images.
-To this end,we introduce **cutout retrieval** and **pipelining**.
+To this end, we introduce **cutout retrieval** and **pipelining**.
 In turn, they enable faster and parallel processing, as well as streamlined production workflows.
-In addition, Azulero v2 introduces new command :doc:`arrange` aimed at performing a very common post-processing stage:
+In addition, Azulero 2.0 introduces new command :doc:`arrange` aimed at performing a very common post-processing stage:
 making **collages** from collections of images.
 
 Cutout retrieval
@@ -31,7 +31,7 @@ Collage
 All of these evolutions come with breaking changes, thus the major version number.
 Here is an overview (for more details, see the :doc:`changes`):
 
-Updated commands:
+Updated commands with breaking changes:
 
 * :doc:`retrieve`
 * :doc:`process`
