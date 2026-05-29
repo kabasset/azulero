@@ -109,7 +109,6 @@ html_sidebars = {
     "**": [
         "sidebar_main_nav_links.html",
         "sidebar_toc.html",
-        "versions.html",
     ]
 }
 
