@@ -9,9 +9,6 @@ from azulero import _version
 
 extensions = [
     "sphinx.ext.githubpages",  # Add .nojekyll file
-    "sphinxcontrib.plantuml",
-    "sphinxcontrib.video",
-    "sphinx_changelog",
 ]
 source_suffix = {".rst": "restructuredtext"}
 templates_path = ["_templates"]
@@ -48,16 +45,15 @@ def list_releases(other_versions: dict[str, str] = {}):
 
     releases.sort(key=lambda v: [int(d) for d in v.split(".")], reverse=True)
     url = lambda v: (
-        old_version_url if v.startswith("v1.") else new_version_url
-    ).format(version=v)
-    releases = {str(v): url(f"v{v}") for v in releases}
+        old_version_url if (int(v.split(".")[0]) < 2) else new_version_url
+    ).format(version=f"v{v}")
+    releases = {str(v): url(v) for v in releases}
     others = {v: url(other_versions[v]) for v in other_versions}
     return {**releases, **others}
 
 
 html_context = {
     "repository": "https://github.com/kabasset/azulero",
-    "versions": list_releases({"Development version": "develop"}),
 }
 
 project = _version.__title__
@@ -76,6 +72,16 @@ rst_prolog = f"""
 
 """
 
+releases = list_releases()
+tags_substitution = "\n".join(f"  * `{tag} <{releases[tag]}>`_" for tag in releases)
+
+rst_epilog = f"""
+Releases
+{tags_substitution}
+
+Unstable
+  * `develop <https://kabasset.github.io/azulero/develop/index.html>`_
+"""
 
 # Style
 # =====
@@ -83,6 +89,7 @@ rst_prolog = f"""
 
 # Theme
 # -----
+
 
 html_theme = "sphinxawesome_theme"
 
@@ -95,7 +102,7 @@ html_css_files = [
     "lists.css",
 ]
 
-html_title = _version.__title__ + " " + _version.__version__
+html_title = _version.__title__
 html_favicon = "_static/favicon.png"
 
 html_use_index = False
@@ -105,57 +112,27 @@ html_show_sourcelink = False
 html_show_copyright = True
 html_last_updated_fmt = ""
 
-html_sidebars = {
-    "**": [
-        "sidebar_main_nav_links.html",
-        "sidebar_toc.html",
-        "versions.html",
-    ]
-}
-
-
-# Code blocks
-# -----------
-
-# pygments_style is not taken into account when pygments_style_dark is specified; sphinxawesome bug?
-# Anyway, since we mostly rely on command lines, with very few highlighting,
-# and there are many "false positives" (e.g. whole part of floats is highlighted),
-# we prefer relying on manual highlighting of the words.
-
-# pygments_style = "algol"
-# pygments_style_dark = "monokai"
+html_sidebars = {"**": []}
 
 
 # Links
 # -----
 
 
-awesome_external_links = True
-
-
-# PlantUML
-# ========
-
-
-if "PLANTUML_JAR" in os.environ:
-    plantuml = f"java -jar {os.environ.get('PLANTUML_JAR')}"
-else:
-    plantuml = "plantuml"
-plantuml += " -darkmode"
-plantuml_output_format = "svg"
+awesome_external_links = False
 
 
 # Header
 # ======
 
+
 html_theme_options = {
-    "show_prev_next": True,
+    "show_prev_next": False,
     "awesome_external_links": False,
     "show_breadcrumbs": False,
     "logo_light": html_favicon,
     "logo_dark": html_favicon,
     "main_nav_links": {
-        "Versions": "https://kabasset.github.io/azulero/versions/index.html",
         "New issue": "https://github.com/kabasset/azulero/issues/new",
         # TODO add gallery
     },
