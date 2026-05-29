@@ -2,8 +2,8 @@ name: "Sphinx: Publish versions page"
 
 on:
   push:
-    branches:
-      - 'develop'
+    tags:
+      - 'v*.*.*'
 
 jobs:
   build:
