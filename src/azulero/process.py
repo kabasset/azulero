@@ -39,25 +39,25 @@ def add_parser(subparsers, help):
         default=read_pipe_args(),
         help="""
         Space separated list of workdirs relative to the workspace,
-        optionally with slicing à-la NumPy, e.g. ``102160611[1500:7500,11500:17500]``.
-        If no value is specified, the program will read ``stdin``.
-        """,  # FIXME use {workspace}
+        optionally with slicing à-la NumPy, e.g. `102160611[1500:7500,11500:17500]`.
+        If no value is specified, the program will read `stdin`.
+        """,
     )
     parser.add_argument(
         "--output",
         "-o",
         type=str,
-        default="{workspace}/{workdir}/{target}_{tile}.tiff",
+        default="{workspace}/{workdir}/{1}_{0}.tiff",
         metavar="TEMPLATE",
         help="""
         Output path template, where: 
 
-        * ``{workspace}`` is replaced with the workspace folder; 
-        * ``{wordir}`` is replaced with the workdir folder relative to the workspace; 
-        * ``{target}`` is replaced with the last part of the workdir or with 'Tile' if there is only one part; 
-        * ``{tile}`` is replaced with the first part of the workdir; 
-        * ``{step}`` is replaced with the processing step. 
-          If ``{step}`` is not present in the template, 
+        * `{workspace}` is replaced with the workspace folder; 
+        * `{wordir}` is replaced with the workdir folder relative to the workspace; 
+        * `{0}` is replaced with the first part of the workdir; 
+        * `{1}` is replaced with the last part of the workdir or with `Tile` if there is only one part; 
+        * `{step}` is replaced with the processing step. 
+          If `{step}` is not present in the template, 
           then intermediate steps are not saved.
         """,
     )
@@ -226,10 +226,10 @@ def process_target(ios: Workspace, target: str, transform: color.Transform):
         slicing_str = ""
     workdir = ios.workspace / target
     template = ios.output_template.format(
+        tile,
+        name,
         workspace=ios.workspace,
         workdir=target,
-        target=name,
-        tile=tile,
         slicing=slicing_str,
         step="{step}",
     )

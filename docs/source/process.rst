@@ -115,8 +115,8 @@ Placeholder name Substitution value
 ================ ==================
 ``{workspace}``  Workspace path
 ``{workdir}``    Workdir path relative to the workspace
-``{tile}``       First part of the workdir
-``{target}``     Last part of the workdir if it has several parts, otherwise ``Tile``
+``{0}``          First part of the workdir
+``{1}``          Second part of the workdir if it has several parts, otherwise ``Tile``
 ``{step}``       Name of the current step output (see below)
 ================ ==================
 
