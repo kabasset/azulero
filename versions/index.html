@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+
+<html :class="{ 'dark' : darkMode === true }" data-content_root="./" lang="en" x-data="{ darkMode: $persist(window.matchMedia('(prefers-color-scheme: dark)').matches), activeSection: ''}">
+<head>
+<script>
+    (function () {
+      // Set initial color scheme
+      if ((localStorage.getItem("_x_darkMode") === "true") || (window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+        document.documentElement.classList.add("dark");
+      }
+
+      // Watch for media preference changes
+      window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (event) => {
+        localStorage.setItem("_x_darkMode", event.matches);
+        document.documentElement.classList.toggle("dark", event.matches);
+      });
+    })();
+  </script>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta charset="utf-8"/>
+<meta content="#ffffff" media="(prefers-color-scheme: light)" name="theme-color"/>
+<meta content="#030711" media="(prefers-color-scheme: dark)" name="theme-color"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>Azulero versions | Azulero</title>
+<meta content="Azulero versions | Azulero" property="og:title"/>
+<meta content="Azulero versions | Azulero" name="twitter:title"/>
+<link href="_static/pygments.css?v=e72c8e07" rel="stylesheet" type="text/css"/>
+<link href="_static/theme.css?v=979577e3" rel="stylesheet" type="text/css"/>
+<link href="_static/code.css?v=7b0d5e71" rel="stylesheet" type="text/css"/>
+<link href="_static/figures.css?v=e9209c3b" rel="stylesheet" type="text/css"/>
+<link href="_static/lists.css?v=79f77f08" rel="stylesheet" type="text/css"/>
+<link href="_static/favicon.png" rel="icon"/>
+<link href="search.html" rel="search" title="Search"/>
+</head>
+<body :class="{ 'overflow-hidden': showSidebar }" class="min-h-screen font-sans antialiased bg-background text-foreground" x-data="{ showSidebar: false, showScrollTop: false }"><div class="relative flex flex-col min-h-screen" id="page"><a class="absolute top-0 left-0 z-[100] block bg-background p-4 text-xl transition -translate-x-full opacity-0 focus:translate-x-0 focus:opacity-100" href="#content">
+      Skip to content
+    </a>
+<div class="flex-1"><div class="container">
+<main class="relative py-6">
+<div class="w-full min-w-0 mx-auto max-w-prose">
+<div id="content" role="main">
+<a class="reference internal image-reference" href="_images/azul.png"><img alt="_images/azul.png" class="align-center" src="_images/azul.png" style="width: 80%;"/>
+</a>
+<section id="azulero-versions">
+<h1>Azulero versions</h1>
+<p>Welcome to Azulero, a toolbox for producing publication-ready color Euclid images!
+To get started, choose a version:</p>
+<dl class="simple">
+<dt>Releases</dt><dd><ul class="simple">
+<li><p><a class="reference external" href="https://github.com/kabasset/azulero/blob/v1.2.0/README.md">1.2.0</a></p></li>
+<li><p><a class="reference external" href="https://github.com/kabasset/azulero/blob/v1.1.0/README.md">1.1.0</a></p></li>
+<li><p><a class="reference external" href="https://github.com/kabasset/azulero/blob/v1.0.0/README.md">1.0.0</a></p></li>
+<li><p><a class="reference external" href="https://github.com/kabasset/azulero/blob/v0.1.0/README.md">0.1.0</a></p></li>
+</ul>
+</dd>
+<dt>Unstable</dt><dd><ul class="simple">
+<li><p><a class="reference external" href="https://kabasset.github.io/azulero/develop/index.html">develop</a></p></li>
+</ul>
+</dd>
+</dl>
+</section>
+</div></div>
+</main>
+</div>
+</div><footer class="py-6 border-t border-border md:py-0">
+<div class="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
+<div class="flex flex-col items-center gap-4 px-8 md:flex-row md:gap-2 md:px-0">
+<p class="text-sm leading-loose text-center text-muted-foreground md:text-left">© 2025-2026, Antoine Basset (CNES) and contributors. Last updated: May 29, 2026. Built with <a class="font-medium underline underline-offset-4" href="https://www.sphinx-doc.org" rel="noreferrer">Sphinx 9.1.0</a></p>
+</div>
+</div>
+</footer>
+</div>
+<script src="_static/documentation_options.js?v=7f41d439"></script>
+<script src="_static/doctools.js?v=fd6eb6e6"></script>
+<script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+<script defer="defer" src="_static/theme.js?v=d6a9845b"></script>
+</body>
+</html>

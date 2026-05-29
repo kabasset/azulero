@@ -1,0 +1,5 @@
+code .ge {
+    font-style: normal !important;
+    font-weight: bold;
+    color: var(--color-yellow-600);
+}
