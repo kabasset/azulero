@@ -1,11 +1,6 @@
 General interface design
 ========================
 
-Introduction
-------------
-
-TODO
-
 Commands
 --------
 
@@ -26,14 +21,14 @@ with:
 ``<command>``
    The name of the command (e.g. ``retrieve``).
 ``<input>``
-   The space separated list of inputs (e.g. ``UGC11116 PGC61356``).
-   If the list is empty, then ``stdin`` is read (see next section and :doc:`pipelines`).
+   The space-separated list of inputs (e.g. ``UGC11116 PGC61356``).
+   If the list is empty, then ``stdin`` is read (see :ref:`streams` section below and :doc:`pipelines` page).
 ``[options]``
    Optional command arguments (e.g. ``-r 1m``).
 
 Global options, common to all commands, are passed *between* ``azul`` and the command name,
 and command options are passed *after* the command name, before or after inputs.
-Option ``-o <output>`` exists for all commands.
+Option ``-o <output>`` exists for all commands to specify the output paths.
 
 Here is an example command line with global and command options,
 a list of inputs and an output specification:
@@ -60,7 +55,7 @@ Workdirs
 
 By default, all paths passed as input of a command are assumed to be relative to the workspace,
 unless they are absolute paths.
-Output paths are specified as templates with curly brace-enclosed placeholders.
+Output paths are often specified as templates with curly brace-enclosed placeholders.
 The placeholders are replaced with values depending on the command parameters.
 For example, most output path start with placeholder ``{workspace}``,
 which will be rendered as the actual workspace path.
@@ -86,6 +81,8 @@ Global options are:
    which contain the band name (e.g. ``NIR-J``) separated from other chunks by underscores.
 
 
+.. _streams:
+
 Standard streams
 ----------------
 
@@ -100,7 +97,7 @@ Azulero commands read and write different types of messages from and to the diff
 ``stderr``
    Azulero commands log to ``stderr``.
 
-For more details, see :doc:`pipelines`.
+For concrete usage examples, see :doc:`pipelines`.
 
 
 ..  _named_options:
@@ -138,7 +135,7 @@ sets the log level to ``DEBUG`` for all commands,
 and sets the data provider to ``pdr`` and crop radius to 1 arcmin for :doc:`retrieve`.
 These parameters are overloaded by command line arguments.
 
-Within this context, the following lines are equivalent:
+Within the above environment, the following lines are equivalent:
 
 .. code-block:: console
    :emphasize-text: --log DEBUG -r 1m --from pdr
@@ -146,12 +143,18 @@ Within this context, the following lines are equivalent:
    $ azul retrieve NGC6505 UGC11116 | azul process
    $ azul --log DEBUG retrieve NGC6505 UGC11116 -r 1m --from pdr | azul --log DEBUG process
 
+.. admonition:: Precedence
+   :class: note
+
+   Command line arguments overload environment variables,
+   which themselves overload default option values.
+
 
 Command line help
 -----------------
 
 We tried our best to write a complete-enough documentation.
-However, we may have omitted a few details.
+However, we may have omitted a few details, such as the default option values.
 For an exhaustive description of global and command options,
 ``azul`` and each of its commands feature an option ``-h``, or ``--help``:
 
@@ -161,11 +164,14 @@ For an exhaustive description of global and command options,
    $ azul -h
    $ azul process -h
 
-In particular, the commands are documented in terms of short-form options when they exist.
-Check the help messages in order to find the long-from options (typically, to know the environment variable names).
+In these pages, only the short forms of the options are given when they exist.
+Check the help messages in order to find the long-from options
+-- typically, to know the environment variable names.
 
-.. error::
+.. admonition:: Finding errors?
+   :class: warning
 
    If you find discrepancies between the documentation and help messages,
+   or any other kind of mistakes down here,
    please `open issues <https://github.com/kabasset/azulero/issues/new>`_ or contact us.
    This really helps!
