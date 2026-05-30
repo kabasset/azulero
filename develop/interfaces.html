@@ -116,10 +116,6 @@
 <div id="content" role="main">
 <section id="general-interface-design">
 <h1>General interface design</h1>
-<section id="introduction">
-<h2>Introduction</h2>
-<p>TODO</p>
-</section>
 <section id="commands">
 <h2>Commands</h2>
 <p>The only executable of Azulero is <code class="docutils literal notranslate"><span class="pre">azul</span></code>.
@@ -135,15 +131,15 @@ All commands follow the same pattern:</p>
 </dd>
 <dt><code class="docutils literal notranslate"><span class="pre">&lt;command&gt;</span></code></dt><dd><p>The name of the command (e.g. <code class="docutils literal notranslate"><span class="pre">retrieve</span></code>).</p>
 </dd>
-<dt><code class="docutils literal notranslate"><span class="pre">&lt;input&gt;</span></code></dt><dd><p>The space separated list of inputs (e.g. <code class="docutils literal notranslate"><span class="pre">UGC11116</span> <span class="pre">PGC61356</span></code>).
-If the list is empty, then <code class="docutils literal notranslate"><span class="pre">stdin</span></code> is read (see next section and <a class="reference internal" href="pipelines.html"><span class="doc">Pipelines</span></a>).</p>
+<dt><code class="docutils literal notranslate"><span class="pre">&lt;input&gt;</span></code></dt><dd><p>The space-separated list of inputs (e.g. <code class="docutils literal notranslate"><span class="pre">UGC11116</span> <span class="pre">PGC61356</span></code>).
+If the list is empty, then <code class="docutils literal notranslate"><span class="pre">stdin</span></code> is read (see <a class="reference internal" href="#streams"><span class="std std-ref">Standard streams</span></a> section below and <a class="reference internal" href="pipelines.html"><span class="doc">Pipelines</span></a> page).</p>
 </dd>
 <dt><code class="docutils literal notranslate"><span class="pre">[options]</span></code></dt><dd><p>Optional command arguments (e.g. <code class="docutils literal notranslate"><span class="pre">-r</span> <span class="pre">1m</span></code>).</p>
 </dd>
 </dl>
 <p>Global options, common to all commands, are passed <em>between</em> <code class="docutils literal notranslate"><span class="pre">azul</span></code> and the command name,
 and command options are passed <em>after</em> the command name, before or after inputs.
-Option <code class="docutils literal notranslate"><span class="pre">-o</span> <span class="pre">&lt;output&gt;</span></code> exists for all commands.</p>
+Option <code class="docutils literal notranslate"><span class="pre">-o</span> <span class="pre">&lt;output&gt;</span></code> exists for all commands to specify the output paths.</p>
 <p>Here is an example command line with global and command options,
 a list of inputs and an output specification:</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">$ </span>azul<span class="w"> </span>--log<span class="w"> </span>DEBUG<span class="w"> </span>retrieve<span class="w"> </span>-r<span class="w"> </span>1m<span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="w"> </span>UGC11116<span class="w"> </span>PGC61356<span class="w"> </span>-o<span class="w"> </span><span class="o">{</span>target<span class="o">}</span>
@@ -164,7 +160,7 @@ Tiledirs are named after the tile index.</p>
 </dl>
 <p>By default, all paths passed as input of a command are assumed to be relative to the workspace,
 unless they are absolute paths.
-Output paths are specified as templates with curly brace-enclosed placeholders.
+Output paths are often specified as templates with curly brace-enclosed placeholders.
 The placeholders are replaced with values depending on the command parameters.
 For example, most output path start with placeholder <code class="docutils literal notranslate"><span class="pre">{workspace}</span></code>,
 which will be rendered as the actual workspace path.</p>
@@ -189,7 +185,7 @@ which contain the band name (e.g. <code class="docutils literal notranslate"><sp
 </dl>
 </section>
 <section id="standard-streams">
-<h2>Standard streams</h2>
+<span id="streams"></span><h2>Standard streams</h2>
 <p>Azulero commands read and write different types of messages from and to the different standard streams:</p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">stdin</span></code></dt><dd><p>When no inputs are provided to the command line, they are read from <code class="docutils literal notranslate"><span class="pre">stdin</span></code>.
@@ -201,7 +197,7 @@ for further use by commands down a pipeline.</p>
 <dt><code class="docutils literal notranslate"><span class="pre">stderr</span></code></dt><dd><p>Azulero commands log to <code class="docutils literal notranslate"><span class="pre">stderr</span></code>.</p>
 </dd>
 </dl>
-<p>For more details, see <a class="reference internal" href="pipelines.html"><span class="doc">Pipelines</span></a>.</p>
+<p>For concrete usage examples, see <a class="reference internal" href="pipelines.html"><span class="doc">Pipelines</span></a>.</p>
 </section>
 <section id="named-options">
 <span id="id1"></span><h2>Named options</h2>
@@ -229,27 +225,34 @@ or <code class="docutils literal notranslate"><span class="pre">RADIUS</span></c
 <p>sets the log level to <code class="docutils literal notranslate"><span class="pre">DEBUG</span></code> for all commands,
 and sets the data provider to <code class="docutils literal notranslate"><span class="pre">pdr</span></code> and crop radius to 1 arcmin for <a class="reference internal" href="retrieve.html"><span class="doc">azul retrieve</span></a>.
 These parameters are overloaded by command line arguments.</p>
-<p>Within this context, the following lines are equivalent:</p>
+<p>Within the above environment, the following lines are equivalent:</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">$ </span>azul<span class="w"> </span>retrieve<span class="w"> </span>NGC6505<span class="w"> </span>UGC11116<span class="w"> </span><span class="p">|</span><span class="w"> </span>azul<span class="w"> </span>process
 </span><span id="line-2"><span class="gp">$ </span>azul<span class="w"> </span><span class="ge">--log</span><span class="w"> </span><span class="ge">DEBUG</span><span class="w"> </span>retrieve<span class="w"> </span>NGC6505<span class="w"> </span>UGC11116<span class="w"> </span><span class="ge">-r</span><span class="w"> </span><span class="ge">1m</span><span class="w"> </span><span class="ge">--from</span><span class="w"> </span><span class="ge">pdr</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>azul<span class="w"> </span><span class="ge">--log</span><span class="w"> </span><span class="ge">DEBUG</span><span class="w"> </span>process
 </span></code></pre></div>
+</div>
+<div class="note admonition">
+<p class="admonition-title">Precedence</p>
+<p>Command line arguments overload environment variables,
+which themselves overload default option values.</p>
 </div>
 </section>
 <section id="command-line-help">
 <h2>Command line help</h2>
 <p>We tried our best to write a complete-enough documentation.
-However, we may have omitted a few details.
+However, we may have omitted a few details, such as the default option values.
 For an exhaustive description of global and command options,
 <code class="docutils literal notranslate"><span class="pre">azul</span></code> and each of its commands feature an option <code class="docutils literal notranslate"><span class="pre">-h</span></code>, or <code class="docutils literal notranslate"><span class="pre">--help</span></code>:</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">$ </span>azul<span class="w"> </span><span class="ge">-h</span>
 </span><span id="line-2"><span class="gp">$ </span>azul<span class="w"> </span>process<span class="w"> </span><span class="ge">-h</span>
 </span></code></pre></div>
 </div>
-<p>In particular, the commands are documented in terms of short-form options when they exist.
-Check the help messages in order to find the long-from options (typically, to know the environment variable names).</p>
-<div class="admonition error">
-<p class="admonition-title">Error</p>
+<p>In these pages, only the short forms of the options are given when they exist.
+Check the help messages in order to find the long-from options
+– typically, to know the environment variable names.</p>
+<div class="warning admonition">
+<p class="admonition-title">Finding errors?</p>
 <p>If you find discrepancies between the documentation and help messages,
+or any other kind of mistakes down here,
 please <a class="reference external" href="https://github.com/kabasset/azulero/issues/new">open issues</a> or contact us.
 This really helps!</p>
 </div>
@@ -275,7 +278,6 @@ This really helps!</p>
 </div></div><aside class="hidden text-sm xl:block" id="right-sidebar">
 <div class="sticky top-16 -mt-10 max-h-[calc(100vh-5rem)] h-full overflow-y-auto pt-6 space-y-2"><p class="font-medium">On this page</p>
 <ul>
-<li><a :data-current="activeSection === '#introduction'" class="reference internal" href="#introduction">Introduction</a></li>
 <li><a :data-current="activeSection === '#commands'" class="reference internal" href="#commands">Commands</a></li>
 <li><a :data-current="activeSection === '#workspace-input-and-output-paths'" class="reference internal" href="#workspace-input-and-output-paths">Workspace, input and output paths</a></li>
 <li><a :data-current="activeSection === '#global-options'" class="reference internal" href="#global-options">Global options</a></li>
@@ -290,7 +292,7 @@ This really helps!</p>
 </div><footer class="py-6 border-t border-border md:py-0">
 <div class="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
 <div class="flex flex-col items-center gap-4 px-8 md:flex-row md:gap-2 md:px-0">
-<p class="text-sm leading-loose text-center text-muted-foreground md:text-left">© 2025-2026, Antoine Basset (CNES) and contributors. Last updated: May 29, 2026. Built with <a class="font-medium underline underline-offset-4" href="https://www.sphinx-doc.org" rel="noreferrer">Sphinx 9.1.0</a></p>
+<p class="text-sm leading-loose text-center text-muted-foreground md:text-left">© 2025-2026, Antoine Basset (CNES) and contributors. Last updated: May 30, 2026. Built with <a class="font-medium underline underline-offset-4" href="https://www.sphinx-doc.org" rel="noreferrer">Sphinx 9.1.0</a></p>
 </div>
 </div>
 </footer>
