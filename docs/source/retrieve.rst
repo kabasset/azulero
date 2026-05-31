@@ -6,6 +6,7 @@ Overview
 
 ``azul retrieve`` finds and downloads Euclid MER data which contain specified **targets**,
 such as coordinates or named astronomical objects.
+A radius can be specified to download only a region of the tiles.
 The retrieved files are organized in directories we call **workdirs** (see :ref:`workspace`).
 
 As depicted below, ``azul retrieve`` consists of two main steps:
@@ -73,14 +74,25 @@ In general, spaces can be omitted, though, such that the two following lines are
 Outputs
 -------
 
-The files are downloaded into a dedicated **workdir** for each target, inside some parent **workspace**.
-By default, the workspace is the current directory (``.``).
-It can be configured with global option ``--workspace``:
+The files are downloaded into a dedicated workdir for each target
+(the current directory by default).
+It can be set with global option ``--workspace``:
 
 .. code-block:: console
    :emphasize-text: --workspace
 
    $ azul --workspace /tmp retrieve NGC6505 270.93,67.05 102157949 PGC61356
+
+The way the workspace is structured depends on the output template parameter ``-o``.
+The template is rendered as follows:
+
+================ ==================
+Placeholder name Substitution value
+================ ==================
+``{workspace}``  Workspace path
+``{tile}``       Resolved target tile index
+``{target}``     Verbatim target argument in command line, or nothing if the target is a tile index
+================ ==================
 
 By default, the workdirs are named after the targets, grouped by tile index.
 At the time of writing, the above command creates the following workdirs inside workspace ``/tmp``:
@@ -104,17 +116,6 @@ such that several workdirs are created for each of them.
 Conversely, several targets (270.93,67.05 and PGC61356) belong a same tile (101836362),
 in which case workdirs have a common parent tile folder.
 
-The way the workspace is structured depends on the output template parameter ``-o``.
-The template is rendered as follows:
-
-================ ==================
-Placeholder name Substitution value
-================ ==================
-``{workspace}``  Workspace path
-``{tile}``       Resolved target tile index
-``{target}``     Verbatim target argument in command line, or nothing it the target is a tile index
-================ ==================
-
 
 Query
 -----
@@ -137,12 +138,12 @@ There are several such providers, which store different sets of data:
    Contains all public data.
    This is the only provider which does not require authentication.
 ``idr`` (Internal Data Releases)
-   Contains SAS data under embargo which will later be released publicly.
+   Contains data under embargo which will later be released publicly.
 ``otf`` (on-the-fly)
-   Contains unreleased SAS data.
+   Contains unreleased data from the Euclid Science Archive.
    It is updated from time to time between data releases.
 ``dss`` (Distributed Storage System)
-   Contains everything!
+   Contains everything but is much slower than other providers.
 
 .. warning:: Provider ``dss`` does not natively support named objects and coordinates retrieval.
 
@@ -182,11 +183,13 @@ downloads 2' x 2' regions for NGC6505 and (270.93, 67.05), as well as the whole 
    (this is the case with the default value).
 
 Flag ``-q`` stands for "query only" and interrupts the command before effectively downloading data,
-such that the filenames you look for will be returned but no file download will happen.
+such that the file names you look for will be returned but no file download will happen.
 
 By default, if a file to be downloaded already exists in the specified workdir, it is skipped.
 This behavior can be changed by forcing downloads with flag ``-f``.
 In this case, files which already exist will be overwritten.
+This option is particularly useful to force the download of targets with same file names,
+e.g. same target with different cutout radii.
 
 
 More on data providers
@@ -198,16 +201,17 @@ a database and a data store.
 Querying relies on a database for finding the tile indices and MER file names.
 There are two such databases provided by the Euclid Archive System (EAS):
 
-* the Science Archive Service (EAS-SAS or simply SAS);
-* the Data Processing System (EAS-DPS or DPS).
+* The database of the Euclid Science Archive, formerly known as Science Archive Service
+  (EAS-SAS, which we still name SAS in Azulero because ESA's EAS-ESA is funny while we are not);
+* The Data Processing System (EAS-DPS or DPS in short).
 
 The SAS offers the spatial query and cutout service but does not know of all of the internal data,
-while the DPS does reference everything
-but does not offer the spatial query (at least, not in a reasonable amount of time) or cutout service.
+while the DPS does reference everything but does not offer the spatial query
+(at least, not in a reasonable amount of time) or the cutout service.
 
 Once the file names have been resolved, the files are downloaded from a data store.
 The DSS is the storage associated to the DPS.
-The other providers are associated to the SAS.
+The other providers are bound to the SAS storage.
 Therefore, selecting provider DSS means accessing metadata from the DPS and data from the DSS.
 Only the latter is specified to ``azul retrieve``, and the former is deduced
 (same goes for the other data providers with the SAS).
