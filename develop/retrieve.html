@@ -120,6 +120,7 @@
 <h2>Overview</h2>
 <p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code> finds and downloads Euclid MER data which contain specified <strong>targets</strong>,
 such as coordinates or named astronomical objects.
+A radius can be specified to download only a region of the tiles.
 The retrieved files are organized in directories we call <strong>workdirs</strong> (see <a class="reference internal" href="interfaces.html#workspace"><span class="std std-ref">Workspace, input and output paths</span></a>).</p>
 <p>As depicted below, <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code> consists of two main steps:</p>
 <ol class="arabic simple">
@@ -178,12 +179,32 @@ In general, spaces can be omitted, though, such that the two following lines are
 </section>
 <section id="outputs">
 <h2>Outputs</h2>
-<p>The files are downloaded into a dedicated <strong>workdir</strong> for each target, inside some parent <strong>workspace</strong>.
-By default, the workspace is the current directory (<code class="docutils literal notranslate"><span class="pre">.</span></code>).
-It can be configured with global option <code class="docutils literal notranslate"><span class="pre">--workspace</span></code>:</p>
+<p>The files are downloaded into a dedicated workdir for each target
+(the current directory by default).
+It can be set with global option <code class="docutils literal notranslate"><span class="pre">--workspace</span></code>:</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">$ </span>azul<span class="w"> </span><span class="ge">--workspace</span><span class="w"> </span>/tmp<span class="w"> </span>retrieve<span class="w"> </span>NGC6505<span class="w"> </span><span class="m">270</span>.93,67.05<span class="w"> </span><span class="m">102157949</span><span class="w"> </span>PGC61356
 </span></code></pre></div>
 </div>
+<p>The way the workspace is structured depends on the output template parameter <code class="docutils literal notranslate"><span class="pre">-o</span></code>.
+The template is rendered as follows:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Placeholder name</p></th>
+<th class="head"><p>Substitution value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">{workspace}</span></code></p></td>
+<td><p>Workspace path</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">{tile}</span></code></p></td>
+<td><p>Resolved target tile index</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">{target}</span></code></p></td>
+<td><p>Verbatim target argument in command line, or nothing if the target is a tile index</p></td>
+</tr>
+</tbody>
+</table>
 <p>By default, the workdirs are named after the targets, grouped by tile index.
 At the time of writing, the above command creates the following workdirs inside workspace <code class="docutils literal notranslate"><span class="pre">/tmp</span></code>:</p>
 <p class="plantuml">
@@ -203,26 +224,6 @@ At the time of writing, the above command creates the following workdirs inside 
 such that several workdirs are created for each of them.
 Conversely, several targets (270.93,67.05 and PGC61356) belong a same tile (101836362),
 in which case workdirs have a common parent tile folder.</p>
-<p>The way the workspace is structured depends on the output template parameter <code class="docutils literal notranslate"><span class="pre">-o</span></code>.
-The template is rendered as follows:</p>
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head"><p>Placeholder name</p></th>
-<th class="head"><p>Substitution value</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">{workspace}</span></code></p></td>
-<td><p>Workspace path</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">{tile}</span></code></p></td>
-<td><p>Resolved target tile index</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">{target}</span></code></p></td>
-<td><p>Verbatim target argument in command line, or nothing it the target is a tile index</p></td>
-</tr>
-</tbody>
-</table>
 </section>
 <section id="query">
 <h2>Query</h2>
@@ -239,12 +240,12 @@ and applies to all of the targets of the command line:</p>
 <dt><code class="docutils literal notranslate"><span class="pre">pdr</span></code> (Public Data Releases)</dt><dd><p>Contains all public data.
 This is the only provider which does not require authentication.</p>
 </dd>
-<dt><code class="docutils literal notranslate"><span class="pre">idr</span></code> (Internal Data Releases)</dt><dd><p>Contains SAS data under embargo which will later be released publicly.</p>
+<dt><code class="docutils literal notranslate"><span class="pre">idr</span></code> (Internal Data Releases)</dt><dd><p>Contains data under embargo which will later be released publicly.</p>
 </dd>
-<dt><code class="docutils literal notranslate"><span class="pre">otf</span></code> (on-the-fly)</dt><dd><p>Contains unreleased SAS data.
+<dt><code class="docutils literal notranslate"><span class="pre">otf</span></code> (on-the-fly)</dt><dd><p>Contains unreleased data from the Euclid Science Archive.
 It is updated from time to time between data releases.</p>
 </dd>
-<dt><code class="docutils literal notranslate"><span class="pre">dss</span></code> (Distributed Storage System)</dt><dd><p>Contains everything!</p>
+<dt><code class="docutils literal notranslate"><span class="pre">dss</span></code> (Distributed Storage System)</dt><dd><p>Contains everything but is much slower than other providers.</p>
 </dd>
 </dl>
 <div class="admonition warning">
@@ -279,10 +280,12 @@ Ensure that the workdirs and tiledirs as specified with option <code class="docu
 (this is the case with the default value).</p>
 </div>
 <p>Flag <code class="docutils literal notranslate"><span class="pre">-q</span></code> stands for “query only” and interrupts the command before effectively downloading data,
-such that the filenames you look for will be returned but no file download will happen.</p>
+such that the file names you look for will be returned but no file download will happen.</p>
 <p>By default, if a file to be downloaded already exists in the specified workdir, it is skipped.
 This behavior can be changed by forcing downloads with flag <code class="docutils literal notranslate"><span class="pre">-f</span></code>.
-In this case, files which already exist will be overwritten.</p>
+In this case, files which already exist will be overwritten.
+This option is particularly useful to force the download of targets with same file names,
+e.g. same target with different cutout radii.</p>
 </section>
 <section id="more-on-data-providers">
 <h2>More on data providers</h2>
@@ -291,15 +294,16 @@ a database and a data store.</p>
 <p>Querying relies on a database for finding the tile indices and MER file names.
 There are two such databases provided by the Euclid Archive System (EAS):</p>
 <ul class="simple">
-<li><p>the Science Archive Service (EAS-SAS or simply SAS);</p></li>
-<li><p>the Data Processing System (EAS-DPS or DPS).</p></li>
+<li><p>The database of the Euclid Science Archive, formerly known as Science Archive Service
+(EAS-SAS, which we still name SAS in Azulero because ESA’s EAS-ESA is funny while we are not);</p></li>
+<li><p>The Data Processing System (EAS-DPS or DPS in short).</p></li>
 </ul>
 <p>The SAS offers the spatial query and cutout service but does not know of all of the internal data,
-while the DPS does reference everything
-but does not offer the spatial query (at least, not in a reasonable amount of time) or cutout service.</p>
+while the DPS does reference everything but does not offer the spatial query
+(at least, not in a reasonable amount of time) or the cutout service.</p>
 <p>Once the file names have been resolved, the files are downloaded from a data store.
 The DSS is the storage associated to the DPS.
-The other providers are associated to the SAS.
+The other providers are bound to the SAS storage.
 Therefore, selecting provider DSS means accessing metadata from the DPS and data from the DSS.
 Only the latter is specified to <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code>, and the former is deduced
 (same goes for the other data providers with the SAS).</p>
@@ -339,7 +343,7 @@ Only the latter is specified to <code class="docutils literal notranslate"><span
 </div><footer class="py-6 border-t border-border md:py-0">
 <div class="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
 <div class="flex flex-col items-center gap-4 px-8 md:flex-row md:gap-2 md:px-0">
-<p class="text-sm leading-loose text-center text-muted-foreground md:text-left">© 2025-2026, Antoine Basset (CNES) and contributors. Last updated: May 30, 2026. Built with <a class="font-medium underline underline-offset-4" href="https://www.sphinx-doc.org" rel="noreferrer">Sphinx 9.1.0</a></p>
+<p class="text-sm leading-loose text-center text-muted-foreground md:text-left">© 2025-2026, Antoine Basset (CNES) and contributors. Last updated: May 31, 2026. Built with <a class="font-medium underline underline-offset-4" href="https://www.sphinx-doc.org" rel="noreferrer">Sphinx 9.1.0</a></p>
 </div>
 </div>
 </footer>
