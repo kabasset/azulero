@@ -64,7 +64,7 @@ The above command will generate two images:
    | |ugc_rendering| | |pgc_rendering| |
    +-----------------+-----------------+
 
-The resulting workspace contains two workdirs which share a common tile folder:
+The resulting workspace contains two workdirs which share a common tiledir:
 
 .. plantuml::
    :max-width: 100%

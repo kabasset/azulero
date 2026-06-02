@@ -5,30 +5,12 @@ Overview
 --------
 
 Command ``azul roam`` consists in moving a so-called **viewport**
--- a region from which video frames are extracted --
-over an input image.
+-- a region from which video frames are extracted -- over an input image,
+using more-or-less complex projection methods.
 The image and viewport can be seen as analogous to a scene and camera, respectively.
 
 The viewport has a variable center, field of view and rotation angle around the line of sight.
-The parameters at **key frames** are specified by the user.
-
-The command supports the following frame capture modes:
-
-Pan-and-zoom
-   This is the simplest way of capturing frames, where the viewport supports only translation, scaling and rotation.
-WCS transform (experimental)
-   In this mode, the input WCS parameters are used to warp the image
-   as if the camera was not pointing perpendicularly to the image plane.
-   This is more than an affine transform because distortion as computed by MER is taken into account.
-Equirectangular
-   This mode assumes that the input image is an equirectangular (plate-carrée) projection of the full sky,
-   with RA from 180° on the left to -180° on the right
-   and Dec from -90° at the bottom to 90° at the top.
-Gaia Sky
-   This special mode consists in capturing frames from a running `Gaia Sky <https://gaiasky.space/>`_ instance.
-   No other input data (no image) is used.
-   The Gaia Sky mode is provided for creating seamless transitions between planetarium and Euclid data.
-
+The parameters at **key frames** are specified by the user, and interpolated between key frames.
 
 .. plantuml::
    :align: center
@@ -57,6 +39,23 @@ Gaia Sky
    Interpolate -> Capture
    Capture --> video
 
+The command supports the following frame capture modes:
+
+Orthographic projection
+   This is the simplest way of capturing frames, where the projection consists only of translation, scaling and rotation.
+WCS transform
+   In this mode, the input WCS parameters are used to warp the image
+   as if the camera was not pointing perpendicularly to the image plane.
+   This is also more than an affine transform because spherical-to-planar projection is performed.
+Equirectangular
+   This mode assumes that the input image is an equirectangular (plate-carrée) projection of the full sky,
+   with RA from 180° on the left to -180° on the right
+   and Dec from -90° at the bottom to 90° at the top.
+Gaia Sky
+   This special mode consists in capturing frames from a running `Gaia Sky <https://gaiasky.space/>`_ instance.
+   No other input data (no image) is used.
+   The Gaia Sky mode is provided for creating seamless transitions between planetarium and Euclid data.
+
 
 Input
 -----
@@ -84,14 +83,14 @@ Placeholder name Substitution value
 ================ ==================
 
 Several video file formats are supported (see the help message for a complete list: ``azul roam -h``),
-among which MKV (the default) features lossless compression, which is needed for further video compositing.
+among which MKV features lossless compression, which is helpful for further video compositing.
 
 
 Viewport parameters interpolation
 ---------------------------------
 
-The main command line argument of ``azul roam`` is a so-called **sequence file** (see last section).
-It contains the specifications of **key frames**: time and viewport parameters.
+Beside the input image, the main input of ``azul roam`` is a so-called **sequence file**,
+which specifies, for each key frame, the time and viewport parameters.
 Between key frames, the viewport geometry is sine-interpolated to ensure smooth transitions.
 The path of the center can also be spline-interpolated using additional **control points**
 in order to avoid unnatural-looking zigzag patterns.
@@ -102,8 +101,16 @@ Interpolation also depends on the following parameters:
    The video format, given either as ``<width>,<height>`` or as a standard "K"-format such as ``2K`` or ``4K``.
 ``--fps``
    The number of frames per second.
-``--start`` and ``--stop``
-   The 0-based indices of the first and last frames to be captured.
+
+It is possible to generate only a subset of the sequence,
+by giving start and stop frame indices via a slicing notation suffixed to the path of the sequence file, e.g.:
+
+.. code-block::
+   :emphasize-text: 50 75
+
+   azul roam image.tiff --wcs "sequence.yaml[50,75]"
+
+The sequence file syntax is presented at the bottom of this page.
 
 
 Frame capture
@@ -141,7 +148,6 @@ The sequence file is in YAML format, which is very compact but requires space di
 A typical key frame specification looks like this:
 
 .. code-block:: yaml
-   :emphasize-text: t c s r
 
    - t: +10s
      c: UGC 11116
@@ -188,7 +194,7 @@ The viewport size is specified either as a scale factor or horizontal field of v
   Typically, a full-width viewport is specified as ``s: 1w`` and a full-height viewport is specified as ``s: 1h``.
 * Angular quantities (e.g. suffixed with ``°``) indicate a horizontal field of view as a solid angle.
 
-.. warning:: In pan-and-zoom mode, zoom levels higher than 100% are not supported.
+.. warning:: In orthographic mode, zoom levels higher than 100% are not supported.
 
    In Gaia Sky mode, fields of view smaller than 1° are not supported.
 
@@ -217,13 +223,13 @@ Several successive key frames can be eluded, as demonstrated in the example belo
 Control points
 ^^^^^^^^^^^^^^
 
-It is possible to make the center trajectory smooth instead of piecewise linear, by defining intermediate **control points** (spline knots),
+It is possible to make the center trajectory smooth instead of piecewise linear,
+by defining intermediate control points (spline knots),
 which are positions the center must pass through between key frames.
 They are specified by providing ``c`` only (no time or any other parameter has to be specified).
 The following example is a ten-second circular trajectory with three intermediate knots:
 
 .. code-block:: yaml
-   :emphasize-text: t c s r
 
    - t: 0s
      c: 70%, 50%
@@ -246,11 +252,10 @@ Example
 Consider the following sequence:
 
 .. code-block:: yaml
-   :emphasize-text: t c s r
 
    - t: 0s
      c: 50%, 50%
-     s: 1h
+     s: 100%h
      r: 0°
 
    - t: +1s
@@ -258,7 +263,7 @@ Consider the following sequence:
 
    - t: +10s
      c: 87%, 57%
-     s: 0.2w
+     s: 20%w
      r: ...
 
    - t: +5s
@@ -274,7 +279,7 @@ Consider the following sequence:
 
    - t: +5s
      c: 50%, 50%
-     s: 1h
+     s: 100%h
 
    - t: +1s
 

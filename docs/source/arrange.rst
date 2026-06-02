@@ -58,19 +58,27 @@ Canvas initialization
 
 A canvas (the background of the collage) is initialized with a format and color.
 First, the width and height of the grid cells are computed
-from the input image sizes and ``--format`` parameter.
+from the input image sizes and option ``--format``.
 
-TODO document ``--format``
+Option ``--format`` accepts one value for square cells or two comma-separated values for rectangular cells.
+In the latter case, the first value specifies the cell width and the second value specifies the cell height.
+This can be done in absolute terms as integers (e.g. ``600,400``),
+or via some internal computation based on the aggregation of input image formats.
+The following aggregators are provided: ``min``, ``max``, ``median``.
+If only one value is passed to ``--format``, then a square format is enforced.
+Therefore, ``--format min,min`` (the default) is not the same as ``--format min``.
 
-Then, the number of rows and columns is computed according to ``-n``
+Once the cell format has been evaluated, the number of rows and columns is computed according to ``-n``
 which specifies the maximum number of columns.
-If the parameter is not specified, then a single row will be generated.
+If the parameter is not specified, then a single row is generated.
 
-Between rows and columns, a spacing is specified to option ``--gap``
+Between rows and columns, a spacing is configured with option ``--gap``
 either in pixels or in percentage of the maximum cell extent if suffixed with ``%``.
-Around the whole collage, a margin can also be specified to ``--margin`` in pixels or cell extent percentage.
+For example, if the cell format is ``600,400``, then ``--gap 2%`` will produce 12-pixel gaps.
 
-The initial color of the canvas is given to option ``--background``.
+A margin around the whole collage can also be specified to ``--margin`` in pixels or cell extent percentage.
+
+The color of the canvas is given to option ``--background``.
 This impacts the color of the gap and margin pixels,
 as well as regions around cells which accommodate small images (see next session).
 

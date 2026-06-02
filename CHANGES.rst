@@ -24,10 +24,20 @@ Breaking changes
   - For TIFF files, the parameters are saved as standard metadata;
   - For other formats, the parameters are written following the output name with extension ``.wcs``.
 
+- Placeholders were renamed.
+- Intermediate outputs are not written anymore, by default.
+
 ``azul roam``
 
-- The key frames file is passed as a named option.
+- The sequence file is passed as a named option.
+- The keys in the sequence file were changed:
+
+  - ``x`` and ``y`` have become a single ``c`` for "center";
+  - ``z`` has become ``s`` for "scale" or "size";
+  - ``a`` has become ``r`` for "roll".
+
 - The origin of the image coordinates is the bottom left corner (instead of top left).
+- Start and stop frames are passed with slicing notation.
 
 Bug fixes
 ^^^^^^^^^

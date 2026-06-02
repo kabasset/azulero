@@ -15,6 +15,8 @@ Therefore, image IOs should always be performed with the ``azulero.image.io`` mo
 
 Grayscale image stacks, such as the IYJH stack, use the first axis as an image index.
 
+We use the word *shape* following NumPy's definition, while *format* is always the 2-element tuple of width and then height.
+
 
 Inpainting
 ----------
@@ -49,3 +51,11 @@ Therefore, we perform the cutout locally after downloading the full tile.
 This assumes the ``-o`` parameter specifies different tile and target workdirs,
 otherwise the tile will be overwritten by the cutout,
 which may result in undefined behavior for subsequent retrievals.
+
+
+Sequence file
+-------------
+
+``azul roam``'s sequence file is quite rich already, which may make it hard to read.
+In order to simplify reading, we chose to make everything explicit, i.e. there is no default value or unit.
+A data model would be welcome...

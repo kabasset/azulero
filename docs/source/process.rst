@@ -146,7 +146,12 @@ No alignment is performed since we assume the images are already MER-aligned.
 Inpainting
 ----------
 
-Pixels with a null value after stacking are inpainted, but some defects may remain.
+Many defects are masked by MER without being "corrected",
+because correction would be detrimental to science (hallucination, increased noise level, uncalibrated response).
+Most of the so-called *bad pixels* are assigned value 0 in the mosaics.
+Azulero inpaints pixels with a null value after stacking.
+
+Some defects may remain when they are not null in the mosaic (which may happen for a variety of reasons).
 Relying on bitmasks to detect them and decide on the inpainting technique would be nice, especially for VIS ghosts,
 yet we did not find a satisfying selection method, which would work both for WIDE and DEEP tiles.
 We keep this in mind for a future version...
@@ -166,6 +171,7 @@ Equalization
 Bands are scaled according to their zero-point,
 and white balance is controlled with a scaling parameter (``--scaling``).
 The zero-point parameter (``--zero``) should generally not be changed.
+Default white balance was tuned empirically over hundreds of images in order to render bright objects white in average.
 
 The conversion between input intensity :math:`f` and AB magnitude :math:`m_\mathrm{AB}` is given by:
 
@@ -173,7 +179,7 @@ The conversion between input intensity :math:`f` and AB magnitude :math:`m_\math
 
    m_\mathrm{AB} = 2.5 \log_{10}(f) + \mathrm{ZP}
 
-with ZP the zero-point.
+with :math:`\mathrm{ZP}` the zero-point.
 
 
 Stretching
@@ -181,16 +187,19 @@ Stretching
 
 The dynamic range is asinh-scaled, which yields pleasing results for both low- and high-energy regions.
 The function is linear-like for low values and log-like for high values.
-Scaling is controlled by:
+Above all, the transform is color-invariant such that if you change the stretching parameters,
+only the rendered object luminosity will change, not its hue.
 
-* the white point (``-w``),
-* an offset (``-b``), which is the opposite of the black point,
+Stretching is controlled by:
+
+* the white point (``-w``), which is the magnitude rendered white in the output image;
+* an offset (``-b``), which is the opposite of the black point;
 * a stretching parameter (``-a``) which sets the transition point between linear-like scaling and log-like scaling.
 
 All of them are expressed in AB magnitude, therefore a higher value corresponds to a lower intensity.
 
 In general, only the white point has to be adjusted, especially for very bright sources.
-Typically, the Cat's eye nebula is best rendered with a white point around 18.
+Typically, the Cat's eye nebula is extremely bright and best rendered with a white point around 18.
 Special value ``-w 0`` triggers data-driven tuning based on image statistics.
 It generally gives good results, but using it will prevent stitching multiple images,
 since they will be rendered with inconsistent stretching parameters.
@@ -335,21 +344,22 @@ Adjustment  10 s,  4 GB  25 s, 12 GB
 OVERALL     75 s,  6 GB 310 s, 22 GB
 ========== ============ ============
 
-Scalability is roughly linear, such that you should be able to interpolate the needs wrt. the input shape.
-In order to lower the memory consumption, it is possible to crop the image with numpy's syntax,
-e.g. for the top-left quarter (x < 5000, y >= 5000):
+Scalability is roughly linear (except for the stacking and inpainting steps),
+such that you should be able to interpolate the needs wrt. the input shape.
+In order to lower the memory consumption, it is possible to crop the image with NumPy's syntax,
+e.g. for some top-left region (:math:`x < 6000, y \geq \mathrm{height} - 4000`):
 
 .. code-block:: console
    :emphasize-text: [ ] : ,
 
-   $ azul process 102159776[5000:,:5000]
+   $ azul process 102159776[-4000:,:6000]
 
 Depending on your system, it may be necessary to add quotes:
 
 .. code-block:: console
    :emphasize-text: "
 
-   $ azul process "102159776[5000:,:5000]"
+   $ azul process "102159776[-4000:,:6000]"
 
 
 .. _eummy: https://github.com/schirmermischa/eummy

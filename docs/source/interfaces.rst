@@ -61,6 +61,20 @@ For example, most output path start with placeholder ``{workspace}``,
 which will be rendered as the actual workspace path.
 
 
+.. _coordinates:
+
+Sky and image coordinates
+-------------------------
+
+Most command take coordinates as parameters:
+
+Sky coordinates
+   They are specified as RA/Dec in the International Celestial Reference Frame (ICRF).
+Image coordinates
+   They are given from left to right and from bottom to top.
+   Integral values are the pixel centers.
+
+
 Global options
 --------------
 
