@@ -8,6 +8,7 @@ from pathlib import Path
 import yaml
 
 from azulero.image import io
+from azulero.tools import parsing
 from azulero.tools.timing import Timer
 
 
@@ -53,7 +54,7 @@ def run(args):
     print("Read patches")
     patches = []
     with open(workspace / args.tiles, "r") as f:
-        specs = [io.parse_target(tile) for tile in yaml.safe_load(f)]
+        specs = [parsing.parse_target(tile) for tile in yaml.safe_load(f)]
     common_height = height(specs[0][1])
     print(f"- Height: {common_height}")
     assert all(

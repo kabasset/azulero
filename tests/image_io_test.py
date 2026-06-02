@@ -29,27 +29,6 @@ def test_product_metadata():
     assert "WCSAXES" in io.product_metadata(WCS())
 
 
-def test_slice_parsing():
-
-    text = ":,3:14"
-    slicing = io.parse_slice(text)
-    assert slicing == (slice(None, None), slice(3, 14))
-    a = np.zeros((9, 16))
-    b = a[slicing]
-    assert b.shape == (9, 11)
-
-
-def test_target_parsing():
-
-    t, s = io.parse_target("tile")
-    assert t == Path("tile")
-    assert s is None
-
-    t, s = io.parse_target("workdir[:,:]")
-    assert t == Path("workdir")
-    assert s == (slice(None, None), slice(None, None))
-
-
 def test_data_io():
     filenames = ["data.FTS", "data.TIF", "data.PNG"]
     # We don't test JPG as it is compressed

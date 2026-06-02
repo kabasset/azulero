@@ -14,44 +14,6 @@ import yaml
 from azulero import _version
 from azulero.tools.messaging import logger
 
-# FIXME not in image.io
-
-
-def parse_target(text: str) -> tuple[Path, tuple | None]:
-    """
-    Parse the workdir and slicing from a target string.
-    """
-    if text.endswith("]") and "[" in text:
-        workdir, slicing = text.removesuffix("]").split("[")
-        return Path(workdir), parse_slice(slicing)
-    return Path(text), None
-
-
-def parse_slice(text: str | None) -> tuple | None:
-    """
-    Parse a 2D slice from a string, e.g. ``:,3:14``.
-    """
-    if text is None:
-        return None
-    parse_index = lambda i: int(i) if i else None
-    return tuple(
-        slice(*[parse_index(i) for i in axis.split(":")]) for axis in text.split(",")
-    )
-
-
-def parse_map(text: str, dtype=float) -> list[tuple[object, object]]:
-    """
-    Parse a comma-separated list of ``key:value`` pairs.
-    """
-    if not text:
-        return []
-    pairs = [p.split(":") for p in text.split(",")]
-    return [(dtype(x), dtype(y)) for x, y in pairs]
-
-
-# end FIXME
-
-
 supported_formats: dict[str, list[str]] = {
     ".fits": [".fits", ".fit", ".fts"],
     ".tiff": [".tiff", ".tif"],

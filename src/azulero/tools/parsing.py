@@ -4,6 +4,7 @@
 
 from astropy.coordinates import Angle
 import numpy as np
+from pathlib import Path
 
 
 class ParseError(Exception):
@@ -74,3 +75,40 @@ def parse_lengths_or_angles(text: str, references: tuple | None = None):
         return Angle(values)
     else:
         return np.array(values)
+
+
+def parse_target(text: str) -> tuple[Path, slice | tuple | None]:
+    """
+    Parse the path and slicing from a target string.
+    """
+    if text.endswith("]") and "[" in text:
+        workdir, slicing = text.removesuffix("]").split("[")
+        return Path(workdir), parse_slice(slicing)
+    return Path(text), None
+
+
+def parse_slice(text: str | None) -> slice | tuple | None:
+    """
+    Parse a slice or slice tuple from a string, e.g. ``50:70`` or ``:,3:14``.
+    """
+    if text is None:
+        return None
+    chunks = text.split(",")
+    if len(chunks) == 1:
+        return _parse_slice(chunks[0])
+    return tuple(_parse_slice(axis) for axis in chunks)
+
+
+def _parse_slice(text: str) -> slice:
+    parse_index = lambda i: int(i) if i else None
+    return slice(*[parse_index(i.strip()) for i in text.split(":")])
+
+
+def parse_map(text: str, dtype=float) -> list[tuple[object, object]]:
+    """
+    Parse a comma-separated list of ``key:value`` pairs.
+    """
+    if not text:
+        return []
+    pairs = [p.split(":") for p in text.split(",")]
+    return [(dtype(x), dtype(y)) for x, y in pairs]

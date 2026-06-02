@@ -9,6 +9,7 @@ from pathlib import Path
 
 from azulero.image import color, io, mask
 from azulero.tools.messaging import logger, read_pipe_args, write_pipe_args
+from azulero.tools import parsing
 from azulero.tools.timing import Timer
 from azulero.tools.workspace import Workspace
 
@@ -178,7 +179,7 @@ def run(args):
 
     curves = []
     for i in range(len(args.curves)):
-        knots = io.parse_map(args.curves[i])
+        knots = parsing.parse_map(args.curves[i])
         if knots:
             first = knots[0]
             if first[0] != 0 and first[1] != 0:
@@ -212,11 +213,11 @@ def run(args):
         process_target(ios, target, transform)
 
 
-def process_target(ios: Workspace, target: str, transform: color.Transform):
+def process_target(ios: Workspace, arg: str, transform: color.Transform):
 
-    logger.header(1, f"Target: {target}", linebreaks=[1, 0])
+    logger.header(1, f"Target: {arg}", linebreaks=[1, 0])
 
-    target, slicing = io.parse_target(target)
+    target, slicing = parsing.parse_target(arg)
     parts = Path(target).parts
     name = parts[-1] if len(parts) > 1 else "Tile"
     tile = parts[0]
