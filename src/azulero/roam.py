@@ -54,7 +54,7 @@ def add_parser(subparsers, help):
         "--ortho",
         metavar="PATH",
         help="""
-        Key frame sequence file for orthographic projection.
+        Sequence file for orthographic projection.
         Only scaling and rotation are performed.
         The key frames may be specified as image coordinates,
         or as sky coordinates if the images come with WCS parameters,
@@ -128,20 +128,6 @@ def add_parser(subparsers, help):
         "--fps", type=float, default=25, metavar="FPS", help="Frames per second."
     )
     parser.add_argument(
-        "--start",
-        type=int,
-        default=None,
-        metavar="FRAME",
-        help="Index of the first frame to be rendered.",
-    )
-    parser.add_argument(
-        "--stop",
-        type=int,
-        default=None,
-        metavar="FRAME",
-        help="Index of the last frame to be rendered.",
-    )
-    parser.add_argument(
         "--scale",
         type=str,
         default=None,
@@ -167,7 +153,8 @@ def run(args):
 
     ios = Workspace.from_args(args)
     input = ios.workspace / args.images[0]  # FIXME loop over inputs
-    config = Path(args.ortho or args.wcs or args.equi or args.gaiasky)
+    target = args.ortho or args.wcs or args.equi or args.gaiasky
+    config, slicing = parsing.parse_target(target)
     output = Path(
         ios.output_template.format(
             workspace=ios.workspace, image=input.stem, sequence=config.stem
@@ -205,8 +192,10 @@ def run(args):
     params = [
         sequence.Frame(i, c, z, a)
         for i, c, z, a in zip(range(len(centers)), centers, hfovs, rolls)
-    ][args.start : args.stop]
-    logger.bullet(f"Rendering range: [{args.start}, {args.stop})")
+    ]
+    if slicing is not None:
+        params = params[slicing]
+        logger.bullet(f"Rendering range: [{slicing.start}, {slicing.stop})")
     timer.tic_log()
 
     if args.scale is None:
