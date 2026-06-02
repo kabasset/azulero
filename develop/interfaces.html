@@ -165,6 +165,17 @@ The placeholders are replaced with values depending on the command parameters.
 For example, most output path start with placeholder <code class="docutils literal notranslate"><span class="pre">{workspace}</span></code>,
 which will be rendered as the actual workspace path.</p>
 </section>
+<section id="sky-and-image-coordinates">
+<span id="coordinates"></span><h2>Sky and image coordinates</h2>
+<p>Most command take coordinates as parameters:</p>
+<dl class="simple">
+<dt>Sky coordinates</dt><dd><p>They are specified as RA/Dec in the International Celestial Reference Frame (ICRF).</p>
+</dd>
+<dt>Image coordinates</dt><dd><p>They are given from left to right and from bottom to top.
+Integral values are the pixel centers.</p>
+</dd>
+</dl>
+</section>
 <section id="global-options">
 <h2>Global options</h2>
 <p>Global options are:</p>
@@ -280,6 +291,7 @@ This really helps!</p>
 <ul>
 <li><a :data-current="activeSection === '#commands'" class="reference internal" href="#commands">Commands</a></li>
 <li><a :data-current="activeSection === '#workspace-input-and-output-paths'" class="reference internal" href="#workspace-input-and-output-paths">Workspace, input and output paths</a></li>
+<li><a :data-current="activeSection === '#sky-and-image-coordinates'" class="reference internal" href="#sky-and-image-coordinates">Sky and image coordinates</a></li>
 <li><a :data-current="activeSection === '#global-options'" class="reference internal" href="#global-options">Global options</a></li>
 <li><a :data-current="activeSection === '#standard-streams'" class="reference internal" href="#standard-streams">Standard streams</a></li>
 <li><a :data-current="activeSection === '#named-options'" class="reference internal" href="#named-options">Named options</a></li>

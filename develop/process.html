@@ -267,7 +267,11 @@ No alignment is performed since we assume the images are already MER-aligned.</p
 </section>
 <section id="inpainting">
 <h2>Inpainting</h2>
-<p>Pixels with a null value after stacking are inpainted, but some defects may remain.
+<p>Many defects are masked by MER without being “corrected”,
+because correction would be detrimental to science (hallucination, increased noise level, uncalibrated response).
+Most of the so-called <em>bad pixels</em> are assigned value 0 in the mosaics.
+Azulero inpaints pixels with a null value after stacking.</p>
+<p>Some defects may remain when they are not null in the mosaic (which may happen for a variety of reasons).
 Relying on bitmasks to detect them and decide on the inpainting technique would be nice, especially for VIS ghosts,
 yet we did not find a satisfying selection method, which would work both for WIDE and DEEP tiles.
 We keep this in mind for a future version…</p>
@@ -282,25 +286,28 @@ The PSF width parameter (<code class="docutils literal notranslate"><span class=
 <h2>Equalization</h2>
 <p>Bands are scaled according to their zero-point,
 and white balance is controlled with a scaling parameter (<code class="docutils literal notranslate"><span class="pre">--scaling</span></code>).
-The zero-point parameter (<code class="docutils literal notranslate"><span class="pre">--zero</span></code>) should generally not be changed.</p>
+The zero-point parameter (<code class="docutils literal notranslate"><span class="pre">--zero</span></code>) should generally not be changed.
+Default white balance was tuned empirically over hundreds of images in order to render bright objects white in average.</p>
 <p>The conversion between input intensity <span class="math notranslate nohighlight">\(f\)</span> and AB magnitude <span class="math notranslate nohighlight">\(m_\mathrm{AB}\)</span> is given by:</p>
 <div class="math notranslate nohighlight">
 \[m_\mathrm{AB} = 2.5 \log_{10}(f) + \mathrm{ZP}\]</div>
-<p>with ZP the zero-point.</p>
+<p>with <span class="math notranslate nohighlight">\(\mathrm{ZP}\)</span> the zero-point.</p>
 </section>
 <section id="stretching">
 <h2>Stretching</h2>
 <p>The dynamic range is asinh-scaled, which yields pleasing results for both low- and high-energy regions.
 The function is linear-like for low values and log-like for high values.
-Scaling is controlled by:</p>
+Above all, the transform is color-invariant such that if you change the stretching parameters,
+only the rendered object luminosity will change, not its hue.</p>
+<p>Stretching is controlled by:</p>
 <ul class="simple">
-<li><p>the white point (<code class="docutils literal notranslate"><span class="pre">-w</span></code>),</p></li>
-<li><p>an offset (<code class="docutils literal notranslate"><span class="pre">-b</span></code>), which is the opposite of the black point,</p></li>
+<li><p>the white point (<code class="docutils literal notranslate"><span class="pre">-w</span></code>), which is the magnitude rendered white in the output image;</p></li>
+<li><p>an offset (<code class="docutils literal notranslate"><span class="pre">-b</span></code>), which is the opposite of the black point;</p></li>
 <li><p>a stretching parameter (<code class="docutils literal notranslate"><span class="pre">-a</span></code>) which sets the transition point between linear-like scaling and log-like scaling.</p></li>
 </ul>
 <p>All of them are expressed in AB magnitude, therefore a higher value corresponds to a lower intensity.</p>
 <p>In general, only the white point has to be adjusted, especially for very bright sources.
-Typically, the Cat’s eye nebula is best rendered with a white point around 18.
+Typically, the Cat’s eye nebula is extremely bright and best rendered with a white point around 18.
 Special value <code class="docutils literal notranslate"><span class="pre">-w</span> <span class="pre">0</span></code> triggers data-driven tuning based on image statistics.
 It generally gives good results, but using it will prevent stitching multiple images,
 since they will be rendered with inconsistent stretching parameters.
@@ -458,14 +465,15 @@ Walltime will depend on the CPU while RAM usage should be stable across architec
 </tr>
 </tbody>
 </table>
-<p>Scalability is roughly linear, such that you should be able to interpolate the needs wrt. the input shape.
-In order to lower the memory consumption, it is possible to crop the image with numpy’s syntax,
-e.g. for the top-left quarter (x &lt; 5000, y &gt;= 5000):</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">$ </span>azul<span class="w"> </span>process<span class="w"> </span><span class="m">102159776</span><span class="ge">[</span><span class="m">5000</span><span class="ge">:,:</span>5000<span class="ge">]</span>
+<p>Scalability is roughly linear (except for the stacking and inpainting steps),
+such that you should be able to interpolate the needs wrt. the input shape.
+In order to lower the memory consumption, it is possible to crop the image with NumPy’s syntax,
+e.g. for some top-left region (<span class="math notranslate nohighlight">\(x &lt; 6000, y \geq \mathrm{height} - 4000\)</span>):</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">$ </span>azul<span class="w"> </span>process<span class="w"> </span><span class="m">102159776</span><span class="ge">[</span>-4000<span class="ge">:,:</span>6000<span class="ge">]</span>
 </span></code></pre></div>
 </div>
 <p>Depending on your system, it may be necessary to add quotes:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">$ </span>azul<span class="w"> </span>process<span class="w"> </span><span class="ge">"</span><span class="s2">102159776[5000:,:5000]</span><span class="ge">"</span>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">$ </span>azul<span class="w"> </span>process<span class="w"> </span><span class="ge">"</span><span class="s2">102159776[-4000:,:6000]</span><span class="ge">"</span>
 </span></code></pre></div>
 </div>
 </section>

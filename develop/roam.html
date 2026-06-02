@@ -119,28 +119,11 @@
 <section id="overview">
 <h2>Overview</h2>
 <p>Command <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">roam</span></code> consists in moving a so-called <strong>viewport</strong>
-– a region from which video frames are extracted –
-over an input image.
+– a region from which video frames are extracted – over an input image,
+using more-or-less complex projection methods.
 The image and viewport can be seen as analogous to a scene and camera, respectively.</p>
 <p>The viewport has a variable center, field of view and rotation angle around the line of sight.
-The parameters at <strong>key frames</strong> are specified by the user.</p>
-<p>The command supports the following frame capture modes:</p>
-<dl class="simple">
-<dt>Pan-and-zoom</dt><dd><p>This is the simplest way of capturing frames, where the viewport supports only translation, scaling and rotation.</p>
-</dd>
-<dt>WCS transform (experimental)</dt><dd><p>In this mode, the input WCS parameters are used to warp the image
-as if the camera was not pointing perpendicularly to the image plane.
-This is more than an affine transform because distortion as computed by MER is taken into account.</p>
-</dd>
-<dt>Equirectangular</dt><dd><p>This mode assumes that the input image is an equirectangular (plate-carrée) projection of the full sky,
-with RA from 180° on the left to -180° on the right
-and Dec from -90° at the bottom to 90° at the top.</p>
-</dd>
-<dt>Gaia Sky</dt><dd><p>This special mode consists in capturing frames from a running <a class="reference external" href="https://gaiasky.space/">Gaia Sky</a> instance.
-No other input data (no image) is used.
-The Gaia Sky mode is provided for creating seamless transitions between planetarium and Euclid data.</p>
-</dd>
-</dl>
+The parameters at <strong>key frames</strong> are specified by the user, and interpolated between key frames.</p>
 <figure class="align-center">
 <p class="plantuml">
 <object data="_images/plantuml-971d34c36815ecbec2af6376963d472b0c6bf32e.svg" style="max-width:100%" type="image/svg+xml">
@@ -168,6 +151,23 @@ Interpolate -&gt; Capture
 Capture --&gt; video" src="_images/plantuml-971d34c36815ecbec2af6376963d472b0c6bf32e.png"/>
 </object></p>
 </figure>
+<p>The command supports the following frame capture modes:</p>
+<dl class="simple">
+<dt>Orthographic projection</dt><dd><p>This is the simplest way of capturing frames, where the projection consists only of translation, scaling and rotation.</p>
+</dd>
+<dt>WCS transform</dt><dd><p>In this mode, the input WCS parameters are used to warp the image
+as if the camera was not pointing perpendicularly to the image plane.
+This is also more than an affine transform because spherical-to-planar projection is performed.</p>
+</dd>
+<dt>Equirectangular</dt><dd><p>This mode assumes that the input image is an equirectangular (plate-carrée) projection of the full sky,
+with RA from 180° on the left to -180° on the right
+and Dec from -90° at the bottom to 90° at the top.</p>
+</dd>
+<dt>Gaia Sky</dt><dd><p>This special mode consists in capturing frames from a running <a class="reference external" href="https://gaiasky.space/">Gaia Sky</a> instance.
+No other input data (no image) is used.
+The Gaia Sky mode is provided for creating seamless transitions between planetarium and Euclid data.</p>
+</dd>
+</dl>
 </section>
 <section id="input">
 <h2>Input</h2>
@@ -200,12 +200,12 @@ Placeholders are:</p>
 </tbody>
 </table>
 <p>Several video file formats are supported (see the help message for a complete list: <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">roam</span> <span class="pre">-h</span></code>),
-among which MKV (the default) features lossless compression, which is needed for further video compositing.</p>
+among which MKV features lossless compression, which is helpful for further video compositing.</p>
 </section>
 <section id="viewport-parameters-interpolation">
 <h2>Viewport parameters interpolation</h2>
-<p>The main command line argument of <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">roam</span></code> is a so-called <strong>sequence file</strong> (see last section).
-It contains the specifications of <strong>key frames</strong>: time and viewport parameters.
+<p>Beside the input image, the main input of <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">roam</span></code> is a so-called <strong>sequence file</strong>,
+which specifies, for each key frame, the time and viewport parameters.
 Between key frames, the viewport geometry is sine-interpolated to ensure smooth transitions.
 The path of the center can also be spline-interpolated using additional <strong>control points</strong>
 in order to avoid unnatural-looking zigzag patterns.</p>
@@ -215,9 +215,13 @@ in order to avoid unnatural-looking zigzag patterns.</p>
 </dd>
 <dt><code class="docutils literal notranslate"><span class="pre">--fps</span></code></dt><dd><p>The number of frames per second.</p>
 </dd>
-<dt><code class="docutils literal notranslate"><span class="pre">--start</span></code> and <code class="docutils literal notranslate"><span class="pre">--stop</span></code></dt><dd><p>The 0-based indices of the first and last frames to be captured.</p>
-</dd>
 </dl>
+<p>It is possible to generate only a subset of the sequence,
+by giving start and stop frame indices via a slicing notation suffixed to the path of the sequence file, e.g.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="n">azul</span> <span class="n">roam</span> <span class="n">image</span><span class="o">.</span><span class="n">tiff</span> <span class="o">--</span><span class="n">wcs</span> <span class="s2">"sequence.yaml[</span><span class="ge">50</span><span class="s2">,</span><span class="ge">75</span><span class="s2">]"</span>
+</span></code></pre></div>
+</div>
+<p>The sequence file syntax is presented at the bottom of this page.</p>
 </section>
 <section id="frame-capture">
 <h2>Frame capture</h2>
@@ -247,10 +251,10 @@ from a scale relative to the image pixel size, or relatively to the image extent
 <p>For each key frame but the first one, omitted parameters are copied from the previous key frame.
 The sequence file is in YAML format, which is very compact but requires space discipline!
 A typical key frame specification looks like this:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="p p-Indicator">-</span><span class="w"> </span><span class="ge">t</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">+10</span><span class="ge">s</span>
-</span><span id="line-2"><span class="w">  </span><span class="ge">c</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">UGC 11116</span>
-</span><span id="line-3"><span class="w">  </span><span class="ge">s</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80%</span>
-</span><span id="line-4"><span class="w">  </span><span class="ge">r</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">15°</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">t</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">+10s</span>
+</span><span id="line-2"><span class="w">  </span><span class="nt">c</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">UGC 11116</span>
+</span><span id="line-3"><span class="w">  </span><span class="nt">s</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80%</span>
+</span><span id="line-4"><span class="w">  </span><span class="nt">r</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">15°</span>
 </span></code></pre></div>
 </div>
 <section id="time">
@@ -289,7 +293,7 @@ Typically, a full-width viewport is specified as <code class="docutils literal n
 </ul>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>In pan-and-zoom mode, zoom levels higher than 100% are not supported.</p>
+<p>In orthographic mode, zoom levels higher than 100% are not supported.</p>
 <p>In Gaia Sky mode, fields of view smaller than 1° are not supported.</p>
 </div>
 </section>
@@ -312,23 +316,24 @@ Several successive key frames can be eluded, as demonstrated in the example belo
 </section>
 <section id="control-points">
 <h3>Control points</h3>
-<p>It is possible to make the center trajectory smooth instead of piecewise linear, by defining intermediate <strong>control points</strong> (spline knots),
+<p>It is possible to make the center trajectory smooth instead of piecewise linear,
+by defining intermediate control points (spline knots),
 which are positions the center must pass through between key frames.
 They are specified by providing <code class="docutils literal notranslate"><span class="pre">c</span></code> only (no time or any other parameter has to be specified).
 The following example is a ten-second circular trajectory with three intermediate knots:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="p p-Indicator">-</span><span class="w"> </span><span class="ge">t</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span><span class="ge">s</span>
-</span><span id="line-2"><span class="w">  </span><span class="ge">c</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">70%, 50%</span>
-</span><span id="line-3"><span class="w">  </span><span class="ge">s</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100%</span>
-</span><span id="line-4"><span class="w">  </span><span class="ge">r</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0°</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">t</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0s</span>
+</span><span id="line-2"><span class="w">  </span><span class="nt">c</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">70%, 50%</span>
+</span><span id="line-3"><span class="w">  </span><span class="nt">s</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100%</span>
+</span><span id="line-4"><span class="w">  </span><span class="nt">r</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0°</span>
 </span><span id="line-5">
-</span><span id="line-6"><span class="p p-Indicator">-</span><span class="w"> </span><span class="ge">c</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50%, 70%</span>
+</span><span id="line-6"><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">c</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50%, 70%</span>
 </span><span id="line-7">
-</span><span id="line-8"><span class="p p-Indicator">-</span><span class="w"> </span><span class="ge">c</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30%, 50%</span>
+</span><span id="line-8"><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">c</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30%, 50%</span>
 </span><span id="line-9">
-</span><span id="line-10"><span class="p p-Indicator">-</span><span class="w"> </span><span class="ge">c</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50%, 30%</span>
+</span><span id="line-10"><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">c</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50%, 30%</span>
 </span><span id="line-11">
-</span><span id="line-12"><span class="p p-Indicator">-</span><span class="w"> </span><span class="ge">t</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span><span class="ge">s</span>
-</span><span id="line-13"><span class="w">  </span><span class="ge">c</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">70%, 50%</span>
+</span><span id="line-12"><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">t</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10s</span>
+</span><span id="line-13"><span class="w">  </span><span class="nt">c</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">70%, 50%</span>
 </span></code></pre></div>
 </div>
 </section>
@@ -336,35 +341,35 @@ The following example is a ten-second circular trajectory with three intermediat
 <section id="example">
 <h2>Example</h2>
 <p>Consider the following sequence:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="p p-Indicator">-</span><span class="w"> </span><span class="ge">t</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span><span class="ge">s</span>
-</span><span id="line-2"><span class="w">  </span><span class="ge">c</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50%, 50%</span>
-</span><span id="line-3"><span class="w">  </span><span class="ge">s</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1h</span>
-</span><span id="line-4"><span class="w">  </span><span class="ge">r</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0°</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">t</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0s</span>
+</span><span id="line-2"><span class="w">  </span><span class="nt">c</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50%, 50%</span>
+</span><span id="line-3"><span class="w">  </span><span class="nt">s</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100%h</span>
+</span><span id="line-4"><span class="w">  </span><span class="nt">r</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0°</span>
 </span><span id="line-5">
-</span><span id="line-6"><span class="p p-Indicator">-</span><span class="w"> </span><span class="ge">t</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">+1</span><span class="ge">s</span>
-</span><span id="line-7"><span class="w">  </span><span class="ge">r</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+</span><span id="line-6"><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">t</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">+1s</span>
+</span><span id="line-7"><span class="w">  </span><span class="nt">r</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
 </span><span id="line-8">
-</span><span id="line-9"><span class="p p-Indicator">-</span><span class="w"> </span><span class="ge">t</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">+10</span><span class="ge">s</span>
-</span><span id="line-10"><span class="w">  </span><span class="ge">c</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">87%, 57%</span>
-</span><span id="line-11"><span class="w">  </span><span class="ge">s</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.2w</span>
-</span><span id="line-12"><span class="w">  </span><span class="ge">r</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+</span><span id="line-9"><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">t</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">+10s</span>
+</span><span id="line-10"><span class="w">  </span><span class="nt">c</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">87%, 57%</span>
+</span><span id="line-11"><span class="w">  </span><span class="nt">s</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">20%w</span>
+</span><span id="line-12"><span class="w">  </span><span class="nt">r</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
 </span><span id="line-13">
-</span><span id="line-14"><span class="p p-Indicator">-</span><span class="w"> </span><span class="ge">t</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">+5</span><span class="ge">s</span>
-</span><span id="line-15"><span class="w">  </span><span class="ge">r</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+</span><span id="line-14"><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">t</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">+5s</span>
+</span><span id="line-15"><span class="w">  </span><span class="nt">r</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
 </span><span id="line-16">
-</span><span id="line-17"><span class="p p-Indicator">-</span><span class="w"> </span><span class="ge">t</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">+10</span><span class="ge">s</span>
-</span><span id="line-18"><span class="w">  </span><span class="ge">c</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">60%, 72%</span>
-</span><span id="line-19"><span class="w">  </span><span class="ge">s</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100%</span>
-</span><span id="line-20"><span class="w">  </span><span class="ge">r</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+</span><span id="line-17"><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">t</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">+10s</span>
+</span><span id="line-18"><span class="w">  </span><span class="nt">c</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">60%, 72%</span>
+</span><span id="line-19"><span class="w">  </span><span class="nt">s</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100%</span>
+</span><span id="line-20"><span class="w">  </span><span class="nt">r</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
 </span><span id="line-21">
-</span><span id="line-22"><span class="p p-Indicator">-</span><span class="w"> </span><span class="ge">t</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">+5</span><span class="ge">s</span>
-</span><span id="line-23"><span class="w">  </span><span class="ge">r</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">-90°</span>
+</span><span id="line-22"><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">t</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">+5s</span>
+</span><span id="line-23"><span class="w">  </span><span class="nt">r</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">-90°</span>
 </span><span id="line-24">
-</span><span id="line-25"><span class="p p-Indicator">-</span><span class="w"> </span><span class="ge">t</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">+5</span><span class="ge">s</span>
-</span><span id="line-26"><span class="w">  </span><span class="ge">c</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50%, 50%</span>
-</span><span id="line-27"><span class="w">  </span><span class="ge">s</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1h</span>
+</span><span id="line-25"><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">t</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">+5s</span>
+</span><span id="line-26"><span class="w">  </span><span class="nt">c</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50%, 50%</span>
+</span><span id="line-27"><span class="w">  </span><span class="nt">s</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100%h</span>
 </span><span id="line-28">
-</span><span id="line-29"><span class="p p-Indicator">-</span><span class="w"> </span><span class="ge">t</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">+1</span><span class="ge">s</span>
+</span><span id="line-29"><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">t</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">+1s</span>
 </span></code></pre></div>
 </div>
 <p>It consists in eight key frames:</p>

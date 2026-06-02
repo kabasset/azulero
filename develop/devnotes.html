@@ -126,6 +126,7 @@
 <p>Specifically, this impacts IOs, since non-FITS supported formats are stored from top to bottom.
 Therefore, image IOs should always be performed with the <code class="docutils literal notranslate"><span class="pre">azulero.image.io</span></code> module.</p>
 <p>Grayscale image stacks, such as the IYJH stack, use the first axis as an image index.</p>
+<p>We use the word <em>shape</em> following NumPy’s definition, while <em>format</em> is always the 2-element tuple of width and then height.</p>
 </section>
 <section id="inpainting">
 <h2>Inpainting</h2>
@@ -154,6 +155,12 @@ This assumes the <code class="docutils literal notranslate"><span class="pre">-o
 otherwise the tile will be overwritten by the cutout,
 which may result in undefined behavior for subsequent retrievals.</p>
 </section>
+<section id="sequence-file">
+<h2>Sequence file</h2>
+<p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">roam</span></code>’s sequence file is quite rich already, which may make it hard to read.
+In order to simplify reading, we chose to make everything explicit, i.e. there is no default value or unit.
+A data model would be welcome…</p>
+</section>
 </section>
 </div><div class="flex justify-between items-center pt-6 mt-12 border-t border-border gap-4">
 <div class="mr-auto">
@@ -172,6 +179,7 @@ which may result in undefined behavior for subsequent retrievals.</p>
 <li><a :data-current="activeSection === '#sharpening'" class="reference internal" href="#sharpening">Sharpening</a></li>
 <li><a :data-current="activeSection === '#dps-tile-lookup'" class="reference internal" href="#dps-tile-lookup">DPS tile lookup</a></li>
 <li><a :data-current="activeSection === '#dps-cutout-service'" class="reference internal" href="#dps-cutout-service">DPS cutout service</a></li>
+<li><a :data-current="activeSection === '#sequence-file'" class="reference internal" href="#sequence-file">Sequence file</a></li>
 </ul>
 </div>
 </aside>

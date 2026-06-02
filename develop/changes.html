@@ -144,11 +144,21 @@
 <li><p>For other formats, the parameters are written following the output name with extension <code class="docutils literal notranslate"><span class="pre">.wcs</span></code>.</p></li>
 </ul>
 </li>
+<li><p>Placeholders were renamed.</p></li>
+<li><p>Intermediate outputs are not written anymore, by default.</p></li>
 </ul>
 <p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">roam</span></code></p>
 <ul class="simple">
-<li><p>The key frames file is passed as a named option.</p></li>
+<li><p>The sequence file is passed as a named option.</p></li>
+<li><p>The keys in the sequence file were changed:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code> have become a single <code class="docutils literal notranslate"><span class="pre">c</span></code> for “center”;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">z</span></code> has become <code class="docutils literal notranslate"><span class="pre">s</span></code> for “scale” or “size”;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">a</span></code> has become <code class="docutils literal notranslate"><span class="pre">r</span></code> for “roll”.</p></li>
+</ul>
+</li>
 <li><p>The origin of the image coordinates is the bottom left corner (instead of top left).</p></li>
+<li><p>Start and stop frames are passed with slicing notation.</p></li>
 </ul>
 </section>
 <section id="bug-fixes">
