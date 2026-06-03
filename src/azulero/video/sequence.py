@@ -28,7 +28,7 @@ class Frame:
 
     index: int  #: Frame index
     center: np.ndarray | Angle  #: Center in pixels or sky coordinates
-    hfov: float | Angle  #: Horizontal field of view in pixels or solid angle
+    hfov: float | Angle  #: Horizontal field of view in pixels or angle of view
     roll: Angle  #: Viewport roll angle
 
     def planar(self, wcs: WCS, image_shape: tuple[int, int]):
@@ -266,9 +266,7 @@ def parse_hfov(text: str, context: RoamingContext) -> float | Angle:
     elif match := parsing.match_suffix("h", text):
         vfov = parsing.parse_length(match, context.image_shape[0])
         hfov = vfov * context.video_format[0] / context.video_format[1]
-    elif match := parsing.match_suffix(
-        "%", text
-    ):  # FIXME this is a zoom factor, not an hfov => change key?
+    elif match := parsing.match_suffix("%", text):
         hfov = 100 / float(match) * context.video_format[0]
     else:
         hfov = parsing.parse_length_or_angle(text)

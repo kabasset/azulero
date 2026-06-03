@@ -280,7 +280,6 @@ def process_target(ios: Workspace, arg: str, transform: color.Transform):
     del lbgr
     bgr[dead[0]] = mask.resaturate(bgr[dead[0]])
     if "{step}" in template or len(transform.curves) == 0:
-        # FIXME implement some Step to handle len(args.curves) == 0 case generically
         path = render_path_for_step(template, "blended")
         logger.bullet(f"Write: {path.name}")
         io.write_normalized_bgr(path, bgr, wcs)

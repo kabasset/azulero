@@ -23,7 +23,7 @@ class CameraRunnable:
                 for v in (
                     p.center[0].value,  # FIXME always in degrees?
                     p.center[1].value,
-                    p.hfov.value,
+                    p.hfov.value,  # FIXME compute vfov early
                     p.roll.value,
                 )
             ]
@@ -69,12 +69,14 @@ def roam_gaiasky(params, fps, video_format, output):
     api.time.stop_clock()
     api.camera.set_focus_lock(True)
     api.camera.set_orientation_lock(False)
-    output_dir = pathlib.Path(api.base.get_default_frame_output_dir())  # FIXME tmp
+    output_dir = pathlib.Path(
+        api.base.get_default_frame_output_dir()
+    )  # FIXME use output
     for f in output_dir.iterdir():
         f.unlink()
     api.output.configure_frame_output(
         *video_format, fps, str(output_dir), "frame"
-    )  # FIXME use max fps
+    )  # TODO use max fps?
     runnable = CameraRunnable(api, params)
     api.base.park_camera_runnable("azul", runnable)
     # api.output.frame_output(True)

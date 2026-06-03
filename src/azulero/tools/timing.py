@@ -8,7 +8,7 @@ import tracemalloc
 from azulero.tools.messaging import logger
 
 
-class Timer(object):  # FIXME rename as profiler
+class Timer(object):  # TODO rename as profiler?
 
     def __init__(self):
         tracemalloc.start()

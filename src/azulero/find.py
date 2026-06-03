@@ -91,7 +91,7 @@ class Tiling(object):
         for tile in self.tiles:
             polygon = geometry.shape(tile["geometry"])
             if polygon.contains(point):
-                # FIXME use astropy-region for spherical geometry
+                # FIXME use JC's code for spherical geometry
                 index = tile["properties"]["TileIndex"]
                 mode = tile["properties"]["ProcessingMode"]
                 dsr = tile["properties"]["DatasetRelease"]

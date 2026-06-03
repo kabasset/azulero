@@ -9,6 +9,7 @@ from pathlib import Path
 
 from azulero.tools.timing import Timer
 from azulero.tools.messaging import logger, read_pipe_args, write_pipe_args
+from azulero.tools import parsing
 from azulero.tools.workspace import Workspace
 
 
@@ -99,7 +100,7 @@ def run(args):
     height = (rows - 1) * gap + rows * h + 2 * margin
     logger.bullet(f"Format: {width} x {height}")
     canvas = np.full([height, width, 3], args.background, dtype=np.uint8)
-    # FIXME support RGBA
+    # TODO support RGBA
     timer.tic_log()
 
     logger.header(1, f"Blit images")
@@ -146,12 +147,8 @@ def parse_format(arg, images):
     return w, h
 
 
-def parse_spacing(arg: str, reference: int):
-    if arg.endswith("%"):  # FIXME rely on match_suffix
-        return int(float(arg[:-1]) * reference / 100 + 0.5)
-    if arg.endswith("px"):  # FIXME rely on match_suffix
-        arg = arg[:-2]
-    return int(arg)
+def parse_spacing(text: str, reference: int):
+    return int(parsing.parse_length(text, reference) + 0.5)
 
 
 def blit_centered(canvas, image):

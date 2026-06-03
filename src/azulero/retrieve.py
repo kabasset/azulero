@@ -242,7 +242,7 @@ def run(args):
             download_datafiles(
                 cutout_provider,
                 datafiles,
-                workdir,  # FIXME give ios, instead, and add Target.tiledir
+                workdir,  # FIXME give ios instead
                 t,
                 args.radius,
                 args.force is not None,
