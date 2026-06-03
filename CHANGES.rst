@@ -59,6 +59,7 @@ New features
   - ``roam`` can read input from ``stdin``, write video filename to ``stdout``.
 
 - Default arguments can be overloaded with environment variables.
+- Angular parameters support various suffixes like ``°``, ``d``, ``m``, ``s``
 
 ``azul retrieve``
 
@@ -95,8 +96,9 @@ Cleaning
 - Documentation uses proper HTML pages (which include CLI documentation).
 - Video tutorials are published.
 - Packaging is handled with ``uv``.
-- Merged ``AstroQuery`` class into ``SAS``.
 - Pixel ordering is consistent.
+- Units parsing is centralized.
+- Merged ``AstroQuery`` class into ``SAS``.
 
 
 1.2.0
