@@ -254,7 +254,7 @@ Consider the following sequence:
 
    - t: 0s
      c: 50%, 50%
-     s: 100%h
+     s: 100% h
      r: 0°
 
    - t: +1s
@@ -262,7 +262,7 @@ Consider the following sequence:
 
    - t: +10s
      c: 87%, 57%
-     s: 20%w
+     s: 20% w
      r: ...
 
    - t: +5s
@@ -278,7 +278,7 @@ Consider the following sequence:
 
    - t: +5s
      c: 50%, 50%
-     s: 100%h
+     s: 100% h
 
    - t: +1s
 
