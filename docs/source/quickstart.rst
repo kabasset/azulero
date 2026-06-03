@@ -39,6 +39,7 @@ better clone the repository locally:
    
    $ git clone https://github.com/kabasset/azulero
    $ cd azulero
+   $ uv run pytest
    $ pip install .
 
 Azulero is packaged with `uv <https://docs.astral.sh/uv/>`_.
