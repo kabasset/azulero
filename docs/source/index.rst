@@ -21,6 +21,7 @@ Azulero |version|
    pipelines
    changes
    devnotes
+   ai
 
 .. image:: _static/collage_266.0955154946042,66.96054615038162_102159772_ESO482-009_102045468.png
    :scale: 60%
