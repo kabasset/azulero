@@ -26,7 +26,7 @@
 <meta content="azul roam | Azulero 2.0" name="twitter:title"/>
 <link href="_static/pygments.css?v=e72c8e07" rel="stylesheet" type="text/css"/>
 <link href="_static/theme.css?v=979577e3" rel="stylesheet" type="text/css"/>
-<link href="_static/code.css?v=7b0d5e71" rel="stylesheet" type="text/css"/>
+<link href="_static/code.css?v=7ade5f64" rel="stylesheet" type="text/css"/>
 <link href="_static/figures.css?v=1baf8845" rel="stylesheet" type="text/css"/>
 <link href="_static/lists.css?v=79f77f08" rel="stylesheet" type="text/css"/>
 <link href="_static/favicon.png" rel="icon"/>
@@ -123,18 +123,16 @@
 using more-or-less complex projection methods.
 The image and viewport can be seen as analogous to a scene and camera, respectively.</p>
 <p>The viewport has a variable center, field of view and rotation angle around the line of sight.
-The parameters at <strong>key frames</strong> are specified by the user, and interpolated between key frames.</p>
+The parameters are specified by the user at so-called <strong>key frames</strong>, and interpolated between key frames.</p>
 <figure class="align-center">
 <p class="plantuml">
-<object data="_images/plantuml-971d34c36815ecbec2af6376963d472b0c6bf32e.svg" style="max-width:100%" type="image/svg+xml">
+<object data="_images/plantuml-2092188caa08cc0114a9e58867ce41678b7c17bf.svg" style="max-width:100%" type="image/svg+xml">
 <img alt="file image {
 }
 
 object Interpolate {
 --format
 --fps
---start
---stop
 }
 object Capture {
 --ortho
@@ -148,7 +146,7 @@ file video {
 
 image --&gt; Interpolate
 Interpolate -&gt; Capture
-Capture --&gt; video" src="_images/plantuml-971d34c36815ecbec2af6376963d472b0c6bf32e.png"/>
+Capture --&gt; video" src="_images/plantuml-2092188caa08cc0114a9e58867ce41678b7c17bf.png"/>
 </object></p>
 </figure>
 <p>The command supports the following frame capture modes:</p>
@@ -221,7 +219,7 @@ by giving start and stop frame indices via a slicing notation suffixed to the pa
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="n">azul</span> <span class="n">roam</span> <span class="n">image</span><span class="o">.</span><span class="n">tiff</span> <span class="o">--</span><span class="n">wcs</span> <span class="s2">"sequence.yaml[</span><span class="ge">50</span><span class="s2">,</span><span class="ge">75</span><span class="s2">]"</span>
 </span></code></pre></div>
 </div>
-<p>The sequence file syntax is presented at the bottom of this page.</p>
+<p>The sequence file syntax is presented and illustrated at the bottom of this page.</p>
 </section>
 <section id="frame-capture">
 <h2>Frame capture</h2>
@@ -232,8 +230,8 @@ As a tradeoff between speed and output quality, we use bicubic interpolants.</p>
 <p>With <code class="docutils literal notranslate"><span class="pre">--ortho</span></code>, a multiresolution pyramid is first computed for speed and antialiasing.
 We plan to expand this to the other capture modes.</p>
 </section>
-<section id="sequence-file">
-<h2>Sequence file</h2>
+<section id="sequence-file-syntax">
+<h2>Sequence file syntax</h2>
 <p>The configuration file contains a list of key frames with associated times,
 as well as intermediate control points for smoothing trajectories.
 Four variables are specified per key frame:</p>
@@ -242,10 +240,10 @@ Four variables are specified per key frame:</p>
 </dd>
 <dt>Center</dt><dd><p>The center is specified either in sky coordinates, pixel coordinates or percentage of the image extents.</p>
 </dd>
-<dt>Field of view</dt><dd><p>The viewport size is computed either from a solid angle,
-from a scale relative to the image pixel size, or relatively to the image extents.</p>
+<dt>Field of view</dt><dd><p>The viewport size is computed either from an angle of view, a length in pixels,
+a scale relative to the image pixel size, or relatively to the image extents.</p>
 </dd>
-<dt>Orientation</dt><dd><p>The viewport orientation is a rotation angle around the line of sight specified clockwise in degrees or radians.</p>
+<dt>Roll angle</dt><dd><p>The viewport orientation controlled by a rotation angle around the line of sight specified clockwise in degrees or radians.</p>
 </dd>
 </dl>
 <p>For each key frame but the first one, omitted parameters are copied from the previous key frame.
@@ -257,21 +255,21 @@ A typical key frame specification looks like this:</p>
 </span><span id="line-4"><span class="w">  </span><span class="nt">r</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">15°</span>
 </span></code></pre></div>
 </div>
-<section id="time">
-<h3>Time</h3>
+<section id="t-time">
+<h3><code class="docutils literal notranslate"><span class="pre">t:</span></code> Time</h3>
 <p>The name of the key frame time parameter in the sequence file is <code class="docutils literal notranslate"><span class="pre">t</span></code>.
 It is specified in seconds with suffix <code class="docutils literal notranslate"><span class="pre">s</span></code> or number of frames with suffix <code class="docutils literal notranslate"><span class="pre">f</span></code>.
 Prefix <code class="docutils literal notranslate"><span class="pre">+</span></code> indicates a duration from previous key frame instead of a time point, e.g.:
 <code class="docutils literal notranslate"><span class="pre">t:</span> <span class="pre">1s</span></code> means key frame at 1 second, <code class="docutils literal notranslate"><span class="pre">t:</span> <span class="pre">+24f</span></code> means 24 frames after the previous key frame.</p>
 <p>The time of the first frame must be <code class="docutils literal notranslate"><span class="pre">0s</span></code> or <code class="docutils literal notranslate"><span class="pre">0f</span></code>.</p>
 </section>
-<section id="center">
-<h3>Center</h3>
+<section id="c-center">
+<h3><code class="docutils literal notranslate"><span class="pre">c:</span></code> Center</h3>
 <p>The viewport center is given with key <code class="docutils literal notranslate"><span class="pre">c</span></code>.
 Both image and sky coordinates are supported:</p>
 <dl class="simple">
 <dt>Image coordinates</dt><dd><p>Suffix <code class="docutils literal notranslate"><span class="pre">px</span></code> indicates absolute image coordinates, while suffix <code class="docutils literal notranslate"><span class="pre">%</span></code> indicates percentage relative to the image width or height.
-Negative values are interpreted as backward coordinates, i.e. from the right and bottom.
+Negative values are interpreted as backward coordinates, i.e. from the right and top.
 Typically, the viewport is centered with <code class="docutils literal notranslate"><span class="pre">x:</span> <span class="pre">50%,</span> <span class="pre">50%</span></code>.</p>
 </dd>
 <dt>Sky coordinates</dt><dd><p>Other formats of comma-separated pairs indicates RA/dec coordinates in ICRS frame.</p>
@@ -280,8 +278,8 @@ Typically, the viewport is centered with <code class="docutils literal notransla
 </dd>
 </dl>
 </section>
-<section id="field-of-view">
-<h3>Field of view</h3>
+<section id="s-field-of-view">
+<h3><code class="docutils literal notranslate"><span class="pre">s:</span></code> Field of view</h3>
 <p>The viewport size is specified either as a scale factor or horizontal field of view, with key <code class="docutils literal notranslate"><span class="pre">s</span></code>:</p>
 <ul class="simple">
 <li><p>When suffixed with <code class="docutils literal notranslate"><span class="pre">%</span></code>, the parameter is interpreted as relative to the pixel size,
@@ -297,14 +295,14 @@ Typically, a full-width viewport is specified as <code class="docutils literal n
 <p>In Gaia Sky mode, fields of view smaller than 1° are not supported.</p>
 </div>
 </section>
-<section id="orientation">
-<h3>Orientation</h3>
-<p>Viewport orientation is the rotation angle around the line of sight, aka. roll angle.
+<section id="r-roll-angle">
+<h3><code class="docutils literal notranslate"><span class="pre">r:</span></code> Roll angle</h3>
+<p>The roll angle is the viewport rotation around the line of sight.
+Positive values mean clockwise rotation of the viewport, i.e. counterclockwise rotation of the image.
 The angular parameter has key <code class="docutils literal notranslate"><span class="pre">r</span></code> and can be given in radians with suffix <code class="docutils literal notranslate"><span class="pre">pi</span></code>,
-in addition to degrees (<code class="docutils literal notranslate"><span class="pre">d</span></code> or <code class="docutils literal notranslate"><span class="pre">°</span></code>), minutes (<code class="docutils literal notranslate"><span class="pre">m</span></code> or <code class="docutils literal notranslate"><span class="pre">'</span></code>) and seconds (<code class="docutils literal notranslate"><span class="pre">s</span></code> or <code class="docutils literal notranslate"><span class="pre">"</span></code>).
-Its value is arbitrary to allow for multi-turns videos.
-Typically, with <code class="docutils literal notranslate"><span class="pre">r:</span> <span class="pre">0pi</span></code> in a key frame and <code class="docutils literal notranslate"><span class="pre">r:</span> <span class="pre">4pi</span></code> in the next one, the viewport would perform two full turns.
-Positive values mean clockwise rotation of the viewport, i.e. counterclockwise rotation of the image.</p>
+in addition to degrees (<code class="docutils literal notranslate"><span class="pre">d</span></code> or <code class="docutils literal notranslate"><span class="pre">°</span></code>), minutes (<code class="docutils literal notranslate"><span class="pre">m</span></code> or <code class="docutils literal notranslate"><span class="pre">'</span></code>) and seconds (<code class="docutils literal notranslate"><span class="pre">s</span></code> or <code class="docutils literal notranslate"><span class="pre">"</span></code>).</p>
+<p>The value is unbounded to allow for multiple turns.
+For example, with <code class="docutils literal notranslate"><span class="pre">r:</span> <span class="pre">0pi</span></code> in a key frame and <code class="docutils literal notranslate"><span class="pre">r:</span> <span class="pre">4pi</span></code> in the next one, the viewport would perform two full turns.</p>
 </section>
 <section id="elision">
 <h3>Elision</h3>
@@ -379,7 +377,7 @@ The following example is a ten-second circular trajectory with three intermediat
 – which will run continuously until the sixth key frame to reach 90° clockwise rotation of the image.</p></li>
 <li><p>Then, in ten seconds, the viewport moves to position (87%, 57%) relative to the image extents,
 and we zoom until we the viewport width reaches 20% of the image width.</p></li>
-<li><p>For the next five seconds, only the orientation continues to evolve.</p></li>
+<li><p>For the next five seconds, only the roll angle continues to evolve.</p></li>
 <li><p>For ten seconds, we pan to position (60%, 72%) and zoom to 100% pixel size.</p></li>
 <li><p>Five seconds later, rotation stops.</p></li>
 <li><p>In the next five seconds, we go back to the center of the image and zoom out to reach full image height again.</p></li>
@@ -412,11 +410,11 @@ and we zoom until we the viewport width reaches 20% of the image width.</p></li>
 <li><a :data-current="activeSection === '#output'" class="reference internal" href="#output">Output</a></li>
 <li><a :data-current="activeSection === '#viewport-parameters-interpolation'" class="reference internal" href="#viewport-parameters-interpolation">Viewport parameters interpolation</a></li>
 <li><a :data-current="activeSection === '#frame-capture'" class="reference internal" href="#frame-capture">Frame capture</a></li>
-<li><a :data-current="activeSection === '#sequence-file'" class="reference internal" href="#sequence-file">Sequence file</a><ul>
-<li><a :data-current="activeSection === '#time'" class="reference internal" href="#time">Time</a></li>
-<li><a :data-current="activeSection === '#center'" class="reference internal" href="#center">Center</a></li>
-<li><a :data-current="activeSection === '#field-of-view'" class="reference internal" href="#field-of-view">Field of view</a></li>
-<li><a :data-current="activeSection === '#orientation'" class="reference internal" href="#orientation">Orientation</a></li>
+<li><a :data-current="activeSection === '#sequence-file-syntax'" class="reference internal" href="#sequence-file-syntax">Sequence file syntax</a><ul>
+<li><a :data-current="activeSection === '#t-time'" class="reference internal" href="#t-time"><code class="docutils literal notranslate"><span class="pre">t:</span></code> Time</a></li>
+<li><a :data-current="activeSection === '#c-center'" class="reference internal" href="#c-center"><code class="docutils literal notranslate"><span class="pre">c:</span></code> Center</a></li>
+<li><a :data-current="activeSection === '#s-field-of-view'" class="reference internal" href="#s-field-of-view"><code class="docutils literal notranslate"><span class="pre">s:</span></code> Field of view</a></li>
+<li><a :data-current="activeSection === '#r-roll-angle'" class="reference internal" href="#r-roll-angle"><code class="docutils literal notranslate"><span class="pre">r:</span></code> Roll angle</a></li>
 <li><a :data-current="activeSection === '#elision'" class="reference internal" href="#elision">Elision</a></li>
 <li><a :data-current="activeSection === '#control-points'" class="reference internal" href="#control-points">Control points</a></li>
 </ul>
@@ -430,7 +428,7 @@ and we zoom until we the viewport width reaches 20% of the image width.</p></li>
 </div><footer class="py-6 border-t border-border md:py-0">
 <div class="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
 <div class="flex flex-col items-center gap-4 px-8 md:flex-row md:gap-2 md:px-0">
-<p class="text-sm leading-loose text-center text-muted-foreground md:text-left">© 2025-2026, Antoine Basset (CNES) and contributors. Last updated: Jun 02, 2026. Built with <a class="font-medium underline underline-offset-4" href="https://www.sphinx-doc.org" rel="noreferrer">Sphinx 9.1.0</a></p>
+<p class="text-sm leading-loose text-center text-muted-foreground md:text-left">© 2025-2026, Antoine Basset (CNES) and contributors. Last updated: Jun 03, 2026. Built with <a class="font-medium underline underline-offset-4" href="https://www.sphinx-doc.org" rel="noreferrer">Sphinx 9.1.0</a></p>
 </div>
 </div>
 </footer>
