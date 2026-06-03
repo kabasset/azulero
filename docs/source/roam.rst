@@ -10,7 +10,7 @@ using more-or-less complex projection methods.
 The image and viewport can be seen as analogous to a scene and camera, respectively.
 
 The viewport has a variable center, field of view and rotation angle around the line of sight.
-The parameters at **key frames** are specified by the user, and interpolated between key frames.
+The parameters are specified by the user at so-called **key frames**, and interpolated between key frames.
 
 .. plantuml::
    :align: center
@@ -22,8 +22,6 @@ The parameters at **key frames** are specified by the user, and interpolated bet
    object Interpolate {
    --format
    --fps
-   --start
-   --stop
    }
    object Capture {
    --ortho
@@ -110,7 +108,7 @@ by giving start and stop frame indices via a slicing notation suffixed to the pa
 
    azul roam image.tiff --wcs "sequence.yaml[50,75]"
 
-The sequence file syntax is presented at the bottom of this page.
+The sequence file syntax is presented and illustrated at the bottom of this page.
 
 
 Frame capture
@@ -126,8 +124,8 @@ With ``--ortho``, a multiresolution pyramid is first computed for speed and anti
 We plan to expand this to the other capture modes.
 
 
-Sequence file
--------------
+Sequence file syntax
+--------------------
 
 The configuration file contains a list of key frames with associated times,
 as well as intermediate control points for smoothing trajectories.
@@ -138,10 +136,10 @@ Time
 Center
    The center is specified either in sky coordinates, pixel coordinates or percentage of the image extents.
 Field of view
-   The viewport size is computed either from a solid angle,
-   from a scale relative to the image pixel size, or relatively to the image extents.
-Orientation
-   The viewport orientation is a rotation angle around the line of sight specified clockwise in degrees or radians.
+   The viewport size is computed either from an angle of view, a length in pixels,
+   a scale relative to the image pixel size, or relatively to the image extents.
+Roll angle
+   The viewport orientation controlled by a rotation angle around the line of sight specified clockwise in degrees or radians.
 
 For each key frame but the first one, omitted parameters are copied from the previous key frame.
 The sequence file is in YAML format, which is very compact but requires space discipline!
@@ -155,8 +153,8 @@ A typical key frame specification looks like this:
      r: 15°
 
 
-Time
-^^^^
+``t:`` Time
+^^^^^^^^^^^
 
 The name of the key frame time parameter in the sequence file is ``t``.
 It is specified in seconds with suffix ``s`` or number of frames with suffix ``f``.
@@ -166,15 +164,15 @@ Prefix ``+`` indicates a duration from previous key frame instead of a time poin
 The time of the first frame must be ``0s`` or ``0f``.
 
 
-Center
-^^^^^^
+``c:`` Center
+^^^^^^^^^^^^^
 
 The viewport center is given with key ``c``.
 Both image and sky coordinates are supported:
 
 Image coordinates
    Suffix ``px`` indicates absolute image coordinates, while suffix ``%`` indicates percentage relative to the image width or height.
-   Negative values are interpreted as backward coordinates, i.e. from the right and bottom.
+   Negative values are interpreted as backward coordinates, i.e. from the right and top.
    Typically, the viewport is centered with ``x: 50%, 50%``.
 Sky coordinates
    Other formats of comma-separated pairs indicates RA/dec coordinates in ICRS frame.
@@ -182,8 +180,8 @@ Named object
    Similarly to :doc:`retrieve`, ``azul roam`` supports object names as sky coordinates.
 
 
-Field of view
-^^^^^^^^^^^^^
+``s:`` Field of view
+^^^^^^^^^^^^^^^^^^^^
 
 The viewport size is specified either as a scale factor or horizontal field of view, with key ``s``:
 
@@ -199,15 +197,16 @@ The viewport size is specified either as a scale factor or horizontal field of v
    In Gaia Sky mode, fields of view smaller than 1° are not supported.
 
 
-Orientation
-^^^^^^^^^^^
+``r:`` Roll angle
+^^^^^^^^^^^^^^^^^
 
-Viewport orientation is the rotation angle around the line of sight, aka. roll angle.
+The roll angle is the viewport rotation around the line of sight.
+Positive values mean clockwise rotation of the viewport, i.e. counterclockwise rotation of the image.
 The angular parameter has key ``r`` and can be given in radians with suffix ``pi``,
 in addition to degrees (``d`` or ``°``), minutes (``m`` or ``'``) and seconds (``s`` or ``"``).
-Its value is arbitrary to allow for multi-turns videos.
-Typically, with ``r: 0pi`` in a key frame and ``r: 4pi`` in the next one, the viewport would perform two full turns.
-Positive values mean clockwise rotation of the viewport, i.e. counterclockwise rotation of the image.
+
+The value is unbounded to allow for multiple turns.
+For example, with ``r: 0pi`` in a key frame and ``r: 4pi`` in the next one, the viewport would perform two full turns.
 
 
 Elision
@@ -290,7 +289,7 @@ It consists in eight key frames:
    -- which will run continuously until the sixth key frame to reach 90° clockwise rotation of the image.
 #. Then, in ten seconds, the viewport moves to position (87%, 57%) relative to the image extents,
    and we zoom until we the viewport width reaches 20% of the image width.
-#. For the next five seconds, only the orientation continues to evolve.
+#. For the next five seconds, only the roll angle continues to evolve.
 #. For ten seconds, we pan to position (60%, 72%) and zoom to 100% pixel size.
 #. Five seconds later, rotation stops.
 #. In the next five seconds, we go back to the center of the image and zoom out to reach full image height again.
