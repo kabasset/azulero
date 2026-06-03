@@ -3,3 +3,7 @@ code .ge {
     font-weight: bold;
     color: var(--color-yellow-600);
 }
+
+code, .highlight .s2 {
+    font-style: normal !important;
+}
