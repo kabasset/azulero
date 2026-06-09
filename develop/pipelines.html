@@ -158,8 +158,8 @@ which is the case for those two galaxies in <a class="reference external" href="
 <p>The above command will generate two images:</p>
 <table class="subfigure docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><img alt="ugc_rendering" src="_images/UGC11116_102159776_adjusted.jpg"/></p></td>
-<td><p><img alt="pgc_rendering" src="_images/PGC61356_102159776_adjusted.jpg"/></p></td>
+<tr class="row-odd"><td><p><img alt="ugc_rendering" src="_images/UGC11116_102159776.jpg"/></p></td>
+<td><p><img alt="pgc_rendering" src="_images/PGC61356_102159776.jpg"/></p></td>
 </tr>
 </tbody>
 </table>
@@ -198,7 +198,7 @@ and <code class="docutils literal notranslate"><span class="pre">-P</span> <span
 <h2>Pipeline: Online catalog to collage</h2>
 <p>Let us run Azulero on the lens catalog which was used to render
 <a class="reference external" href="https://www.esa.int/ESA_Multimedia/Images/2025/03/Strong_gravitational_lenses_captured_by_Euclid">the Q1 strong lensing collage</a>
-and generate a similar output in one pipeline:</p>
+and generate a similar output in one pipeline (there are a lot of files to download, this may take more than ten minutes to complete):</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">$ </span>wget<span class="w"> </span>-q<span class="w"> </span>-O<span class="w"> </span>-<span class="w"> </span>https://zenodo.org/records/15025832/files/q1_discovery_engine_lens_catalog.csv<span class="w"> </span><span class="se">\</span>
 </span><span id="line-2"><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-n+2<span class="w"> </span><span class="se">\</span>
 </span><span id="line-3"><span class="p">|</span><span class="w"> </span>sort<span class="w"> </span>-r<span class="w"> </span>-t<span class="w"> </span><span class="s1">','</span><span class="w"> </span>-k<span class="w"> </span><span class="m">8</span><span class="w"> </span><span class="se">\</span>
@@ -222,12 +222,7 @@ and generate a similar output in one pipeline:</p>
 <li><p>arrange renderings into a 14-column grid,</p></li>
 <li><p>display the resulting collage:</p></li>
 </ul>
-<figure class="align-default" id="id1">
-<img alt="_images/collage_56.46762095259402%2C-49.45093443791871_102020055_adjusted_56.46762095259402%2C-49.45093443791871_102020055_adjusted.png" src="_images/collage_56.46762095259402%2C-49.45093443791871_102020055_adjusted_56.46762095259402%2C-49.45093443791871_102020055_adjusted.png"/>
-<figcaption>
-<p><span class="caption-text">Collage of 10” x 10” cutouts around Q1 strong lenses.</span></p>
-</figcaption>
-</figure>
+<img alt="_images/collage_56.46762095259402%2C-49.45093443791871_102020055_54.36856435116159%2C-28.53351499365056_102043551.png" src="_images/collage_56.46762095259402%2C-49.45093443791871_102020055_54.36856435116159%2C-28.53351499365056_102043551.png"/>
 </section>
 <section id="pipeline-clipboard-to-slideshow">
 <h2>Pipeline: Clipboard to slideshow</h2>
@@ -275,8 +270,8 @@ The pipeline will be fed by the clipboard, therefore we will just select the tab
 </span></code></pre></div>
 </div>
 <p>which gives:</p>
-<figure class="align-default" id="id2">
-<img alt="_images/collage_UGC11116_102159776_adjusted_LEDA2697349_102159776_adjusted.png" src="_images/collage_UGC11116_102159776_adjusted_LEDA2697349_102159776_adjusted.png"/>
+<figure class="align-default" id="id1">
+<img alt="_images/collage_UGC11116_102159776_LEDA2697349_102159776.png" src="_images/collage_UGC11116_102159776_LEDA2697349_102159776.png"/>
 <figcaption>
 <p><span class="caption-text">Collage of 2’ x 2’ cutouts around UGC11116, PGC61356 and LEDA2697349.</span></p>
 </figcaption>
@@ -379,7 +374,7 @@ collage -&gt; open' src="_images/plantuml-89f6e558cfca0d4a1224da1ce5abc4faf6dfd4
 </div><footer class="py-6 border-t border-border md:py-0">
 <div class="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
 <div class="flex flex-col items-center gap-4 px-8 md:flex-row md:gap-2 md:px-0">
-<p class="text-sm leading-loose text-center text-muted-foreground md:text-left">© 2025-2026, Antoine Basset (CNES) and contributors. Last updated: Jun 03, 2026. Built with <a class="font-medium underline underline-offset-4" href="https://www.sphinx-doc.org" rel="noreferrer">Sphinx 9.1.0</a></p>
+<p class="text-sm leading-loose text-center text-muted-foreground md:text-left">© 2025-2026, Antoine Basset (CNES) and contributors. Last updated: Jun 09, 2026. Built with <a class="font-medium underline underline-offset-4" href="https://www.sphinx-doc.org" rel="noreferrer">Sphinx 9.1.0</a></p>
 </div>
 </div>
 </footer>
