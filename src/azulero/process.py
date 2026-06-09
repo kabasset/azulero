@@ -54,7 +54,7 @@ def add_parser(subparsers, help):
         Output path template, where: 
 
         * `{workspace}` is replaced with the workspace folder; 
-        * `{wordir}` is replaced with the workdir folder relative to the workspace; 
+        * `{workdir}` is replaced with the workdir folder relative to the workspace; 
         * `{0}` is replaced with the first part of the workdir; 
         * `{1}` is replaced with the last part of the workdir or with `Tile` if there is only one part; 
         * `{step}` is replaced with the processing step. 
