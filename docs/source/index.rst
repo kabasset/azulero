@@ -1,6 +1,6 @@
 .. raw:: html
 
-   <img src="_static/favicon.png" class="align-left" style="height: 40px; margin: 0; margin-right: 16px"/>
+   <img src="_static/favicon.png" class="align-left" style="height: 40px; margin: 0 16px 0 0 !important"/>
 
 Azulero |version|
 =================
