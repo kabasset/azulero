@@ -64,9 +64,9 @@ def _xyzpers(
     y_max = np.tan(v_fov / 2)
     x_rng = np.linspace(-x_max, x_max, num=out_hw[1], dtype=np.float32)
     y_rng = np.linspace(-y_max, y_max, num=out_hw[0], dtype=np.float32)
-    out[..., :2] = np.stack(np.meshgrid(x_rng, -y_rng), -1)
+    out[..., :2] = np.stack(np.meshgrid(-x_rng, y_rng), -1)
     Rx = rotation_matrix(v, 0)
-    Ry = rotation_matrix(u, 1)
+    Ry = rotation_matrix(-u, 1)
     Ri = rotation_matrix(in_rot, np.array([0, 0, 1.0]).dot(Rx).dot(Ry))
 
     return out.dot(Rx).dot(Ry).dot(Ri).astype(np.float32)
@@ -134,8 +134,8 @@ def uv2coor(
         * x is in [-0.5, w-0.5]
         * y is in [-0.5, h-0.5]
     """
-    x = (u / (2 * np.pi) + 0.5) * w - 0.5
-    y = (-v / np.pi + 0.5) * h - 0.5
+    x = (-u / (2 * np.pi) + 0.5) * w - 0.5
+    y = (v / np.pi + 0.5) * h - 0.5
     return x, y
 
 

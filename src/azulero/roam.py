@@ -77,7 +77,7 @@ def add_parser(subparsers, help):
         Sequence file for equirectangular sky maps.
         The input images must be equirectangular with:
 
-        * RA from -180° on the right to 180° on the left,
+        * RA from 180° on the left to -180° on the right,
         * declination from -90° at the bottom to 90° at the top.
 
         Only sky coordinates are supported.
