@@ -133,7 +133,7 @@ def add_parser(subparsers, help):
         "--stretch",
         "-a",
         type=float,
-        default=27.0,
+        default=27.5,
         metavar="AB_MAG",
         help="Stretching factor in AB magnitude.",
     )
