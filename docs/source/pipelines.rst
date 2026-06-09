@@ -54,8 +54,8 @@ which is the case for those two galaxies in `Q1 tile 102159776 <https://www.yout
 
 The above command will generate two images:
 
-.. |ugc_rendering| image:: _static/UGC11116_102159776_adjusted.jpg
-.. |pgc_rendering| image:: _static/PGC61356_102159776_adjusted.jpg
+.. |ugc_rendering| image:: _static/UGC11116_102159776.jpg
+.. |pgc_rendering| image:: _static/PGC61356_102159776.jpg
 
 .. table::
    :class: subfigure
@@ -109,7 +109,7 @@ Pipeline: Online catalog to collage
 
 Let us run Azulero on the lens catalog which was used to render
 `the Q1 strong lensing collage <https://www.esa.int/ESA_Multimedia/Images/2025/03/Strong_gravitational_lenses_captured_by_Euclid>`_
-and generate a similar output in one pipeline:
+and generate a similar output in one pipeline (there are a lot of files to download, this may take more than ten minutes to complete):
 
 .. code-block:: console
    :emphasize-text: azul retrieve process arrange
@@ -136,9 +136,7 @@ The above pipeline performs the following:
 * arrange renderings into a 14-column grid,
 * display the resulting collage:
 
-.. figure:: _static/collage_56.46762095259402,-49.45093443791871_102020055_adjusted_56.46762095259402,-49.45093443791871_102020055_adjusted.png
-
-   Collage of 10" x 10" cutouts around Q1 strong lenses.
+.. image:: _static/collage_56.46762095259402,-49.45093443791871_102020055_54.36856435116159,-28.53351499365056_102043551.png
 
 
 Pipeline: Clipboard to slideshow
@@ -203,7 +201,7 @@ Let us introduce a simple and typical example pipeline:
 
 which gives:
 
-.. figure:: _static/collage_UGC11116_102159776_adjusted_LEDA2697349_102159776_adjusted.png
+.. figure:: _static/collage_UGC11116_102159776_LEDA2697349_102159776.png
 
    Collage of 2' x 2' cutouts around UGC11116, PGC61356 and LEDA2697349.
 
