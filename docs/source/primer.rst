@@ -4,6 +4,7 @@ A Euclid primer
 .. image:: https://www.esa.int/var/esa/storage/images/science_exploration/space_science/euclid/24495561-6-eng-GB/Euclid_pillars.png
    :width: 20%
    :align: right
+   :target: https://www.esa.int/Science_Exploration/Space_Science/Euclid
 
 The mission
 -----------
@@ -18,10 +19,18 @@ The mission
 
    -- `ESA <https://www.esa.int/Science_Exploration/Space_Science/Euclid>`_
 
-.. |image_1| image:: https://www.euclid-ec.org/wp-content/uploads/59881_A4-1600px.jpg
-.. |image_2| image:: https://www.euclid-ec.org/wp-content/uploads/57296_A4-1600px.jpg
-.. |image_3| image:: https://www.euclid-ec.org/wp-content/uploads/59905_A4-1600px.jpg
-.. |image_4| image:: https://www.euclid-ec.org/wp-content/uploads/41554_A4-1600px.jpg
+.. |image_1| thumbnail:: https://www.euclid-ec.org/wp-content/uploads/59881_A4-1600px.jpg
+   :download: false
+   :group: spacecraft
+.. |image_2| thumbnail:: https://www.euclid-ec.org/wp-content/uploads/57296_A4-1600px.jpg
+   :download: false
+   :group: spacecraft
+.. |image_3| thumbnail:: https://www.euclid-ec.org/wp-content/uploads/59905_A4-1600px.jpg
+   :download: false
+   :group: spacecraft
+.. |image_4| thumbnail:: https://www.euclid-ec.org/wp-content/uploads/41554_A4-1600px.jpg
+   :download: false
+   :group: spacecraft
 
 .. table::
    :class: subfigure
@@ -37,7 +46,7 @@ The mission
 The instruments
 ---------------
 
-.. image:: https://www.euclid-ec.org/wp-content/uploads/2018/07/FM_integration.jpg
+.. thumbnail:: https://www.euclid-ec.org/wp-content/uploads/2018/07/FM_integration.jpg
    :width: 50%
    :align: right
 

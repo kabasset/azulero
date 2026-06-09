@@ -23,8 +23,8 @@ Azulero |version|
    devnotes
    ai
 
-.. image:: _static/collage_266.0955154946042,66.96054615038162_102159772_ESO482-009_102045468.png
-   :scale: 60%
+.. thumbnail:: _static/collage_266.0955154946042,66.96054615038162_102159772_ESO482-009_102045468.png
+   :width: 120px
    :align: right
 
 

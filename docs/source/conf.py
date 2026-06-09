@@ -9,6 +9,7 @@ from azulero import _version
 
 extensions = [
     "sphinx.ext.githubpages",  # Add .nojekyll file
+    "sphinxcontrib.images",
     "sphinxcontrib.plantuml",
     "sphinxcontrib.video",
     "sphinx_changelog",

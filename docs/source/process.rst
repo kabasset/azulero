@@ -10,11 +10,16 @@ It takes as input workdirs which each contain at least one such MER image per Eu
 and outputs one color rendering per workdir.
 Intermediate files can be written, mostly for investigation.
 
-.. |I_band| image:: _static/iyjh/VIS.png
-.. |Y_band| image:: _static/iyjh/NIR-Y.png
-.. |J_band| image:: _static/iyjh/NIR-J.png
-.. |H_band| image:: _static/iyjh/NIR-H.png
-.. |RGB_out| image:: _static/iyjh/RGB.png
+.. |I_band| thumbnail:: _static/iyjh/VIS.png
+   :group: iyjh
+.. |Y_band| thumbnail:: _static/iyjh/NIR-Y.png
+   :group: iyjh
+.. |J_band| thumbnail:: _static/iyjh/NIR-J.png
+   :group: iyjh
+.. |H_band| thumbnail:: _static/iyjh/NIR-H.png
+   :group: iyjh
+.. |RGB_out| thumbnail:: _static/iyjh/RGB.png
+   :group: iyjh
 
 .. table::
    :class: subfigure
@@ -214,15 +219,24 @@ set the following environment variable:
 To demonstrate the effect and sensitivity of ``-w`` and ``-a``,
 below is a matrix of UGC 11116 renderings in which we varied the parameters around their default values.
 
-.. |200-2575| image:: _static/matrix/20-25.75.png
-.. |225-2575| image:: _static/matrix/22.5-25.75.png
-.. |250-2575| image:: _static/matrix/25-25.75.png
-.. |200-2700| image:: _static/matrix/20-27.png
-.. |225-2700| image:: _static/matrix/22.5-27.png
-.. |250-2700| image:: _static/matrix/25-27.png
-.. |200-2825| image:: _static/matrix/20-28.25.png
-.. |225-2825| image:: _static/matrix/22.5-28.25.png
-.. |250-2825| image:: _static/matrix/25-28.25.png
+.. |200-2575| thumbnail:: _static/matrix/20-25.75.png
+   :group: matrix
+.. |225-2575| thumbnail:: _static/matrix/22.5-25.75.png
+   :group: matrix
+.. |250-2575| thumbnail:: _static/matrix/25-25.75.png
+   :group: matrix
+.. |200-2700| thumbnail:: _static/matrix/20-27.png
+   :group: matrix
+.. |225-2700| thumbnail:: _static/matrix/22.5-27.png
+   :group: matrix
+.. |250-2700| thumbnail:: _static/matrix/25-27.png
+   :group: matrix
+.. |200-2825| thumbnail:: _static/matrix/20-28.25.png
+   :group: matrix
+.. |225-2825| thumbnail:: _static/matrix/22.5-28.25.png
+   :group: matrix
+.. |250-2825| thumbnail:: _static/matrix/25-28.25.png
+   :group: matrix
 
 .. table::
    :class: subfigure
