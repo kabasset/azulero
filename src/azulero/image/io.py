@@ -197,10 +197,11 @@ def write_product(path: Path, data: np.ndarray, wcs: WCS | None = None) -> Path 
     if ext == ".fits":
         fits.PrimaryHDU(data, header=product_header(wcs)).writeto(path, overwrite=True)
         # FIXME get overwrite policy from args
-        res = True  # FIXME
+        res = True  # FIXME False if fits.verify.VerifyError raised
     elif ext == ".tiff":
         if data.ndim == 3:
-            data = data[:, :, ::-1]  # FIXME what about alpha?
+            data = data[:, :, ::-1]
+            # FIXME what about alpha? use cv2.RGBA2BGRA and the likes
         tifffile.imwrite(path, np.flipud(data), metadata=product_metadata(wcs))
         res = True  # FIXME
     else:

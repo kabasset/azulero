@@ -23,7 +23,7 @@ class CameraRunnable:
                 for v in (
                     p.center[0].value,  # FIXME always in degrees?
                     p.center[1].value,
-                    p.hfov.value,  # FIXME compute vfov early
+                    p.hfov.value,  # FIXME compute vfov early from video format
                     p.roll.value,
                 )
             ]
@@ -38,7 +38,7 @@ class CameraRunnable:
             pointing = np.array(pointing)
             pointing /= np.linalg.norm(pointing)
             self.camera.set_direction(pointing.tolist(), True)
-            self.camera.set_fov(p[2] * 9 / 16)  # FIXME compute vfov with atan
+            self.camera.set_fov(p[2] * 9 / 16)  # FIXME
             up = camera_up(pointing, p[3])
             self.camera.set_up(up.tolist(), True)
             self.output.frame_output(True)
