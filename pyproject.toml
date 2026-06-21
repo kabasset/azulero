@@ -1,6 +1,6 @@
 [project]
 name = "azulero"
-version = "2.0.0"
+version = "2.1"
 authors = [
   {name="Basset, Antoine", email = "antoine.basset@cnes.fr"},
   {name="Schirmer, Mischa"},
