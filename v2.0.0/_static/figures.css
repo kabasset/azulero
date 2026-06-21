@@ -1,0 +1,38 @@
+img.align-left, figure.align-left {
+    float: left;
+    margin-right: calc(var(--spacing)*4) !important;
+    margin-top: calc(var(--spacing)*6) !important;
+    margin-bottom: calc(var(--spacing)*2) !important;
+}
+
+img.align-right, figure.align-right {
+    float: right;
+    margin-left: calc(var(--spacing)*4) !important;
+    margin-top: calc(var(--spacing)*6) !important;
+    margin-bottom: calc(var(--spacing)*2) !important;
+}
+
+img.align-center, figure.align-center .plantuml *, figure.align-center video {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.plantuml, video {
+    margin-top: calc(var(--spacing)*6);
+}
+
+table.subfigure tbody,
+table.subfigure tr,
+table.subfigure td {
+    border-collapse: collapse !important;
+    border: none !important;
+    padding: 0.5ex !important;
+    border-spacing: 0 !important;
+    background-color: transparent !important;
+    table-layout: fixed !important;
+    text-align: center !important;
+}
+
+table.subfigure img {
+    margin: 0 !important;
+}

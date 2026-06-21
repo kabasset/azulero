@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+
+<html :class="{ 'dark' : darkMode === true }" data-content_root="./" lang="en" x-data="{ darkMode: $persist(window.matchMedia('(prefers-color-scheme: dark)').matches), activeSection: ''}">
+<head>
+<script>
+    (function () {
+      // Set initial color scheme
+      if ((localStorage.getItem("_x_darkMode") === "true") || (window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+        document.documentElement.classList.add("dark");
+      }
+
+      // Watch for media preference changes
+      window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (event) => {
+        localStorage.setItem("_x_darkMode", event.matches);
+        document.documentElement.classList.toggle("dark", event.matches);
+      });
+    })();
+  </script>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta charset="utf-8"/>
+<meta content="#ffffff" media="(prefers-color-scheme: light)" name="theme-color"/>
+<meta content="#030711" media="(prefers-color-scheme: dark)" name="theme-color"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>azul process | Azulero 2.0.0</title>
+<meta content="azul process | Azulero 2.0.0" property="og:title"/>
+<meta content="azul process | Azulero 2.0.0" name="twitter:title"/>
+<link href="_static/pygments.css?v=e72c8e07" rel="stylesheet" type="text/css"/>
+<link href="_static/theme.css?v=d6d7c91b" rel="stylesheet" type="text/css"/>
+<link href="_static/sphinxcontrib-images/LightBox2/lightbox2/dist/css/lightbox.min.css?v=6e7d0de0" rel="stylesheet" type="text/css"/>
+<link href="_static/sphinxcontrib-images/LightBox2/lightbox2-customize/pointer.css?v=c97663ff" rel="stylesheet" type="text/css"/>
+<link href="_static/code.css?v=7ade5f64" rel="stylesheet" type="text/css"/>
+<link href="_static/figures.css?v=1baf8845" rel="stylesheet" type="text/css"/>
+<link href="_static/lists.css?v=79f77f08" rel="stylesheet" type="text/css"/>
+<link href="_static/favicon.png" rel="icon"/>
+<link href="search.html" rel="search" title="Search"/>
+<link href="arrange.html" rel="next" title="azul arrange"/>
+<link href="retrieve.html" rel="prev" title="azul retrieve"/>
+</head>
+<body :class="{ 'overflow-hidden': showSidebar }" class="min-h-screen font-sans antialiased bg-background text-foreground" x-data="{ showSidebar: false, showScrollTop: false }">
+<div @click.self="showSidebar = false" class="fixed inset-0 z-50 overflow-hidden bg-background/80 backdrop-blur-sm md:hidden" x-cloak="" x-show="showSidebar"></div><div class="relative flex flex-col min-h-screen" id="page"><a class="absolute top-0 left-0 z-[100] block bg-background p-4 text-xl transition -translate-x-full opacity-0 focus:translate-x-0 focus:opacity-100" href="#content">
+      Skip to content
+    </a><header class="sticky top-0 z-40 w-full border-b shadow-xs border-border bg-background/90 backdrop-blur"><div class="container flex items-center h-14">
+<div class="hidden mr-4 md:flex">
+<a class="flex items-center mr-6" href="index.html">
+<img alt="Logo" class="mr-2 hidden dark:block" height="24" src="_static/favicon.png" width="24"/>
+<img alt="Logo" class="mr-2 dark:hidden" height="24" src="_static/favicon.png" width="24"/><span class="hidden font-bold sm:inline-block text-clip whitespace-nowrap">Azulero 2.0.0</span>
+</a><nav class="flex items-center gap-6 text-sm font-medium">
+<a class="transition-colors hover:text-foreground/80 text-foreground/60" href="https://kabasset.github.io/azulero/versions/index.html" rel="noopener nofollow">Versions</a>
+<a class="transition-colors hover:text-foreground/80 text-foreground/60" href="https://github.com/kabasset/azulero/issues/new" rel="noopener nofollow">New issue</a>
+</nav></div><button @click="showSidebar = true" class="inline-flex items-center justify-center h-10 px-0 py-2 mr-2 text-base font-medium transition-colors rounded-md hover:text-accent-foreground hover:bg-transparent md:hidden" type="button">
+<svg aria-hidden="true" fill="currentColor" height="24" viewbox="0 96 960 960" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M152.587 825.087q-19.152 0-32.326-13.174t-13.174-32.326q0-19.152 13.174-32.326t32.326-13.174h440q19.152 0 32.326 13.174t13.174 32.326q0 19.152-13.174 32.326t-32.326 13.174h-440Zm0-203.587q-19.152 0-32.326-13.174T107.087 576q0-19.152 13.174-32.326t32.326-13.174h320q19.152 0 32.326 13.174T518.087 576q0 19.152-13.174 32.326T472.587 621.5h-320Zm0-203.587q-19.152 0-32.326-13.174t-13.174-32.326q0-19.152 13.174-32.326t32.326-13.174h440q19.152 0 32.326 13.174t13.174 32.326q0 19.152-13.174 32.326t-32.326 13.174h-440ZM708.913 576l112.174 112.174q12.674 12.674 12.674 31.826t-12.674 31.826Q808.413 764.5 789.261 764.5t-31.826-12.674l-144-144Q600 594.391 600 576t13.435-31.826l144-144q12.674-12.674 31.826-12.674t31.826 12.674q12.674 12.674 12.674 31.826t-12.674 31.826L708.913 576Z"></path>
+</svg>
+<span class="sr-only">Toggle navigation menu</span>
+</button>
+<div class="flex items-center justify-between flex-1 gap-2 sm:gap-4 md:justify-end">
+<div class="flex-1 w-full md:w-auto md:flex-none"><form @keydown.k.window.meta="$refs.search.focus()" action="search.html" class="relative flex items-center group" id="searchbox" method="get">
+<input aria-label="Search the docs" class="inline-flex items-center font-medium transition-colors bg-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-offset-background border border-input hover:bg-accent focus:bg-accent hover:text-accent-foreground focus:text-accent-foreground hover:placeholder-accent-foreground py-2 px-4 relative h-9 w-full justify-start rounded-[0.5rem] text-sm text-muted-foreground sm:pr-12 md:w-40 lg:w-64" id="search-input" name="q" placeholder="Search ..." type="search" x-ref="search"/>
+<kbd class="pointer-events-none absolute right-1.5 top-2 hidden h-5 select-none text-muted-foreground items-center gap-1 rounded border border-border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex group-hover:bg-accent group-hover:text-accent-foreground">
+<span class="text-xs">⌘</span>
+    K
+  </kbd>
+</form>
+</div>
+<nav class="flex items-center gap-1">
+<a href="https://github.com/kabasset/azulero" rel="noopener nofollow" title="Visit repository on GitHub">
+<div class="inline-flex items-center justify-center px-0 text-sm font-medium transition-colors rounded-md hover:bg-accent hover:text-accent-foreground h-9 w-9">
+<svg fill="currentColor" height="16px" style="margin-top:-2px;display:inline" viewbox="0 0 45 44" xmlns="http://www.w3.org/2000/svg"><path clip-rule="evenodd" d="M22.477.927C10.485.927.76 10.65.76 22.647c0 9.596 6.223 17.736 14.853 20.608 1.087.2 1.483-.47 1.483-1.047 0-.516-.019-1.881-.03-3.693-6.04 1.312-7.315-2.912-7.315-2.912-.988-2.51-2.412-3.178-2.412-3.178-1.972-1.346.149-1.32.149-1.32 2.18.154 3.327 2.24 3.327 2.24 1.937 3.318 5.084 2.36 6.321 1.803.197-1.403.759-2.36 1.379-2.903-4.823-.548-9.894-2.412-9.894-10.734 0-2.37.847-4.31 2.236-5.828-.224-.55-.969-2.759.214-5.748 0 0 1.822-.584 5.972 2.226 1.732-.482 3.59-.722 5.437-.732 1.845.01 3.703.25 5.437.732 4.147-2.81 5.967-2.226 5.967-2.226 1.185 2.99.44 5.198.217 5.748 1.392 1.517 2.232 3.457 2.232 5.828 0 8.344-5.078 10.18-9.916 10.717.779.67 1.474 1.996 1.474 4.021 0 2.904-.027 5.247-.027 5.96 0 .58.392 1.256 1.493 1.044C37.981 40.375 44.2 32.24 44.2 22.647c0-11.996-9.726-21.72-21.722-21.72" fill="currentColor" fill-rule="evenodd"></path></svg>
+</div>
+</a>
+<button @click="darkMode = !darkMode" class="relative inline-flex items-center justify-center px-0 text-sm font-medium transition-colors rounded-md hover:bg-accent hover:text-accent-foreground h-9 w-9" title="Toggle color scheme" type="button">
+<svg class="absolute transition-all scale-100 rotate-0 dark:-rotate-90 dark:scale-0" fill="currentColor" height="16" viewbox="0 96 960 960" width="16" xmlns="http://www.w3.org/2000/svg">
+<path d="M480 685q45.456 0 77.228-31.772Q589 621.456 589 576q0-45.456-31.772-77.228Q525.456 467 480 467q-45.456 0-77.228 31.772Q371 530.544 371 576q0 45.456 31.772 77.228Q434.544 685 480 685Zm0 91q-83 0-141.5-58.5T280 576q0-83 58.5-141.5T480 376q83 0 141.5 58.5T680 576q0 83-58.5 141.5T480 776ZM80 621.5q-19.152 0-32.326-13.174T34.5 576q0-19.152 13.174-32.326T80 530.5h80q19.152 0 32.326 13.174T205.5 576q0 19.152-13.174 32.326T160 621.5H80Zm720 0q-19.152 0-32.326-13.174T754.5 576q0-19.152 13.174-32.326T800 530.5h80q19.152 0 32.326 13.174T925.5 576q0 19.152-13.174 32.326T880 621.5h-80Zm-320-320q-19.152 0-32.326-13.174T434.5 256v-80q0-19.152 13.174-32.326T480 130.5q19.152 0 32.326 13.174T525.5 176v80q0 19.152-13.174 32.326T480 301.5Zm0 720q-19.152 0-32.326-13.17Q434.5 995.152 434.5 976v-80q0-19.152 13.174-32.326T480 850.5q19.152 0 32.326 13.174T525.5 896v80q0 19.152-13.174 32.33-13.174 13.17-32.326 13.17ZM222.174 382.065l-43-42Q165.5 327.391 166 308.239t13.174-33.065q13.435-13.674 32.587-13.674t32.065 13.674l42.239 43q12.674 13.435 12.555 31.706-.12 18.272-12.555 31.946-12.674 13.674-31.445 13.413-18.772-.261-32.446-13.174Zm494 494.761-42.239-43q-12.674-13.435-12.674-32.087t12.674-31.565Q686.609 756.5 705.38 757q18.772.5 32.446 13.174l43 41.761Q794.5 824.609 794 843.761t-13.174 33.065Q767.391 890.5 748.239 890.5t-32.065-13.674Zm-42-494.761Q660.5 369.391 661 350.62q.5-18.772 13.174-32.446l41.761-43Q728.609 261.5 747.761 262t33.065 13.174q13.674 13.435 13.674 32.587t-13.674 32.065l-43 42.239q-13.435 12.674-31.706 12.555-18.272-.12-31.946-12.555Zm-495 494.761Q165.5 863.391 165.5 844.239t13.674-32.065l43-42.239q13.435-12.674 32.087-12.674t31.565 12.674Q299.5 782.609 299 801.38q-.5 18.772-13.174 32.446l-41.761 43Q231.391 890.5 212.239 890t-33.065-13.174ZM480 576Z"></path>
+</svg>
+<svg class="absolute transition-all scale-0 rotate-90 dark:rotate-0 dark:scale-100" fill="currentColor" height="16" viewbox="0 96 960 960" width="16" xmlns="http://www.w3.org/2000/svg">
+<path d="M480 936q-151 0-255.5-104.5T120 576q0-138 90-239.5T440 218q25-3 39 18t-1 44q-17 26-25.5 55t-8.5 61q0 90 63 153t153 63q31 0 61.5-9t54.5-25q21-14 43-1.5t19 39.5q-14 138-117.5 229T480 936Zm0-80q88 0 158-48.5T740 681q-20 5-40 8t-40 3q-123 0-209.5-86.5T364 396q0-20 3-40t8-40q-78 32-126.5 102T200 576q0 116 82 198t198 82Zm-10-270Z"></path>
+</svg>
+</button>
+</nav>
+</div>
+</div>
+</header>
+<div class="flex-1"><div class="container md:grid md:grid-cols-[220px_minmax(0,1fr)] md:gap-6 lg:grid-cols-[240px_minmax(0,1fr)] lg:gap-10"><aside :aria-hidden="!showSidebar" :class="{ 'translate-x-0': showSidebar }" class="fixed inset-y-0 left-0 md:top-14 z-50 md:z-30 bg-background md:bg-transparent transition-all duration-100 -translate-x-full md:translate-x-0 ml-0 p-6 md:p-0 md:-ml-2 md:h-[calc(100vh-3.5rem)] w-5/6 md:w-full overflow-y-auto border-r border-border md:sticky" id="left-sidebar">
+<a class="justify-start text-sm md:!hidden bg-background" href="index.html">
+<img alt="Logo" class="mr-2 hidden dark:block" height="16" src="_static/favicon.png" width="16"/>
+<img alt="Logo" class="mr-2 dark:hidden" height="16" src="_static/favicon.png" width="16"/><span class="font-bold text-clip whitespace-nowrap">Azulero 2.0.0</span>
+</a>
+<div class="relative overflow-hidden md:overflow-auto my-4 md:my-0">
+<div class="overflow-y-auto h-full w-full relative pr-6"><nav class="flex md:hidden flex-col font-medium mt-4">
+<a href="https://kabasset.github.io/azulero/versions/index.html" rel="nofollow noopener">Versions</a>
+<a href="https://github.com/kabasset/azulero/issues/new" rel="nofollow noopener">New issue</a>
+</nav><nav class="table w-full min-w-full my-6 lg:my-8">
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">Azulero 2.0.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="primer.html">A Euclid primer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="news.html">What’s new</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="interfaces.html">General interface design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="retrieve.html"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code></a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="arrange.html"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">arrange</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="roam.html"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">roam</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="pipelines.html">Pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changes.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="devnotes.html">Developer notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai.html">Generative AI use</a></li>
+</ul>
+</nav>
+</div>
+</div>
+<button @click="showSidebar = false" class="absolute md:hidden right-4 top-4 rounded-sm opacity-70 transition-opacity hover:opacity-100" type="button">
+<svg class="h-4 w-4" fill="currentColor" height="24" stroke="none" viewbox="0 96 960 960" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M480 632 284 828q-11 11-28 11t-28-11q-11-11-11-28t11-28l196-196-196-196q-11-11-11-28t11-28q11-11 28-11t28 11l196 196 196-196q11-11 28-11t28 11q11 11 11 28t-11 28L536 576l196 196q11 11 11 28t-11 28q-11 11-28 11t-28-11L480 632Z"></path>
+</svg>
+</button>
+</aside>
+<main class="relative py-6 lg:gap-10 lg:py-8 xl:grid xl:grid-cols-[1fr_300px]">
+<div class="w-full min-w-0 mx-auto">
+<div id="content" role="main">
+<section id="azul-process">
+<h1><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code></h1>
+<section id="overview">
+<h2>Overview</h2>
+<p>Command <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code> generates a defect-inpainted color image of a tile or tile cutout
+from input MER images generally retrieved with <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code>.
+It takes as input workdirs which each contain at least one such MER image per Euclid photometric band (I, Y, J, H),
+and outputs one color rendering per workdir.
+Intermediate files can be written, mostly for investigation.</p>
+<table class="subfigure docutils align-default">
+<colgroup>
+<col style="width: 20.0%"/>
+<col style="width: 20.0%"/>
+<col style="width: 20.0%"/>
+<col style="width: 20.0%"/>
+<col style="width: 20.0%"/>
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="" data-lightbox="group-iyjh" data-title="" href="_images/VIS.png" title=""><img alt="I_band" class="" height="auto" src="_images/VIS.png" width="100%"/>
+</a></p></td>
+<td><p><a class="" data-lightbox="group-iyjh" data-title="" href="_images/NIR-Y.png" title=""><img alt="Y_band" class="" height="auto" src="_images/NIR-Y.png" width="100%"/>
+</a></p></td>
+<td><p><a class="" data-lightbox="group-iyjh" data-title="" href="_images/NIR-J.png" title=""><img alt="J_band" class="" height="auto" src="_images/NIR-J.png" width="100%"/>
+</a></p></td>
+<td><p><a class="" data-lightbox="group-iyjh" data-title="" href="_images/NIR-H.png" title=""><img alt="H_band" class="" height="auto" src="_images/NIR-H.png" width="100%"/>
+</a></p></td>
+<td><p><a class="" data-lightbox="group-iyjh" data-title="" href="_images/RGB.png" title=""><img alt="RGB_out" class="" height="auto" src="_images/RGB.png" width="100%"/>
+</a></p></td>
+</tr>
+<tr class="row-even"><td><p>I band</p></td>
+<td><p>Y band</p></td>
+<td><p>J band</p></td>
+<td><p>H band</p></td>
+<td><p>Output</p></td>
+</tr>
+</tbody>
+</table>
+<p>The diagram below illustrates the various steps of the algorithm processing a single workdir.</p>
+<figure class="align-center">
+<p class="plantuml">
+<object data="_images/plantuml-86ff90597b6b6c6d7099c1a8d6cbaa44869e58cf.svg" style="max-width:100%" type="image/svg+xml">
+<img alt="folder workdir {
+}
+object Stack {
+}
+object Inpaint {
+}
+object Sharpen {
+--fwhm
+--strength
+}
+object Equalize {
+--zero
+--scaling
+}
+object Stretch {
+-w
+-a
+-b
+}
+object Blend {
+--ib
+--yg
+--jr
+--nirl
+}
+object Adjust {
+--hue
+--saturation
+--curves
+}
+
+workdir --&gt; Stack
+Stack -&gt; Inpaint
+Inpaint -&gt; Sharpen
+Sharpen -&gt; Equalize
+Equalize -&gt; Stretch
+Stretch -&gt; Blend
+Blend -&gt; Adjust
+
+file mask {
+}
+file blended {
+}
+file adjusted {
+}
+
+Inpaint --&gt; mask
+Blend --&gt; blended
+Adjust --&gt; adjusted" src="_images/plantuml-86ff90597b6b6c6d7099c1a8d6cbaa44869e58cf.png"/>
+</object></p>
+</figure>
+</section>
+<section id="inputs">
+<h2>Inputs</h2>
+<p>Input files are discovered according to their names in the workdir (see <a class="reference internal" href="interfaces.html#workspace"><span class="std std-ref">Workspace, input and output paths</span></a>) and a glob pattern.
+For more details, see help messages of global options <code class="docutils literal notranslate"><span class="pre">--workspace</span></code> and <code class="docutils literal notranslate"><span class="pre">--input</span></code>:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">$ </span>azul<span class="w"> </span><span class="ge">-h</span>
+</span></code></pre></div>
+</div>
+</section>
+<section id="outputs">
+<h2>Outputs</h2>
+<p>The script results in a 16-bit TIFF, 8-bit PNG or 8-bit compressed JPG
+depending on the extension of the file name parameter (<code class="docutils literal notranslate"><span class="pre">-o</span></code>).</p>
+<p>WCS parameters are written as follows:</p>
+<ul class="simple">
+<li><p>TIFF outputs contain WCS parameters as <code class="docutils literal notranslate"><span class="pre">ImageDescription</span></code> metadata,
+for compatibility with <a class="reference external" href="https://github.com/schirmermischa/euniverse">euniverse</a>;</p></li>
+<li><p>PNG and JPEG outputs are accompanied with YAML files containing WCS parameters,
+named after the image file with <code class="docutils literal notranslate"><span class="pre">.wcs</span></code> extension.</p></li>
+</ul>
+<p>The value passed to <code class="docutils literal notranslate"><span class="pre">-o</span></code> is a template in which the placeholders are rendered as follows.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Placeholder name</p></th>
+<th class="head"><p>Substitution value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">{workspace}</span></code></p></td>
+<td><p>Workspace path</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">{workdir}</span></code></p></td>
+<td><p>Workdir path relative to the workspace</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">{0}</span></code></p></td>
+<td><p>First part of the workdir</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">{1}</span></code></p></td>
+<td><p>Second part of the workdir if it has several parts, otherwise <code class="docutils literal notranslate"><span class="pre">Tile</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">{step}</span></code></p></td>
+<td><p>Name of the current step output (see below)</p></td>
+</tr>
+</tbody>
+</table>
+<p>Intermediate images are saved when the template contains <code class="docutils literal notranslate"><span class="pre">{step}</span></code>.
+The latter will be replaced with the name of the intermediate step as follows:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">mask</span></code> – The color-coded bad pixel map, where 0 means the pixel is good,
+and grey (resp. blue, green, red) means the I (resp. Y, J, H) channel is bad.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">blended</span></code> – The RGB image before color and curve adjustment.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">adjusted</span></code> – The RGB image after color and curve adjustment, if any.</p></li>
+</ul>
+<p>For example, using the template <code class="docutils literal notranslate"><span class="pre">{workspace}/{workdir}/{target}_{tile}_{step}.tiff</span></code>,
+the inpainting mask of target 102159776 will be saved as <code class="docutils literal notranslate"><span class="pre">Tile_102159776_mask.tiff</span></code> in the workdir.
+If, instead, <code class="docutils literal notranslate"><span class="pre">-o</span> <span class="pre">{tile}.jpg</span></code> is used, then the output will be a JPG file in the current directory
+accompanied by a <code class="docutils literal notranslate"><span class="pre">.wcs</span></code> file, and no intermediate steps will be saved.</p>
+<p>For each target, only the path to the final image (not to the intermediate files or WCS file) is streamed to <code class="docutils literal notranslate"><span class="pre">stdout</span></code>.</p>
+</section>
+<section id="stacking">
+<h2>Stacking</h2>
+<p>If several images are provided for a given band, they are median-stacked.
+No alignment is performed since we assume the images are already MER-aligned.</p>
+</section>
+<section id="inpainting">
+<h2>Inpainting</h2>
+<p>Many defects are masked by MER without being “corrected”,
+because correction would be detrimental to science (hallucination, increased noise level, uncalibrated response).
+Most of the so-called <em>bad pixels</em> are assigned value 0 in the mosaics.
+Azulero inpaints pixels with a null value after stacking.</p>
+<p>Some defects may remain when they are not null in the mosaic (which may happen for a variety of reasons).
+Relying on bitmasks to detect them and decide on the inpainting technique would be nice, especially for VIS ghosts,
+yet we did not find a satisfying selection method, which would work both for WIDE and DEEP tiles.
+We keep this in mind for a future version…</p>
+</section>
+<section id="sharpening">
+<h2>Sharpening</h2>
+<p>Band-wise sharpening is performed according to the empirical PSF width, using unsharp mask filtering.
+The sharpening strength can be adjusted with <code class="docutils literal notranslate"><span class="pre">--strength</span></code>.
+The PSF width parameter (<code class="docutils literal notranslate"><span class="pre">--fwhm</span></code>) should generally not be changed.</p>
+</section>
+<section id="equalization">
+<h2>Equalization</h2>
+<p>Bands are scaled according to their zero-point,
+and white balance is controlled with a scaling parameter (<code class="docutils literal notranslate"><span class="pre">--scaling</span></code>).
+The zero-point parameter (<code class="docutils literal notranslate"><span class="pre">--zero</span></code>) should generally not be changed.
+Default white balance was tuned empirically over hundreds of images in order to render bright objects white in average.</p>
+<p>The conversion between input intensity <span class="math notranslate nohighlight">\(f\)</span> and AB magnitude <span class="math notranslate nohighlight">\(m_\mathrm{AB}\)</span> is given by:</p>
+<div class="math notranslate nohighlight">
+\[m_\mathrm{AB} = 2.5 \log_{10}(f) + \mathrm{ZP}\]</div>
+<p>with <span class="math notranslate nohighlight">\(\mathrm{ZP}\)</span> the zero-point.</p>
+</section>
+<section id="stretching">
+<h2>Stretching</h2>
+<p>The dynamic range is asinh-scaled, which yields pleasing results for both low- and high-energy regions.
+The function is linear-like for low values and log-like for high values.
+Above all, the transform is color-invariant such that if you change the stretching parameters,
+only the rendered object luminosity will change, not its hue.</p>
+<p>Stretching is controlled by:</p>
+<ul class="simple">
+<li><p>the white point (<code class="docutils literal notranslate"><span class="pre">-w</span></code>), which is the magnitude rendered white in the output image;</p></li>
+<li><p>an offset (<code class="docutils literal notranslate"><span class="pre">-b</span></code>), which is the opposite of the black point;</p></li>
+<li><p>a stretching parameter (<code class="docutils literal notranslate"><span class="pre">-a</span></code>) which sets the transition point between linear-like scaling and log-like scaling.</p></li>
+</ul>
+<p>All of them are expressed in AB magnitude, therefore a higher value corresponds to a lower intensity.</p>
+<p>In general, only the white point has to be adjusted, especially for very bright sources.
+Typically, the Cat’s eye nebula is extremely bright and best rendered with a white point around 18.
+Special value <code class="docutils literal notranslate"><span class="pre">-w</span> <span class="pre">0</span></code> triggers data-driven tuning based on image statistics.
+It generally gives good results, but using it will prevent stitching multiple images,
+since they will be rendered with inconsistent stretching parameters.
+If you wish to make automatic parameter tuning the default,
+set the following environment variable:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">$ </span><span class="nb">export</span><span class="w"> </span><span class="ge">AZULPROCESS_WHITE</span><span class="o">=</span><span class="m">0</span>
+</span></code></pre></div>
+</div>
+<p>To demonstrate the effect and sensitivity of <code class="docutils literal notranslate"><span class="pre">-w</span></code> and <code class="docutils literal notranslate"><span class="pre">-a</span></code>,
+below is a matrix of UGC 11116 renderings in which we varied the parameters around their default values.</p>
+<table class="subfigure docutils align-default">
+<colgroup>
+<col style="width: 10.0%"/>
+<col style="width: 30.0%"/>
+<col style="width: 30.0%"/>
+<col style="width: 30.0%"/>
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>a = 28.25</p></td>
+<td><p><a class="" data-lightbox="group-matrix" data-title="" href="_images/20-28.25.png" title=""><img alt="200-2825" class="" height="auto" src="_images/20-28.25.png" width="100%"/>
+</a></p></td>
+<td><p><a class="" data-lightbox="group-matrix" data-title="" href="_images/22.5-28.25.png" title=""><img alt="225-2825" class="" height="auto" src="_images/22.5-28.25.png" width="100%"/>
+</a></p></td>
+<td><p><a class="" data-lightbox="group-matrix" data-title="" href="_images/25-28.25.png" title=""><img alt="250-2825" class="" height="auto" src="_images/25-28.25.png" width="100%"/>
+</a></p></td>
+</tr>
+<tr class="row-even"><td><p>a = 27.00</p></td>
+<td><p><a class="" data-lightbox="group-matrix" data-title="" href="_images/20-27.png" title=""><img alt="200-2700" class="" height="auto" src="_images/20-27.png" width="100%"/>
+</a></p></td>
+<td><p><a class="" data-lightbox="group-matrix" data-title="" href="_images/22.5-27.png" title=""><img alt="225-2700" class="" height="auto" src="_images/22.5-27.png" width="100%"/>
+</a></p></td>
+<td><p><a class="" data-lightbox="group-matrix" data-title="" href="_images/25-27.png" title=""><img alt="250-2700" class="" height="auto" src="_images/25-27.png" width="100%"/>
+</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>a = 25.75</p></td>
+<td><p><a class="" data-lightbox="group-matrix" data-title="" href="_images/20-25.75.png" title=""><img alt="200-2575" class="" height="auto" src="_images/20-25.75.png" width="100%"/>
+</a></p></td>
+<td><p><a class="" data-lightbox="group-matrix" data-title="" href="_images/22.5-25.75.png" title=""><img alt="225-2575" class="" height="auto" src="_images/22.5-25.75.png" width="100%"/>
+</a></p></td>
+<td><p><a class="" data-lightbox="group-matrix" data-title="" href="_images/25-25.75.png" title=""><img alt="250-2575" class="" height="auto" src="_images/25-25.75.png" width="100%"/>
+</a></p></td>
+</tr>
+<tr class="row-even"><td></td>
+<td><p>w = 20.0</p></td>
+<td><p>w = 22.5</p></td>
+<td><p>w = 25.0</p></td>
+</tr>
+</tbody>
+</table>
+<p>The effect of <code class="docutils literal notranslate"><span class="pre">-w</span></code> is obvious at the heart of the galaxy, which is completely burnt in the rightmost column.
+Note how pushing <code class="docutils literal notranslate"><span class="pre">-a</span></code> deeper (top row) intensifies dimmer objects like background galaxies and the outer region of UGC 11116.
+Beware that it also increases noise and may make the background grainy and unpleasant.
+Azulero default values are carefully chosen to limit this phenomenon while keeping room for post-processing.</p>
+</section>
+<section id="blending">
+<h2>Blending</h2>
+<figure class="align-center">
+<p class="plantuml">
+<object data="_images/plantuml-3895c1c4f82aa96c6c489c943b71d85095aa9204.svg" style="max-width:100%" type="image/svg+xml">
+<img alt="left to right direction
+
+card L #777
+card VIS
+card NIR
+card I
+card Y
+card J
+card H
+card B #007
+card G #070
+card R #700
+
+L &lt;-- NIR : nirl
+L &lt;-- VIS
+VIS &lt;-- I
+NIR &lt;-- Y
+NIR &lt;-- J
+NIR &lt;-- H
+
+I --&gt; B : ib
+Y --&gt; B
+Y --&gt; G : yg
+J --&gt; G
+J --&gt; R : jr
+H --&gt; R" src="_images/plantuml-3895c1c4f82aa96c6c489c943b71d85095aa9204.png"/>
+</object></p>
+</figure>
+<p>The blending generates an RGB image from four input channels.
+We decide to keep the wavelength ordering: I &lt; Y &lt; J &lt; H.
+Two adjacent input channels may contribute to an output channel, e.g. Y and J may contribute to G.
+An input channel may contribute to two adjacent output channels, e.g. Y may contribute to B and G.</p>
+<p>In order to maximize resolution while retaining very red objects,
+a intermediate lightness map (L) is built from the VIS (I) intensity and average NIR intensity
+(specifically, the median stacking of YJH).
+Resolution in VIS is better than in NIR,
+therefore it has higher weight in the output lightness.</p>
+<p>The different weight parameters control the different blending contributions:
+<code class="docutils literal notranslate"><span class="pre">--ib</span></code> (resp. <code class="docutils literal notranslate"><span class="pre">--yg</span></code>, <code class="docutils literal notranslate"><span class="pre">--jr</span></code>, <code class="docutils literal notranslate"><span class="pre">--nirl</span></code>) control the relative contribution
+of I (resp. Y, J, NIR) to B (resp. G, R, L).
+As default parameters, we have chosen to use only I to generate B, and to compress YJH into GR.
+Other research groups made different choices
+like skipping completely J for ERO images,
+using I only for L and YJH for RGB in many articles,
+or merging YJ into G and use only H for R in the <a class="reference external" href="https://github.com/schirmermischa/eummy">eummy</a> package.
+The default parameters of Azulero were challenged on thousands of various objects and always gave pleasant results.
+That being said, there is no good or bad approach and you can create your own palette by varying the blending parameters.</p>
+</section>
+<section id="adjustment">
+<h2>Adjustment</h2>
+<p>Before combining the intermediate RGB and L channels,
+hue is rotated (parameter <code class="docutils literal notranslate"><span class="pre">--hue</span></code>) and saturation is boosted (<code class="docutils literal notranslate"><span class="pre">--saturation</span></code>).
+The default hue rotation reduces artificial-looking greens,
+while the default, very light saturation boost aims at highlighting dust lanes.</p>
+<p>The intensity of each color channel is then adjusted using splines
+similar to Photoshop and Gimp curves (<code class="docutils literal notranslate"><span class="pre">--curves</span></code>).
+By default, mid-tone blue intensities are increased a bit, which makes outer regions of galaxies stand out
+and gives a subtle blue shade to the background noise.</p>
+<p>All adjustments can be disabled by setting:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="ge">--hue</span><span class="go"> 0 </span><span class="ge">--saturation</span><span class="go"> 1 </span><span class="ge">--curves</span><span class="go"> ""</span>
+</span></code></pre></div>
+</div>
+</section>
+<section id="resources-and-cropping">
+<h2>Resources and cropping</h2>
+<p>In its current version, the script may be very memory-greedy for full tiles.
+Below is a typical profiling for DEEP and WIDE tiles, including elapsed time and peak RAM usage for each step.
+Theses numbers are logged step-by-step during the execution of <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code>.
+Walltime will depend on the CPU while RAM usage should be stable across architectures.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Step</p></th>
+<th class="head"><p>10k x 10k px</p></th>
+<th class="head"><p>20k x 20k px</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Reading</p></td>
+<td><p>10 s,  3 GB</p></td>
+<td><p>10 s,  6 GB</p></td>
+</tr>
+<tr class="row-odd"><td><p>Inpainting</p></td>
+<td><p>25 s,  6 GB</p></td>
+<td><p>110 s, 21 GB</p></td>
+</tr>
+<tr class="row-even"><td><p>Sharpening</p></td>
+<td><p>5 s,  3 GB</p></td>
+<td><p>70 s, 12 GB</p></td>
+</tr>
+<tr class="row-odd"><td><p>Stretching</p></td>
+<td><p>5 s,  2 GB</p></td>
+<td><p>25 s,  8 GB</p></td>
+</tr>
+<tr class="row-even"><td><p>Blending</p></td>
+<td><p>20 s,  6 GB</p></td>
+<td><p>70 s, 22 GB</p></td>
+</tr>
+<tr class="row-odd"><td><p>Adjustment</p></td>
+<td><p>10 s,  4 GB</p></td>
+<td><p>25 s, 12 GB</p></td>
+</tr>
+<tr class="row-even"><td><p>OVERALL</p></td>
+<td><p>75 s,  6 GB</p></td>
+<td><p>310 s, 22 GB</p></td>
+</tr>
+</tbody>
+</table>
+<p>Scalability is roughly linear (except for the stacking and inpainting steps),
+such that you should be able to interpolate the needs wrt. the input shape.
+In order to lower the memory consumption, it is possible to crop the image with NumPy’s syntax,
+e.g. for some top-left region (<span class="math notranslate nohighlight">\(x &lt; 6000, y \geq \mathrm{height} - 4000\)</span>):</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">$ </span>azul<span class="w"> </span>process<span class="w"> </span><span class="m">102159776</span><span class="ge">[</span>-4000<span class="ge">:,:</span>6000<span class="ge">]</span>
+</span></code></pre></div>
+</div>
+<p>Depending on your system, it may be necessary to add quotes:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">$ </span>azul<span class="w"> </span>process<span class="w"> </span><span class="ge">"</span><span class="s2">102159776[-4000:,:6000]</span><span class="ge">"</span>
+</span></code></pre></div>
+</div>
+</section>
+</section>
+</div><div class="flex justify-between items-center pt-6 mt-12 border-t border-border gap-4">
+<div class="mr-auto">
+<a class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors border border-input hover:bg-accent hover:text-accent-foreground py-2 px-4" href="retrieve.html">
+<svg class="mr-2 h-4 w-4" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<polyline points="15 18 9 12 15 6"></polyline>
+</svg>
+        azul retrieve
+      </a>
+</div>
+<div class="ml-auto">
+<a class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors border border-input hover:bg-accent hover:text-accent-foreground py-2 px-4" href="arrange.html">
+        azul arrange
+        <svg class="ml-2 h-4 w-4" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<polyline points="9 18 15 12 9 6"></polyline>
+</svg>
+</a>
+</div>
+</div></div><aside class="hidden text-sm xl:block" id="right-sidebar">
+<div class="sticky top-16 -mt-10 max-h-[calc(100vh-5rem)] h-full overflow-y-auto pt-6 space-y-2"><p class="font-medium">On this page</p>
+<ul>
+<li><a :data-current="activeSection === '#overview'" class="reference internal" href="#overview">Overview</a></li>
+<li><a :data-current="activeSection === '#inputs'" class="reference internal" href="#inputs">Inputs</a></li>
+<li><a :data-current="activeSection === '#outputs'" class="reference internal" href="#outputs">Outputs</a></li>
+<li><a :data-current="activeSection === '#stacking'" class="reference internal" href="#stacking">Stacking</a></li>
+<li><a :data-current="activeSection === '#inpainting'" class="reference internal" href="#inpainting">Inpainting</a></li>
+<li><a :data-current="activeSection === '#sharpening'" class="reference internal" href="#sharpening">Sharpening</a></li>
+<li><a :data-current="activeSection === '#equalization'" class="reference internal" href="#equalization">Equalization</a></li>
+<li><a :data-current="activeSection === '#stretching'" class="reference internal" href="#stretching">Stretching</a></li>
+<li><a :data-current="activeSection === '#blending'" class="reference internal" href="#blending">Blending</a></li>
+<li><a :data-current="activeSection === '#adjustment'" class="reference internal" href="#adjustment">Adjustment</a></li>
+<li><a :data-current="activeSection === '#resources-and-cropping'" class="reference internal" href="#resources-and-cropping">Resources and cropping</a></li>
+</ul>
+</div>
+</aside>
+</main>
+</div>
+</div><footer class="py-6 border-t border-border md:py-0">
+<div class="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
+<div class="flex flex-col items-center gap-4 px-8 md:flex-row md:gap-2 md:px-0">
+<p class="text-sm leading-loose text-center text-muted-foreground md:text-left">© 2025-2026, Antoine Basset (CNES) and contributors. Last updated: Jun 21, 2026. Built with <a class="font-medium underline underline-offset-4" href="https://www.sphinx-doc.org" rel="noreferrer">Sphinx 9.1.0</a></p>
+</div>
+</div>
+</footer>
+</div>
+<script src="_static/documentation_options.js?v=7f41d439"></script>
+<script src="_static/doctools.js?v=fd6eb6e6"></script>
+<script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+<script defer="defer" src="_static/theme.js?v=5db23cf8"></script>
+<script src="_static/sphinxcontrib-images/LightBox2/lightbox2/dist/js/lightbox-plus-jquery.min.js?v=f0ca4bb6"></script>
+<script src="_static/sphinxcontrib-images/LightBox2/lightbox2-customize/jquery-noconflict.js?v=12818e64"></script>
+<script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+</body>
+</html>
