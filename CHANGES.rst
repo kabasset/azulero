@@ -25,7 +25,7 @@ Breaking changes
   - For other formats, the parameters are written following the output name with extension ``.wcs``.
 
 - Placeholders were renamed.
-- Intermediate outputs are not written anymore, by default.
+- Intermediate outputs are not written anymore by default.
 
 ``azul roam``
 
@@ -42,6 +42,8 @@ Breaking changes
 Bug fixes
 ^^^^^^^^^
 
+- Unit tests were fixed.
+
 ``azul process``
 
 - In some systems and environments, the script was crashing when ``--wcs`` was enabled and no slicing was performed.
@@ -51,6 +53,7 @@ New features
 ^^^^^^^^^^^^
 
 - The following commands were added: ``arrange``, ``cite``.
+- Logs are written to ``stderr`` with a proper logger, which also supports log levels (option ``--log``).
 - The following commands support piping:
 
   - ``retrieve`` can read targets from ``stdin``, write workdirs to ``stdout``,
@@ -92,13 +95,29 @@ New features
 Cleaning
 ^^^^^^^^
 
-- Logs are written to ``stderr`` with a proper logger, which also supports log levels (option ``--log``).
 - Documentation uses proper HTML pages (which include CLI documentation).
-- Video tutorials are published.
+- Demo pipelines are included.
 - Packaging is handled with ``uv``.
 - Pixel ordering is consistent.
 - Units parsing is centralized.
 - Merged ``AstroQuery`` class into ``SAS``.
+
+Known issues
+^^^^^^^^^^^^
+
+``azul retrieve``
+
+- #85 -- DEEP tiles always have precedence over WIDE tiles,
+  even if object are cropped in the DEEP tile and not in the WIDE tile.
+- #35 -- Cartesian coordinates are used,
+  which cannot handle positions around RA = 0° = 360° or dec = +/-90°
+  (where there are no Euclid data anyway).
+
+``azul roam``
+
+- #104 -- Field of view is approximate with Gaia Sky.
+- #55 -- Zoom < 1° is not supported for Gaia Sky.
+- #31 -- Zoom > 100% is not supported.
 
 
 1.2.0
