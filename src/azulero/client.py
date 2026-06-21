@@ -84,8 +84,8 @@ def run():
         log_args(args)
         args.func(args)
 
-    citation = log_citation()
     if args.cmd == "cite":
+        citation = log_citation()
         write_pipe_args(citation, log=False)
 
     logger.info("")
@@ -105,7 +105,7 @@ def log_args(args):
 
 
 def log_citation():
-    logger.header(1, "Citation", linebreaks=[1, 0])
+    logger.header(1, "Citation", linebreaks=[0, 0])
 
     logger.header(
         2, "If you publish images rendered with this software, please credit:"
