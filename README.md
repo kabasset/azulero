@@ -22,5 +22,4 @@ Pipelining makes batch processing simple, including with parallelization.
 
 # Documentation
 
-* [Latest release](https://kabasset.github.io/azulero/v2.0.0/index.html)
-* [Development version](https://kabasset.github.io/azulero/develop/index.html)
+[Homepage](https://kabasset.github.io/azulero/versions/index.html)
