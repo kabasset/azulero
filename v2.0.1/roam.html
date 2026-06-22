@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+
+<html :class="{ 'dark' : darkMode === true }" data-content_root="./" lang="en" x-data="{ darkMode: $persist(window.matchMedia('(prefers-color-scheme: dark)').matches), activeSection: ''}">
+<head>
+<script>
+    (function () {
+      // Set initial color scheme
+      if ((localStorage.getItem("_x_darkMode") === "true") || (window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+        document.documentElement.classList.add("dark");
+      }
+
+      // Watch for media preference changes
+      window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (event) => {
+        localStorage.setItem("_x_darkMode", event.matches);
+        document.documentElement.classList.toggle("dark", event.matches);
+      });
+    })();
+  </script>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta charset="utf-8"/>
+<meta content="#ffffff" media="(prefers-color-scheme: light)" name="theme-color"/>
+<meta content="#030711" media="(prefers-color-scheme: dark)" name="theme-color"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>azul roam | Azulero 2.0.1</title>
+<meta content="azul roam | Azulero 2.0.1" property="og:title"/>
+<meta content="azul roam | Azulero 2.0.1" name="twitter:title"/>
+<link href="_static/pygments.css?v=e72c8e07" rel="stylesheet" type="text/css"/>
+<link href="_static/theme.css?v=d6d7c91b" rel="stylesheet" type="text/css"/>
+<link href="_static/sphinxcontrib-images/LightBox2/lightbox2/dist/css/lightbox.min.css?v=6e7d0de0" rel="stylesheet" type="text/css"/>
+<link href="_static/sphinxcontrib-images/LightBox2/lightbox2-customize/pointer.css?v=c97663ff" rel="stylesheet" type="text/css"/>
+<link href="_static/code.css?v=7ade5f64" rel="stylesheet" type="text/css"/>
+<link href="_static/figures.css?v=1baf8845" rel="stylesheet" type="text/css"/>
+<link href="_static/lists.css?v=79f77f08" rel="stylesheet" type="text/css"/>
+<link href="_static/favicon.png" rel="icon"/>
+<link href="search.html" rel="search" title="Search"/>
+<link href="pipelines.html" rel="next" title="Pipelines"/>
+<link href="arrange.html" rel="prev" title="azul arrange"/>
+</head>
+<body :class="{ 'overflow-hidden': showSidebar }" class="min-h-screen font-sans antialiased bg-background text-foreground" x-data="{ showSidebar: false, showScrollTop: false }">
+<div @click.self="showSidebar = false" class="fixed inset-0 z-50 overflow-hidden bg-background/80 backdrop-blur-sm md:hidden" x-cloak="" x-show="showSidebar"></div><div class="relative flex flex-col min-h-screen" id="page"><a class="absolute top-0 left-0 z-[100] block bg-background p-4 text-xl transition -translate-x-full opacity-0 focus:translate-x-0 focus:opacity-100" href="#content">
+      Skip to content
+    </a><header class="sticky top-0 z-40 w-full border-b shadow-xs border-border bg-background/90 backdrop-blur"><div class="container flex items-center h-14">
+<div class="hidden mr-4 md:flex">
+<a class="flex items-center mr-6" href="index.html">
+<img alt="Logo" class="mr-2 hidden dark:block" height="24" src="_static/favicon.png" width="24"/>
+<img alt="Logo" class="mr-2 dark:hidden" height="24" src="_static/favicon.png" width="24"/><span class="hidden font-bold sm:inline-block text-clip whitespace-nowrap">Azulero 2.0.1</span>
+</a><nav class="flex items-center gap-6 text-sm font-medium">
+<a class="transition-colors hover:text-foreground/80 text-foreground/60" href="https://kabasset.github.io/azulero/versions/index.html" rel="noopener nofollow">Versions</a>
+<a class="transition-colors hover:text-foreground/80 text-foreground/60" href="https://github.com/kabasset/azulero/issues/new" rel="noopener nofollow">New issue</a>
+</nav></div><button @click="showSidebar = true" class="inline-flex items-center justify-center h-10 px-0 py-2 mr-2 text-base font-medium transition-colors rounded-md hover:text-accent-foreground hover:bg-transparent md:hidden" type="button">
+<svg aria-hidden="true" fill="currentColor" height="24" viewbox="0 96 960 960" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M152.587 825.087q-19.152 0-32.326-13.174t-13.174-32.326q0-19.152 13.174-32.326t32.326-13.174h440q19.152 0 32.326 13.174t13.174 32.326q0 19.152-13.174 32.326t-32.326 13.174h-440Zm0-203.587q-19.152 0-32.326-13.174T107.087 576q0-19.152 13.174-32.326t32.326-13.174h320q19.152 0 32.326 13.174T518.087 576q0 19.152-13.174 32.326T472.587 621.5h-320Zm0-203.587q-19.152 0-32.326-13.174t-13.174-32.326q0-19.152 13.174-32.326t32.326-13.174h440q19.152 0 32.326 13.174t13.174 32.326q0 19.152-13.174 32.326t-32.326 13.174h-440ZM708.913 576l112.174 112.174q12.674 12.674 12.674 31.826t-12.674 31.826Q808.413 764.5 789.261 764.5t-31.826-12.674l-144-144Q600 594.391 600 576t13.435-31.826l144-144q12.674-12.674 31.826-12.674t31.826 12.674q12.674 12.674 12.674 31.826t-12.674 31.826L708.913 576Z"></path>
+</svg>
+<span class="sr-only">Toggle navigation menu</span>
+</button>
+<div class="flex items-center justify-between flex-1 gap-2 sm:gap-4 md:justify-end">
+<div class="flex-1 w-full md:w-auto md:flex-none"><form @keydown.k.window.meta="$refs.search.focus()" action="search.html" class="relative flex items-center group" id="searchbox" method="get">
+<input aria-label="Search the docs" class="inline-flex items-center font-medium transition-colors bg-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-offset-background border border-input hover:bg-accent focus:bg-accent hover:text-accent-foreground focus:text-accent-foreground hover:placeholder-accent-foreground py-2 px-4 relative h-9 w-full justify-start rounded-[0.5rem] text-sm text-muted-foreground sm:pr-12 md:w-40 lg:w-64" id="search-input" name="q" placeholder="Search ..." type="search" x-ref="search"/>
+<kbd class="pointer-events-none absolute right-1.5 top-2 hidden h-5 select-none text-muted-foreground items-center gap-1 rounded border border-border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex group-hover:bg-accent group-hover:text-accent-foreground">
+<span class="text-xs">⌘</span>
+    K
+  </kbd>
+</form>
+</div>
+<nav class="flex items-center gap-1">
+<a href="https://github.com/kabasset/azulero" rel="noopener nofollow" title="Visit repository on GitHub">
+<div class="inline-flex items-center justify-center px-0 text-sm font-medium transition-colors rounded-md hover:bg-accent hover:text-accent-foreground h-9 w-9">
+<svg fill="currentColor" height="16px" style="margin-top:-2px;display:inline" viewbox="0 0 45 44" xmlns="http://www.w3.org/2000/svg"><path clip-rule="evenodd" d="M22.477.927C10.485.927.76 10.65.76 22.647c0 9.596 6.223 17.736 14.853 20.608 1.087.2 1.483-.47 1.483-1.047 0-.516-.019-1.881-.03-3.693-6.04 1.312-7.315-2.912-7.315-2.912-.988-2.51-2.412-3.178-2.412-3.178-1.972-1.346.149-1.32.149-1.32 2.18.154 3.327 2.24 3.327 2.24 1.937 3.318 5.084 2.36 6.321 1.803.197-1.403.759-2.36 1.379-2.903-4.823-.548-9.894-2.412-9.894-10.734 0-2.37.847-4.31 2.236-5.828-.224-.55-.969-2.759.214-5.748 0 0 1.822-.584 5.972 2.226 1.732-.482 3.59-.722 5.437-.732 1.845.01 3.703.25 5.437.732 4.147-2.81 5.967-2.226 5.967-2.226 1.185 2.99.44 5.198.217 5.748 1.392 1.517 2.232 3.457 2.232 5.828 0 8.344-5.078 10.18-9.916 10.717.779.67 1.474 1.996 1.474 4.021 0 2.904-.027 5.247-.027 5.96 0 .58.392 1.256 1.493 1.044C37.981 40.375 44.2 32.24 44.2 22.647c0-11.996-9.726-21.72-21.722-21.72" fill="currentColor" fill-rule="evenodd"></path></svg>
+</div>
+</a>
+<button @click="darkMode = !darkMode" class="relative inline-flex items-center justify-center px-0 text-sm font-medium transition-colors rounded-md hover:bg-accent hover:text-accent-foreground h-9 w-9" title="Toggle color scheme" type="button">
+<svg class="absolute transition-all scale-100 rotate-0 dark:-rotate-90 dark:scale-0" fill="currentColor" height="16" viewbox="0 96 960 960" width="16" xmlns="http://www.w3.org/2000/svg">
+<path d="M480 685q45.456 0 77.228-31.772Q589 621.456 589 576q0-45.456-31.772-77.228Q525.456 467 480 467q-45.456 0-77.228 31.772Q371 530.544 371 576q0 45.456 31.772 77.228Q434.544 685 480 685Zm0 91q-83 0-141.5-58.5T280 576q0-83 58.5-141.5T480 376q83 0 141.5 58.5T680 576q0 83-58.5 141.5T480 776ZM80 621.5q-19.152 0-32.326-13.174T34.5 576q0-19.152 13.174-32.326T80 530.5h80q19.152 0 32.326 13.174T205.5 576q0 19.152-13.174 32.326T160 621.5H80Zm720 0q-19.152 0-32.326-13.174T754.5 576q0-19.152 13.174-32.326T800 530.5h80q19.152 0 32.326 13.174T925.5 576q0 19.152-13.174 32.326T880 621.5h-80Zm-320-320q-19.152 0-32.326-13.174T434.5 256v-80q0-19.152 13.174-32.326T480 130.5q19.152 0 32.326 13.174T525.5 176v80q0 19.152-13.174 32.326T480 301.5Zm0 720q-19.152 0-32.326-13.17Q434.5 995.152 434.5 976v-80q0-19.152 13.174-32.326T480 850.5q19.152 0 32.326 13.174T525.5 896v80q0 19.152-13.174 32.33-13.174 13.17-32.326 13.17ZM222.174 382.065l-43-42Q165.5 327.391 166 308.239t13.174-33.065q13.435-13.674 32.587-13.674t32.065 13.674l42.239 43q12.674 13.435 12.555 31.706-.12 18.272-12.555 31.946-12.674 13.674-31.445 13.413-18.772-.261-32.446-13.174Zm494 494.761-42.239-43q-12.674-13.435-12.674-32.087t12.674-31.565Q686.609 756.5 705.38 757q18.772.5 32.446 13.174l43 41.761Q794.5 824.609 794 843.761t-13.174 33.065Q767.391 890.5 748.239 890.5t-32.065-13.674Zm-42-494.761Q660.5 369.391 661 350.62q.5-18.772 13.174-32.446l41.761-43Q728.609 261.5 747.761 262t33.065 13.174q13.674 13.435 13.674 32.587t-13.674 32.065l-43 42.239q-13.435 12.674-31.706 12.555-18.272-.12-31.946-12.555Zm-495 494.761Q165.5 863.391 165.5 844.239t13.674-32.065l43-42.239q13.435-12.674 32.087-12.674t31.565 12.674Q299.5 782.609 299 801.38q-.5 18.772-13.174 32.446l-41.761 43Q231.391 890.5 212.239 890t-33.065-13.174ZM480 576Z"></path>
+</svg>
+<svg class="absolute transition-all scale-0 rotate-90 dark:rotate-0 dark:scale-100" fill="currentColor" height="16" viewbox="0 96 960 960" width="16" xmlns="http://www.w3.org/2000/svg">
+<path d="M480 936q-151 0-255.5-104.5T120 576q0-138 90-239.5T440 218q25-3 39 18t-1 44q-17 26-25.5 55t-8.5 61q0 90 63 153t153 63q31 0 61.5-9t54.5-25q21-14 43-1.5t19 39.5q-14 138-117.5 229T480 936Zm0-80q88 0 158-48.5T740 681q-20 5-40 8t-40 3q-123 0-209.5-86.5T364 396q0-20 3-40t8-40q-78 32-126.5 102T200 576q0 116 82 198t198 82Zm-10-270Z"></path>
+</svg>
+</button>
+</nav>
+</div>
+</div>
+</header>
+<div class="flex-1"><div class="container md:grid md:grid-cols-[220px_minmax(0,1fr)] md:gap-6 lg:grid-cols-[240px_minmax(0,1fr)] lg:gap-10"><aside :aria-hidden="!showSidebar" :class="{ 'translate-x-0': showSidebar }" class="fixed inset-y-0 left-0 md:top-14 z-50 md:z-30 bg-background md:bg-transparent transition-all duration-100 -translate-x-full md:translate-x-0 ml-0 p-6 md:p-0 md:-ml-2 md:h-[calc(100vh-3.5rem)] w-5/6 md:w-full overflow-y-auto border-r border-border md:sticky" id="left-sidebar">
+<a class="justify-start text-sm md:!hidden bg-background" href="index.html">
+<img alt="Logo" class="mr-2 hidden dark:block" height="16" src="_static/favicon.png" width="16"/>
+<img alt="Logo" class="mr-2 dark:hidden" height="16" src="_static/favicon.png" width="16"/><span class="font-bold text-clip whitespace-nowrap">Azulero 2.0.1</span>
+</a>
+<div class="relative overflow-hidden md:overflow-auto my-4 md:my-0">
+<div class="overflow-y-auto h-full w-full relative pr-6"><nav class="flex md:hidden flex-col font-medium mt-4">
+<a href="https://kabasset.github.io/azulero/versions/index.html" rel="nofollow noopener">Versions</a>
+<a href="https://github.com/kabasset/azulero/issues/new" rel="nofollow noopener">New issue</a>
+</nav><nav class="table w-full min-w-full my-6 lg:my-8">
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">Azulero 2.0.1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="primer.html">A Euclid primer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="news.html">What’s new</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="interfaces.html">General interface design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="retrieve.html"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="process.html"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="arrange.html"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">arrange</span></code></a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">roam</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="pipelines.html">Pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changes.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="devnotes.html">Developer notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai.html">Generative AI use</a></li>
+</ul>
+</nav>
+</div>
+</div>
+<button @click="showSidebar = false" class="absolute md:hidden right-4 top-4 rounded-sm opacity-70 transition-opacity hover:opacity-100" type="button">
+<svg class="h-4 w-4" fill="currentColor" height="24" stroke="none" viewbox="0 96 960 960" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M480 632 284 828q-11 11-28 11t-28-11q-11-11-11-28t11-28l196-196-196-196q-11-11-11-28t11-28q11-11 28-11t28 11l196 196 196-196q11-11 28-11t28 11q11 11 11 28t-11 28L536 576l196 196q11 11 11 28t-11 28q-11 11-28 11t-28-11L480 632Z"></path>
+</svg>
+</button>
+</aside>
+<main class="relative py-6 lg:gap-10 lg:py-8 xl:grid xl:grid-cols-[1fr_300px]">
+<div class="w-full min-w-0 mx-auto">
+<div id="content" role="main">
+<section id="azul-roam">
+<h1><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">roam</span></code></h1>
+<section id="overview">
+<h2>Overview</h2>
+<p>Command <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">roam</span></code> consists in moving a so-called <strong>viewport</strong>
+– a region from which video frames are extracted – over an input image,
+using more-or-less complex projection methods.
+The image and viewport can be seen as analogous to a scene and camera, respectively.</p>
+<p>The viewport has a variable center, field of view and rotation angle around the line of sight.
+The parameters are specified by the user at so-called <strong>key frames</strong>, and interpolated between key frames.</p>
+<figure class="align-center">
+<p class="plantuml">
+<object data="_images/plantuml-2092188caa08cc0114a9e58867ce41678b7c17bf.svg" style="max-width:100%" type="image/svg+xml">
+<img alt="file image {
+}
+
+object Interpolate {
+--format
+--fps
+}
+object Capture {
+--ortho
+--wcs
+--equi
+--gaiasky
+}
+
+file video {
+}
+
+image --&gt; Interpolate
+Interpolate -&gt; Capture
+Capture --&gt; video" src="_images/plantuml-2092188caa08cc0114a9e58867ce41678b7c17bf.png"/>
+</object></p>
+</figure>
+<p>The command supports the following frame capture modes:</p>
+<dl class="simple">
+<dt>Orthographic projection</dt><dd><p>This is the simplest way of capturing frames, where the projection consists only of translation, scaling and rotation.</p>
+</dd>
+<dt>WCS transform</dt><dd><p>In this mode, the input WCS parameters are used to warp the image
+as if the camera was not pointing perpendicularly to the image plane.
+This is also more than an affine transform because spherical-to-planar projection is performed.</p>
+</dd>
+<dt>Equirectangular</dt><dd><p>This mode assumes that the input image is an equirectangular (plate-carrée) projection of the full sky,
+with RA from 180° on the left to -180° on the right
+and Dec from -90° at the bottom to 90° at the top.</p>
+</dd>
+<dt>Gaia Sky</dt><dd><p>This special mode consists in capturing frames from a running <a class="reference external" href="https://gaiasky.space/">Gaia Sky</a> instance.
+No other input data (no image) is used.
+The Gaia Sky mode is provided for creating seamless transitions between planetarium and Euclid data.</p>
+</dd>
+</dl>
+</section>
+<section id="input">
+<h2>Input</h2>
+<p>In this version, <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">roam</span></code> takes as input a single image path,
+given as a positional argument or through <code class="docutils literal notranslate"><span class="pre">stdin</span></code>.</p>
+<p>The key frames are specified through a so-called <strong>sequence file</strong>
+passed to option <code class="docutils literal notranslate"><span class="pre">--ortho</span></code>, <code class="docutils literal notranslate"><span class="pre">--wcs</span></code>, <code class="docutils literal notranslate"><span class="pre">--equi</span></code> or <code class="docutils literal notranslate"><span class="pre">--gaiasky</span></code>
+depending on the wanted frame capture mode.</p>
+</section>
+<section id="output">
+<h2>Output</h2>
+<p>The video produced by <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">roam</span></code> is a saved following a template given to option <code class="docutils literal notranslate"><span class="pre">-o</span></code>.
+Placeholders are:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Placeholder name</p></th>
+<th class="head"><p>Substitution value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">{workspace}</span></code></p></td>
+<td><p>Workspace path</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">{image}</span></code></p></td>
+<td><p>Input image stem</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">{sequence}</span></code></p></td>
+<td><p>Sequence file stem</p></td>
+</tr>
+</tbody>
+</table>
+<p>Several video file formats are supported (see the help message for a complete list: <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">roam</span> <span class="pre">-h</span></code>),
+among which MKV features lossless compression, which is helpful for further video compositing.</p>
+</section>
+<section id="viewport-parameters-interpolation">
+<h2>Viewport parameters interpolation</h2>
+<p>Beside the input image, the main input of <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">roam</span></code> is a so-called <strong>sequence file</strong>,
+which specifies, for each key frame, the time and viewport parameters.
+Between key frames, the viewport geometry is sine-interpolated to ensure smooth transitions.
+The path of the center can also be spline-interpolated using additional <strong>control points</strong>
+in order to avoid unnatural-looking zigzag patterns.</p>
+<p>Interpolation also depends on the following parameters:</p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">--format</span></code></dt><dd><p>The video format, given either as <code class="docutils literal notranslate"><span class="pre">&lt;width&gt;,&lt;height&gt;</span></code> or as a standard “K”-format such as <code class="docutils literal notranslate"><span class="pre">2K</span></code> or <code class="docutils literal notranslate"><span class="pre">4K</span></code>.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">--fps</span></code></dt><dd><p>The number of frames per second.</p>
+</dd>
+</dl>
+<p>It is possible to generate only a subset of the sequence,
+by giving start and stop frame indices via a slicing notation suffixed to the path of the sequence file, e.g.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="n">azul</span> <span class="n">roam</span> <span class="n">image</span><span class="o">.</span><span class="n">tiff</span> <span class="o">--</span><span class="n">wcs</span> <span class="s2">"sequence.yaml[</span><span class="ge">50</span><span class="s2">,</span><span class="ge">75</span><span class="s2">]"</span>
+</span></code></pre></div>
+</div>
+<p>The sequence file syntax is presented and illustrated at the bottom of this page.</p>
+</section>
+<section id="frame-capture">
+<h2>Frame capture</h2>
+<p>Frame capture is the operation of determining the viewport pixel intensities from the input image.
+To this end, we build the mathematical mapping between image and viewport positions according to the capture mode.</p>
+<p>In general, the positions in the image are not integral and interpolation is needed.
+As a tradeoff between speed and output quality, we use bicubic interpolants.</p>
+<p>With <code class="docutils literal notranslate"><span class="pre">--ortho</span></code>, a multiresolution pyramid is first computed for speed and antialiasing.
+We plan to expand this to the other capture modes.</p>
+</section>
+<section id="sequence-file-syntax">
+<h2>Sequence file syntax</h2>
+<p>The configuration file contains a list of key frames with associated times,
+as well as intermediate control points for smoothing trajectories.
+Four variables are specified per key frame:</p>
+<dl class="simple">
+<dt>Time</dt><dd><p>The time is specified either in seconds or in number of frames.</p>
+</dd>
+<dt>Center</dt><dd><p>The center is specified either in sky coordinates, pixel coordinates or percentage of the image extents.</p>
+</dd>
+<dt>Field of view</dt><dd><p>The viewport size is computed either from an angle of view, a length in pixels,
+a scale relative to the image pixel size, or relatively to the image extents.</p>
+</dd>
+<dt>Roll angle</dt><dd><p>The viewport orientation controlled by a rotation angle around the line of sight specified clockwise in degrees or radians.</p>
+</dd>
+</dl>
+<p>For each key frame but the first one, omitted parameters are copied from the previous key frame.
+The sequence file is in YAML format, which is very compact but requires space discipline!
+A typical key frame specification looks like this:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">t</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">+10s</span>
+</span><span id="line-2"><span class="w">  </span><span class="nt">c</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">UGC 11116</span>
+</span><span id="line-3"><span class="w">  </span><span class="nt">s</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80%</span>
+</span><span id="line-4"><span class="w">  </span><span class="nt">r</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">15°</span>
+</span></code></pre></div>
+</div>
+<section id="t-time">
+<h3><code class="docutils literal notranslate"><span class="pre">t:</span></code> Time</h3>
+<p>The name of the key frame time parameter in the sequence file is <code class="docutils literal notranslate"><span class="pre">t</span></code>.
+It is specified in seconds with suffix <code class="docutils literal notranslate"><span class="pre">s</span></code> or number of frames with suffix <code class="docutils literal notranslate"><span class="pre">f</span></code>.
+Prefix <code class="docutils literal notranslate"><span class="pre">+</span></code> indicates a duration from previous key frame instead of a time point, e.g.:
+<code class="docutils literal notranslate"><span class="pre">t:</span> <span class="pre">1s</span></code> means key frame at 1 second, <code class="docutils literal notranslate"><span class="pre">t:</span> <span class="pre">+24f</span></code> means 24 frames after the previous key frame.</p>
+<p>The time of the first frame must be <code class="docutils literal notranslate"><span class="pre">0s</span></code> or <code class="docutils literal notranslate"><span class="pre">0f</span></code>.</p>
+</section>
+<section id="c-center">
+<h3><code class="docutils literal notranslate"><span class="pre">c:</span></code> Center</h3>
+<p>The viewport center is given with key <code class="docutils literal notranslate"><span class="pre">c</span></code>.
+Both image and sky coordinates are supported:</p>
+<dl class="simple">
+<dt>Image coordinates</dt><dd><p>Suffix <code class="docutils literal notranslate"><span class="pre">px</span></code> indicates absolute image coordinates, while suffix <code class="docutils literal notranslate"><span class="pre">%</span></code> indicates percentage relative to the image width or height.
+Negative values are interpreted as backward coordinates, i.e. from the right and top.
+Typically, the viewport is centered with <code class="docutils literal notranslate"><span class="pre">x:</span> <span class="pre">50%,</span> <span class="pre">50%</span></code>.</p>
+</dd>
+<dt>Sky coordinates</dt><dd><p>Other formats of comma-separated pairs indicates RA/dec coordinates in ICRS frame.</p>
+</dd>
+<dt>Named object</dt><dd><p>Similarly to <a class="reference internal" href="retrieve.html"><span class="doc">azul retrieve</span></a>, <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">roam</span></code> supports object names as sky coordinates.</p>
+</dd>
+</dl>
+</section>
+<section id="s-field-of-view">
+<h3><code class="docutils literal notranslate"><span class="pre">s:</span></code> Field of view</h3>
+<p>The viewport size is specified either as a scale factor or horizontal field of view, with key <code class="docutils literal notranslate"><span class="pre">s</span></code>:</p>
+<ul class="simple">
+<li><p>When suffixed with <code class="docutils literal notranslate"><span class="pre">%</span></code>, the parameter is interpreted as relative to the pixel size,
+such that <code class="docutils literal notranslate"><span class="pre">s:</span> <span class="pre">100%</span></code> (resp. <code class="docutils literal notranslate"><span class="pre">s:</span> <span class="pre">50%</span></code>) means that one pixel in the output frame
+corresponds to one pixel (resp. two pixels) in the input image.</p></li>
+<li><p>When suffixed with <code class="docutils literal notranslate"><span class="pre">w</span></code> (resp. <code class="docutils literal notranslate"><span class="pre">h</span></code>), the parameter value is a factor wrt. the image width (resp. height).
+Typically, a full-width viewport is specified as <code class="docutils literal notranslate"><span class="pre">s:</span> <span class="pre">1w</span></code> and a full-height viewport is specified as <code class="docutils literal notranslate"><span class="pre">s:</span> <span class="pre">1h</span></code>.</p></li>
+<li><p>Angular quantities (e.g. suffixed with <code class="docutils literal notranslate"><span class="pre">°</span></code>) indicate a horizontal field of view as a solid angle.</p></li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>In orthographic mode, zoom levels higher than 100% are not supported.</p>
+<p>In Gaia Sky mode, fields of view smaller than 1° are not supported.</p>
+</div>
+</section>
+<section id="r-roll-angle">
+<h3><code class="docutils literal notranslate"><span class="pre">r:</span></code> Roll angle</h3>
+<p>The roll angle is the viewport rotation around the line of sight.
+Positive values mean clockwise rotation of the viewport, i.e. counterclockwise rotation of the image.
+The angular parameter has key <code class="docutils literal notranslate"><span class="pre">r</span></code> and can be given in radians with suffix <code class="docutils literal notranslate"><span class="pre">pi</span></code>,
+in addition to degrees (<code class="docutils literal notranslate"><span class="pre">d</span></code> or <code class="docutils literal notranslate"><span class="pre">°</span></code>), minutes (<code class="docutils literal notranslate"><span class="pre">m</span></code> or <code class="docutils literal notranslate"><span class="pre">'</span></code>) and seconds (<code class="docutils literal notranslate"><span class="pre">s</span></code> or <code class="docutils literal notranslate"><span class="pre">"</span></code>).</p>
+<p>The value is unbounded to allow for multiple turns.
+For example, with <code class="docutils literal notranslate"><span class="pre">r:</span> <span class="pre">0pi</span></code> in a key frame and <code class="docutils literal notranslate"><span class="pre">r:</span> <span class="pre">4pi</span></code> in the next one, the viewport would perform two full turns.</p>
+</section>
+<section id="elision">
+<h3>Elision</h3>
+<p>While all parameters can be omitted to denote no change from the previous frame,
+field of view and orientation parameters support key frame elision, with the ellipsis syntax: <code class="docutils literal notranslate"><span class="pre">...</span></code>.
+In this case, for the eluded parameter, it is like the key frame did not exist.
+This means the interpolation runs from the frame immediately before ellipsis until that immediately after ellipsis.
+Several successive key frames can be eluded, as demonstrated in the example below.</p>
+</section>
+<section id="control-points">
+<h3>Control points</h3>
+<p>It is possible to make the center trajectory smooth instead of piecewise linear,
+by defining intermediate control points (spline knots),
+which are positions the center must pass through between key frames.
+They are specified by providing <code class="docutils literal notranslate"><span class="pre">c</span></code> only (no time or any other parameter has to be specified).
+The following example is a ten-second circular trajectory with three intermediate knots:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">t</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0s</span>
+</span><span id="line-2"><span class="w">  </span><span class="nt">c</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">70%, 50%</span>
+</span><span id="line-3"><span class="w">  </span><span class="nt">s</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100%</span>
+</span><span id="line-4"><span class="w">  </span><span class="nt">r</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0°</span>
+</span><span id="line-5">
+</span><span id="line-6"><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">c</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50%, 70%</span>
+</span><span id="line-7">
+</span><span id="line-8"><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">c</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30%, 50%</span>
+</span><span id="line-9">
+</span><span id="line-10"><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">c</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50%, 30%</span>
+</span><span id="line-11">
+</span><span id="line-12"><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">t</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10s</span>
+</span><span id="line-13"><span class="w">  </span><span class="nt">c</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">70%, 50%</span>
+</span></code></pre></div>
+</div>
+</section>
+</section>
+<section id="example">
+<h2>Example</h2>
+<p>Consider the following sequence:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">t</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0s</span>
+</span><span id="line-2"><span class="w">  </span><span class="nt">c</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50%, 50%</span>
+</span><span id="line-3"><span class="w">  </span><span class="nt">s</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100% h</span>
+</span><span id="line-4"><span class="w">  </span><span class="nt">r</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0°</span>
+</span><span id="line-5">
+</span><span id="line-6"><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">t</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">+1s</span>
+</span><span id="line-7"><span class="w">  </span><span class="nt">r</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+</span><span id="line-8">
+</span><span id="line-9"><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">t</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">+10s</span>
+</span><span id="line-10"><span class="w">  </span><span class="nt">c</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">87%, 57%</span>
+</span><span id="line-11"><span class="w">  </span><span class="nt">s</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">20% w</span>
+</span><span id="line-12"><span class="w">  </span><span class="nt">r</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+</span><span id="line-13">
+</span><span id="line-14"><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">t</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">+5s</span>
+</span><span id="line-15"><span class="w">  </span><span class="nt">r</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+</span><span id="line-16">
+</span><span id="line-17"><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">t</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">+10s</span>
+</span><span id="line-18"><span class="w">  </span><span class="nt">c</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">60%, 72%</span>
+</span><span id="line-19"><span class="w">  </span><span class="nt">s</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100%</span>
+</span><span id="line-20"><span class="w">  </span><span class="nt">r</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+</span><span id="line-21">
+</span><span id="line-22"><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">t</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">+5s</span>
+</span><span id="line-23"><span class="w">  </span><span class="nt">r</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">-90°</span>
+</span><span id="line-24">
+</span><span id="line-25"><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">t</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">+5s</span>
+</span><span id="line-26"><span class="w">  </span><span class="nt">c</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50%, 50%</span>
+</span><span id="line-27"><span class="w">  </span><span class="nt">s</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100% h</span>
+</span><span id="line-28">
+</span><span id="line-29"><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">t</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">+1s</span>
+</span></code></pre></div>
+</div>
+<p>It consists in eight key frames:</p>
+<ol class="arabic simple">
+<li><p>The video starts with a full-height, centered and horizontal viewport.</p></li>
+<li><p>For one second, there is only a viewport rotation
+– which will run continuously until the sixth key frame to reach 90° clockwise rotation of the image.</p></li>
+<li><p>Then, in ten seconds, the viewport moves to position (87%, 57%) relative to the image extents,
+and we zoom until we the viewport width reaches 20% of the image width.</p></li>
+<li><p>For the next five seconds, only the roll angle continues to evolve.</p></li>
+<li><p>For ten seconds, we pan to position (60%, 72%) and zoom to 100% pixel size.</p></li>
+<li><p>Five seconds later, rotation stops.</p></li>
+<li><p>In the next five seconds, we go back to the center of the image and zoom out to reach full image height again.</p></li>
+<li><p>The video finally stays still for one second.</p></li>
+</ol>
+</section>
+</section>
+</div><div class="flex justify-between items-center pt-6 mt-12 border-t border-border gap-4">
+<div class="mr-auto">
+<a class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors border border-input hover:bg-accent hover:text-accent-foreground py-2 px-4" href="arrange.html">
+<svg class="mr-2 h-4 w-4" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<polyline points="15 18 9 12 15 6"></polyline>
+</svg>
+        azul arrange
+      </a>
+</div>
+<div class="ml-auto">
+<a class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors border border-input hover:bg-accent hover:text-accent-foreground py-2 px-4" href="pipelines.html">
+        Pipelines
+        <svg class="ml-2 h-4 w-4" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<polyline points="9 18 15 12 9 6"></polyline>
+</svg>
+</a>
+</div>
+</div></div><aside class="hidden text-sm xl:block" id="right-sidebar">
+<div class="sticky top-16 -mt-10 max-h-[calc(100vh-5rem)] h-full overflow-y-auto pt-6 space-y-2"><p class="font-medium">On this page</p>
+<ul>
+<li><a :data-current="activeSection === '#overview'" class="reference internal" href="#overview">Overview</a></li>
+<li><a :data-current="activeSection === '#input'" class="reference internal" href="#input">Input</a></li>
+<li><a :data-current="activeSection === '#output'" class="reference internal" href="#output">Output</a></li>
+<li><a :data-current="activeSection === '#viewport-parameters-interpolation'" class="reference internal" href="#viewport-parameters-interpolation">Viewport parameters interpolation</a></li>
+<li><a :data-current="activeSection === '#frame-capture'" class="reference internal" href="#frame-capture">Frame capture</a></li>
+<li><a :data-current="activeSection === '#sequence-file-syntax'" class="reference internal" href="#sequence-file-syntax">Sequence file syntax</a><ul>
+<li><a :data-current="activeSection === '#t-time'" class="reference internal" href="#t-time"><code class="docutils literal notranslate"><span class="pre">t:</span></code> Time</a></li>
+<li><a :data-current="activeSection === '#c-center'" class="reference internal" href="#c-center"><code class="docutils literal notranslate"><span class="pre">c:</span></code> Center</a></li>
+<li><a :data-current="activeSection === '#s-field-of-view'" class="reference internal" href="#s-field-of-view"><code class="docutils literal notranslate"><span class="pre">s:</span></code> Field of view</a></li>
+<li><a :data-current="activeSection === '#r-roll-angle'" class="reference internal" href="#r-roll-angle"><code class="docutils literal notranslate"><span class="pre">r:</span></code> Roll angle</a></li>
+<li><a :data-current="activeSection === '#elision'" class="reference internal" href="#elision">Elision</a></li>
+<li><a :data-current="activeSection === '#control-points'" class="reference internal" href="#control-points">Control points</a></li>
+</ul>
+</li>
+<li><a :data-current="activeSection === '#example'" class="reference internal" href="#example">Example</a></li>
+</ul>
+</div>
+</aside>
+</main>
+</div>
+</div><footer class="py-6 border-t border-border md:py-0">
+<div class="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
+<div class="flex flex-col items-center gap-4 px-8 md:flex-row md:gap-2 md:px-0">
+<p class="text-sm leading-loose text-center text-muted-foreground md:text-left">© 2025-2026, Antoine Basset (CNES) and contributors. Last updated: Jun 22, 2026. Built with <a class="font-medium underline underline-offset-4" href="https://www.sphinx-doc.org" rel="noreferrer">Sphinx 9.1.0</a></p>
+</div>
+</div>
+</footer>
+</div>
+<script src="_static/documentation_options.js?v=7f41d439"></script>
+<script src="_static/doctools.js?v=fd6eb6e6"></script>
+<script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+<script defer="defer" src="_static/theme.js?v=5db23cf8"></script>
+<script src="_static/sphinxcontrib-images/LightBox2/lightbox2/dist/js/lightbox-plus-jquery.min.js?v=f0ca4bb6"></script>
+<script src="_static/sphinxcontrib-images/LightBox2/lightbox2-customize/jquery-noconflict.js?v=12818e64"></script>
+</body>
+</html>

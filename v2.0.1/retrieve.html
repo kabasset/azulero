@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+
+<html :class="{ 'dark' : darkMode === true }" data-content_root="./" lang="en" x-data="{ darkMode: $persist(window.matchMedia('(prefers-color-scheme: dark)').matches), activeSection: ''}">
+<head>
+<script>
+    (function () {
+      // Set initial color scheme
+      if ((localStorage.getItem("_x_darkMode") === "true") || (window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+        document.documentElement.classList.add("dark");
+      }
+
+      // Watch for media preference changes
+      window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (event) => {
+        localStorage.setItem("_x_darkMode", event.matches);
+        document.documentElement.classList.toggle("dark", event.matches);
+      });
+    })();
+  </script>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta charset="utf-8"/>
+<meta content="#ffffff" media="(prefers-color-scheme: light)" name="theme-color"/>
+<meta content="#030711" media="(prefers-color-scheme: dark)" name="theme-color"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>azul retrieve | Azulero 2.0.1</title>
+<meta content="azul retrieve | Azulero 2.0.1" property="og:title"/>
+<meta content="azul retrieve | Azulero 2.0.1" name="twitter:title"/>
+<link href="_static/pygments.css?v=e72c8e07" rel="stylesheet" type="text/css"/>
+<link href="_static/theme.css?v=d6d7c91b" rel="stylesheet" type="text/css"/>
+<link href="_static/sphinxcontrib-images/LightBox2/lightbox2/dist/css/lightbox.min.css?v=6e7d0de0" rel="stylesheet" type="text/css"/>
+<link href="_static/sphinxcontrib-images/LightBox2/lightbox2-customize/pointer.css?v=c97663ff" rel="stylesheet" type="text/css"/>
+<link href="_static/code.css?v=7ade5f64" rel="stylesheet" type="text/css"/>
+<link href="_static/figures.css?v=1baf8845" rel="stylesheet" type="text/css"/>
+<link href="_static/lists.css?v=79f77f08" rel="stylesheet" type="text/css"/>
+<link href="_static/favicon.png" rel="icon"/>
+<link href="search.html" rel="search" title="Search"/>
+<link href="process.html" rel="next" title="azul process"/>
+<link href="interfaces.html" rel="prev" title="General interface design"/>
+</head>
+<body :class="{ 'overflow-hidden': showSidebar }" class="min-h-screen font-sans antialiased bg-background text-foreground" x-data="{ showSidebar: false, showScrollTop: false }">
+<div @click.self="showSidebar = false" class="fixed inset-0 z-50 overflow-hidden bg-background/80 backdrop-blur-sm md:hidden" x-cloak="" x-show="showSidebar"></div><div class="relative flex flex-col min-h-screen" id="page"><a class="absolute top-0 left-0 z-[100] block bg-background p-4 text-xl transition -translate-x-full opacity-0 focus:translate-x-0 focus:opacity-100" href="#content">
+      Skip to content
+    </a><header class="sticky top-0 z-40 w-full border-b shadow-xs border-border bg-background/90 backdrop-blur"><div class="container flex items-center h-14">
+<div class="hidden mr-4 md:flex">
+<a class="flex items-center mr-6" href="index.html">
+<img alt="Logo" class="mr-2 hidden dark:block" height="24" src="_static/favicon.png" width="24"/>
+<img alt="Logo" class="mr-2 dark:hidden" height="24" src="_static/favicon.png" width="24"/><span class="hidden font-bold sm:inline-block text-clip whitespace-nowrap">Azulero 2.0.1</span>
+</a><nav class="flex items-center gap-6 text-sm font-medium">
+<a class="transition-colors hover:text-foreground/80 text-foreground/60" href="https://kabasset.github.io/azulero/versions/index.html" rel="noopener nofollow">Versions</a>
+<a class="transition-colors hover:text-foreground/80 text-foreground/60" href="https://github.com/kabasset/azulero/issues/new" rel="noopener nofollow">New issue</a>
+</nav></div><button @click="showSidebar = true" class="inline-flex items-center justify-center h-10 px-0 py-2 mr-2 text-base font-medium transition-colors rounded-md hover:text-accent-foreground hover:bg-transparent md:hidden" type="button">
+<svg aria-hidden="true" fill="currentColor" height="24" viewbox="0 96 960 960" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M152.587 825.087q-19.152 0-32.326-13.174t-13.174-32.326q0-19.152 13.174-32.326t32.326-13.174h440q19.152 0 32.326 13.174t13.174 32.326q0 19.152-13.174 32.326t-32.326 13.174h-440Zm0-203.587q-19.152 0-32.326-13.174T107.087 576q0-19.152 13.174-32.326t32.326-13.174h320q19.152 0 32.326 13.174T518.087 576q0 19.152-13.174 32.326T472.587 621.5h-320Zm0-203.587q-19.152 0-32.326-13.174t-13.174-32.326q0-19.152 13.174-32.326t32.326-13.174h440q19.152 0 32.326 13.174t13.174 32.326q0 19.152-13.174 32.326t-32.326 13.174h-440ZM708.913 576l112.174 112.174q12.674 12.674 12.674 31.826t-12.674 31.826Q808.413 764.5 789.261 764.5t-31.826-12.674l-144-144Q600 594.391 600 576t13.435-31.826l144-144q12.674-12.674 31.826-12.674t31.826 12.674q12.674 12.674 12.674 31.826t-12.674 31.826L708.913 576Z"></path>
+</svg>
+<span class="sr-only">Toggle navigation menu</span>
+</button>
+<div class="flex items-center justify-between flex-1 gap-2 sm:gap-4 md:justify-end">
+<div class="flex-1 w-full md:w-auto md:flex-none"><form @keydown.k.window.meta="$refs.search.focus()" action="search.html" class="relative flex items-center group" id="searchbox" method="get">
+<input aria-label="Search the docs" class="inline-flex items-center font-medium transition-colors bg-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-offset-background border border-input hover:bg-accent focus:bg-accent hover:text-accent-foreground focus:text-accent-foreground hover:placeholder-accent-foreground py-2 px-4 relative h-9 w-full justify-start rounded-[0.5rem] text-sm text-muted-foreground sm:pr-12 md:w-40 lg:w-64" id="search-input" name="q" placeholder="Search ..." type="search" x-ref="search"/>
+<kbd class="pointer-events-none absolute right-1.5 top-2 hidden h-5 select-none text-muted-foreground items-center gap-1 rounded border border-border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex group-hover:bg-accent group-hover:text-accent-foreground">
+<span class="text-xs">⌘</span>
+    K
+  </kbd>
+</form>
+</div>
+<nav class="flex items-center gap-1">
+<a href="https://github.com/kabasset/azulero" rel="noopener nofollow" title="Visit repository on GitHub">
+<div class="inline-flex items-center justify-center px-0 text-sm font-medium transition-colors rounded-md hover:bg-accent hover:text-accent-foreground h-9 w-9">
+<svg fill="currentColor" height="16px" style="margin-top:-2px;display:inline" viewbox="0 0 45 44" xmlns="http://www.w3.org/2000/svg"><path clip-rule="evenodd" d="M22.477.927C10.485.927.76 10.65.76 22.647c0 9.596 6.223 17.736 14.853 20.608 1.087.2 1.483-.47 1.483-1.047 0-.516-.019-1.881-.03-3.693-6.04 1.312-7.315-2.912-7.315-2.912-.988-2.51-2.412-3.178-2.412-3.178-1.972-1.346.149-1.32.149-1.32 2.18.154 3.327 2.24 3.327 2.24 1.937 3.318 5.084 2.36 6.321 1.803.197-1.403.759-2.36 1.379-2.903-4.823-.548-9.894-2.412-9.894-10.734 0-2.37.847-4.31 2.236-5.828-.224-.55-.969-2.759.214-5.748 0 0 1.822-.584 5.972 2.226 1.732-.482 3.59-.722 5.437-.732 1.845.01 3.703.25 5.437.732 4.147-2.81 5.967-2.226 5.967-2.226 1.185 2.99.44 5.198.217 5.748 1.392 1.517 2.232 3.457 2.232 5.828 0 8.344-5.078 10.18-9.916 10.717.779.67 1.474 1.996 1.474 4.021 0 2.904-.027 5.247-.027 5.96 0 .58.392 1.256 1.493 1.044C37.981 40.375 44.2 32.24 44.2 22.647c0-11.996-9.726-21.72-21.722-21.72" fill="currentColor" fill-rule="evenodd"></path></svg>
+</div>
+</a>
+<button @click="darkMode = !darkMode" class="relative inline-flex items-center justify-center px-0 text-sm font-medium transition-colors rounded-md hover:bg-accent hover:text-accent-foreground h-9 w-9" title="Toggle color scheme" type="button">
+<svg class="absolute transition-all scale-100 rotate-0 dark:-rotate-90 dark:scale-0" fill="currentColor" height="16" viewbox="0 96 960 960" width="16" xmlns="http://www.w3.org/2000/svg">
+<path d="M480 685q45.456 0 77.228-31.772Q589 621.456 589 576q0-45.456-31.772-77.228Q525.456 467 480 467q-45.456 0-77.228 31.772Q371 530.544 371 576q0 45.456 31.772 77.228Q434.544 685 480 685Zm0 91q-83 0-141.5-58.5T280 576q0-83 58.5-141.5T480 376q83 0 141.5 58.5T680 576q0 83-58.5 141.5T480 776ZM80 621.5q-19.152 0-32.326-13.174T34.5 576q0-19.152 13.174-32.326T80 530.5h80q19.152 0 32.326 13.174T205.5 576q0 19.152-13.174 32.326T160 621.5H80Zm720 0q-19.152 0-32.326-13.174T754.5 576q0-19.152 13.174-32.326T800 530.5h80q19.152 0 32.326 13.174T925.5 576q0 19.152-13.174 32.326T880 621.5h-80Zm-320-320q-19.152 0-32.326-13.174T434.5 256v-80q0-19.152 13.174-32.326T480 130.5q19.152 0 32.326 13.174T525.5 176v80q0 19.152-13.174 32.326T480 301.5Zm0 720q-19.152 0-32.326-13.17Q434.5 995.152 434.5 976v-80q0-19.152 13.174-32.326T480 850.5q19.152 0 32.326 13.174T525.5 896v80q0 19.152-13.174 32.33-13.174 13.17-32.326 13.17ZM222.174 382.065l-43-42Q165.5 327.391 166 308.239t13.174-33.065q13.435-13.674 32.587-13.674t32.065 13.674l42.239 43q12.674 13.435 12.555 31.706-.12 18.272-12.555 31.946-12.674 13.674-31.445 13.413-18.772-.261-32.446-13.174Zm494 494.761-42.239-43q-12.674-13.435-12.674-32.087t12.674-31.565Q686.609 756.5 705.38 757q18.772.5 32.446 13.174l43 41.761Q794.5 824.609 794 843.761t-13.174 33.065Q767.391 890.5 748.239 890.5t-32.065-13.674Zm-42-494.761Q660.5 369.391 661 350.62q.5-18.772 13.174-32.446l41.761-43Q728.609 261.5 747.761 262t33.065 13.174q13.674 13.435 13.674 32.587t-13.674 32.065l-43 42.239q-13.435 12.674-31.706 12.555-18.272-.12-31.946-12.555Zm-495 494.761Q165.5 863.391 165.5 844.239t13.674-32.065l43-42.239q13.435-12.674 32.087-12.674t31.565 12.674Q299.5 782.609 299 801.38q-.5 18.772-13.174 32.446l-41.761 43Q231.391 890.5 212.239 890t-33.065-13.174ZM480 576Z"></path>
+</svg>
+<svg class="absolute transition-all scale-0 rotate-90 dark:rotate-0 dark:scale-100" fill="currentColor" height="16" viewbox="0 96 960 960" width="16" xmlns="http://www.w3.org/2000/svg">
+<path d="M480 936q-151 0-255.5-104.5T120 576q0-138 90-239.5T440 218q25-3 39 18t-1 44q-17 26-25.5 55t-8.5 61q0 90 63 153t153 63q31 0 61.5-9t54.5-25q21-14 43-1.5t19 39.5q-14 138-117.5 229T480 936Zm0-80q88 0 158-48.5T740 681q-20 5-40 8t-40 3q-123 0-209.5-86.5T364 396q0-20 3-40t8-40q-78 32-126.5 102T200 576q0 116 82 198t198 82Zm-10-270Z"></path>
+</svg>
+</button>
+</nav>
+</div>
+</div>
+</header>
+<div class="flex-1"><div class="container md:grid md:grid-cols-[220px_minmax(0,1fr)] md:gap-6 lg:grid-cols-[240px_minmax(0,1fr)] lg:gap-10"><aside :aria-hidden="!showSidebar" :class="{ 'translate-x-0': showSidebar }" class="fixed inset-y-0 left-0 md:top-14 z-50 md:z-30 bg-background md:bg-transparent transition-all duration-100 -translate-x-full md:translate-x-0 ml-0 p-6 md:p-0 md:-ml-2 md:h-[calc(100vh-3.5rem)] w-5/6 md:w-full overflow-y-auto border-r border-border md:sticky" id="left-sidebar">
+<a class="justify-start text-sm md:!hidden bg-background" href="index.html">
+<img alt="Logo" class="mr-2 hidden dark:block" height="16" src="_static/favicon.png" width="16"/>
+<img alt="Logo" class="mr-2 dark:hidden" height="16" src="_static/favicon.png" width="16"/><span class="font-bold text-clip whitespace-nowrap">Azulero 2.0.1</span>
+</a>
+<div class="relative overflow-hidden md:overflow-auto my-4 md:my-0">
+<div class="overflow-y-auto h-full w-full relative pr-6"><nav class="flex md:hidden flex-col font-medium mt-4">
+<a href="https://kabasset.github.io/azulero/versions/index.html" rel="nofollow noopener">Versions</a>
+<a href="https://github.com/kabasset/azulero/issues/new" rel="nofollow noopener">New issue</a>
+</nav><nav class="table w-full min-w-full my-6 lg:my-8">
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">Azulero 2.0.1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="primer.html">A Euclid primer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="news.html">What’s new</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="interfaces.html">General interface design</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="process.html"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="arrange.html"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">arrange</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="roam.html"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">roam</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="pipelines.html">Pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changes.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="devnotes.html">Developer notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai.html">Generative AI use</a></li>
+</ul>
+</nav>
+</div>
+</div>
+<button @click="showSidebar = false" class="absolute md:hidden right-4 top-4 rounded-sm opacity-70 transition-opacity hover:opacity-100" type="button">
+<svg class="h-4 w-4" fill="currentColor" height="24" stroke="none" viewbox="0 96 960 960" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M480 632 284 828q-11 11-28 11t-28-11q-11-11-11-28t11-28l196-196-196-196q-11-11-11-28t11-28q11-11 28-11t28 11l196 196 196-196q11-11 28-11t28 11q11 11 11 28t-11 28L536 576l196 196q11 11 11 28t-11 28q-11 11-28 11t-28-11L480 632Z"></path>
+</svg>
+</button>
+</aside>
+<main class="relative py-6 lg:gap-10 lg:py-8 xl:grid xl:grid-cols-[1fr_300px]">
+<div class="w-full min-w-0 mx-auto">
+<div id="content" role="main">
+<section id="azul-retrieve">
+<h1><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code></h1>
+<section id="overview">
+<h2>Overview</h2>
+<p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code> finds and downloads Euclid MER data which contain specified <strong>targets</strong>,
+such as coordinates or named astronomical objects.
+A radius can be specified to download only a region of the tiles.
+The retrieved files are organized in directories we call <strong>workdirs</strong> (see <a class="reference internal" href="interfaces.html#workspace"><span class="std std-ref">Workspace, input and output paths</span></a>).</p>
+<p>As depicted below, <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code> consists of two main steps:</p>
+<ol class="arabic simple">
+<li><p>Querying the indices of the tiles which contain input targets;</p></li>
+<li><p>Downloading the data files in full or in part.</p></li>
+</ol>
+<figure class="align-center">
+<p class="plantuml">
+<object data="_images/plantuml-3120741dce64d5c5399eca257e8bbb99eb51f64f.svg" style="max-width:100%" type="image/svg+xml">
+<img alt="card target {
+}
+
+object Query {
+--from
+--dsr
+-n
+}
+object Download {
+-q
+-r
+-f
+}
+
+folder workdir {
+}
+
+target --&gt; Query
+Query -&gt; Download
+Download --&gt; workdir" src="_images/plantuml-3120741dce64d5c5399eca257e8bbb99eb51f64f.png"/>
+</object></p>
+</figure>
+</section>
+<section id="inputs">
+<h2>Inputs</h2>
+<p>The command takes as input the list of targets, which may be of different types:</p>
+<dl class="simple">
+<dt>Tiles</dt><dd><p>Integers are parsed as tile indices.</p>
+</dd>
+<dt>Coordinates</dt><dd><p>If the target contains a comma, it is considered as RA/Dec coordinates
+in degrees, using ICRS reference frame.</p>
+</dd>
+<dt>Named objects</dt><dd><p>Other types of input are parsed as object names.
+Their coordinates are looked up in the <a class="reference external" href="https://cds.unistra.fr/cgi-bin/Sesame">CDS name resolver</a>.</p>
+</dd>
+</dl>
+<p>For example, the following command would retrieve the tiles covering targets of each type:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">$ </span>azul<span class="w"> </span>retrieve<span class="w"> </span><span class="ge">NGC6505</span><span class="w"> </span><span class="m">270</span>.93,67.05<span class="w"> </span><span class="ge">102157949</span>
+</span></code></pre></div>
+</div>
+<p>If the target <em>has to</em> contain spaces or special characters, the argument must be given between quotes.
+In general, spaces can be omitted, though, such that the two following lines are equivalent:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">$ </span>azul<span class="w"> </span>retrieve<span class="w"> </span><span class="ge">"</span><span class="s2">NGC 6505</span><span class="ge">"</span>
+</span><span id="line-2"><span class="gp">$ </span>azul<span class="w"> </span>retrieve<span class="w"> </span>NGC6505
+</span></code></pre></div>
+</div>
+</section>
+<section id="outputs">
+<h2>Outputs</h2>
+<p>The files are downloaded into a dedicated workdir for each target
+(the current directory by default).
+It can be set with global option <code class="docutils literal notranslate"><span class="pre">--workspace</span></code>:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">$ </span>azul<span class="w"> </span><span class="ge">--workspace</span><span class="w"> </span>/tmp<span class="w"> </span>retrieve<span class="w"> </span>NGC6505<span class="w"> </span><span class="m">270</span>.93,67.05<span class="w"> </span><span class="m">102157949</span><span class="w"> </span>PGC61356
+</span></code></pre></div>
+</div>
+<p>The way the workspace is structured depends on the output template parameter <code class="docutils literal notranslate"><span class="pre">-o</span></code>.
+The template is rendered as follows:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Placeholder name</p></th>
+<th class="head"><p>Substitution value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">{workspace}</span></code></p></td>
+<td><p>Workspace path</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">{tile}</span></code></p></td>
+<td><p>Resolved target tile index</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">{target}</span></code></p></td>
+<td><p>Verbatim target argument in command line, or nothing if the target is a tile index</p></td>
+</tr>
+</tbody>
+</table>
+<p>By default, the workdirs are named after the targets, grouped by tile index.
+At the time of writing, the above command creates the following workdirs inside workspace <code class="docutils literal notranslate"><span class="pre">/tmp</span></code>:</p>
+<p class="plantuml">
+<object data="_images/plantuml-93e04f04a754646785c4285da549496a43edde29.svg" style="max-width:100%" type="image/svg+xml">
+<img alt="@startfiles
+/tmp/101832848/NGC6505/
+/tmp/101832849/NGC6505/
+/tmp/101836362/270.93,67.05/
+/tmp/101836362/PGC61356/
+/tmp/102157949/
+/tmp/102158889/NGC6505/
+/tmp/102159776/270.93,67.05/
+/tmp/102159776/PGC61356/
+@endfiles" src="_images/plantuml-93e04f04a754646785c4285da549496a43edde29.png"/>
+</object></p>
+<p>Several tiles (101832848 and 101832849) cover a single target (NGC6505),
+such that several workdirs are created for each of them.
+Conversely, several targets (270.93,67.05 and PGC61356) belong a same tile (101836362),
+in which case workdirs have a common parent tile folder.</p>
+</section>
+<section id="query">
+<h2>Query</h2>
+<p>The querying phase consists in finding the tile indices of the input coordinates and resolved objects,
+as well as the names of the files to be downloaded.</p>
+<p>This step relies on what we call a <strong>data provider</strong>, passed to option <code class="docutils literal notranslate"><span class="pre">--from</span></code>
+(or through environment variable <code class="docutils literal notranslate"><span class="pre">AZULRETRIEVE_FROM</span></code>).
+and applies to all of the targets of the command line:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">$ </span>azul<span class="w"> </span>retrieve<span class="w"> </span>NGC6505<span class="w"> </span><span class="m">270</span>.93,67.05<span class="w"> </span><span class="m">102157949</span><span class="w"> </span><span class="ge">--from</span><span class="w"> </span>pdr
+</span></code></pre></div>
+</div>
+<p>There are several such providers, which store different sets of data:</p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">pdr</span></code> (Public Data Releases)</dt><dd><p>Contains all public data.
+This is the only provider which does not require authentication.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">idr</span></code> (Internal Data Releases)</dt><dd><p>Contains data under embargo which will later be released publicly.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">otf</span></code> (on-the-fly)</dt><dd><p>Contains unreleased data from the Euclid Science Archive.
+It is updated from time to time between data releases.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">dss</span></code> (Distributed Storage System)</dt><dd><p>Contains everything but is much slower than other providers.</p>
+</dd>
+</dl>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Provider <code class="docutils literal notranslate"><span class="pre">dss</span></code> does not natively support named objects and coordinates retrieval.</p>
+<p>A <a class="reference external" href="https://gitlab.euclid-sgs.uk/sy-tools/ST_SMT_DATA/-/raw/DR1/data/DpdMerFinalCatalog.geojson?ref_type=heads">MER tiling file</a>
+must be given to option <code class="docutils literal notranslate"><span class="pre">--tiling</span></code>.
+This is a temporary workaround which we hope to improve in a future version.</p>
+</div>
+<p>Option <code class="docutils literal notranslate"><span class="pre">--dsr</span></code> is used to restrict the returned tiles according to the value of their <code class="docutils literal notranslate"><span class="pre">DataSetRelease</span></code> attribute.
+By default, dataset releases for Q1 and DR1 releases are enabled.</p>
+<p>Option <code class="docutils literal notranslate"><span class="pre">-n</span></code> limits the number of tiles returned by target.
+This is especially handy when one wants to get exactly one image per target (<code class="docutils literal notranslate"><span class="pre">-n</span> <span class="pre">1</span></code>).</p>
+</section>
+<section id="download">
+<h2>Download</h2>
+<p>When retrieving coordinates or named objects, a cone radius can be passed as option <code class="docutils literal notranslate"><span class="pre">-r</span></code>,
+which triggers a cutout service and downloads only a square region around the target.
+All formats handled by Astropy’s <code class="docutils literal notranslate"><span class="pre">Angle</span></code> are accepted.</p>
+<p>The radius applies to all coordinates and named objects of the command line,
+but not to the tile targets.
+Therefore, the following line:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">$ </span>azul<span class="w"> </span>retrieve<span class="w"> </span>NGC6505<span class="w"> </span><span class="m">270</span>.93,67.05<span class="w"> </span><span class="m">102157949</span><span class="w"> </span><span class="ge">-r</span><span class="w"> </span>1m
+</span></code></pre></div>
+</div>
+<p>downloads 2’ x 2’ regions for NGC6505 and (270.93, 67.05), as well as the whole 102157949 tile.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Provider <code class="docutils literal notranslate"><span class="pre">dss</span></code> does not natively support the cutout service.</p>
+<p>A full tile will be downloaded and cut locally.
+Ensure that the workdirs and tiledirs as specified with option <code class="docutils literal notranslate"><span class="pre">-o</span></code> are distinct
+(this is the case with the default value).</p>
+</div>
+<p>Flag <code class="docutils literal notranslate"><span class="pre">-q</span></code> stands for “query only” and interrupts the command before effectively downloading data,
+such that the file names you look for will be returned but no file download will happen.</p>
+<p>By default, if a file to be downloaded already exists in the specified workdir, it is skipped.
+This behavior can be changed by forcing downloads with flag <code class="docutils literal notranslate"><span class="pre">-f</span></code>.
+In this case, files which already exist will be overwritten.
+This option is particularly useful to force the download of targets with same file names,
+e.g. same target with different cutout radii.</p>
+</section>
+<section id="more-on-data-providers">
+<h2>More on data providers</h2>
+<p>What we call a data provider is in fact a couple of Euclid components:
+a database and a data store.</p>
+<p>Querying relies on a database for finding the tile indices and MER file names.
+There are two such databases provided by the Euclid Archive System (EAS):</p>
+<ul class="simple">
+<li><p>The database of the Euclid Science Archive, formerly known as Science Archive Service
+(EAS-SAS, which we still name SAS in Azulero because ESA’s EAS-ESA is funny while we are not);</p></li>
+<li><p>The Data Processing System (EAS-DPS or DPS in short).</p></li>
+</ul>
+<p>The SAS offers the spatial query and cutout service but does not know of all of the internal data,
+while the DPS does reference everything but does not offer the spatial query
+(at least, not in a reasonable amount of time) or the cutout service.</p>
+<p>Once the file names have been resolved, the files are downloaded from a data store.
+The DSS is the storage associated to the DPS.
+The other providers are bound to the SAS storage.
+Therefore, selecting provider DSS means accessing metadata from the DPS and data from the DSS.
+Only the latter is specified to <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code>, and the former is deduced
+(same goes for the other data providers with the SAS).</p>
+</section>
+</section>
+</div><div class="flex justify-between items-center pt-6 mt-12 border-t border-border gap-4">
+<div class="mr-auto">
+<a class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors border border-input hover:bg-accent hover:text-accent-foreground py-2 px-4" href="interfaces.html">
+<svg class="mr-2 h-4 w-4" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<polyline points="15 18 9 12 15 6"></polyline>
+</svg>
+        General interface design
+      </a>
+</div>
+<div class="ml-auto">
+<a class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors border border-input hover:bg-accent hover:text-accent-foreground py-2 px-4" href="process.html">
+        azul process
+        <svg class="ml-2 h-4 w-4" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<polyline points="9 18 15 12 9 6"></polyline>
+</svg>
+</a>
+</div>
+</div></div><aside class="hidden text-sm xl:block" id="right-sidebar">
+<div class="sticky top-16 -mt-10 max-h-[calc(100vh-5rem)] h-full overflow-y-auto pt-6 space-y-2"><p class="font-medium">On this page</p>
+<ul>
+<li><a :data-current="activeSection === '#overview'" class="reference internal" href="#overview">Overview</a></li>
+<li><a :data-current="activeSection === '#inputs'" class="reference internal" href="#inputs">Inputs</a></li>
+<li><a :data-current="activeSection === '#outputs'" class="reference internal" href="#outputs">Outputs</a></li>
+<li><a :data-current="activeSection === '#query'" class="reference internal" href="#query">Query</a></li>
+<li><a :data-current="activeSection === '#download'" class="reference internal" href="#download">Download</a></li>
+<li><a :data-current="activeSection === '#more-on-data-providers'" class="reference internal" href="#more-on-data-providers">More on data providers</a></li>
+</ul>
+</div>
+</aside>
+</main>
+</div>
+</div><footer class="py-6 border-t border-border md:py-0">
+<div class="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
+<div class="flex flex-col items-center gap-4 px-8 md:flex-row md:gap-2 md:px-0">
+<p class="text-sm leading-loose text-center text-muted-foreground md:text-left">© 2025-2026, Antoine Basset (CNES) and contributors. Last updated: Jun 22, 2026. Built with <a class="font-medium underline underline-offset-4" href="https://www.sphinx-doc.org" rel="noreferrer">Sphinx 9.1.0</a></p>
+</div>
+</div>
+</footer>
+</div>
+<script src="_static/documentation_options.js?v=7f41d439"></script>
+<script src="_static/doctools.js?v=fd6eb6e6"></script>
+<script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+<script defer="defer" src="_static/theme.js?v=5db23cf8"></script>
+<script src="_static/sphinxcontrib-images/LightBox2/lightbox2/dist/js/lightbox-plus-jquery.min.js?v=f0ca4bb6"></script>
+<script src="_static/sphinxcontrib-images/LightBox2/lightbox2-customize/jquery-noconflict.js?v=12818e64"></script>
+</body>
+</html>
