@@ -120,6 +120,16 @@
 <section id="change-log">
 <h1>Change log</h1>
 <section id="id1">
+<h2>2.0.1</h2>
+<section id="bug-fixes">
+<h3>Bug fixes</h3>
+<p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code></p>
+<ul class="simple">
+<li><p>Sometimes a Python error was raised when multiple observations of the same field had to be stacked.</p></li>
+</ul>
+</section>
+</section>
+<section id="id2">
 <h2>2.0.0</h2>
 <section id="breaking-changes">
 <h3>Breaking changes</h3>
@@ -164,7 +174,7 @@
 <li><p>Start and stop frames are passed with slicing notation.</p></li>
 </ul>
 </section>
-<section id="bug-fixes">
+<section id="id3">
 <h3>Bug fixes</h3>
 <ul class="simple">
 <li><p>Unit tests were fixed.</p></li>
@@ -249,9 +259,9 @@ which cannot handle positions around RA = 0° = 360° or dec = +/-90°
 </ul>
 </section>
 </section>
-<section id="id2">
+<section id="id4">
 <h2>1.2.0</h2>
-<section id="id3">
+<section id="id5">
 <h3>New features</h3>
 <p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">find</span></code></p>
 <ul class="simple">
@@ -293,7 +303,7 @@ and an <code class="docutils literal notranslate"><span class="pre">azul</span> 
 <li><p>Image pyramids are built to speed up rendering of frames with wide fields of view.</p></li>
 </ul>
 </section>
-<section id="id4">
+<section id="id6">
 <h3>Known issues</h3>
 <p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">find</span></code></p>
 <ul class="simple">
@@ -312,9 +322,9 @@ which cannot handle positions around RA = 0° = 360° or dec = +/-90°
 </ul>
 </section>
 </section>
-<section id="id5">
+<section id="id7">
 <h2>1.1.1</h2>
-<section id="id6">
+<section id="id8">
 <h3>Bug fixes</h3>
 <p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code></p>
 <ul class="simple">
@@ -322,16 +332,16 @@ which cannot handle positions around RA = 0° = 360° or dec = +/-90°
 </ul>
 </section>
 </section>
-<section id="id7">
+<section id="id9">
 <h2>1.1.0</h2>
-<section id="id8">
+<section id="id10">
 <h3>Bug fixes</h3>
 <p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">crop</span></code></p>
 <ul class="simple">
 <li><p>Command did crash when reading the image.</p></li>
 </ul>
 </section>
-<section id="id9">
+<section id="id11">
 <h3>New features</h3>
 <p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code></p>
 <ul class="simple">
@@ -339,7 +349,7 @@ which cannot handle positions around RA = 0° = 360° or dec = +/-90°
 provider).</p></li>
 </ul>
 </section>
-<section id="id10">
+<section id="id12">
 <h3>Improvements</h3>
 <p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code></p>
 <ul class="simple">
@@ -347,7 +357,7 @@ provider).</p></li>
 <li><p>Ouput(s) can be written anywhere, not only in the tile folder.</p></li>
 </ul>
 </section>
-<section id="id11">
+<section id="id13">
 <h3>Optimization</h3>
 <p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code></p>
 <ul class="simple">
@@ -355,7 +365,7 @@ provider).</p></li>
 </ul>
 </section>
 </section>
-<section id="id12">
+<section id="id14">
 <h2>1.0.0</h2>
 <section id="initial-features">
 <h3>Initial features</h3>
@@ -383,7 +393,7 @@ interface.</p></li>
 <li><p>Produce a pan-and-zoom video from an image.</p></li>
 </ul>
 </section>
-<section id="id13">
+<section id="id15">
 <h3>Known issues</h3>
 <p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">find</span></code></p>
 <ul class="simple">
@@ -423,35 +433,39 @@ which cannot handle positions around RA = 0° = 360° or dec = +/-90°
 </div></div><aside class="hidden text-sm xl:block" id="right-sidebar">
 <div class="sticky top-16 -mt-10 max-h-[calc(100vh-5rem)] h-full overflow-y-auto pt-6 space-y-2"><p class="font-medium">On this page</p>
 <ul>
-<li><a :data-current="activeSection === '#id1'" class="reference internal" href="#id1">2.0.0</a><ul>
-<li><a :data-current="activeSection === '#breaking-changes'" class="reference internal" href="#breaking-changes">Breaking changes</a></li>
+<li><a :data-current="activeSection === '#id1'" class="reference internal" href="#id1">2.0.1</a><ul>
 <li><a :data-current="activeSection === '#bug-fixes'" class="reference internal" href="#bug-fixes">Bug fixes</a></li>
+</ul>
+</li>
+<li><a :data-current="activeSection === '#id2'" class="reference internal" href="#id2">2.0.0</a><ul>
+<li><a :data-current="activeSection === '#breaking-changes'" class="reference internal" href="#breaking-changes">Breaking changes</a></li>
+<li><a :data-current="activeSection === '#id3'" class="reference internal" href="#id3">Bug fixes</a></li>
 <li><a :data-current="activeSection === '#new-features'" class="reference internal" href="#new-features">New features</a></li>
 <li><a :data-current="activeSection === '#cleaning'" class="reference internal" href="#cleaning">Cleaning</a></li>
 <li><a :data-current="activeSection === '#known-issues'" class="reference internal" href="#known-issues">Known issues</a></li>
 </ul>
 </li>
-<li><a :data-current="activeSection === '#id2'" class="reference internal" href="#id2">1.2.0</a><ul>
-<li><a :data-current="activeSection === '#id3'" class="reference internal" href="#id3">New features</a></li>
+<li><a :data-current="activeSection === '#id4'" class="reference internal" href="#id4">1.2.0</a><ul>
+<li><a :data-current="activeSection === '#id5'" class="reference internal" href="#id5">New features</a></li>
 <li><a :data-current="activeSection === '#improvements'" class="reference internal" href="#improvements">Improvements</a></li>
 <li><a :data-current="activeSection === '#optimization'" class="reference internal" href="#optimization">Optimization</a></li>
-<li><a :data-current="activeSection === '#id4'" class="reference internal" href="#id4">Known issues</a></li>
+<li><a :data-current="activeSection === '#id6'" class="reference internal" href="#id6">Known issues</a></li>
 </ul>
 </li>
-<li><a :data-current="activeSection === '#id5'" class="reference internal" href="#id5">1.1.1</a><ul>
-<li><a :data-current="activeSection === '#id6'" class="reference internal" href="#id6">Bug fixes</a></li>
-</ul>
-</li>
-<li><a :data-current="activeSection === '#id7'" class="reference internal" href="#id7">1.1.0</a><ul>
+<li><a :data-current="activeSection === '#id7'" class="reference internal" href="#id7">1.1.1</a><ul>
 <li><a :data-current="activeSection === '#id8'" class="reference internal" href="#id8">Bug fixes</a></li>
-<li><a :data-current="activeSection === '#id9'" class="reference internal" href="#id9">New features</a></li>
-<li><a :data-current="activeSection === '#id10'" class="reference internal" href="#id10">Improvements</a></li>
-<li><a :data-current="activeSection === '#id11'" class="reference internal" href="#id11">Optimization</a></li>
 </ul>
 </li>
-<li><a :data-current="activeSection === '#id12'" class="reference internal" href="#id12">1.0.0</a><ul>
+<li><a :data-current="activeSection === '#id9'" class="reference internal" href="#id9">1.1.0</a><ul>
+<li><a :data-current="activeSection === '#id10'" class="reference internal" href="#id10">Bug fixes</a></li>
+<li><a :data-current="activeSection === '#id11'" class="reference internal" href="#id11">New features</a></li>
+<li><a :data-current="activeSection === '#id12'" class="reference internal" href="#id12">Improvements</a></li>
+<li><a :data-current="activeSection === '#id13'" class="reference internal" href="#id13">Optimization</a></li>
+</ul>
+</li>
+<li><a :data-current="activeSection === '#id14'" class="reference internal" href="#id14">1.0.0</a><ul>
 <li><a :data-current="activeSection === '#initial-features'" class="reference internal" href="#initial-features">Initial features</a></li>
-<li><a :data-current="activeSection === '#id13'" class="reference internal" href="#id13">Known issues</a></li>
+<li><a :data-current="activeSection === '#id15'" class="reference internal" href="#id15">Known issues</a></li>
 </ul>
 </li>
 </ul>
