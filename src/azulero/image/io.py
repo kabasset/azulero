@@ -145,9 +145,12 @@ def _average(slices: list):
     """
     Average arrays while discarding zeros.
     """
-    if n := slices.count(None):
-        logger.warning(f"Invalid input(s) discarded: {n}/{len(slices)}")
-    stack = np.stack([s for s in slices if s is not None])
+    valid_slices = [s for s in slices if s is not None]
+    if len(valid_slices) < len(slices):
+        logger.warning(
+            f"Invalid input(s) discarded: {len(slices) - len(valid_slices)}/{len(slices)}"
+        )
+    stack = np.stack(valid_slices)
     stack[stack == 0] = np.nan
     return np.nan_to_num(np.nanmedian(stack, axis=0))
 
