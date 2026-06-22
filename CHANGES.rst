@@ -1,3 +1,14 @@
+2.0.1
+-----
+
+Bug fixes
+^^^^^^^^^
+
+``azul process``
+
+- Sometimes a Python error was raised when multiple observations of the same field had to be stacked.
+
+
 2.0.0
 -----
 
