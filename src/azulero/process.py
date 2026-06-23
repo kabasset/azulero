@@ -224,7 +224,7 @@ def process_target(ios: Workspace, arg: str, transform: color.Transform):
     parts = Path(target).parts
     name = parts[-1] if len(parts) > 1 else "Tile"
     if Path(target).is_file():
-        name = Path(name).stem  # For SIF files, remove extensions
+        name = Path(name).stem  # For MEF files, remove extensions
     tile = parts[0]
     if slicing:
         slicing_str = f"{slicing[0].start or ''}:{slicing[0].stop or ''},{slicing[1].start or ''}:{slicing[1].stop or ''}"

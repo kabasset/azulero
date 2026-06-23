@@ -1,3 +1,14 @@
+2.1
+---
+
+New features
+^^^^^^^^^^^^
+
+``azul process``
+
+- Enable reading of multi-extension FITS files.
+
+
 2.0.1
 -----
 
