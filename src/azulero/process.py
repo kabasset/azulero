@@ -42,6 +42,9 @@ def add_parser(subparsers, help):
         Space separated list of workdirs relative to the workspace,
         optionally with slicing à-la NumPy, e.g. `102160611[1500:7500,11500:17500]`.
         If no value is specified, the program will read `stdin`.
+
+        If the path to a FITS file is specified instead of a workdir,
+        extensions named after the channels will be used instead of individual files.
         """,
     )
     parser.add_argument(

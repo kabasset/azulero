@@ -164,9 +164,22 @@ def read_iyjh(
     """
     Read the region of a VIS- and NIR-covered tile.
     """
+    if workdir.is_file():
+        return np.stack([read_ext(workdir, c, slicing) for c in channels])
     return np.stack(
         [read_channel(workdir, template.format(channel=c), slicing) for c in channels]
     )
+
+
+def read_ext(filename: Path, ext: str, slicing=None) -> np.ndarray:
+    """
+    Read the region of one FITS extension.
+    """
+    with fits.open(filename) as f:
+        data = f[ext].data  # type: ignore
+        if slicing is not None:
+            return data[slicing]
+        return data
 
 
 # Writing
