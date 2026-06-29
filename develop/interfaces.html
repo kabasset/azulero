@@ -244,10 +244,36 @@ These parameters are overloaded by command line arguments.</p>
 </span><span id="line-2"><span class="gp">$ </span>azul<span class="w"> </span><span class="ge">--log</span><span class="w"> </span><span class="ge">DEBUG</span><span class="w"> </span>retrieve<span class="w"> </span>NGC6505<span class="w"> </span>UGC11116<span class="w"> </span><span class="ge">-r</span><span class="w"> </span><span class="ge">1m</span><span class="w"> </span><span class="ge">--from</span><span class="w"> </span><span class="ge">pdr</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>azul<span class="w"> </span><span class="ge">--log</span><span class="w"> </span><span class="ge">DEBUG</span><span class="w"> </span>process
 </span></code></pre></div>
 </div>
+<p>The variables can be set in a <code class="docutils literal notranslate"><span class="pre">.env</span></code> file in the directory from which the command is triggered.</p>
 <div class="note admonition">
 <p class="admonition-title">Precedence</p>
-<p>Command line arguments overload environment variables,
-which themselves overload default option values.</p>
+<p>The decreasing precedence order is:</p>
+<ol class="arabic simple">
+<li><p>Command line arguments</p></li>
+<li><p>Environment variables</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">.env</span></code> file</p></li>
+<li><p>Default values</p></li>
+</ol>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">$ </span>azul<span class="w"> </span>retrieve<span class="w"> </span>PGC61356
+</span><span id="line-2"><span class="gp">  # </span>Logs<span class="w"> </span>at<span class="w"> </span><span class="ge">INFO</span><span class="w"> </span>level<span class="w"> </span><span class="o">(</span>default<span class="o">)</span>
+</span><span id="line-3">
+</span><span id="line-4"><span class="gp">$ </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"</span><span class="ge">AZUL_LOG</span><span class="s2">=</span><span class="ge">DEBUG</span><span class="s2">"</span><span class="w"> </span>&gt;<span class="w"> </span>.env
+</span><span id="line-5">
+</span><span id="line-6"><span class="gp">$ </span>azul<span class="w"> </span>retrieve<span class="w"> </span>PGC61356
+</span><span id="line-7"><span class="gp">  # </span>Logs<span class="w"> </span>at<span class="w"> </span><span class="ge">DEBUG</span><span class="w"> </span>level<span class="w"> </span><span class="o">(</span>.env<span class="w"> </span>overwrites<span class="w"> </span>default<span class="o">)</span>
+</span><span id="line-8">
+</span><span id="line-9"><span class="gp">$ </span><span class="nb">export</span><span class="w"> </span><span class="ge">AZUL_LOG</span><span class="o">=</span><span class="ge">WARNING</span>
+</span><span id="line-10">
+</span><span id="line-11"><span class="gp">$ </span>azul<span class="w"> </span>retrieve<span class="w"> </span>PGC61356
+</span><span id="line-12"><span class="gp">  # </span>Logs<span class="w"> </span>at<span class="w"> </span><span class="ge">WARNING</span><span class="w"> </span>level<span class="w"> </span><span class="o">(</span>variable<span class="w"> </span>overwrites<span class="w"> </span>default<span class="w"> </span>and<span class="w"> </span>.env<span class="o">)</span>
+</span><span id="line-13">
+</span><span id="line-14"><span class="gp">$ </span><span class="ge">AZUL_LOG</span><span class="o">=</span><span class="ge">ERROR</span><span class="w"> </span>azul<span class="w"> </span>retrieve<span class="w"> </span>PGC61356
+</span><span id="line-15"><span class="gp">  # </span>Logs<span class="w"> </span>at<span class="w"> </span><span class="ge">ERROR</span><span class="w"> </span>level<span class="w"> </span><span class="o">(</span><span class="nb">local</span><span class="w"> </span>variable<span class="w"> </span>overwrites<span class="w"> </span>exported<span class="w"> </span>variable<span class="o">)</span>
+</span><span id="line-16">
+</span><span id="line-17"><span class="gp">$ </span><span class="ge">AZUL_LOG</span><span class="o">=</span><span class="ge">ERROR</span><span class="w"> </span>azul<span class="w"> </span><span class="ge">--log</span><span class="w"> </span><span class="ge">CRITICAL</span><span class="w"> </span>retrieve<span class="w"> </span>PGC61356
+</span><span id="line-18"><span class="gp">  # </span>Logs<span class="w"> </span>at<span class="w"> </span><span class="ge">CRITICAL</span><span class="w"> </span>level<span class="w"> </span><span class="o">(</span>argument<span class="w"> </span>overwrites<span class="w"> </span>everything<span class="o">)</span>
+</span></code></pre></div>
+</div>
 </div>
 </section>
 <section id="command-line-help">
