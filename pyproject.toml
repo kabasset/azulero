@@ -26,6 +26,7 @@ dependencies = [
     "matplotlib", # FIXME make optional
     "opencv-python",
     "py4j",
+    "python-dotenv",
     "pyyaml",
     "requests",
     "rich-argparse",

@@ -4,6 +4,8 @@
 New features
 ^^^^^^^^^^^^
 
+- Read ``.env`` file.
+
 ``azul process``
 
 - Enable reading of multi-extension FITS files.

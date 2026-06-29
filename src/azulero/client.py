@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import argparse
+import dotenv
 
 from azulero import (
     retrieve,
@@ -66,13 +67,13 @@ def add_parser():
     assemble.add_parser(subparsers, "DEPRECATED")
     overlay.add_parser(subparsers, "DEPRECATED")
 
-    # TODO read .env first
     parser.set_defaults(**parse_envargs())
 
     return parser
 
 
 def run():
+    read_dotenv()
     parser = add_parser()
     args = parser.parse_args()
 
@@ -83,12 +84,17 @@ def run():
     if args.cmd != "cite":
         log_args(args)
         args.func(args)
-
-    if args.cmd == "cite":
+    else:
         citation = log_citation()
         write_pipe_args(citation, log=False)
 
     logger.info("")
+
+
+def read_dotenv():
+    filename = dotenv.find_dotenv(usecwd=True)
+    dotenv.load_dotenv(dotenv_path=filename)
+    return filename
 
 
 def log_title():
