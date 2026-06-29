@@ -157,11 +157,39 @@ Within the above environment, the following lines are equivalent:
    $ azul retrieve NGC6505 UGC11116 | azul process
    $ azul --log DEBUG retrieve NGC6505 UGC11116 -r 1m --from pdr | azul --log DEBUG process
 
+The variables can be set in a ``.env`` file in the directory from which the command is triggered.
+
 .. admonition:: Precedence
    :class: note
 
-   Command line arguments overload environment variables,
-   which themselves overload default option values.
+   The decreasing precedence order is:
+
+   1. Command line arguments
+   2. Environment variables
+   3. ``.env`` file
+   4. Default values
+
+   .. code-block:: console
+      :emphasize-text: AZUL_LOG --log DEBUG INFO WARNING ERROR CRITICAL
+
+      $ azul retrieve PGC61356
+        # Logs at INFO level (default)
+      
+      $ echo "AZUL_LOG=DEBUG" > .env
+
+      $ azul retrieve PGC61356
+        # Logs at DEBUG level (.env overwrites default)
+
+      $ export AZUL_LOG=WARNING
+      
+      $ azul retrieve PGC61356
+        # Logs at WARNING level (variable overwrites default and .env)
+
+      $ AZUL_LOG=ERROR azul retrieve PGC61356
+        # Logs at ERROR level (local variable overwrites exported variable)
+      
+      $ AZUL_LOG=ERROR azul --log CRITICAL retrieve PGC61356
+        # Logs at CRITICAL level (argument overwrites everything)
 
 
 Command line help
