@@ -8,7 +8,12 @@ import numpy as np
 from pathlib import Path
 
 from azulero.image import color, io, mask
-from azulero.tools.messaging import logger, read_pipe_args, write_pipe_args
+from azulero.tools.messaging import (
+    logger,
+    parse_envargs,
+    read_pipe_args,
+    write_pipe_args,
+)
 from azulero.tools import parsing
 from azulero.tools.timing import Timer
 from azulero.tools.workspace import Workspace
@@ -171,7 +176,7 @@ def add_parser(subparsers, help):
         help="Curve spline knots for each channel (leave empty to disable).",
     )
 
-    parser.set_defaults(func=run)
+    parser.set_defaults(**parse_envargs("process"), func=run)
 
 
 def render_path_for_step(template, step):

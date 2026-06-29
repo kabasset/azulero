@@ -11,7 +11,12 @@ from azulero import overlay
 from azulero.image import io
 from azulero.projections.equirectangular import Projection  # FIXME
 from azulero.projections.wcs import capture_frame as wcs_frame
-from azulero.tools.messaging import logger, read_pipe_args, write_pipe_args
+from azulero.tools.messaging import (
+    logger,
+    parse_envargs,
+    read_pipe_args,
+    write_pipe_args,
+)
 from azulero.tools import parsing
 from azulero.tools.timing import Timer
 from azulero.tools.workspace import Workspace
@@ -135,7 +140,7 @@ def add_parser(subparsers, help):
         help="Comma-separated scale length in image pixels and optional text above.",
     )
 
-    parser.set_defaults(func=run)
+    parser.set_defaults(**parse_envargs("roam"), func=run)
 
 
 def parse_format(text):

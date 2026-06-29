@@ -8,7 +8,12 @@ import numpy as np
 from pathlib import Path
 
 from azulero.tools.timing import Timer
-from azulero.tools.messaging import logger, read_pipe_args, write_pipe_args
+from azulero.tools.messaging import (
+    logger,
+    parse_envargs,
+    read_pipe_args,
+    write_pipe_args,
+)
 from azulero.tools import parsing
 from azulero.tools.workspace import Workspace
 
@@ -75,7 +80,7 @@ def add_parser(subparsers, help):
         """,
     )
 
-    parser.set_defaults(func=run)
+    parser.set_defaults(**parse_envargs("arrange"), func=run)
 
 
 def run(args):
