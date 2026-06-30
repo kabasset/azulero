@@ -5,6 +5,7 @@
 from astropy.coordinates import Angle
 import numpy as np
 from pathlib import Path
+import re
 
 
 class ParseError(Exception):
@@ -112,3 +113,27 @@ def parse_map(text: str, dtype=float) -> list[tuple[object, object]]:
         return []
     pairs = [p.split(":") for p in text.split(",")]
     return [(dtype(x), dtype(y)) for x, y in pairs]
+
+
+def render_template(text: str, *args, **kwargs) -> str:
+    """
+    Replace placeholders in a string, possibly with fallbacks, with provided values.
+
+    Placeholder syntax is ``{<placeholder>}`` or ``{<placeholder>|<fallback>}``.
+    If ``<placeholder>`` is an integer ``i`` (resp. key ``k``), it is substituted with ``str(args[i])`` (resp. ``str(kwargs[k])``).
+    Backward indexing is supported.
+    If ``args[i]`` (resp. ``kwargs[k]`` does not exist, then it is replaced with the provided fallback value.
+    If no fallback is provided, the placeholder is not substituted.
+    """
+    placeholder = lambda p: "{" + str(p) + "}"
+    for i in range(-len(args), len(args)):
+        text = text.replace(placeholder(i), str(args[i]))
+        value = str(i) if i >= 0 else r"\-" + str(-i)
+        pattern = r"\{" + value + r"\|[A-Za-z0-9_]+\}"
+        text = re.sub(pattern, str(args[i]), text)
+    for k in kwargs:
+        text = text.replace(placeholder(k), str(kwargs[k]))
+        pattern = r"\{" + str(k) + r"\|[A-Za-z0-9_]+\}"
+        text = re.sub(pattern, str(kwargs[k]), text)
+    pattern = r"\{\-?[A-Za-z0-9_]+\|([A-Za-z0-9_]+)\}"  # possibly negative int or str (could be more specific)
+    return re.sub(pattern, r"\1", text)
