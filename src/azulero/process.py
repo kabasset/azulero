@@ -56,15 +56,14 @@ def add_parser(subparsers, help):
         "--output",
         "-o",
         type=str,
-        default="{workspace}/{workdir}/{1}_{0}.tiff",
+        default="{workspace}/{workdir}/{1|Tile}_{0}.tiff",
         metavar="TEMPLATE",
         help="""
         Output path template, where: 
 
         * `{workspace}` is replaced with the workspace folder; 
         * `{workdir}` is replaced with the workdir folder relative to the workspace; 
-        * `{0}` is replaced with the first part of the workdir; 
-        * `{1}` is replaced with the last part of the workdir or with `Tile` if there is only one part; 
+        * `{0}, {1}, ...` are replaced with the parts of the workdir; 
         * `{step}` is replaced with the processing step. 
           If `{step}` is not present in the template, 
           then intermediate steps are not saved.
@@ -226,19 +225,17 @@ def process_target(ios: Workspace, arg: str, transform: color.Transform):
     logger.header(1, f"Target: {arg}", linebreaks=[1, 0])
 
     target, slicing = parsing.parse_target(arg)
-    parts = Path(target).parts
-    name = parts[-1] if len(parts) > 1 else "Tile"
+    parts = list(Path(target).parts)
     if Path(target).is_file():
-        name = Path(name).stem  # For MEF files, remove extensions
-    tile = parts[0]
+        parts[-1] = Path(target).stem  # For MEF files, remove extensions
     if slicing:
         slicing_str = f"{slicing[0].start or ''}:{slicing[0].stop or ''},{slicing[1].start or ''}:{slicing[1].stop or ''}"
     else:
         slicing_str = ""
     workdir = ios.workspace / target
-    template = ios.output_template.format(
-        tile,
-        name,
+    template = parsing.render_template(
+        ios.output_template,
+        *parts,
         workspace=ios.workspace,
         workdir=target,
         slicing=slicing_str,
