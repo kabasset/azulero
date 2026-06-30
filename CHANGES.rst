@@ -10,6 +10,11 @@ New features
 
 - Enable reading of multi-extension FITS files.
 
+Bug fixes
+^^^^^^^^^
+
+- Some commands were not reading the environment variables.
+
 
 2.0.1
 -----
