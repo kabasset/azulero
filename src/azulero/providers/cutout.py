@@ -41,14 +41,15 @@ class LocalCutout:
             f"Cutting locally a full tile to be retrieved in: {tiledir}"
         )
         tile = self.download_datafile(name, tiledir / path.name)
-        return self._cut(tile, path, target.coord, radius)
+        return local_cutout(tile, path, target.coord, radius)
 
-    def _cut(self, input: Path, output: Path, coord: SkyCoord, radius: Angle) -> Path:
-        with fits.open(input) as f:
-            hdu = f[0]
-            wcs = WCS(hdu.header)
-            cutout = Cutout2D(hdu.data, position=coord, size=2 * radius, wcs=wcs)
-            hdu.data = cutout.data
-            hdu.header.update(cutout.wcs.to_header())
-            hdu.writeto(output, overwrite=True)  # FIXME overwrite policy from args
-        return output
+
+def local_cutout(input: Path, output: Path, coord: SkyCoord, radius: Angle) -> Path:
+    with fits.open(input) as f:
+        hdu = f[0]
+        wcs = WCS(hdu.header)
+        cutout = Cutout2D(hdu.data, position=coord, size=2 * radius, wcs=wcs)
+        hdu.data = cutout.data
+        hdu.header.update(cutout.wcs.to_header())
+        hdu.writeto(output, overwrite=True)  # FIXME overwrite policy from args
+    return output
