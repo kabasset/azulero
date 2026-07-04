@@ -8,7 +8,7 @@ from pathlib import Path
 from astropy.coordinates import Angle, SkyCoord
 
 from azulero.image import io
-from azulero.providers import dss, sas, tiling, cutout
+from azulero.providers import dss, sas, tiling, cutout, datalabs
 from azulero.tools.messaging import (
     logger,
     parse_envargs,
@@ -18,11 +18,15 @@ from azulero.tools.messaging import (
 from azulero.tools.timing import Timer
 from azulero.tools.workspace import Workspace
 
-providers = {
+tile_providers = {
     "pdr": lambda: sas.SAS("PDR"),
     "idr": lambda: sas.SAS("IDR"),
     "otf": lambda: sas.SAS("OTF"),
     "dss": lambda: dss.DSS(),  # TODO enable DSS selection
+}
+
+data_providers = {
+    "labs": lambda provider: datalabs.Datalabs(provider),
 }
 
 
@@ -68,7 +72,7 @@ def add_parser(subparsers, help):
         type=str,
         default="idr",
         metavar="PROVIDER",
-        help=f"Data provider: {help_choice(providers.keys())}.",
+        help=f"Data provider: {help_choice(data_providers.keys())}.",
     )
     parser.add_argument(
         "--radius",
@@ -110,6 +114,12 @@ def add_parser(subparsers, help):
         default="DpdMerFinalCatalog.geojson",
         metavar="FILENAME",
         help="Tiling Geojson file.",
+    )
+    parser.add_argument(
+        "--data",
+        type=str,
+        metavar="PROVIDER",
+        help="Data provider name: ``labs`` or ``None``",
     )
     parser.add_argument(
         "--output",
@@ -201,15 +211,16 @@ def download_datafiles(provider, datafiles, workdir, target, radius, overwrite):
 def run(args):
 
     timer = Timer()
-    provider = providers[vars(args)["from"].lower()]()  # from is a Python keyword
+    provider = tile_providers[vars(args)["from"].lower()]()  # from is a Python keyword
     tile_provider = (
         provider if hasattr(provider, "query_tiles") else tiling.Tiling(args.tiling)
     )
-    cutout_provider = (
-        provider
-        if hasattr(provider, "download_cutout")
-        else cutout.LocalCutout(provider)
-    )
+    if args.data is not None:
+        data_provider = data_providers[args.data](provider)
+    elif hasattr(provider, "donwload_cutout"):
+        data_provider = provider
+    else:
+        data_provider = cutout.LocalCutout(provider)
     dsrs = args.dsr.split(",")
     assert not args.force or len(args.targets) == 1
     ios = Workspace.from_args(args)
@@ -240,7 +251,7 @@ def run(args):
         if not args.query_only:
             workdir = io.make_workdir(t.workdir(ios))
             download_datafiles(
-                cutout_provider,
+                data_provider,
                 datafiles,
                 workdir,  # FIXME give ios instead
                 t,
