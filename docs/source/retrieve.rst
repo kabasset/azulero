@@ -217,4 +217,19 @@ Only the latter is specified to ``azul retrieve``, and the former is deduced
 (same goes for the other data providers with the SAS).
 
 
+ESA Datalabs
+------------
+
+Azulero works in ESA Datalabs.
+In this environment, "retrieving" SAS data is a matter of finding them in the filesystem.
+Option ``--data labs`` triggers:
+
+* Tile retrieval as symlinks: no copy is performed but the resulting workspace has the same structure as in other environments.
+  Instead of getting proper FITS files in the tiledir, links to the Datalabs data store are created.
+* Direct cutout retrieval: the cutouts are extracted directly from the FITS files in the Datalabs data store.
+
+For convenience, as mentioned in :doc:`quickstart`, it is recommended to export ``AZULRETRIEVE_DATA=labs`` in the Datalabs
+(according to :ref:`named_options`).
+
+
 .. _CDS name resolver: https://cds.unistra.fr/cgi-bin/Sesame

@@ -103,6 +103,19 @@ Typically, Bash users may add the following to the ``.bashrc`` file:
 No other configuration is needed for public data.
 
 
+ESA Datalabs users
+^^^^^^^^^^^^^^^^^^
+
+MER datafiles are directly accessible from ESA Datalabs, such that no download is needed.
+To enable this feature permanently in Datalabs, add the following line to the ``.bashrc`` file
+(see :doc:`retrieve` for details):
+
+.. code-block:: console
+   :emphasize-text: labs
+
+   $ export AZULRETRIEVE_DATA=labs
+
+
 Your first image
 ----------------
 

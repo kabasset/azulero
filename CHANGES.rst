@@ -6,6 +6,10 @@ New features
 
 - Read ``.env`` file.
 
+``azul retrieve``
+
+- Access Datalabs datafiles without download or copy.
+
 ``azul process``
 
 - Enable reading of multi-extension FITS files.
