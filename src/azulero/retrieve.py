@@ -153,7 +153,7 @@ def query_tiles(provider, dsrs: list[str], target: str):
         radec = SkyCoord(ra, dec, unit="deg")
     else:
         logger.info(f"Named object: {target}")
-        radec = SkyCoord.from_name(target)
+        radec = SkyCoord.from_name(target, parse=True)
         logger.bullet(f"Coordinates: {radec.ra.value:.2f}° {radec.dec.value:.2f}°")
 
     tiles = sorted(

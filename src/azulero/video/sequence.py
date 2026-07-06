@@ -223,7 +223,7 @@ def parse_center(text: str, context: RoamingContext) -> np.ndarray | Angle:
     Otherwise, each of them is parsed as a planar coordinate.
     """
     if "," not in text:
-        coord = SkyCoord.from_name(text)
+        coord = SkyCoord.from_name(text, parse=True)
         center = Angle([coord.ra, coord.dec])
     else:
         center = parsing.parse_lengths_or_angles(
