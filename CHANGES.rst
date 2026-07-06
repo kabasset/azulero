@@ -5,6 +5,7 @@ New features
 ^^^^^^^^^^^^
 
 - Read ``.env`` file.
+- Parse J-coordinates such as ``EUCLJ172902.75+641018.1``.
 
 ``azul retrieve``
 
