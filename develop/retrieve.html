@@ -311,6 +311,19 @@ Therefore, selecting provider DSS means accessing metadata from the DPS and data
 Only the latter is specified to <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code>, and the former is deduced
 (same goes for the other data providers with the SAS).</p>
 </section>
+<section id="esa-datalabs">
+<h2>ESA Datalabs</h2>
+<p>Azulero works in ESA Datalabs.
+In this environment, “retrieving” SAS data is a matter of finding them in the filesystem.
+Option <code class="docutils literal notranslate"><span class="pre">--data</span> <span class="pre">labs</span></code> triggers:</p>
+<ul class="simple">
+<li><p>Tile retrieval as symlinks: no copy is performed but the resulting workspace has the same structure as in other environments.
+Instead of getting proper FITS files in the tiledir, links to the Datalabs data store are created.</p></li>
+<li><p>Direct cutout retrieval: the cutouts are extracted directly from the FITS files in the Datalabs data store.</p></li>
+</ul>
+<p>For convenience, as mentioned in <a class="reference internal" href="quickstart.html"><span class="doc">Quick start</span></a>, it is recommended to export <code class="docutils literal notranslate"><span class="pre">AZULRETRIEVE_DATA=labs</span></code> in the Datalabs
+(according to <a class="reference internal" href="interfaces.html#named-options"><span class="std std-ref">Named options</span></a>).</p>
+</section>
 </section>
 </div><div class="flex justify-between items-center pt-6 mt-12 border-t border-border gap-4">
 <div class="mr-auto">
@@ -338,6 +351,7 @@ Only the latter is specified to <code class="docutils literal notranslate"><span
 <li><a :data-current="activeSection === '#query'" class="reference internal" href="#query">Query</a></li>
 <li><a :data-current="activeSection === '#download'" class="reference internal" href="#download">Download</a></li>
 <li><a :data-current="activeSection === '#more-on-data-providers'" class="reference internal" href="#more-on-data-providers">More on data providers</a></li>
+<li><a :data-current="activeSection === '#esa-datalabs'" class="reference internal" href="#esa-datalabs">ESA Datalabs</a></li>
 </ul>
 </div>
 </aside>
@@ -346,7 +360,7 @@ Only the latter is specified to <code class="docutils literal notranslate"><span
 </div><footer class="py-6 border-t border-border md:py-0">
 <div class="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
 <div class="flex flex-col items-center gap-4 px-8 md:flex-row md:gap-2 md:px-0">
-<p class="text-sm leading-loose text-center text-muted-foreground md:text-left">© 2025-2026, Antoine Basset (CNES) and contributors. Last updated: Jun 30, 2026. Built with <a class="font-medium underline underline-offset-4" href="https://www.sphinx-doc.org" rel="noreferrer">Sphinx 9.1.0</a></p>
+<p class="text-sm leading-loose text-center text-muted-foreground md:text-left">© 2025-2026, Antoine Basset (CNES) and contributors. Last updated: Jul 12, 2026. Built with <a class="font-medium underline underline-offset-4" href="https://www.sphinx-doc.org" rel="noreferrer">Sphinx 9.1.0</a></p>
 </div>
 </div>
 </footer>
