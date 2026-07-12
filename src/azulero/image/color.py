@@ -14,9 +14,9 @@ from azulero.tools.messaging import logger
 
 @dataclass
 class Transform(object):
-    iyjh_zero_points: np.ndarray
-    iyjh_scaling: np.ndarray
-    iyjh_fwhm: np.ndarray
+    iyjh_zero_points: list
+    iyjh_scaling: list
+    iyjh_fwhm: list
     sharpen_strength: float
     nir_to_l: float
     i_to_b: float
@@ -25,8 +25,8 @@ class Transform(object):
     hue: float
     saturation: float
     stretch: float
-    bw: np.ndarray
-    curves: list
+    bw: list
+    bgr_curves: list
 
 
 def sharpen(data, radii, strength):  # TODO to dedicated module
@@ -46,8 +46,8 @@ def stretch_iyjh(iyjh: np.ndarray, transform: Transform):
     if w == 0:
         w = tune.propose_white_point(iyjh[0], transform.iyjh_zero_points[0])
         logger.bullet(f"Auto-tune white point: {w:0.2f}")
-    whites = abmag_to_value(w, transform.iyjh_zero_points)
-    scaling = (transform.iyjh_scaling / whites)[:, np.newaxis, np.newaxis]
+    whites = abmag_to_value(w, np.array(transform.iyjh_zero_points))
+    scaling = (np.array(transform.iyjh_scaling) / whites)[:, np.newaxis, np.newaxis]
     a = abmag_to_value(w, transform.stretch)
     b = -abmag_to_value(transform.bw[0], w)
     iyjh *= scaling

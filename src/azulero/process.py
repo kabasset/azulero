@@ -18,6 +18,22 @@ from azulero.tools import parsing
 from azulero.tools.timing import Timer
 from azulero.tools.workspace import Workspace
 
+default_transform = color.Transform(
+    iyjh_zero_points=[24.5, 29.8, 30.1, 30.0],
+    iyjh_scaling=[2.2, 1.3, 1.2, 1.0],
+    iyjh_fwhm=[1.6, 3.5, 3.4, 3.5],
+    sharpen_strength=0.5,
+    nir_to_l=0.2,
+    i_to_b=1.0,
+    y_to_g=0.5,
+    j_to_r=0.25,
+    hue=-20.0,
+    saturation=1.2,
+    stretch=27.5,
+    bw=[28.5, 22.5],
+    bgr_curves=[[(0.5, 0.55)], [], []],
+)
+
 
 def add_parser(subparsers, help):
     parser = subparsers.add_parser(
@@ -73,7 +89,7 @@ def add_parser(subparsers, help):
         "--zero",
         nargs=4,
         type=float,
-        default=[24.5, 29.8, 30.1, 30.0],
+        default=default_transform.iyjh_zero_points,
         metavar=("ZP_I", "ZP_Y", "ZP_J", "ZP_H"),
         help="Zero points for each band.",  # FIXME read FITS header, keep this arg as the defaults
     )
@@ -81,7 +97,7 @@ def add_parser(subparsers, help):
         "--scaling",
         nargs=4,
         type=float,
-        default=[2.2, 1.3, 1.2, 1.0],
+        default=default_transform.iyjh_scaling,
         metavar=("GAIN_I", "GAIN_Y", "GAIN_J", "GAIN_H"),
         help="Scaling factors applied immediately to the IYJH bands for white balance.",
     )
@@ -89,42 +105,42 @@ def add_parser(subparsers, help):
         "--fwhm",
         nargs=4,
         type=float,
-        default=[1.6, 3.5, 3.4, 3.5],
+        default=default_transform.iyjh_fwhm,
         metavar=("FWHM_I", "FWHM_Y", "FWHM_J", "FWHM_H"),
         help="FWHM for each band, used for sharpening.",
     )
     parser.add_argument(
         "--sharpen",
         type=float,
-        default=0.5,
+        default=default_transform.sharpen_strength,
         metavar="STRENGTH",
         help="Strength of the sharpening. Set to 0 to disable sharpening.",
     )
     parser.add_argument(
         "--nirl",
         type=float,
-        default=0.1,
+        default=default_transform.nir_to_l,
         metavar="RATE",
         help="NIR contribution to L, between 0 and 1.",
     )
     parser.add_argument(
         "--ib",
         type=float,
-        default=1.0,
+        default=default_transform.i_to_b,
         metavar="RATE",
         help="I contribution to B, between 0 and 1.",
     )
     parser.add_argument(
         "--yg",
         type=float,
-        default=0.5,
+        default=default_transform.y_to_g,
         metavar="RATE",
         help="Y contribution to G, between 0 and 1.",
     )
     parser.add_argument(
         "--jr",
         type=float,
-        default=0.25,
+        default=default_transform.j_to_r,
         metavar="RATE",
         help="J contribution to R, between 0 and 1.",
     )
@@ -132,7 +148,7 @@ def add_parser(subparsers, help):
         "--white",
         "-w",
         type=float,
-        default=22.5,
+        default=default_transform.bw[1],
         metavar="AB_MAG",
         help="White point in AB magnitude, or 0 to enable experimental auto-tuning.",
     )
@@ -140,7 +156,7 @@ def add_parser(subparsers, help):
         "--stretch",
         "-a",
         type=float,
-        default=27.5,
+        default=default_transform.stretch,
         metavar="AB_MAG",
         help="Stretching factor in AB magnitude.",
     )
@@ -148,34 +164,60 @@ def add_parser(subparsers, help):
         "--offset",
         "-b",
         type=float,
-        default=28.5,
+        default=default_transform.bw[0],
         metavar="AB_MAG",
         help="Opposite of black point in AB magnitude.",
     )
     parser.add_argument(
         "--hue",
         type=float,
-        default=-20,
+        default=default_transform.hue,
         metavar="ANGLE",
         help="Hue shift in degrees.",
     )
     parser.add_argument(
         "--saturation",
         type=float,
-        default=1.2,
+        default=default_transform.saturation,
         metavar="GAIN",
         help="Saturation factor.",
     )
     parser.add_argument(
         "--curves",
-        type=str,
-        nargs="*",
-        default=["", "", "0.5: 0.55"],
-        metavar="KNOTS",
+        type=str,  # argparse bug: parse_curve incompatible with ArgumentDefaultsHelpFormatter
+        nargs=3,
+        default=[dump_curve(c) for c in default_transform.bgr_curves[::-1]],
+        metavar=("KNOTS_R", "KNOTS_G", "KNOTS_B"),
         help="Curve spline knots for each channel (leave empty to disable).",
     )
 
     parser.set_defaults(**parse_envargs("process"), func=run)
+
+
+def parse_curve(arg: str):
+    knots = parsing.parse_map(arg)
+    if knots:
+        first = knots[0]
+        if first[0] != 0 and first[1] != 0:
+            knots.insert(0, (0, 0))
+        last = knots[-1]
+        if last[0] != 1 and last[1] != 1:
+            knots.append((1, 1))
+    else:
+        knots = [(0, 0), (1, 1)]
+    return knots
+
+
+def dump_curve(curve: list):
+    items = [f"{knot[0]}:{knot[1]}" for knot in curve]
+    return ",".join(items)
+
+
+def dump_slicing(slicing):
+    if slicing is None:
+        return ""
+    items = [f"{s.start or ''}:{s.stop or ''}" for s in slicing]
+    return ",".join(items)
 
 
 def render_path_for_step(template, step):
@@ -184,24 +226,10 @@ def render_path_for_step(template, step):
 
 def run(args):
 
-    curves = []
-    for i in range(len(args.curves)):
-        knots = parsing.parse_map(args.curves[i])
-        if knots:
-            first = knots[0]
-            if first[0] != 0 and first[1] != 0:
-                knots.insert(0, (0, 0))
-            last = knots[-1]
-            if last[0] != 1 and last[1] != 1:
-                knots.append((1, 1))
-        else:
-            knots = [(0, 0), (1, 1)]
-        curves.append(knots)
-
     transform = color.Transform(
-        iyjh_zero_points=np.array(args.zero),
-        iyjh_scaling=np.array(args.scaling),
-        iyjh_fwhm=np.array(args.fwhm),
+        iyjh_zero_points=args.zero,
+        iyjh_scaling=args.scaling,
+        iyjh_fwhm=args.fwhm,
         sharpen_strength=args.sharpen,
         nir_to_l=args.nirl,
         i_to_b=args.ib,
@@ -210,8 +238,8 @@ def run(args):
         hue=args.hue,
         saturation=args.saturation,
         stretch=args.stretch,
-        bw=np.array([args.offset, args.white]),
-        curves=curves[::-1],  # RGB to BGR
+        bw=[args.offset, args.white],
+        bgr_curves=[parse_curve(c) for c in args.curves[::-1]],  # RGB to BGR
     )
 
     ios = Workspace.from_args(args)
@@ -228,17 +256,13 @@ def process_target(ios: Workspace, arg: str, transform: color.Transform):
     parts = list(Path(target).parts)
     if Path(target).is_file():
         parts[-1] = Path(target).stem  # For MEF files, remove extensions
-    if slicing:
-        slicing_str = f"{slicing[0].start or ''}:{slicing[0].stop or ''},{slicing[1].start or ''}:{slicing[1].stop or ''}"
-    else:
-        slicing_str = ""
     workdir = ios.workspace / target
     template = parsing.render_template(
         ios.output_template,
         *parts,
         workspace=ios.workspace,
         workdir=target,
-        slicing=slicing_str,
+        slicing=dump_slicing(slicing),
         step="{step}",
     )
 
@@ -272,7 +296,9 @@ def process_target(ios: Workspace, arg: str, transform: color.Transform):
     timer.tic_log()
 
     logger.header(2, f"Sharpen channels")
-    iyjh = color.sharpen(iyjh, transform.iyjh_fwhm / 2.355, transform.sharpen_strength)
+    iyjh = color.sharpen(
+        iyjh, np.array(transform.iyjh_fwhm) / 2.355, transform.sharpen_strength
+    )
     timer.tic_log()
 
     logger.header(2, f"Stretch dynamic range")
@@ -286,16 +312,16 @@ def process_target(ios: Workspace, arg: str, transform: color.Transform):
     bgr = color.lbgr_to_bgr(lbgr, transform)
     del lbgr
     bgr[dead[0]] = mask.resaturate(bgr[dead[0]])
-    if "{step}" in template or len(transform.curves) == 0:
+    if "{step}" in template or len(transform.bgr_curves) == 0:
         path = render_path_for_step(template, "blended")
         logger.bullet(f"Write: {path.name}")
         io.write_normalized_bgr(path, bgr, wcs)
     timer.tic_log()
 
-    if len(transform.curves) > 0:
+    if len(transform.bgr_curves) > 0:  # FIXME always 3, check values
         logger.header(2, f"Adjust curves")
-        for i in range(len(transform.curves)):
-            bgr[:, :, i] = color.adjust_curve(bgr[:, :, i], transform.curves[i])
+        for i in range(len(transform.bgr_curves)):
+            bgr[:, :, i] = color.adjust_curve(bgr[:, :, i], transform.bgr_curves[i])
         path = render_path_for_step(template, "adjusted")
         logger.bullet(f"Write: {path.name}")
         io.write_normalized_bgr(path, bgr, wcs)
