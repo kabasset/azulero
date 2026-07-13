@@ -13,7 +13,7 @@ from azulero.providers.tiling import Tile
 
 def tile(res, target):
     index, ra, dec, dsr, mode = res.split(",")
-    center = SkyCoord(ra, dec, unit="deg", frame="icrs")
+    center = SkyCoord(float(ra), float(dec), unit="deg", frame="icrs")
     distance = center.separation(target).value
     return Tile(
         index,
@@ -27,10 +27,9 @@ class DSS(object):
 
     def query_tiles(self, radec: SkyCoord, dsrs: list[str]):
         root = "https://eas-dps-rest-ops.esac.esa.int/REST"
-        dsrs_text = ",".join("'" + d + "'" for d in dsrs)
-        dsr_query = f"Header.DataSetRelease+IN({dsrs_text})"
-        dec_deg = radec.ra.value  # FIXME degrees
-        dec_query = f"Data.WCS.CRVAL2+BETWEEN({dec_deg - 0.51},{dec_deg + 0.51})"
+        dsr_query = f"Header.DataSetRelease={dsrs[0]}"  # FIXME loop
+        dec_deg = radec.dec.value  # FIXME degrees
+        dec_query = f"Data.WCS.CRVAL2>{dec_deg - 0.28}&Data.WCS.CRVAL2<{dec_deg + 0.28}"
         select_text = "Data.TileIndex:Data.WCS.CRVAL1:Data.WCS.CRVAL2:Header.DataSetRelease:Data.ProcessingMode"
         r = requests.get(
             f"{root}?project=EUCLID&class_name=DpdMerBksMosaic&{dsr_query}&{dec_query}&fields={select_text}"
@@ -38,7 +37,8 @@ class DSS(object):
         r.raise_for_status()
         print(r.text)
         lines = r.text.replace('"', "").split()
-        return [tile(l, radec) for l in lines]
+        # FIXME get polygons and refine
+        return [tile(l, radec) for l in lines[1:]]
 
     def query_datafiles(self, tile: Tile, dsr: str):
 
