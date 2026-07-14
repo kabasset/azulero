@@ -211,19 +211,25 @@ def download_datafiles(provider, datafiles, workdir, target, radius, overwrite):
 def run(args):
 
     timer = Timer()
+
+    logger.header(1, "Setup data provider")
     provider = tile_providers[vars(args)["from"].lower()]()  # from is a Python keyword
     tile_provider = (
         provider if hasattr(provider, "query_tiles") else tiling.Tiling(args.tiling)
     )
     if args.data is not None:
+        logger.bullet(f"Enable local data store: {args.data}")
         data_provider = data_providers[args.data](provider)
-    elif hasattr(provider, "donwload_cutout"):
+    elif hasattr(provider, "download_cutout"):
+        logger.bullet(f"Enable distant cutout service.")
         data_provider = provider
     else:
+        logger.bullet("Enable local cutout service.")
         data_provider = cutout.LocalCutout(provider)
     dsrs = args.dsr.split(",")
     assert not args.force or len(args.targets) == 1
     ios = Workspace.from_args(args)
+    timer.tic_log()
 
     logger.header(1, "Resolve targets")
 
