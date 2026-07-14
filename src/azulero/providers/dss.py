@@ -3,42 +3,76 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from astropy.coordinates import SkyCoord
+import csv
 import gzip
 from io import BytesIO
 from pathlib import Path
 import requests
+from shapely import geometry
 
 from azulero.providers.tiling import Tile
-
-
-def tile(res, target):
-    index, ra, dec, dsr, mode = res.split(",")
-    center = SkyCoord(float(ra), float(dec), unit="deg", frame="icrs")
-    distance = center.separation(target).value
-    return Tile(
-        index,
-        mode,
-        dsr,
-        distance,
-    )
 
 
 class DSS(object):
 
     def query_tiles(self, radec: SkyCoord, dsrs: list[str]):
+        tiles = []
+        for d in dsrs:
+            tiles += self._query_dsr_tiles(radec, d)  # FIXME
+        return tiles
+
+    def _query_dsr_tiles(self, radec: SkyCoord, dsr: str):
+        point = geometry.Point(radec.ra.degree, radec.dec.degree)  # type: ignore
+        ring = self._query_tile_ring(radec, dsr)
+        res = []
+        for tile in ring:
+            polygon = geometry.shape(tile["geometry"])
+            if polygon.contains(point):
+                index = tile["properties"]["TileIndex"]
+                mode = tile["properties"]["ProcessingMode"]
+                dsr = tile["properties"]["DatasetRelease"]
+                center = polygon.centroid
+                distance = center.distance(point)
+                if distance < 1:
+                    res.append(Tile(index, mode, dsr, distance))
+        return res
+
+    def _query_tile_ring(self, radec: SkyCoord, dsr: str):
         root = "https://eas-dps-rest-ops.esac.esa.int/REST"
-        dsr_query = f"Header.DataSetRelease={dsrs[0]}"  # FIXME loop
-        dec_deg = radec.dec.value  # FIXME degrees
-        dec_query = f"Data.WCS.CRVAL2>{dec_deg - 0.28}&Data.WCS.CRVAL2<{dec_deg + 0.28}"
-        select_text = "Data.TileIndex:Data.WCS.CRVAL1:Data.WCS.CRVAL2:Header.DataSetRelease:Data.ProcessingMode"
+        dsr_query = f"Header.DataSetRelease={dsr}"
+        dec_deg: float = radec.dec.degree  # type: ignore
+        margin_deg = (
+            32.0 / 60.0 / 2
+        )  # FIXME this is the default WIDE tile height, not the max
+        dec_query = f"Data.WCS.CRVAL2>{dec_deg - margin_deg}&Data.WCS.CRVAL2<{dec_deg + margin_deg}"
+        fields = [
+            "Header.ProductId.LimitedString",
+            "Data.TileIndex",
+            "Header.DataSetRelease",
+            "Data.ProcessingMode",
+            "Data.ImgSpatialFootprint.Polygon.Vertex.C1",  # RA
+            "Data.ImgSpatialFootprint.Polygon.Vertex.C2",  # Dec
+        ]
+        fields_text = ":".join(fields)
         r = requests.get(
-            f"{root}?project=EUCLID&class_name=DpdMerBksMosaic&{dsr_query}&{dec_query}&fields={select_text}"
+            f"{root}?project=EUCLID&class_name=DpdMerBksMosaic&{dsr_query}&{dec_query}&fields={fields_text}"
         )
         r.raise_for_status()
-        print(r.text)
-        lines = r.text.replace('"', "").split()
-        # FIXME get polygons and refine
-        return [tile(l, radec) for l in lines[1:]]
+        return self._parse_geotiles(r.text)
+
+    def _parse_geotiles(self, text: str):
+        tiles = {}
+        reader = csv.reader(text, delimiter=",")
+        for row in next(reader):
+            print(row)
+            product, index, dsr, mode, ra, dec = row
+            if product not in tiles:
+                tiles[product]["properties"]["TileIndex"] = index
+                tiles[product]["properties"]["DataSetRelease"] = dsr
+                tiles[product]["properties"]["ProcessingMode"] = mode
+                tiles[product]["geometry"] = []
+            tiles[product]["geometry"].append((float(ra), float(dec)))
+        return tiles
 
     def query_datafiles(self, tile: Tile, dsr: str):
 
