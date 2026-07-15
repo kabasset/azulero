@@ -236,6 +236,7 @@ def run(args):
     targets = []
     for t in args.targets:
         targets += query_tiles(tile_provider, dsrs, t)[: args.limit]
+    timer.tic_log()
 
     logger.header(1, "Retrieve targets", linebreaks=[1, 0])
 

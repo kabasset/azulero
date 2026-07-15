@@ -5,12 +5,12 @@
 from astropy.coordinates import SkyCoord
 import csv
 import gzip
-from io import BytesIO
+from io import BytesIO, StringIO
 from pathlib import Path
 import requests
 from shapely import geometry
 
-from azulero.providers.tiling import Tile
+from azulero.providers.tiling import Tile, query_geotiles
 
 
 class DSS(object):
@@ -23,19 +23,8 @@ class DSS(object):
 
     def _query_dsr_tiles(self, radec: SkyCoord, dsr: str):
         point = geometry.Point(radec.ra.degree, radec.dec.degree)  # type: ignore
-        ring = self._query_tile_ring(radec, dsr)
-        res = []
-        for tile in ring:
-            polygon = geometry.shape(tile["geometry"])
-            if polygon.contains(point):
-                index = tile["properties"]["TileIndex"]
-                mode = tile["properties"]["ProcessingMode"]
-                dsr = tile["properties"]["DatasetRelease"]
-                center = polygon.centroid
-                distance = center.distance(point)
-                if distance < 1:
-                    res.append(Tile(index, mode, dsr, distance))
-        return res
+        ring = self._query_tile_ring(radec, dsr).values()
+        return query_geotiles(radec, ring)
 
     def _query_tile_ring(self, radec: SkyCoord, dsr: str):
         root = "https://eas-dps-rest-ops.esac.esa.int/REST"
@@ -61,17 +50,25 @@ class DSS(object):
         return self._parse_geotiles(r.text)
 
     def _parse_geotiles(self, text: str):
+        """
+        Parse tiles in geojson format from DPS response.
+        """
         tiles = {}
-        reader = csv.reader(text, delimiter=",")
-        for row in next(reader):
-            print(row)
+        reader = csv.reader(StringIO(text))
+        next(reader)
+        for row in reader:
             product, index, dsr, mode, ra, dec = row
             if product not in tiles:
-                tiles[product]["properties"]["TileIndex"] = index
-                tiles[product]["properties"]["DataSetRelease"] = dsr
-                tiles[product]["properties"]["ProcessingMode"] = mode
-                tiles[product]["geometry"] = []
-            tiles[product]["geometry"].append((float(ra), float(dec)))
+                properties = {
+                    "TileIndex": index,
+                    "DatasetRelease": dsr,
+                    "ProcessingMode": mode,
+                }
+                tiles[product] = {
+                    "properties": properties,
+                    "geometry": {"type": "Polygon", "coordinates": [[]]},
+                }
+            tiles[product]["geometry"]["coordinates"][0].append([float(ra), float(dec)])
         return tiles
 
     def query_datafiles(self, tile: Tile, dsr: str):
