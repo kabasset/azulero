@@ -185,6 +185,8 @@ downloads 2' x 2' regions for NGC6505 and (270.93, 67.05), as well as the whole 
 
 Flag ``-q`` stands for "query only" and interrupts the command before effectively downloading data,
 such that the file names you look for will be returned but no file download will happen.
+With optional value ``-q tiles``, the command stops even earlier to return only the tile indices
+(filenames are not looked for).
 
 By default, if a file to be downloaded already exists in the specified workdir, it is skipped.
 This behavior can be changed by forcing downloads with flag ``-f``.

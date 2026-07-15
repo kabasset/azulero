@@ -9,8 +9,9 @@ New features
 
 ``azul retrieve``
 
-- Access Datalabs datafiles without download or copy.
+- Access Datalabs datafiles without download or copy with option ``--data labs``.
 - Retrieve tile indices with ``dss`` provider (option ``--tiling`` is kept as an optimization).
+- Add option ``-q tiles`` to query just tile indices and not filenames.
 
 ``azul process``
 
