@@ -61,10 +61,17 @@ def add_parser(subparsers, help):
         ),
     )
     parser.add_argument(
+        "--survey",
+        type=str,
+        default="DEEP,WIDE,UNKNOWN",
+        metavar="MODES",
+        help="Comma-separated list of processing modes in order of preference.",
+    )
+    parser.add_argument(
         "--dsr",
         type=str,
         default="DR1_R2,DR1_R1,Q1_R1",
-        metavar="LIST",
+        metavar="NAMES",
         help="Comma-separated list of data set releases in order of preference.",
     )
     parser.add_argument(
@@ -143,7 +150,7 @@ def add_parser(subparsers, help):
     parser.set_defaults(**parse_envargs("retrieve"), func=run)
 
 
-def query_tiles(provider, dsrs: list[str], target: str):
+def query_tiles(provider, dsrs: list[str], modes: list[str], target: str):
     """
     Query the list of tiles for a given target, which may be a tile index, coordinates or object name.
     """
@@ -159,15 +166,9 @@ def query_tiles(provider, dsrs: list[str], target: str):
     else:
         logger.info(f"Named object: {target}")
         radec = SkyCoord.from_name(target, parse=True)
-        logger.bullet(f"Coordinates: {radec.ra.value:.2f}° {radec.dec.value:.2f}°")
+        logger.bullet(f"Coordinates: {radec.ra.degree:.2f}° {radec.dec.degree:.2f}°")
 
-    tiles = sorted(
-        sorted(
-            set(provider.query_tiles(radec, dsrs)),
-            key=lambda t: t.distance,
-        ),
-        key=lambda t: t.mode,
-    )
+    tiles = sort_tiles(provider.query_tiles(radec, dsrs), dsrs, modes)
 
     for t in tiles:
         logger.bullet(f"Tile: {t}")
@@ -175,6 +176,16 @@ def query_tiles(provider, dsrs: list[str], target: str):
     if len(targets) == 0:
         logger.warning("No tile found!")
     return list(targets)
+
+
+def sort_tiles(
+    tiles: list[tiling.Tile], dsrs: list[str], modes: list[str]
+) -> list[tiling.Tile]:
+    res = set(t for t in tiles if (t.dsr in dsrs and t.mode in modes))
+    res = sorted(res, key=lambda t: t.distance)
+    res = sorted(res, key=lambda t: dsrs.index(t.dsr))
+    res = sorted(res, key=lambda t: modes.index(t.mode))
+    return res
 
 
 def query_datafiles(provider, tile, dsr):
@@ -230,6 +241,7 @@ def run(args):
         logger.bullet("Enable local cutout service.")
         data_provider = cutout.LocalCutout(provider)
     dsrs = args.dsr.split(",")
+    modes = args.survey.split(",")
     assert not args.force or len(args.targets) == 1
     ios = Workspace.from_args(args)
     timer.tic_log()
@@ -238,7 +250,7 @@ def run(args):
 
     targets = []
     for t in args.targets:
-        targets += query_tiles(tile_provider, dsrs, t)[: args.limit]
+        targets += query_tiles(tile_provider, dsrs, modes, t)[: args.limit]
     timer.tic_log()
 
     if args.query_only == "tiles":
