@@ -39,8 +39,16 @@ DPS tile lookup
 ---------------
 
 The DPS does not offer fast-enough spatial queries to find the tiles in which a target lies.
-Therefore, we rely on SMT's Geojson tiling.
-Would be nice that users do not need to download the tiling themselves.
+Therefore, we used to rely on SMT's Geojson tiling.
+In order to simplify the workflow by not requiring users to download and update the tiling themselves,
+we have implemented an optimized mechanism for spatial queries:
+
+1. Query the ``DpdMerMosaics`` with a central declination (attribute ``CRVAL2``) between two bounds
+   computed from the target declination and some margin (the maximum half height of a tile).
+2. Perform the spatial query locally, using this subset of tiles, like we used to do with the Geojson tiling.
+
+Other optimizations could be implemented, like bounds on the right ascension, but that would be more tricky to compute
+while accounting for poles and anti-meridian discontinuities.
 
 
 DPS cutout service
