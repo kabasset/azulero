@@ -18,11 +18,10 @@ class DSS(object):
     def query_tiles(self, radec: SkyCoord, dsrs: list[str]):
         tiles = []
         for d in dsrs:
-            tiles += self._query_dsr_tiles(radec, d)  # FIXME
+            tiles += self._query_dsr_tiles(radec, d)
         return tiles
 
     def _query_dsr_tiles(self, radec: SkyCoord, dsr: str):
-        point = geometry.Point(radec.ra.degree, radec.dec.degree)  # type: ignore
         ring = self._query_tile_ring(radec, dsr).values()
         return query_geotiles(radec, ring)
 
