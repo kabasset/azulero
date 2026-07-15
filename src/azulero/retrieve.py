@@ -111,7 +111,6 @@ def add_parser(subparsers, help):
     parser.add_argument(
         "--tiling",
         type=str,
-        default="DpdMerFinalCatalog.geojson",
         metavar="FILENAME",
         help="Tiling Geojson file.",
     )
@@ -214,9 +213,7 @@ def run(args):
 
     logger.header(1, "Setup data provider")
     provider = tile_providers[vars(args)["from"].lower()]()  # from is a Python keyword
-    tile_provider = (
-        provider if hasattr(provider, "query_tiles") else tiling.Tiling(args.tiling)
-    )
+    tile_provider = provider if args.tiling is None else tiling.Tiling(args.tiling)
     if args.data is not None:
         logger.bullet(f"Enable local data store: {args.data}")
         data_provider = data_providers[args.data](provider)
