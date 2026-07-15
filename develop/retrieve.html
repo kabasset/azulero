@@ -283,7 +283,9 @@ Ensure that the workdirs and tiledirs as specified with option <code class="docu
 (this is the case with the default value).</p>
 </div>
 <p>Flag <code class="docutils literal notranslate"><span class="pre">-q</span></code> stands for “query only” and interrupts the command before effectively downloading data,
-such that the file names you look for will be returned but no file download will happen.</p>
+such that the file names you look for will be returned but no file download will happen.
+With optional value <code class="docutils literal notranslate"><span class="pre">-q</span> <span class="pre">tiles</span></code>, the command stops even earlier to return only the tile indices
+(filenames are not looked for).</p>
 <p>By default, if a file to be downloaded already exists in the specified workdir, it is skipped.
 This behavior can be changed by forcing downloads with flag <code class="docutils literal notranslate"><span class="pre">-f</span></code>.
 In this case, files which already exist will be overwritten.
