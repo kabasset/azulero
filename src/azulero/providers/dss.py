@@ -29,9 +29,11 @@ class DSS(object):
         root = "https://eas-dps-rest-ops.esac.esa.int/REST"
         dsr_query = f"Header.DataSetRelease={dsr}"
         dec_deg: float = radec.dec.degree  # type: ignore
-        margin_deg = (
-            32.0 / 60.0 / 2
-        )  # FIXME this is the default WIDE tile height, not the max
+        margin_deg = 38.4 / 60.0 / 2
+        # About the max height of a tile, Martin Kuemmel says:
+        # The papers (Q1 and DR1) quote something like 5%.
+        # [...]
+        # The max width and height is 39.6' and 38.4', respectively. That would be rather 10% in each direction.
         dec_query = f"Data.WCS.CRVAL2>{dec_deg - margin_deg}&Data.WCS.CRVAL2<{dec_deg + margin_deg}"
         fields = [
             "Header.ProductId.LimitedString",
