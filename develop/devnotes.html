@@ -148,8 +148,16 @@ in order to keep overshooting under control.</p>
 <section id="dps-tile-lookup">
 <h2>DPS tile lookup</h2>
 <p>The DPS does not offer fast-enough spatial queries to find the tiles in which a target lies.
-Therefore, we rely on SMT’s Geojson tiling.
-Would be nice that users do not need to download the tiling themselves.</p>
+Therefore, we used to rely on SMT’s Geojson tiling.
+In order to simplify the workflow by not requiring users to download and update the tiling themselves,
+we have implemented an optimized mechanism for spatial queries:</p>
+<ol class="arabic simple">
+<li><p>Query the <code class="docutils literal notranslate"><span class="pre">DpdMerMosaics</span></code> with a central declination (attribute <code class="docutils literal notranslate"><span class="pre">CRVAL2</span></code>) between two bounds
+computed from the target declination and some margin (the maximum half height of a tile).</p></li>
+<li><p>Perform the spatial query locally, using this subset of tiles, like we used to do with the Geojson tiling.</p></li>
+</ol>
+<p>Other optimizations could be implemented, like bounds on the right ascension, but that would be more tricky to compute
+while accounting for poles and anti-meridian discontinuities.</p>
 </section>
 <section id="dps-cutout-service">
 <h2>DPS cutout service</h2>
