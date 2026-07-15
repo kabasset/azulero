@@ -105,8 +105,14 @@ def add_parser(subparsers, help):
     parser.add_argument(
         "--query-only",
         "-q",
-        action="store_true",
-        help="Only query the filenames without downloading.",
+        type=str,
+        nargs="?",
+        const="files",
+        default=None,
+        help=(
+            "Only query the filenames without downloading. "
+            "Use value ``tiles`` to return tile indices instead of filenames."
+        ),
     )
     parser.add_argument(
         "--tiling",
@@ -234,6 +240,10 @@ def run(args):
     for t in args.targets:
         targets += query_tiles(tile_provider, dsrs, t)[: args.limit]
     timer.tic_log()
+
+    if args.query_only == "tiles":
+        write_pipe_args([t.tile for t in targets])
+        return
 
     logger.header(1, "Retrieve targets", linebreaks=[1, 0])
 
