@@ -185,9 +185,9 @@ def add_parser(subparsers, help):
     parser.add_argument(
         "--curves",
         type=str,  # argparse bug: parse_curve incompatible with ArgumentDefaultsHelpFormatter
-        nargs=3,
+        nargs="*",
         default=[dump_curve(c) for c in default_transform.bgr_curves[::-1]],
-        metavar=("KNOTS_R", "KNOTS_G", "KNOTS_B"),
+        metavar="KNOTS",
         help="Curve spline knots for each channel (leave empty to disable).",
     )
 
