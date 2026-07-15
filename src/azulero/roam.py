@@ -136,7 +136,7 @@ def add_parser(subparsers, help):
         "--scale",
         type=str,
         default=None,
-        metavar=("LENGTH,TEXT"),
+        metavar="LENGTH,TEXT",
         help="Comma-separated scale length in image pixels and optional text above.",
     )
 

@@ -51,7 +51,7 @@ def add_parser():
         "--log",
         type=str,
         default="INFO",
-        metavar="LEVEL",
+        choices=["DEBUG", "INFO", "WARNING", "ERROR"],
         help=f"Log level.",
     )
 

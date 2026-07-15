@@ -61,6 +61,7 @@ def query_geotiles(radec: SkyCoord, geotiles: list, dsrs: list[str] | None = Non
     for tile in geotiles:
         polygon = geometry.shape(tile["geometry"])
         if polygon.contains(point):
+            # FIXME use JC's code for spherical geometry
             index = tile["properties"]["TileIndex"]
             mode = tile["properties"]["ProcessingMode"]
             dsr = tile["properties"]["DatasetRelease"]

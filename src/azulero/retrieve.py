@@ -30,17 +30,6 @@ data_providers = {
 }
 
 
-def help_enumeration(values, coordination=", "):
-    l = [str(v) for v in values]
-    if len(l) == 1:
-        return l[0]
-    return ", ".join(list(l)[:-1]) + coordination + list(l)[-1]
-
-
-def help_choice(values):
-    return help_enumeration(values, " or ")
-
-
 def add_parser(subparsers, help):
 
     parser = subparsers.add_parser(
@@ -78,8 +67,8 @@ def add_parser(subparsers, help):
         "--from",
         type=str,
         default="idr",
-        metavar="PROVIDER",
-        help=f"Data provider: {help_choice(data_providers.keys())}.",
+        choices=tile_providers.keys(),
+        help="Data provider.",
     )
     parser.add_argument(
         "--radius",
@@ -116,6 +105,7 @@ def add_parser(subparsers, help):
         nargs="?",
         const="files",
         default=None,
+        choices=["files", "tiles"],
         help=(
             "Only query the filenames without downloading. "
             "Use value ``tiles`` to return tile indices instead of filenames."
