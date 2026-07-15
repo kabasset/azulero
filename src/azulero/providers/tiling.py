@@ -52,16 +52,20 @@ class Tiling:
     def query_tiles(self, radec: SkyCoord, dsrs: list[str]):
         with open(self.filename) as f:
             tiles = json.load(f)["features"]
-        point = geometry.Point(radec.ra.degree, radec.dec.degree)
-        res = []
-        for tile in tiles:
-            polygon = geometry.shape(tile["geometry"])
-            if polygon.contains(point):
-                index = tile["properties"]["TileIndex"]
-                mode = tile["properties"]["ProcessingMode"]
-                dsr = tile["properties"]["DatasetRelease"]
-                center = polygon.centroid
-                distance = center.distance(point)
-                if distance < 1 and dsr in dsrs:
-                    res.append(Tile(index, mode, dsr, distance))
-        return res
+        return query_geotiles(radec, tiles, dsrs)
+
+
+def query_geotiles(radec: SkyCoord, geotiles: list, dsrs: list[str] | None = None):
+    point = geometry.Point(radec.ra.degree, radec.dec.degree)  # type: ignore
+    res = []
+    for tile in geotiles:
+        polygon = geometry.shape(tile["geometry"])
+        if polygon.contains(point):
+            index = tile["properties"]["TileIndex"]
+            mode = tile["properties"]["ProcessingMode"]
+            dsr = tile["properties"]["DatasetRelease"]
+            center = SkyCoord(ra=polygon.centroid.x, dec=polygon.centroid.y, unit="deg")
+            distance = center.separation(radec).value
+            if distance < 1 and (dsrs is None or dsr in dsrs):
+                res.append(Tile(index, mode, dsr, distance))
+    return res
