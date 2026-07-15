@@ -145,11 +145,12 @@ There are several such providers, which store different sets of data:
 ``dss`` (Distributed Storage System)
    Contains everything but is much slower than other providers.
 
-.. warning:: Provider ``dss`` does not natively support named objects and coordinates retrieval.
+.. tip::
 
-   A `MER tiling file <https://gitlab.euclid-sgs.uk/sy-tools/ST_SMT_DATA/-/raw/DR1/data/DpdMerFinalCatalog.geojson?ref_type=heads>`_
-   must be given to option ``--tiling``.
-   This is a temporary workaround which we hope to improve in a future version.
+   In order to bypass the slow spatial queries of provider ``dss``,
+   `some MER tiling file <https://gitlab.euclid-sgs.uk/sy-tools/ST_SMT_DATA/-/raw/main/data/DpdMerFinalCatalog.geojson?ref_type=heads>`_
+   can be downloaded and its path given to option ``--tiling``.
+   In this case, you are responsible for providing the relevant and up-to-date tiling file.
 
 Option ``--dsr`` is used to restrict the returned tiles according to the value of their ``DataSetRelease`` attribute.
 By default, dataset releases for Q1 and DR1 releases are enabled.
@@ -206,7 +207,7 @@ There are two such databases provided by the Euclid Archive System (EAS):
 * The Data Processing System (EAS-DPS or DPS in short).
 
 The SAS offers the spatial query and cutout service but does not know of all of the internal data,
-while the DPS does reference everything but does not offer the spatial query
+while the DPS does reference everything but does not natively offer the spatial query
 (at least, not in a reasonable amount of time) or the cutout service.
 
 Once the file names have been resolved, the files are downloaded from a data store.
