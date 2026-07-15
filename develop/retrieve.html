@@ -251,12 +251,12 @@ It is updated from time to time between data releases.</p>
 <dt><code class="docutils literal notranslate"><span class="pre">dss</span></code> (Distributed Storage System)</dt><dd><p>Contains everything but is much slower than other providers.</p>
 </dd>
 </dl>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>Provider <code class="docutils literal notranslate"><span class="pre">dss</span></code> does not natively support named objects and coordinates retrieval.</p>
-<p>A <a class="reference external" href="https://gitlab.euclid-sgs.uk/sy-tools/ST_SMT_DATA/-/raw/DR1/data/DpdMerFinalCatalog.geojson?ref_type=heads">MER tiling file</a>
-must be given to option <code class="docutils literal notranslate"><span class="pre">--tiling</span></code>.
-This is a temporary workaround which we hope to improve in a future version.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>In order to bypass the slow spatial queries of provider <code class="docutils literal notranslate"><span class="pre">dss</span></code>,
+<a class="reference external" href="https://gitlab.euclid-sgs.uk/sy-tools/ST_SMT_DATA/-/raw/main/data/DpdMerFinalCatalog.geojson?ref_type=heads">some MER tiling file</a>
+can be downloaded and its path given to option <code class="docutils literal notranslate"><span class="pre">--tiling</span></code>.
+In this case, you are responsible for providing the relevant and up-to-date tiling file.</p>
 </div>
 <p>Option <code class="docutils literal notranslate"><span class="pre">--dsr</span></code> is used to restrict the returned tiles according to the value of their <code class="docutils literal notranslate"><span class="pre">DataSetRelease</span></code> attribute.
 By default, dataset releases for Q1 and DR1 releases are enabled.</p>
@@ -302,7 +302,7 @@ There are two such databases provided by the Euclid Archive System (EAS):</p>
 <li><p>The Data Processing System (EAS-DPS or DPS in short).</p></li>
 </ul>
 <p>The SAS offers the spatial query and cutout service but does not know of all of the internal data,
-while the DPS does reference everything but does not offer the spatial query
+while the DPS does reference everything but does not natively offer the spatial query
 (at least, not in a reasonable amount of time) or the cutout service.</p>
 <p>Once the file names have been resolved, the files are downloaded from a data store.
 The DSS is the storage associated to the DPS.
@@ -360,7 +360,7 @@ Instead of getting proper FITS files in the tiledir, links to the Datalabs data 
 </div><footer class="py-6 border-t border-border md:py-0">
 <div class="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
 <div class="flex flex-col items-center gap-4 px-8 md:flex-row md:gap-2 md:px-0">
-<p class="text-sm leading-loose text-center text-muted-foreground md:text-left">© 2025-2026, Antoine Basset (CNES) and contributors. Last updated: Jul 12, 2026. Built with <a class="font-medium underline underline-offset-4" href="https://www.sphinx-doc.org" rel="noreferrer">Sphinx 9.1.0</a></p>
+<p class="text-sm leading-loose text-center text-muted-foreground md:text-left">© 2025-2026, Antoine Basset (CNES) and contributors. Last updated: Jul 15, 2026. Built with <a class="font-medium underline underline-offset-4" href="https://www.sphinx-doc.org" rel="noreferrer">Sphinx 9.1.0</a></p>
 </div>
 </div>
 </footer>
