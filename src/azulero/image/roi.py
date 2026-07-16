@@ -101,23 +101,70 @@ class RectSelector:
             except:
                 break
 
-            display = self._image.copy()
-            cv2.rectangle(
-                display,
-                (self._region["l"], self._region["b"]),
-                (self._region["r"], self._region["t"]),
-                color=(0, 255, 0),
-                thickness=4,
-            )
-            cv2.imshow(self._name, display)
+            self._overlay()
 
         cv2.destroyAllWindows()
         return self.slicing
 
+    def _overlay(self):
+        display = self._image.copy()
+
+        thickness = max(min(self._shape) // 1000, 1) * 2 + 1
+        radius = thickness
+        color = (0, 255, 0)
+
+        # cv2.rectangle(
+        #     display,
+        #     (self._region["l"], self._region["b"]),
+        #     (self._region["r"], self._region["t"]),
+        #     color=color,
+        #     thickness=thickness,
+        # )
+
+        cv2.rectangle(
+            display,
+            (self._region["l"] - thickness // 2, self._region["b"] + radius),
+            (self._region["l"] + thickness // 2, self._region["t"] - radius),
+            color=color,
+            thickness=-1,
+        )
+        cv2.rectangle(
+            display,
+            (self._region["r"] - thickness // 2, self._region["b"] + radius),
+            (self._region["r"] + thickness // 2, self._region["t"] - radius),
+            color=color,
+            thickness=-1,
+        )
+        cv2.rectangle(
+            display,
+            (self._region["l"] + radius, self._region["b"] - thickness // 2),
+            (self._region["r"] - radius, self._region["b"] + thickness // 2),
+            color=color,
+            thickness=-1,
+        )
+        cv2.rectangle(
+            display,
+            (self._region["l"] + radius, self._region["t"] - thickness // 2),
+            (self._region["r"] - radius, self._region["t"] + thickness // 2),
+            color=color,
+            thickness=-1,
+        )
+
+        for h in "lr":
+            for v in "bt":
+                cv2.rectangle(
+                    display,
+                    (self._region[h] - radius, self._region[v] - radius),
+                    (self._region[h] + radius, self._region[v] + radius),
+                    color=color,
+                    thickness=1,
+                )
+        cv2.imshow(self._name, display)
+
 
 if __name__ == "__main__":  # FIXME rm
-    path = "/home/Euclid/Downloads/DR1/102159776/Tile_102159776.tiff"
-    factor = 10
+    path = "/home/basseta/Downloads/102087229/NGC128.jpg"
+    factor = 8
     image = np.flipud(cv2.imread(path))
     select = RectSelector(image, factor)
     rect = select()  # TODO stretching
