@@ -13,10 +13,13 @@ import numpy as np
 # * Pan-and-zoom is handled by cv2.
 class RectSelector:
 
-    def __init__(self, image: np.ndarray, window_name: str = "azul crop"):
+    def __init__(
+        self, image: np.ndarray, downsampling: int = 1, window_name: str = "azul crop"
+    ):
         self.window_name = window_name
-        self.image = np.flipud(image)
-        self.image_shape = np.array(image.shape[:2])
+        self.image = np.flipud(image[::downsampling, ::downsampling])
+        self.downsampling = downsampling
+        self.image_shape = np.array(self.image.shape[:2])
         self.region = {
             "b": 0,
             "t": self.image_shape[0] - 1,
@@ -103,17 +106,20 @@ class RectSelector:
     def slicing(self):
         return (
             slice(
-                self.image_shape[0] - self.region["t"] - 1,
-                self.image_shape[0] - self.region["b"],
+                (self.image_shape[0] - self.region["t"]) * self.downsampling - 1,
+                (self.image_shape[0] - self.region["b"]) * self.downsampling,
             ),
-            slice(self.region["l"], self.region["r"] + 1),
+            slice(
+                self.region["l"] * self.downsampling,
+                self.region["r"] * self.downsampling + 1,
+            ),
         )
 
 
 if __name__ == "__main__":  # FIXME rm
     path = "/home/Euclid/Downloads/DR1/102159776/Tile_102159776.tiff"
     factor = 10
-    image = cv2.imread(path)[::-factor, ::factor]
-    sel = RectSelector(image)
+    image = np.flipud(cv2.imread(path))
+    sel = RectSelector(image, factor)
     rect = sel.select()
     print(rect)
