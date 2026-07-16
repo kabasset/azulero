@@ -7,9 +7,10 @@ import numpy as np
 
 
 # Adapted https://github.com/DevJom/zoner (MIT license):
-# * Only one zone is drawn
-# * The zone is a rectangle
-# * Zoom center is relative to the image, not the viewport
+# * Only one zone is drawn.
+# * The zone is a rectangle.
+# * Zoom center is relative to the image, not the viewport.
+# * Pan-and-zoom is handled by cv2.
 class RectSelector:
 
     def __init__(self, image: np.ndarray, window_name: str = "azul crop"):
@@ -23,26 +24,13 @@ class RectSelector:
             "r": self.image_shape[1] - 1,
         }
 
-        self.zoom_factor = 1.0
-        self.zoom_center = self.image_shape / 2
-        self.update_viewport()
-
         self.dragging = False
         self.mouse_pos = (0, 0)
         self.selection = ""  # e.g. "b" for bottom edge or "tl" for top-left corner
-        self.snap_radius = 12
-
-    def update_viewport(self):
-        self.viewport_shape = np.round(self.image_shape / self.zoom_factor).astype(int)
-        self.viewport_start = np.clip(
-            self.zoom_center - self.viewport_shape / 2,
-            0,
-            self.image_shape - self.viewport_shape,
-        )
+        self.snap_radius = 50
 
     def view_to_pix(self, pos: np.ndarray):
-        unbounded = np.round(self.viewport_start + pos / self.zoom_factor).astype(int)
-        return np.clip(unbounded, 0, self.image_shape)
+        return np.clip(pos, 0, self.image_shape, dtype=int)
 
     def select(self):
 
@@ -53,7 +41,7 @@ class RectSelector:
             pos = self.view_to_pix(np.array([y, x]))
 
             def distance(point):
-                return (point - self.viewport_start) * self.zoom_factor - pos
+                return np.abs(point - pos)
 
             if event == cv2.EVENT_RBUTTONDOWN:
                 self.selection = ""
@@ -88,25 +76,16 @@ class RectSelector:
         cv2.setMouseCallback(self.window_name, mouse_handler)
 
         cv2.imshow(self.window_name, self.image)
+
         while True:
 
-            self.update_viewport()
-
-            view = self.image[
-                int(self.viewport_start[0]) : int(
-                    self.viewport_start[0] + self.viewport_shape[0]
-                ),
-                int(self.viewport_start[1]) : int(
-                    self.viewport_start[1] + self.viewport_shape[1]
-                ),
-            ]
-            display = cv2.resize(view, self.viewport_shape)
+            display = self.image.copy()
             cv2.rectangle(
                 display,
                 (self.region["l"], self.region["b"]),
                 (self.region["r"], self.region["t"]),
                 color=(0, 255, 0),
-                thickness=int(20 / self.zoom_factor),
+                thickness=4,
             )
             k = cv2.waitKey(1)
             if k == 13 or k == 27:  # Enter or Escape
