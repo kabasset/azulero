@@ -69,6 +69,7 @@ class RectSelector:
                     self._selected += "l"
                 elif right < self._snap_radius:
                     self._selected += "r"
+                # FIXME drag all if central handle selected
                 self._dragging = bool(self._selected)
 
             elif event == cv2.EVENT_MOUSEMOVE:
@@ -113,14 +114,6 @@ class RectSelector:
         radius = thickness
         color = (0, 255, 0)
 
-        # cv2.rectangle(
-        #     display,
-        #     (self._region["l"], self._region["b"]),
-        #     (self._region["r"], self._region["t"]),
-        #     color=color,
-        #     thickness=thickness,
-        # )
-
         cv2.rectangle(
             display,
             (self._region["l"] - thickness // 2, self._region["b"] + radius),
@@ -159,6 +152,17 @@ class RectSelector:
                     color=color,
                     thickness=1,
                 )
+
+        x = int((self._region["l"] + self._region["r"]) / 2 + 0.5)
+        y = int((self._region["b"] + self._region["t"]) / 2 + 0.5)
+        cv2.rectangle(
+            display,
+            (x - radius, y - radius),
+            (x + radius, y + radius),
+            color=color,
+            thickness=1,
+        )
+
         cv2.imshow(self._name, display)
 
 
