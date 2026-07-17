@@ -8,11 +8,12 @@ import numpy as np
 from pathlib import Path
 
 from azulero.image import io, roi
-from azulero.tools.messaging import write_pipe_args
+from azulero.tools.messaging import logger, write_pipe_args
 from azulero.tools.timing import Timer
 
 
 def add_parser(subparsers, help):
+
     parser = subparsers.add_parser(
         "crop",
         help=help,
@@ -59,19 +60,20 @@ def run(args):
 
     timer = Timer()
 
-    print(f"Read {args.channels[0]} channel in: {workdir}")
+    logger.header(2, f"Read {args.channels[0]} channel in: {workdir}")
     data = io.read_channel(workdir, args.input.format(channel=args.channels[0]))
     shape = data.shape
+    logger.bullet(f"Image shape: {shape[1]} x {shape[0]}")
     data = np.asinh(
         np.clip(data[:: args.downsample, :: args.downsample], 0, args.white) / 0.7
     )
+    logger.bullet(f"Display shape: {data.shape[1]} x {data.shape[0]}")
     data = np.stack([data, data, data], axis=-1)
     timer.tic_log()
 
-    print(f"Run GUI.")
+    logger.header(2, f"Run GUI.")
     select = roi.RectSelector(data)
     slicing = select()
-    timer.tic_log()
 
     rounding = args.round
     x0 = slicing[1].start * args.downsample
@@ -82,5 +84,7 @@ def run(args):
     y0 = math.floor(y0 / rounding) * rounding
     y1 = slicing[0].stop * args.downsample
     y1 = min(math.ceil(y1 / rounding) * rounding, shape[0])
+    logger.bullet(f"Crop shape: {x1 - x0} x {y1 - y0}")
+    timer.tic_log()
 
     write_pipe_args([f"{args.workdir}[{y0}:{y1},{x0}:{x1}]"])
