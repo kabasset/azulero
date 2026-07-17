@@ -16,6 +16,7 @@ Azulero |version|
    interfaces
    retrieve
    process
+   crop
    arrange
    roam
    pipelines

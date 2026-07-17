@@ -375,6 +375,7 @@ Depending on your system, it may be necessary to add quotes:
 
    $ azul process "102159776[-4000:,:6000]"
 
+For a more user-friendly way of cropping, see :doc:`crop`.
 
 .. _eummy: https://github.com/schirmermischa/eummy
 .. _euniverse: https://github.com/schirmermischa/euniverse
