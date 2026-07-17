@@ -4,6 +4,11 @@
 Overview
 --------
 
+.. warning:: This command is experimental.
+
+   For example, the Azulero package may miss some required system components,
+   some features may be non-portable, and the command was not tested on Windows at all.
+
 ``azul crop`` is a simple tool for selecting a rectangular image region.
 As opposed to other commands, it opens a graphical user interface.
 A VIS image is displayed along with a rectangle which can be adjusted to define the rendering region.

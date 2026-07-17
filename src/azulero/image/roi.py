@@ -2,6 +2,7 @@
 # SPDX-PackageSourceInfo: https://github.com/kabasset/azulero
 # SPDX-License-Identifier: Apache-2.0
 
+from astropy.wcs import WCS
 import cv2
 from dataclasses import dataclass
 import numpy as np
@@ -45,19 +46,30 @@ class Rect:
         return [self.bl, self.br, self.tl, self.tr]
 
 
+def _view_to_pix(x, y, downsampling, shape):
+    return x * downsampling, (shape[0] - y - 1) * downsampling
+
+
 @dataclass
 class RectOverlay:
 
+    downsampling: int
+    shape: np.ndarray
+    wcs: WCS
     thickness: int = 3
     color: tuple[int, int, int] = (0, 255, 0)
 
-    def draw(self, display, rect):
+    def draw(self, display, rect, mode):
 
         self._draw_frame(display, rect)
 
         for c in rect.corners:
             self._draw_handle(display, c)
         self._draw_handle(display, rect.center)
+
+        self._write_coord(display, mode, *rect.br)
+        self._write_coord(display, mode, *rect.tl)
+        self._write_coord(display, mode, *rect.center)
 
     def _draw_frame(self, canvas, rect):
 
@@ -96,6 +108,29 @@ class RectOverlay:
             thickness=self.thickness // 2,
         )
 
+    def _write_coord(self, canvas, mode, x, y):
+        if not mode:
+            return
+        x_pix, y_pix = _view_to_pix(x, y, self.downsampling, self.shape)
+        if mode == 1:
+            self._write_text(canvas, f"{int(x_pix)}, {int(y_pix)}", x, y)
+        elif mode == 2:
+            coord = self.wcs.pixel_to_world(x_pix, y_pix)
+            self._write_text(
+                canvas, f"{coord.ra.degree:0.3f}, {coord.dec.degree:0.3f}", x, y
+            )
+
+    def _write_text(self, canvas, text, x, y):
+        cv2.putText(
+            canvas,
+            text,
+            (x + 2 * self.thickness, y - 2 * self.thickness),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            (self.thickness + 12) // 12,
+            self.color,
+            self.thickness // 2,
+        )
+
 
 # Adapted https://github.com/DevJom/zoner (MIT license):
 # * Only one zone is drawn.
@@ -104,15 +139,17 @@ class RectOverlay:
 # * Pan-and-zoom is handled by cv2.
 class RectSelector:
 
-    def __init__(self, image: np.ndarray, downsampling: int = 1):
+    def __init__(
+        self, image: np.ndarray, wcs: WCS | None = None, downsampling: int = 1
+    ):
         self._name = "azul crop"
         self._downsampling = downsampling
-        self._image = np.flipud(
-            image[:: self._downsampling, :: self._downsampling]
-        )  # OpenCV orientation
+        self._image = np.flipud(image)  # OpenCV orientation
         self._shape = np.array(self._image.shape[:2])
         self._rect = Rect(0, self._shape[0] - 1, 0, self._shape[1] - 1)
-        self._overlay = RectOverlay(min(self._shape // 500) * 2 + 3)
+        self._overlay = RectOverlay(
+            self._downsampling, self._shape, wcs, min(self._shape // 500) * 2 + 3
+        )
 
         self._dragging = False
         self._selected = ""  # e.g. "b" for bottom edge or "tl" for top-left corner
@@ -197,21 +234,24 @@ class RectSelector:
 
         cv2.imshow(self._name, self._image)
 
+        mode = 1
         while True:
 
             k = cv2.waitKey(1)
             if k in [13, 27]:  # Enter, Escape
                 break
+            elif k in [ord("c"), ord("C")]:
+                mode = (mode + 1) % 3
             elif k != -1:
                 _show_help()
-            self._draw_overlay()
+            self._draw_overlay(mode)
 
         cv2.destroyAllWindows()
         return self.slicing
 
-    def _draw_overlay(self):
+    def _draw_overlay(self, mode):
         display = self._image.copy()
-        self._overlay.draw(display, self._rect)
+        self._overlay.draw(display, self._rect, mode)
         cv2.imshow(self._name, display)
 
 
@@ -220,6 +260,7 @@ def _show_help():
         "Zoom": ["Mouse wheel"],
         "Pan": ["Left mouse button"],
         "Select": ["Right mouse button"],
+        "Toggle coordinates": ["C"],
         "Validate": ["Enter", "Escape"],
         "Help": ["Any other key"],
     }

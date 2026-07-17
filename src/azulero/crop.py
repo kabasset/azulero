@@ -61,7 +61,9 @@ def run(args):
     timer = Timer()
 
     logger.header(2, f"Read {args.channels[0]} channel in: {workdir}")
-    data = io.read_channel(workdir, args.input.format(channel=args.channels[0]))
+    path = list(workdir.glob(args.input.format(channel=args.channels[0])))[0]
+    # FIXME duplicate read_channel
+    data, wcs = io.read_product(path)
     shape = data.shape
     logger.bullet(f"Image shape: {shape[1]} x {shape[0]}")
     data = np.asinh(
@@ -72,7 +74,7 @@ def run(args):
     timer.tic_log()
 
     logger.header(2, f"Run GUI.")
-    select = roi.RectSelector(data)
+    select = roi.RectSelector(data, wcs, args.downsample)
     slicing = select()
 
     rounding = args.round
