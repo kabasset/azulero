@@ -12,8 +12,6 @@ from azulero import (
     overlay,
     roam,
     crop,
-    find,
-    assemble,
 )
 from azulero.tools.messaging import logger, parse_envargs, write_pipe_args
 
@@ -57,14 +55,12 @@ def add_parser():
 
     subparsers = parser.add_subparsers(title="Commands", dest="cmd")
     retrieve.add_parser(subparsers, "Retrieve channels of MER tiles or cutouts.")
+    crop.add_parser(subparsers, "Graphically select a region to be processed.")
     process.add_parser(subparsers, "Process MER channels to render a color image.")
     arrange.add_parser(subparsers, "Arrange images into a grid.")
     roam.add_parser(subparsers, "Create videos which roam through images.")
     subparsers.add_parser("cite", help="Print citation instructions.")
 
-    find.add_parser(subparsers, "DEPRECATED")
-    crop.add_parser(subparsers, "DEPRECATED")
-    assemble.add_parser(subparsers, "DEPRECATED")
     overlay.add_parser(subparsers, "DEPRECATED")
 
     parser.set_defaults(**parse_envargs())
