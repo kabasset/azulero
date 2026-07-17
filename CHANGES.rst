@@ -6,9 +6,11 @@ New features
 
 - Read ``.env`` file.
 - Parse J-coordinates such as ``EUCLJ172902.75+641018.1``.
+- Revive ``azul crop`` (without Matplotlib).
 
 ``azul retrieve``
 
+- Enable retries if downloaded files are empty or corrupted.
 - Access Datalabs datafiles without download or copy with option ``--data labs``.
 - Retrieve tile indices with ``dss`` provider (option ``--tiling`` is kept as an optimization).
 - Add option ``-q tiles`` to query just tile indices and not filenames.
@@ -22,6 +24,12 @@ Bug fixes
 ^^^^^^^^^
 
 - Some commands were not reading the environment variables.
+- Remove deprecated commands ``azul assemble``, ``azul find``.
+
+Cleaning
+^^^^^^^^
+
+- Remove Matplotlib dependency
 
 
 2.0.1
