@@ -4,11 +4,11 @@
 
 import argparse
 import math
-import matplotlib.pyplot as plt
 import numpy as np
 from pathlib import Path
 
-from azulero.image import io
+from azulero.image import io, roi
+from azulero.tools.messaging import write_pipe_args
 from azulero.tools.timing import Timer
 
 
@@ -17,22 +17,26 @@ def add_parser(subparsers, help):
         "crop",
         help=help,
         description=(
-            "Display the VIS channel between values 0 and 1 in a new window, "
-            "and enable cropping a region by zooming in. "
-            "When the window is closed, "
-            "the program prints out the corresponding image processing command."
+            "Display the first channel in a workdir and select a region in a GUI."
         ),
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
 
     parser.add_argument(
-        "tile",
+        "workdir",
         type=str,
-        metavar="INDEX",
-        help="Tile index.",
+        metavar="PATH",
+        help="Workdir relative to the workspace.",
     )
     parser.add_argument(
         "--white", "-w", type=float, default=1.0, metavar="VALUE", help="White point"
+    )
+    parser.add_argument(
+        "--downsample",
+        type=int,
+        default=10,
+        metavar="STEP",
+        help="Integral downsampling factor for performance",
     )
     parser.add_argument(
         "--round",
@@ -51,32 +55,32 @@ def add_parser(subparsers, help):
 
 def run(args):
 
-    workdir = Path(args.workspace).expanduser() / args.tile
+    workdir = Path(args.workspace).expanduser() / args.workdir
 
     timer = Timer()
 
-    print(f"Read VIS channel: {workdir}")
-    data = io.read_channel(workdir, args.input.format(channel="VIS"))
+    print(f"Read {args.channels[0]} channel in: {workdir}")
+    data = io.read_channel(workdir, args.input.format(channel=args.channels[0]))
+    shape = data.shape
+    data = np.asinh(
+        np.clip(data[:: args.downsample, :: args.downsample], 0, args.white) / 0.7
+    )
+    data = np.stack([data, data, data], axis=-1)
     timer.tic_log()
 
-    print(f"Prepare data.")
-    h, w = data.shape
-    data = np.clip(data[::10, ::10], 0, args.white)
-    im = plt.imshow(np.flipud(np.asinh(data / 0.7)), extent=[0, w, 0, h])
+    print(f"Run GUI.")
+    select = roi.RectSelector(data)
+    slicing = select()
     timer.tic_log()
-
-    plt.title("Zoom to select a region, then close the window.")
-    plt.show()
 
     rounding = args.round
-    x0, x1 = im.axes.get_xlim()
-    y0, y1 = im.axes.get_ylim()
+    x0 = slicing[1].start * args.downsample
     x0 = math.floor(x0 / rounding) * rounding
-    x1 = min(math.ceil(x1 / rounding) * rounding, w)
+    x1 = slicing[1].stop * args.downsample
+    x1 = min(math.ceil(x1 / rounding) * rounding, shape[1])
+    y0 = slicing[0].start * args.downsample
     y0 = math.floor(y0 / rounding) * rounding
-    y1 = min(math.ceil(y1 / rounding) * rounding, h)
+    y1 = slicing[0].stop * args.downsample
+    y1 = min(math.ceil(y1 / rounding) * rounding, shape[0])
 
-    print(f"\nYou may now run:")
-    print(
-        f"\nazul --workspace {args.workspace} process {args.tile}[{y0}:{y1},{x0}:{x1}]\n"
-    )
+    write_pipe_args([f"{args.workdir}[{y0}:{y1},{x0}:{x1}]"])

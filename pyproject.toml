@@ -23,7 +23,6 @@ dependencies = [
     "numpy >= 2.0",
     "astropy",
     "astroquery",
-    "matplotlib", # FIXME make optional
     "opencv-python",
     "py4j",
     "python-dotenv",

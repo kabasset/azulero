@@ -49,7 +49,6 @@ class Rect:
 class RectOverlay:
 
     thickness: int = 3
-    radius: int = 3
     color: tuple[int, int, int] = (0, 255, 0)
 
     def draw(self, display, rect):
@@ -66,30 +65,30 @@ class RectOverlay:
             cv2.rectangle(canvas, p, q, color=self.color, thickness=-1)
 
         fill_rect(
-            (rect.l - self.thickness // 2, rect.b + self.radius),
-            (rect.l + self.thickness // 2, rect.t - self.radius),
+            (rect.l - self.thickness // 2, rect.b + self.thickness),
+            (rect.l + self.thickness // 2, rect.t - self.thickness),
         )
         fill_rect(
-            (rect.r - self.thickness // 2, rect.b + self.radius),
-            (rect.r + self.thickness // 2, rect.t - self.radius),
+            (rect.r - self.thickness // 2, rect.b + self.thickness),
+            (rect.r + self.thickness // 2, rect.t - self.thickness),
         )
         fill_rect(
-            (rect.l + self.radius, rect.b - self.thickness // 2),
-            (rect.r - self.radius, rect.b + self.thickness // 2),
+            (rect.l + self.thickness, rect.b - self.thickness // 2),
+            (rect.r - self.thickness, rect.b + self.thickness // 2),
         )
         fill_rect(
-            (rect.l + self.radius, rect.t - self.thickness // 2),
-            (rect.r - self.radius, rect.t + self.thickness // 2),
+            (rect.l + self.thickness, rect.t - self.thickness // 2),
+            (rect.r - self.thickness, rect.t + self.thickness // 2),
         )
 
     def _draw_handle(self, canvas, p):
         x, y = p
         cv2.rectangle(
             canvas,
-            (x - self.radius, y - self.radius),
-            (x + self.radius, y + self.radius),
+            (x - self.thickness, y - self.thickness),
+            (x + self.thickness, y + self.thickness),
             color=self.color,
-            thickness=1,
+            thickness=self.thickness // 2,
         )
 
 
@@ -108,11 +107,11 @@ class RectSelector:
         )  # OpenCV orientation
         self._shape = np.array(self._image.shape[:2])
         self._rect = Rect(0, self._shape[0] - 1, 0, self._shape[1] - 1)
-        self._overlay = RectOverlay()
+        self._overlay = RectOverlay(min(self._shape // 500) * 2 + 3)
 
         self._dragging = False
         self._selected = ""  # e.g. "b" for bottom edge or "tl" for top-left corner
-        self._snap_radius = 2 * self._overlay.radius + 3
+        self._snap_radius = 2 * self._overlay.thickness + 3
 
     @property
     def slicing(self):
@@ -183,7 +182,6 @@ class RectSelector:
 
             elif event == cv2.EVENT_RBUTTONUP:
                 self._dragging = False
-                print(self.slicing)
 
         cv2.setMouseCallback(self._name, mouse_handler)
 
@@ -215,8 +213,6 @@ def _show_help():
         "Validate": ["Enter", "Escape"],
         "Help": ["Any other key"],
     }
-    text = "\n".join(f"{c}:\n  {'\n  '.join(commands[c])}" for c in commands)
-    print(text)
     font = cv2.FONT_HERSHEY_SIMPLEX
     scale = 1
     thickness = 1
@@ -260,12 +256,3 @@ def _show_help():
 
     cv2.namedWindow("Help", cv2.WINDOW_GUI_NORMAL | cv2.WINDOW_AUTOSIZE)
     cv2.imshow("Help", canvas)
-
-
-if __name__ == "__main__":  # FIXME rm
-    path = "/home/basseta/Downloads/102087229/NGC128.jpg"
-    factor = 8
-    image = np.flipud(cv2.imread(path))
-    select = RectSelector(image, factor)
-    rect = select()  # TODO stretching
-    print(rect)
