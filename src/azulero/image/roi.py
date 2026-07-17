@@ -15,6 +15,10 @@ class Rect:
     r: int
 
     @property
+    def shape(self):
+        return np.array([self.t - self.b + 1, self.r - self.l + 1])
+
+    @property
     def bl(self):
         return (self.l, self.b)
 
@@ -131,36 +135,51 @@ class RectSelector:
 
         def mouse_handler(event, x, y, flags, params):
 
-            pos = np.clip([y, x], 0, self._shape - 1, dtype=int)
-
-            def distance(point):
-                return np.abs(point - pos)
+            def hovered(x_bounds, y_bounds):
+                x0, x1 = x_bounds[0], x_bounds[-1]
+                y0, y1 = y_bounds[0], y_bounds[-1]
+                if x < x0 - self._snap_radius or x > x1 + self._snap_radius:
+                    return False
+                if y < y0 - self._snap_radius or y > y1 + self._snap_radius:
+                    return False
+                return True
 
             if event == cv2.EVENT_RBUTTONDOWN:
                 self._selected = ""
-                bottom, left = distance([self._rect.b, self._rect.l])
-                top, right = distance([self._rect.t, self._rect.r])
-                if bottom < self._snap_radius:
+                if hovered([self._rect.l, self._rect.r], [self._rect.b]):
                     self._selected += "b"
-                elif top < self._snap_radius:
+                elif hovered([self._rect.l, self._rect.r], [self._rect.t]):
                     self._selected += "t"
-                if left < self._snap_radius:
+                if hovered([self._rect.l], [self._rect.b, self._rect.t]):
                     self._selected += "l"
-                elif right < self._snap_radius:
+                elif hovered([self._rect.r], [self._rect.b, self._rect.t]):
                     self._selected += "r"
-                # FIXME drag all if central handle selected
+                if not self._selected and hovered(
+                    [self._rect.center[0]], [self._rect.center[1]]
+                ):
+                    self._selected += "c"
                 self._dragging = bool(self._selected)
 
             elif event == cv2.EVENT_MOUSEMOVE:
                 if self._dragging:
                     if "b" in self._selected:
-                        self._rect.b = pos[0]
+                        self._rect.b = np.clip(y, 0, self._shape[0] - 1)
                     elif "t" in self._selected:
-                        self._rect.t = pos[0]
+                        self._rect.t = np.clip(y, 0, self._shape[0] - 1)
                     if "l" in self._selected:
-                        self._rect.l = pos[1]
-                    if "r" in self._selected:
-                        self._rect.r = pos[1]
+                        self._rect.l = np.clip(x, 0, self._shape[1] - 1)
+                    elif "r" in self._selected:
+                        self._rect.r = np.clip(x, 0, self._shape[1] - 1)
+                    if self._selected == "c":
+                        shape = self._rect.shape
+                        bl = np.array([y, x]) - shape // 2
+                        tr = bl + shape - 1
+                        bl = np.clip(bl, 0, self._shape - 1)
+                        tr = np.clip(tr, 0, self._shape - 1)
+                        self._rect.b = bl[0]
+                        self._rect.l = bl[1]
+                        self._rect.t = tr[0]
+                        self._rect.r = tr[1]
 
             elif event == cv2.EVENT_RBUTTONUP:
                 self._dragging = False
