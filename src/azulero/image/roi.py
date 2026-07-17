@@ -3,7 +3,90 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import cv2
+from dataclasses import dataclass
 import numpy as np
+
+
+@dataclass
+class Rect:
+    b: int
+    t: int
+    l: int
+    r: int
+
+    @property
+    def bl(self):
+        return (self.l, self.b)
+
+    @property
+    def br(self):
+        return (self.r, self.b)
+
+    @property
+    def tl(self):
+        return (self.l, self.t)
+
+    @property
+    def tr(self):
+        return (self.r, self.t)
+
+    @property
+    def center(self):
+        x = int((self.l + self.r) / 2 + 0.5)
+        y = int((self.b + self.t) / 2 + 0.5)
+        return x, y
+
+    @property
+    def corners(self):
+        return [self.bl, self.br, self.tl, self.tr]
+
+
+@dataclass
+class RectOverlay:
+
+    thickness: int = 3
+    radius: int = 3
+    color: tuple[int, int, int] = (0, 255, 0)
+
+    def draw(self, display, rect):
+
+        self._draw_frame(display, rect)
+
+        for c in rect.corners:
+            self._draw_handle(display, c)
+        self._draw_handle(display, rect.center)
+
+    def _draw_frame(self, canvas, rect):
+
+        def fill_rect(p, q):
+            cv2.rectangle(canvas, p, q, color=self.color, thickness=-1)
+
+        fill_rect(
+            (rect.l - self.thickness // 2, rect.b + self.radius),
+            (rect.l + self.thickness // 2, rect.t - self.radius),
+        )
+        fill_rect(
+            (rect.r - self.thickness // 2, rect.b + self.radius),
+            (rect.r + self.thickness // 2, rect.t - self.radius),
+        )
+        fill_rect(
+            (rect.l + self.radius, rect.b - self.thickness // 2),
+            (rect.r - self.radius, rect.b + self.thickness // 2),
+        )
+        fill_rect(
+            (rect.l + self.radius, rect.t - self.thickness // 2),
+            (rect.r - self.radius, rect.t + self.thickness // 2),
+        )
+
+    def _draw_handle(self, canvas, p):
+        x, y = p
+        cv2.rectangle(
+            canvas,
+            (x - self.radius, y - self.radius),
+            (x + self.radius, y + self.radius),
+            color=self.color,
+            thickness=1,
+        )
 
 
 # Adapted https://github.com/DevJom/zoner (MIT license):
@@ -13,42 +96,38 @@ import numpy as np
 # * Pan-and-zoom is handled by cv2.
 class RectSelector:
 
-    def __init__(
-        self, image: np.ndarray, downsampling: int = 1, window_name: str = "azul crop"
-    ):
-        self._name = window_name
+    def __init__(self, image: np.ndarray, downsampling: int = 1):
+        self._name = "azul crop"
         self._downsampling = downsampling
         self._image = np.flipud(
             image[:: self._downsampling, :: self._downsampling]
         )  # OpenCV orientation
         self._shape = np.array(self._image.shape[:2])
-        self._region = {
-            "b": 0,
-            "t": self._shape[0] - 1,
-            "l": 0,
-            "r": self._shape[1] - 1,
-        }
+        self._rect = Rect(0, self._shape[0] - 1, 0, self._shape[1] - 1)
+        self._overlay = RectOverlay()
 
         self._dragging = False
         self._selected = ""  # e.g. "b" for bottom edge or "tl" for top-left corner
-        self._snap_radius = 50
+        self._snap_radius = 2 * self._overlay.radius + 3
 
     @property
     def slicing(self):
         return (
             slice(
-                (self._shape[0] - self._region["t"] - 1) * self._downsampling,
-                (self._shape[0] - self._region["b"]) * self._downsampling,
+                (self._shape[0] - self._rect.t - 1) * self._downsampling,
+                (self._shape[0] - self._rect.b) * self._downsampling,
             ),
             slice(
-                self._region["l"] * self._downsampling,
-                (self._region["r"] + 1) * self._downsampling,
+                self._rect.l * self._downsampling,
+                (self._rect.r + 1) * self._downsampling,
             ),
         )
 
     def __call__(self):
 
-        cv2.namedWindow(self._name, cv2.WINDOW_GUI_NORMAL)
+        cv2.namedWindow(self._name, cv2.WINDOW_GUI_NORMAL | cv2.WINDOW_NORMAL)
+        # cv2.resizeWindow(self._name, 1600, 900)
+        _show_help()
 
         def mouse_handler(event, x, y, flags, params):
 
@@ -59,8 +138,8 @@ class RectSelector:
 
             if event == cv2.EVENT_RBUTTONDOWN:
                 self._selected = ""
-                bottom, left = distance([self._region["b"], self._region["l"]])
-                top, right = distance([self._region["t"], self._region["r"]])
+                bottom, left = distance([self._rect.b, self._rect.l])
+                top, right = distance([self._rect.t, self._rect.r])
                 if bottom < self._snap_radius:
                     self._selected += "b"
                 elif top < self._snap_radius:
@@ -75,13 +154,13 @@ class RectSelector:
             elif event == cv2.EVENT_MOUSEMOVE:
                 if self._dragging:
                     if "b" in self._selected:
-                        self._region["b"] = pos[0]
+                        self._rect.b = pos[0]
                     elif "t" in self._selected:
-                        self._region["t"] = pos[0]
+                        self._rect.t = pos[0]
                     if "l" in self._selected:
-                        self._region["l"] = pos[1]
+                        self._rect.l = pos[1]
                     if "r" in self._selected:
-                        self._region["r"] = pos[1]
+                        self._rect.r = pos[1]
 
             elif event == cv2.EVENT_RBUTTONUP:
                 self._dragging = False
@@ -94,76 +173,74 @@ class RectSelector:
         while True:
 
             k = cv2.waitKey(1)
-            if k == 13 or k == 27:  # Enter or Escape
+            if k in [13, 27]:  # Enter, Escape
                 break
-            try:
-                if cv2.getWindowProperty(self._name, cv2.WND_PROP_VISIBLE) < 0:
-                    break
-            except:
-                break
-
-            self._overlay()
+            elif k != -1:
+                _show_help()
+            self._draw_overlay()
 
         cv2.destroyAllWindows()
         return self.slicing
 
-    def _overlay(self):
+    def _draw_overlay(self):
         display = self._image.copy()
-
-        thickness = max(min(self._shape) // 1000, 1) * 2 + 1
-        radius = thickness
-        color = (0, 255, 0)
-
-        cv2.rectangle(
-            display,
-            (self._region["l"] - thickness // 2, self._region["b"] + radius),
-            (self._region["l"] + thickness // 2, self._region["t"] - radius),
-            color=color,
-            thickness=-1,
-        )
-        cv2.rectangle(
-            display,
-            (self._region["r"] - thickness // 2, self._region["b"] + radius),
-            (self._region["r"] + thickness // 2, self._region["t"] - radius),
-            color=color,
-            thickness=-1,
-        )
-        cv2.rectangle(
-            display,
-            (self._region["l"] + radius, self._region["b"] - thickness // 2),
-            (self._region["r"] - radius, self._region["b"] + thickness // 2),
-            color=color,
-            thickness=-1,
-        )
-        cv2.rectangle(
-            display,
-            (self._region["l"] + radius, self._region["t"] - thickness // 2),
-            (self._region["r"] - radius, self._region["t"] + thickness // 2),
-            color=color,
-            thickness=-1,
-        )
-
-        for h in "lr":
-            for v in "bt":
-                cv2.rectangle(
-                    display,
-                    (self._region[h] - radius, self._region[v] - radius),
-                    (self._region[h] + radius, self._region[v] + radius),
-                    color=color,
-                    thickness=1,
-                )
-
-        x = int((self._region["l"] + self._region["r"]) / 2 + 0.5)
-        y = int((self._region["b"] + self._region["t"]) / 2 + 0.5)
-        cv2.rectangle(
-            display,
-            (x - radius, y - radius),
-            (x + radius, y + radius),
-            color=color,
-            thickness=1,
-        )
-
+        self._overlay.draw(display, self._rect)
         cv2.imshow(self._name, display)
+
+
+def _show_help():
+    commands = {
+        "Zoom": ["Mouse wheel"],
+        "Pan": ["Left mouse button"],
+        "Select": ["Right mouse button"],
+        "Validate": ["Enter", "Escape"],
+        "Help": ["Any other key"],
+    }
+    text = "\n".join(f"{c}:\n  {'\n  '.join(commands[c])}" for c in commands)
+    print(text)
+    font = cv2.FONT_HERSHEY_SIMPLEX
+    scale = 1
+    thickness = 1
+    margin = 10
+
+    shape = [0, 0]
+    positions = []
+
+    def account_text(text):
+        size, baseline = cv2.getTextSize(
+            text, fontFace=font, fontScale=scale, thickness=thickness
+        )
+        shape[0] += size[1] + baseline
+        positions.append(shape[0])
+        shape[1] = max(shape[1], size[0])
+
+    for k in commands:
+        account_text(k + ":")
+        for v in commands[k]:
+            account_text("  " + v)
+    canvas = np.zeros([shape[0] + 2 * margin, shape[1] + 2 * margin, 3], dtype=np.uint8)
+
+    def write_text(text, index):
+        cv2.putText(
+            canvas,
+            text,
+            (margin, margin + positions[index]),
+            fontFace=font,
+            fontScale=scale,
+            color=(255, 255, 255),
+            thickness=thickness,
+        )
+
+    i = 0
+    for k in commands:
+        write_text(k + ":", i)
+        i += 1
+        for v in commands[k]:
+            write_text("  " + v, i)
+            i += 1
+
+    cv2.namedWindow("Help", cv2.WINDOW_GUI_NORMAL | cv2.WINDOW_AUTOSIZE)
+    cv2.imshow("Help", canvas)
 
 
 if __name__ == "__main__":  # FIXME rm
