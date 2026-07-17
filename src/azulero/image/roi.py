@@ -139,7 +139,7 @@ class RectSelector:
     def __call__(self):
 
         cv2.namedWindow(self._name, cv2.WINDOW_GUI_NORMAL | cv2.WINDOW_NORMAL)
-        # cv2.resizeWindow(self._name, 1600, 900)
+        cv2.resizeWindow(self._name, 800, 800)
         _show_help()
 
         def mouse_handler(event, x, y, flags, params):

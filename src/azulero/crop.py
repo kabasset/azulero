@@ -41,7 +41,7 @@ def add_parser(subparsers, help):
     parser.add_argument(
         "--round",
         type=int,
-        default=500,
+        default=600,
         metavar="PIXELS",
         help=(
             "Image region rounding increment. "
