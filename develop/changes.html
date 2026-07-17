@@ -126,9 +126,11 @@
 <ul class="simple">
 <li><p>Read <code class="docutils literal notranslate"><span class="pre">.env</span></code> file.</p></li>
 <li><p>Parse J-coordinates such as <code class="docutils literal notranslate"><span class="pre">EUCLJ172902.75+641018.1</span></code>.</p></li>
+<li><p>Revive <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">crop</span></code> (without Matplotlib).</p></li>
 </ul>
 <p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code></p>
 <ul class="simple">
+<li><p>Enable retries if downloaded files are empty or corrupted.</p></li>
 <li><p>Access Datalabs datafiles without download or copy with option <code class="docutils literal notranslate"><span class="pre">--data</span> <span class="pre">labs</span></code>.</p></li>
 <li><p>Retrieve tile indices with <code class="docutils literal notranslate"><span class="pre">dss</span></code> provider (option <code class="docutils literal notranslate"><span class="pre">--tiling</span></code> is kept as an optimization).</p></li>
 <li><p>Add option <code class="docutils literal notranslate"><span class="pre">-q</span> <span class="pre">tiles</span></code> to query just tile indices and not filenames.</p></li>
@@ -143,6 +145,13 @@
 <h3>Bug fixes</h3>
 <ul class="simple">
 <li><p>Some commands were not reading the environment variables.</p></li>
+<li><p>Remove deprecated commands <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">assemble</span></code>, <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">find</span></code>.</p></li>
+</ul>
+</section>
+<section id="cleaning">
+<h3>Cleaning</h3>
+<ul class="simple">
+<li><p>Remove Matplotlib dependency</p></li>
 </ul>
 </section>
 </section>
@@ -257,7 +266,7 @@
 <li><p>Print citation instructions.</p></li>
 </ul>
 </section>
-<section id="cleaning">
+<section id="id7">
 <h3>Cleaning</h3>
 <ul class="simple">
 <li><p>Documentation uses proper HTML pages (which include CLI documentation).</p></li>
@@ -286,9 +295,9 @@ which cannot handle positions around RA = 0° = 360° or dec = +/-90°
 </ul>
 </section>
 </section>
-<section id="id7">
-<h2>1.2.0</h2>
 <section id="id8">
+<h2>1.2.0</h2>
+<section id="id9">
 <h3>New features</h3>
 <p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">find</span></code></p>
 <ul class="simple">
@@ -330,7 +339,7 @@ and an <code class="docutils literal notranslate"><span class="pre">azul</span> 
 <li><p>Image pyramids are built to speed up rendering of frames with wide fields of view.</p></li>
 </ul>
 </section>
-<section id="id9">
+<section id="id10">
 <h3>Known issues</h3>
 <p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">find</span></code></p>
 <ul class="simple">
@@ -349,9 +358,9 @@ which cannot handle positions around RA = 0° = 360° or dec = +/-90°
 </ul>
 </section>
 </section>
-<section id="id10">
-<h2>1.1.1</h2>
 <section id="id11">
+<h2>1.1.1</h2>
+<section id="id12">
 <h3>Bug fixes</h3>
 <p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code></p>
 <ul class="simple">
@@ -359,16 +368,16 @@ which cannot handle positions around RA = 0° = 360° or dec = +/-90°
 </ul>
 </section>
 </section>
-<section id="id12">
-<h2>1.1.0</h2>
 <section id="id13">
+<h2>1.1.0</h2>
+<section id="id14">
 <h3>Bug fixes</h3>
 <p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">crop</span></code></p>
 <ul class="simple">
 <li><p>Command did crash when reading the image.</p></li>
 </ul>
 </section>
-<section id="id14">
+<section id="id15">
 <h3>New features</h3>
 <p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code></p>
 <ul class="simple">
@@ -376,7 +385,7 @@ which cannot handle positions around RA = 0° = 360° or dec = +/-90°
 provider).</p></li>
 </ul>
 </section>
-<section id="id15">
+<section id="id16">
 <h3>Improvements</h3>
 <p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code></p>
 <ul class="simple">
@@ -384,7 +393,7 @@ provider).</p></li>
 <li><p>Ouput(s) can be written anywhere, not only in the tile folder.</p></li>
 </ul>
 </section>
-<section id="id16">
+<section id="id17">
 <h3>Optimization</h3>
 <p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code></p>
 <ul class="simple">
@@ -392,7 +401,7 @@ provider).</p></li>
 </ul>
 </section>
 </section>
-<section id="id17">
+<section id="id18">
 <h2>1.0.0</h2>
 <section id="initial-features">
 <h3>Initial features</h3>
@@ -420,7 +429,7 @@ interface.</p></li>
 <li><p>Produce a pan-and-zoom video from an image.</p></li>
 </ul>
 </section>
-<section id="id18">
+<section id="id19">
 <h3>Known issues</h3>
 <p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">find</span></code></p>
 <ul class="simple">
@@ -463,6 +472,7 @@ which cannot handle positions around RA = 0° = 360° or dec = +/-90°
 <li><a :data-current="activeSection === '#id1'" class="reference internal" href="#id1">2.1</a><ul>
 <li><a :data-current="activeSection === '#new-features'" class="reference internal" href="#new-features">New features</a></li>
 <li><a :data-current="activeSection === '#bug-fixes'" class="reference internal" href="#bug-fixes">Bug fixes</a></li>
+<li><a :data-current="activeSection === '#cleaning'" class="reference internal" href="#cleaning">Cleaning</a></li>
 </ul>
 </li>
 <li><a :data-current="activeSection === '#id2'" class="reference internal" href="#id2">2.0.1</a><ul>
@@ -473,31 +483,31 @@ which cannot handle positions around RA = 0° = 360° or dec = +/-90°
 <li><a :data-current="activeSection === '#breaking-changes'" class="reference internal" href="#breaking-changes">Breaking changes</a></li>
 <li><a :data-current="activeSection === '#id5'" class="reference internal" href="#id5">Bug fixes</a></li>
 <li><a :data-current="activeSection === '#id6'" class="reference internal" href="#id6">New features</a></li>
-<li><a :data-current="activeSection === '#cleaning'" class="reference internal" href="#cleaning">Cleaning</a></li>
+<li><a :data-current="activeSection === '#id7'" class="reference internal" href="#id7">Cleaning</a></li>
 <li><a :data-current="activeSection === '#known-issues'" class="reference internal" href="#known-issues">Known issues</a></li>
 </ul>
 </li>
-<li><a :data-current="activeSection === '#id7'" class="reference internal" href="#id7">1.2.0</a><ul>
-<li><a :data-current="activeSection === '#id8'" class="reference internal" href="#id8">New features</a></li>
+<li><a :data-current="activeSection === '#id8'" class="reference internal" href="#id8">1.2.0</a><ul>
+<li><a :data-current="activeSection === '#id9'" class="reference internal" href="#id9">New features</a></li>
 <li><a :data-current="activeSection === '#improvements'" class="reference internal" href="#improvements">Improvements</a></li>
 <li><a :data-current="activeSection === '#optimization'" class="reference internal" href="#optimization">Optimization</a></li>
-<li><a :data-current="activeSection === '#id9'" class="reference internal" href="#id9">Known issues</a></li>
+<li><a :data-current="activeSection === '#id10'" class="reference internal" href="#id10">Known issues</a></li>
 </ul>
 </li>
-<li><a :data-current="activeSection === '#id10'" class="reference internal" href="#id10">1.1.1</a><ul>
-<li><a :data-current="activeSection === '#id11'" class="reference internal" href="#id11">Bug fixes</a></li>
+<li><a :data-current="activeSection === '#id11'" class="reference internal" href="#id11">1.1.1</a><ul>
+<li><a :data-current="activeSection === '#id12'" class="reference internal" href="#id12">Bug fixes</a></li>
 </ul>
 </li>
-<li><a :data-current="activeSection === '#id12'" class="reference internal" href="#id12">1.1.0</a><ul>
-<li><a :data-current="activeSection === '#id13'" class="reference internal" href="#id13">Bug fixes</a></li>
-<li><a :data-current="activeSection === '#id14'" class="reference internal" href="#id14">New features</a></li>
-<li><a :data-current="activeSection === '#id15'" class="reference internal" href="#id15">Improvements</a></li>
-<li><a :data-current="activeSection === '#id16'" class="reference internal" href="#id16">Optimization</a></li>
+<li><a :data-current="activeSection === '#id13'" class="reference internal" href="#id13">1.1.0</a><ul>
+<li><a :data-current="activeSection === '#id14'" class="reference internal" href="#id14">Bug fixes</a></li>
+<li><a :data-current="activeSection === '#id15'" class="reference internal" href="#id15">New features</a></li>
+<li><a :data-current="activeSection === '#id16'" class="reference internal" href="#id16">Improvements</a></li>
+<li><a :data-current="activeSection === '#id17'" class="reference internal" href="#id17">Optimization</a></li>
 </ul>
 </li>
-<li><a :data-current="activeSection === '#id17'" class="reference internal" href="#id17">1.0.0</a><ul>
+<li><a :data-current="activeSection === '#id18'" class="reference internal" href="#id18">1.0.0</a><ul>
 <li><a :data-current="activeSection === '#initial-features'" class="reference internal" href="#initial-features">Initial features</a></li>
-<li><a :data-current="activeSection === '#id18'" class="reference internal" href="#id18">Known issues</a></li>
+<li><a :data-current="activeSection === '#id19'" class="reference internal" href="#id19">Known issues</a></li>
 </ul>
 </li>
 </ul>
