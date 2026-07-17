@@ -184,9 +184,13 @@ class RectSelector:
             def hovered(x_bounds, y_bounds):
                 x0, x1 = x_bounds[0], x_bounds[-1]
                 y0, y1 = y_bounds[0], y_bounds[-1]
-                if x < x0 - self._snap_radius or x > x1 + self._snap_radius:
+                if x < min(x0, x1) - self._snap_radius:
                     return False
-                if y < y0 - self._snap_radius or y > y1 + self._snap_radius:
+                if x > max(x0, x1) + self._snap_radius:
+                    return False
+                if y < min(y0, y1) - self._snap_radius:
+                    return False
+                if y > max(y0, y1) + self._snap_radius:
                     return False
                 return True
 
