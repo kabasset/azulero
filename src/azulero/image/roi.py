@@ -309,7 +309,7 @@ class RectSelector:
                 fontFace=font,
                 fontScale=scale * factor,
                 color=self._overlay.color,
-                thickness=(thickness + 5) // 6,
+                thickness=(thickness + 6) // 6,
             )
 
         i = 0

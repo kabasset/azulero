@@ -78,13 +78,13 @@ def run(args):
     slicing = select()
 
     rounding = args.round
-    x0 = slicing[1].start * args.downsample
+    x0 = slicing[1].start
     x0 = math.floor(x0 / rounding) * rounding
-    x1 = slicing[1].stop * args.downsample
+    x1 = slicing[1].stop
     x1 = min(math.ceil(x1 / rounding) * rounding, shape[1])
-    y0 = slicing[0].start * args.downsample
+    y0 = slicing[0].start
     y0 = math.floor(y0 / rounding) * rounding
-    y1 = slicing[0].stop * args.downsample
+    y1 = slicing[0].stop
     y1 = min(math.ceil(y1 / rounding) * rounding, shape[0])
     logger.bullet(f"Crop shape: {x1 - x0} x {y1 - y0}")
     timer.tic_log()
