@@ -3,8 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import argparse
-from dataclasses import dataclass, field
-from pathlib import Path
+from astropy.io import fits
 from astropy.coordinates import Angle, SkyCoord
 
 from azulero.image import io
@@ -208,10 +207,22 @@ def download_datafiles(provider, datafiles, workdir, target, radius, overwrite):
             logger.bullet(f"{path.name}")
             if path.is_file():
                 logger.warning(f"Existing file will be overwritten: {path.name}")
-            if radius is None:
-                provider.download_datafile(name, path)
-            else:
-                provider.download_cutout(name, path, target, radius)
+
+            tries = 3  # FIXME parameter
+            while tries > 0:
+                if radius is None:
+                    provider.download_datafile(name, path)
+                else:
+                    provider.download_cutout(name, path, target, radius)
+                try:
+                    with fits.open(path):
+                        tries = 0
+                except OSError as e:
+                    tries -= 1
+                    if tries > 0:
+                        logger.warning(f"{e}. Retry.")
+                    else:
+                        logger.error("Retry failed.")
 
 
 def run(args):
