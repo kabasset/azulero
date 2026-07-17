@@ -177,7 +177,6 @@ class RectSelector:
 
         cv2.namedWindow(self._name, cv2.WINDOW_GUI_NORMAL | cv2.WINDOW_NORMAL)
         cv2.resizeWindow(self._name, 800, 800)
-        _show_help()
 
         def mouse_handler(event, x, y, flags, params):
 
@@ -239,75 +238,84 @@ class RectSelector:
         cv2.imshow(self._name, self._image)
 
         mode = 1
+        help = False
         while True:
 
             k = cv2.waitKey(1)
             if k in [13, 27]:  # Enter, Escape
                 break
-            elif k in [ord("c"), ord("C")]:
+            elif k == 32:
                 mode = (mode + 1) % 3
             elif k != -1:
-                _show_help()
-            self._draw_overlay(mode)
+                help = not help
+            try:
+                if cv2.getWindowProperty(self._name, cv2.WND_PROP_VISIBLE) < 0:
+                    break
+            except cv2.error:
+                break
+            self._draw_overlay(mode, help)
 
         cv2.destroyAllWindows()
         return self.slicing
 
-    def _draw_overlay(self, mode):
-        display = self._image.copy()
-        self._overlay.draw(display, self._rect, mode)
-        cv2.imshow(self._name, display)
+    def _draw_overlay(self, mode, help):
+        canvas = self._image.copy()
+        if help:
+            self._show_help(canvas)
+        else:
+            self._overlay.draw(canvas, self._rect, mode)
+        cv2.imshow(self._name, canvas)
 
+    def _show_help(self, canvas):
+        commands = {
+            "Zoom": ["Mouse wheel"],
+            "Pan": ["Left mouse button"],
+            "Select": ["Right mouse button"],
+            "Display mode": ["Space bar"],
+            "Toggle help": ["Any other key"],
+            "Validate": ["Close window"],
+        }
+        font = cv2.FONT_HERSHEY_SIMPLEX
+        scale = 1
+        thickness = self._overlay.thickness
+        margin = 10
 
-def _show_help():
-    commands = {
-        "Zoom": ["Mouse wheel"],
-        "Pan": ["Left mouse button"],
-        "Select": ["Right mouse button"],
-        "Toggle coordinates": ["C"],
-        "Validate": ["Enter", "Escape"],
-        "Help": ["Any other key"],
-    }
-    font = cv2.FONT_HERSHEY_SIMPLEX
-    scale = 1
-    thickness = 1
-    margin = 10
+        shape = np.array([0, 0])
+        positions = []
 
-    shape = [0, 0]
-    positions = []
+        def account_text(text):
+            size, baseline = cv2.getTextSize(
+                text, fontFace=font, fontScale=scale, thickness=thickness
+            )
+            shape[0] += size[1] + 2 * baseline
+            positions.append(shape[0])
+            shape[1] = max(shape[1], size[0])
 
-    def account_text(text):
-        size, baseline = cv2.getTextSize(
-            text, fontFace=font, fontScale=scale, thickness=thickness
-        )
-        shape[0] += size[1] + baseline
-        positions.append(shape[0])
-        shape[1] = max(shape[1], size[0])
+        for k in commands:
+            account_text(k)
+            for v in commands[k]:
+                account_text("    " + v)
 
-    for k in commands:
-        account_text(k + ":")
-        for v in commands[k]:
-            account_text("  " + v)
-    canvas = np.zeros([shape[0] + 2 * margin, shape[1] + 2 * margin, 3], dtype=np.uint8)
+        factor = min(canvas.shape[:2] / (shape + 2 * margin))
 
-    def write_text(text, index):
-        cv2.putText(
-            canvas,
-            text,
-            (margin, margin + positions[index]),
-            fontFace=font,
-            fontScale=scale,
-            color=(255, 255, 255),
-            thickness=thickness,
-        )
+        def write_text(text, index):
+            cv2.putText(
+                canvas,
+                text,
+                (
+                    int(margin * factor + 0.5),
+                    int(positions[index] * factor + 0.5),
+                ),
+                fontFace=font,
+                fontScale=scale * factor,
+                color=self._overlay.color,
+                thickness=(thickness + 5) // 6,
+            )
 
-    i = 0
-    for k in commands:
-        write_text(k + ":", i)
-        i += 1
-        for v in commands[k]:
-            write_text("  " + v, i)
+        i = 0
+        for k in commands:
+            write_text(k, i)
             i += 1
-
-    cv2.namedWindow("Help", cv2.WINDOW_GUI_NORMAL | cv2.WINDOW_AUTOSIZE)
-    cv2.imshow("Help", canvas)
+            for v in commands[k]:
+                write_text("  " + v, i)
+                i += 1
