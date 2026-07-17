@@ -61,24 +61,29 @@ class RectOverlay:
 
     def _draw_frame(self, canvas, rect):
 
+        b = min(rect.b, rect.t)
+        t = max(rect.b, rect.t)
+        l = min(rect.l, rect.r)
+        r = max(rect.l, rect.r)
+
         def fill_rect(p, q):
             cv2.rectangle(canvas, p, q, color=self.color, thickness=-1)
 
         fill_rect(
-            (rect.l - self.thickness // 2, rect.b + self.thickness),
-            (rect.l + self.thickness // 2, rect.t - self.thickness),
+            (l - self.thickness // 2, b + self.thickness),
+            (l + self.thickness // 2, t - self.thickness),
         )
         fill_rect(
-            (rect.r - self.thickness // 2, rect.b + self.thickness),
-            (rect.r + self.thickness // 2, rect.t - self.thickness),
+            (r - self.thickness // 2, b + self.thickness),
+            (r + self.thickness // 2, t - self.thickness),
         )
         fill_rect(
-            (rect.l + self.thickness, rect.b - self.thickness // 2),
-            (rect.r - self.thickness, rect.b + self.thickness // 2),
+            (l + self.thickness, b - self.thickness // 2),
+            (r - self.thickness, b + self.thickness // 2),
         )
         fill_rect(
-            (rect.l + self.thickness, rect.t - self.thickness // 2),
-            (rect.r - self.thickness, rect.t + self.thickness // 2),
+            (l + self.thickness, t - self.thickness // 2),
+            (r - self.thickness, t + self.thickness // 2),
         )
 
     def _draw_handle(self, canvas, p):
@@ -115,14 +120,19 @@ class RectSelector:
 
     @property
     def slicing(self):
+        b = min(self._rect.b, self._rect.t)
+        t = max(self._rect.b, self._rect.t)
+        l = min(self._rect.l, self._rect.r)
+        r = max(self._rect.l, self._rect.r)
+
         return (
             slice(
-                (self._shape[0] - self._rect.t - 1) * self._downsampling,
-                (self._shape[0] - self._rect.b) * self._downsampling,
+                (self._shape[0] - t - 1) * self._downsampling,
+                (self._shape[0] - b) * self._downsampling,
             ),
             slice(
-                self._rect.l * self._downsampling,
-                (self._rect.r + 1) * self._downsampling,
+                l * self._downsampling,
+                (r + 1) * self._downsampling,
             ),
         )
 
