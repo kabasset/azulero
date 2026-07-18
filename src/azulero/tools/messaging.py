@@ -86,11 +86,13 @@ class _LogFormatter(logging.Formatter):
         return message
 
 
+header_color_codes = {1: "92;1", 2: "96;1", 3: "94;1"}
+
+
 def _log_header(self, level, message, linebreaks=[1]):
-    codes = {1: "92;1", 2: "96;1", 3: "94;1"}
     for _ in range(linebreaks[0]):
         self.info("")
-    self.info(colorize(codes.get(level, "0"), message))
+    self.info(colorize(header_color_codes.get(level, "0"), message))
     for _ in range(linebreaks[-1]):
         self.info("")
 

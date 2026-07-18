@@ -155,6 +155,15 @@ class RectSelector:
         self._selected = ""  # e.g. "b" for bottom edge or "tl" for top-left corner
         self._snap_radius = 2 * self._overlay.thickness + 3
 
+        self.commands = {
+            "Zoom": ["Mouse wheel"],
+            "Pan": ["Left mouse button"],
+            "Select": ["Right mouse button"],
+            "Display mode": ["Space bar"],
+            "Toggle help": ["Any other key"],
+            "Validate": ["Close window"],
+        }
+
     @property
     def slicing(self):
         b = min(self._rect.b, self._rect.t)
@@ -267,14 +276,7 @@ class RectSelector:
         cv2.imshow(self._name, canvas)
 
     def _show_help(self, canvas):
-        commands = {
-            "Zoom": ["Mouse wheel"],
-            "Pan": ["Left mouse button"],
-            "Select": ["Right mouse button"],
-            "Display mode": ["Space bar"],
-            "Toggle help": ["Any other key"],
-            "Validate": ["Close window"],
-        }
+
         font = cv2.FONT_HERSHEY_SIMPLEX
         scale = 1
         thickness = self._overlay.thickness
@@ -291,9 +293,9 @@ class RectSelector:
             positions.append(shape[0])
             shape[1] = max(shape[1], size[0])
 
-        for k in commands:
+        for k in self.commands:
             account_text(k)
-            for v in commands[k]:
+            for v in self.commands[k]:
                 account_text("    " + v)
 
         factor = min(canvas.shape[:2] / (shape + 2 * margin))
@@ -313,9 +315,9 @@ class RectSelector:
             )
 
         i = 0
-        for k in commands:
+        for k in self.commands:
             write_text(k, i)
             i += 1
-            for v in commands[k]:
-                write_text("  " + v, i)
+            for v in self.commands[k]:
+                write_text("    " + v, i)
                 i += 1

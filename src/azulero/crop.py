@@ -8,7 +8,12 @@ import numpy as np
 from pathlib import Path
 
 from azulero.image import io, roi
-from azulero.tools.messaging import logger, write_pipe_args
+from azulero.tools.messaging import (
+    logger,
+    header_color_codes,
+    colorize,
+    write_pipe_args,
+)
 from azulero.tools.timing import Timer
 
 
@@ -73,8 +78,12 @@ def run(args):
     data = np.stack([data, data, data], axis=-1)
     timer.tic_log()
 
-    logger.header(2, f"Run GUI.")
+    logger.header(2, f"Run GUI")
     select = roi.RectSelector(data, wcs, args.downsample)
+    for c in select.commands:
+        logger.bullet(
+            f"{colorize(header_color_codes[3], c)} - {', '.join(select.commands[c])}"
+        )
     slicing = select()
 
     rounding = args.round
