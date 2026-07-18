@@ -246,7 +246,7 @@ class RectSelector:
 
         cv2.imshow(self._name, self._image)
 
-        mode = 1
+        mode = 2
         help = False
         while True:
 
