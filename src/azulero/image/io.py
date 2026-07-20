@@ -211,7 +211,7 @@ def write_product(path: Path, data: np.ndarray, wcs: WCS | None = None) -> Path 
 
     If the path is not a file, return it early.
     """
-    if not path.is_file():
+    if not path.suffix:
         return path
 
     ext = standard_extension(path)

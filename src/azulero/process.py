@@ -307,7 +307,7 @@ def process_iyjh(
         io.write_normalized_bgr(path, bgr, wcs)
         timer.tic_log()
 
-    if path.is_file():
+    if path.suffix:
         write_pipe_args([ios.relative_to_workspace(path)])
 
     return bgr

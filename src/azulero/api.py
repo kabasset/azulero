@@ -48,5 +48,4 @@ def process_iyjh(
     Returns:
         A normalized BGR image (i.e. default OpenCV layout).
     """
-    # FIXME output not written
     return process.process_iyjh(iyjh, wcs, transform, output)
