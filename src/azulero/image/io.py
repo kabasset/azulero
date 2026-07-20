@@ -208,7 +208,12 @@ def write_product(path: Path, data: np.ndarray, wcs: WCS | None = None) -> Path 
     """
     Write an image and optional WCS as an image file with WCS if supported,
     or as an image file and WCS files otherwise.
+
+    If the path is not a file, return it early.
     """
+    if not path.is_file():
+        return path
+
     ext = standard_extension(path)
     if ext == ".fits":
         fits.PrimaryHDU(data, header=product_header(wcs)).writeto(path, overwrite=True)

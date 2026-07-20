@@ -4,7 +4,9 @@
 
 import argparse
 import dotenv
+from pathlib import Path
 
+from azulero import _version
 from azulero import (
     retrieve,
     process,
@@ -13,9 +15,10 @@ from azulero import (
     roam,
     crop,
 )
+from azulero.tools.workspace import Workspace
 from azulero.tools.messaging import logger, parse_envargs, write_pipe_args
 
-from azulero import _version
+default_workspace = Workspace()
 
 
 def add_parser():
@@ -28,12 +31,16 @@ def add_parser():
     )
 
     parser.add_argument(
-        "--workspace", type=str, default=".", metavar="PATH", help="Parent workspace"
+        "--workspace",
+        type=Path,
+        default=default_workspace.workspace,
+        metavar="PATH",
+        help="Parent workspace",
     )
     parser.add_argument(
         "--input",
         type=str,
-        default="*[-_]{channel}[-_]*.fits",
+        default=default_workspace.input_pattern,
         metavar="PATTERN",
         help="Input file pattern, where ``{channel}`` is replaced with the channel name",
     )
@@ -42,7 +49,7 @@ def add_parser():
         type=str,
         nargs=4,
         metavar=("I_NAME", "Y_NAME", "J_NAME", "H_NAME"),
-        default=["VIS", "NIR-Y", "NIR-J", "NIR-H"],
+        default=default_workspace.channel_names,
         help="Channel names to be rendered in the input file pattern.",
     )
     parser.add_argument(

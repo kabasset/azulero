@@ -9,10 +9,10 @@ from pathlib import Path
 @dataclass
 class Workspace:
 
-    workspace: Path
-    input_pattern: str
-    channel_names: list
-    output_template: str
+    workspace: Path = Path(".")
+    input_pattern: str = "*[-_]{channel}[-_]*.fits"
+    channel_names: tuple = ("VIS", "NIR-Y", "NIR-J", "NIR-H")
+    output_template: str = "{workspace}/{workdir}/{1|Tile}_{0}.tiff"
 
     @classmethod
     def from_args(cls, args):

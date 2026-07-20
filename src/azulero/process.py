@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import argparse
-from dataclasses import dataclass
 import numpy as np
 from pathlib import Path
 
@@ -19,6 +18,7 @@ from azulero.tools.timing import Timer
 from azulero.tools.workspace import Workspace
 
 default_transform = color.Transform()
+default_workspace = Workspace()
 
 
 def add_parser(subparsers, help):
@@ -58,7 +58,7 @@ def add_parser(subparsers, help):
         "--output",
         "-o",
         type=str,
-        default="{workspace}/{workdir}/{1|Tile}_{0}.tiff",
+        default=default_workspace.output_template,
         metavar="TEMPLATE",
         help="""
         Output path template, where: 
@@ -263,7 +263,6 @@ def process_target(ios: Workspace, arg: str, transform: color.Transform):
     else:
         wcs = None
         logger.warning(f"No WCS found.")
-    path = render_path_for_step(template, "wcs").with_suffix(".yaml")
     timer.tic_log()
 
     logger.header(2, f"Detect bad pixels")
@@ -313,4 +312,7 @@ def process_target(ios: Workspace, arg: str, transform: color.Transform):
         io.write_normalized_bgr(path, bgr, wcs)
         timer.tic_log()
 
-    write_pipe_args([ios.relative_to_workspace(path)])
+    if path.is_file():
+        write_pipe_args([ios.relative_to_workspace(path)])
+
+    return bgr
