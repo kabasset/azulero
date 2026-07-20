@@ -103,6 +103,15 @@ def asinh(data: np.ndarray, a: float, black: float):
 
 
 def adjust_curve(data: np.ndarray, knots: list):
+    if knots:
+        first = knots[0]
+        if first[0] != 0 and first[1] != 0:
+            knots.insert(0, (0, 0))
+        last = knots[-1]
+        if last[0] != 1 and last[1] != 1:
+            knots.append((1, 1))
+    else:
+        knots = [(0, 0), (1, 1)]
     x, y = list(map(list, zip(*knots)))
     k = min(len(knots) - 1, 3)
     spline = interpolate.make_interp_spline(x, y, k)

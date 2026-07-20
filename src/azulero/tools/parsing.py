@@ -115,6 +115,11 @@ def parse_map(text: str, dtype=float) -> list[tuple[object, object]]:
     return [(dtype(x), dtype(y)) for x, y in pairs]
 
 
+def dump_map(curve: list):
+    items = [f"{knot[0]}:{knot[1]}" for knot in curve]
+    return ",".join(items)
+
+
 def render_template(text: str, *args, **kwargs) -> str:
     """
     Replace placeholders in a string, possibly with fallbacks, with provided values.

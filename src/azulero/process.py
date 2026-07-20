@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import argparse
+from astropy.wcs import WCS
 import numpy as np
 from pathlib import Path
 
@@ -170,33 +171,14 @@ def add_parser(subparsers, help):
     )
     parser.add_argument(
         "--curves",
-        type=str,  # argparse bug: parse_curve incompatible with ArgumentDefaultsHelpFormatter
+        type=str,  # argparse bug: parse_map incompatible with ArgumentDefaultsHelpFormatter
         nargs="*",
-        default=[dump_curve(c) for c in default_transform.bgr_curves[::-1]],
+        default=[parsing.dump_map(c) for c in default_transform.bgr_curves[::-1]],
         metavar="KNOTS",
         help="Curve spline knots for each channel (leave empty to disable).",
     )
 
     parser.set_defaults(**parse_envargs("process"), func=run)
-
-
-def parse_curve(arg: str):
-    knots = parsing.parse_map(arg)
-    if knots:
-        first = knots[0]
-        if first[0] != 0 and first[1] != 0:
-            knots.insert(0, (0, 0))
-        last = knots[-1]
-        if last[0] != 1 and last[1] != 1:
-            knots.append((1, 1))
-    else:
-        knots = [(0, 0), (1, 1)]
-    return knots
-
-
-def dump_curve(curve: list):
-    items = [f"{knot[0]}:{knot[1]}" for knot in curve]
-    return ",".join(items)
 
 
 def dump_slicing(slicing):
@@ -225,7 +207,7 @@ def run(args):
         saturation=args.saturation,
         stretch=args.stretch,
         bw=[args.offset, args.white],
-        bgr_curves=[parse_curve(c) for c in args.curves[::-1]],  # RGB to BGR
+        bgr_curves=[parsing.parse_map(c) for c in args.curves[::-1]],  # RGB to BGR
     )
 
     ios = Workspace.from_args(args)
@@ -243,6 +225,7 @@ def process_target(ios: Workspace, arg: str, transform: color.Transform):
     if Path(target).is_file():
         parts[-1] = Path(target).stem  # For MEF files, remove extensions
     workdir = ios.workspace / target
+
     template = parsing.render_template(
         ios.output_template,
         *parts,
@@ -264,6 +247,18 @@ def process_target(ios: Workspace, arg: str, transform: color.Transform):
         wcs = None
         logger.warning(f"No WCS found.")
     timer.tic_log()
+
+    process_iyjh(iyjh, wcs, transform, template, ios, timer)
+
+
+def process_iyjh(
+    iyjh: np.ndarray,
+    wcs: WCS,
+    transform: color.Transform = color.Transform(),
+    template: str = "",
+    ios: Workspace = Workspace(),
+    timer: Timer = Timer(),
+) -> np.ndarray:
 
     logger.header(2, f"Detect bad pixels")
     dead = mask.dead_pixels(iyjh)
