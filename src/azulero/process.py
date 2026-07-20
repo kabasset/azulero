@@ -18,21 +18,7 @@ from azulero.tools import parsing
 from azulero.tools.timing import Timer
 from azulero.tools.workspace import Workspace
 
-default_transform = color.Transform(
-    iyjh_zero_points=[24.5, 29.8, 30.1, 30.0],
-    iyjh_scaling=[2.2, 1.3, 1.2, 1.0],
-    iyjh_fwhm=[1.6, 3.5, 3.4, 3.5],
-    sharpen_strength=0.5,
-    nir_to_l=0.2,
-    i_to_b=1.0,
-    y_to_g=0.5,
-    j_to_r=0.25,
-    hue=-20.0,
-    saturation=1.2,
-    stretch=27.5,
-    bw=[28.5, 22.5],
-    bgr_curves=[[(0.5, 0.55)], [], []],
-)
+default_transform = color.Transform()
 
 
 def add_parser(subparsers, help):

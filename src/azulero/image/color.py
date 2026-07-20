@@ -14,19 +14,19 @@ from azulero.tools.messaging import logger
 
 @dataclass
 class Transform(object):
-    iyjh_zero_points: list
-    iyjh_scaling: list
-    iyjh_fwhm: list
-    sharpen_strength: float
-    nir_to_l: float
-    i_to_b: float
-    y_to_g: float
-    j_to_r: float
-    hue: float
-    saturation: float
-    stretch: float
-    bw: list
-    bgr_curves: list
+    iyjh_zero_points: tuple = (24.5, 29.8, 30.1, 30.0)
+    iyjh_scaling: tuple = (2.2, 1.3, 1.2, 1.0)
+    iyjh_fwhm: tuple = (1.6, 3.5, 3.4, 3.5)
+    sharpen_strength: float = 0.5
+    nir_to_l: float = 0.2
+    i_to_b: float = 1.0
+    y_to_g: float = 0.5
+    j_to_r: float = 0.25
+    hue: float = -20.0
+    saturation: float = 1.2
+    stretch: float = 27.5
+    bw: tuple = (28.5, 22.5)
+    bgr_curves: tuple = ([(0.5, 0.55)], [], [])
 
 
 def sharpen(data, radii, strength):  # TODO to dedicated module
