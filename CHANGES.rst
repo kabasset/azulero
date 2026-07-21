@@ -11,6 +11,7 @@ New features
 ``azul retrieve``
 
 - Enable retries if downloaded files are empty or corrupted.
+- Enable multi-radii cutout retrieval with target syntax ``<target>[r=<radius>]``.
 - Access Datalabs datafiles without download or copy with option ``--data labs``.
 - Retrieve tile indices with ``dss`` provider (option ``--tiling`` is kept as an optimization).
 - Add option ``-q tiles`` to query just tile indices and not filenames.

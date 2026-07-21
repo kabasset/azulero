@@ -70,6 +70,16 @@ In general, spaces can be omitted, though, such that the two following lines are
    $ azul retrieve "NGC 6505"
    $ azul retrieve NGC6505
 
+Each target can be suffixed with a cone angle for cutout retrieval (more details in section Download).
+The syntax is ``<target>[r=<radius>]``, e.g.:
+
+.. code-block:: console
+   :emphasize-text: [ ]
+
+   $ azul retrieve NGC6505[r=1m] 270.93,67.05[r=10s] 102157949
+
+Depending on your system, quotes may be required.
+
 
 Outputs
 -------
@@ -166,16 +176,18 @@ When retrieving coordinates or named objects, a cone radius can be passed as opt
 which triggers a cutout service and downloads only a square region around the target.
 All formats handled by Astropy's ``Angle`` are accepted.
 
-The radius applies to all coordinates and named objects of the command line,
+The radius applies to all coordinates and named objects without a specific radius given,
 but not to the tile targets.
 Therefore, the following line:
 
 .. code-block:: console
    :emphasize-text: -r
 
-   $ azul retrieve NGC6505 270.93,67.05 102157949 -r 1m
+   $ azul retrieve NGC6505 270.93,67.05 PGC61356[r=20s] 102157949 -r 1m
 
-downloads 2' x 2' regions for NGC6505 and (270.93, 67.05), as well as the whole 102157949 tile.
+downloads 2' x 2' regions around NGC6505 and (270.93, 67.05),
+a 40" x 40" region around  PGC61356,
+as well as the whole 102157949 tile.
 
 .. warning:: Provider ``dss`` does not natively support the cutout service.
 
