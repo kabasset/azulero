@@ -23,9 +23,10 @@ class Datalabs:
         name: str,
         path: Path,
         target: Target,
-        radius: Angle,
     ) -> Path:
-        return local_cutout(self._datafile_path(name), path, target.coord, radius)
+        return local_cutout(
+            self._datafile_path(name), path, target.coord, target.radius
+        )
 
     def _datafile_path(self, name):
         q = f"SELECT file_name, datalabs_path FROM sedm.mosaic_product WHERE file_name='{name}'"

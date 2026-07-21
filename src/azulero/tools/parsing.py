@@ -78,14 +78,23 @@ def parse_lengths_or_angles(text: str, references: tuple | None = None):
         return np.array(values)
 
 
-def parse_target(text: str) -> tuple[Path, slice | tuple | None]:
+def parse_target(
+    text: str, default_slicing=None, otype=Path
+) -> tuple[otype, slice | Angle | tuple | None]:
     """
     Parse the path and slicing from a target string.
+
+    Args:
+        text: The target string
+        default_slicing: The value returned if no slicing is specified in the input
+        otype: The output target type
     """
     if text.endswith("]") and "[" in text:
         workdir, slicing = text.removesuffix("]").split("[")
-        return Path(workdir), parse_slice(slicing)
-    return Path(text), None
+        if slicing.startswith("r="):
+            return otype(workdir), Angle(slicing.removeprefix("r="))
+        return otype(workdir), parse_slice(slicing)
+    return otype(text), default_slicing
 
 
 def parse_slice(text: str | None) -> slice | tuple | None:

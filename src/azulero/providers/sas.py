@@ -75,7 +75,6 @@ class SAS:
         name: str,
         path: Path,
         target: Target,
-        radius: Angle,
     ):
         q = f"SELECT file_path, instrument_name FROM sedm.mosaic_product WHERE file_name='{name}'"
         res = self.euclid.launch_job(q).get_results()[0]  # type: ignore
@@ -84,7 +83,7 @@ class SAS:
             instrument=res["instrument_name"],
             id=target.tile,
             coordinate=target.coord,
-            radius=radius,
+            radius=target.radius,
             output_file=path,
         )  # type: ignore
         return path

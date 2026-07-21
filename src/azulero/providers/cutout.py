@@ -33,7 +33,6 @@ class LocalCutout:
         name: str,
         path: Path,
         target: tiling.Target,
-        radius: Angle,
     ) -> Path:
         tiledir = path.parent.parent  # FIXME resolve tile folder
         logger.warning(
@@ -41,7 +40,7 @@ class LocalCutout:
             f"Cutting locally a full tile to be retrieved in: {tiledir}"
         )
         tile = self.download_datafile(name, tiledir / path.name)
-        return local_cutout(tile, path, target.coord, radius)
+        return local_cutout(tile, path, target.coord, target.radius)
 
 
 def local_cutout(input: Path, output: Path, coord: SkyCoord, radius: Angle) -> Path:

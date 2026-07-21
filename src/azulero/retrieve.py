@@ -8,6 +8,7 @@ from astropy.coordinates import Angle, SkyCoord
 
 from azulero.image import io
 from azulero.providers import dss, sas, tiling, cutout, datalabs
+from azulero.tools import parsing
 from azulero.tools.messaging import (
     logger,
     parse_envargs,
@@ -45,7 +46,9 @@ def add_parser(subparsers, help):
         default=read_pipe_args(),
         help=(
             "Space-separated list of tile indices (e.g. 102159776), "
-            "coordinates (e.g. 270.93°,67.05°), and/or object names (e.g. UGC11116)."
+            "coordinates (e.g. 270.93°,67.05°), and/or object names (e.g. UGC11116). "
+            "A specific cone search angle can be specified between brackets (e.g. UGC11116[r=2m]). "
+            "See also option -r."
         ),
     )
     parser.add_argument(
@@ -73,9 +76,11 @@ def add_parser(subparsers, help):
         "--radius",
         "-r",
         type=Angle,
-        default=None,
         metavar="ANGLE",
-        help="Cone search angle (if set, will retrieve cutouts instead of tiles).",
+        help=(
+            "Default cone search angle (if set, will retrieve cutouts instead of tiles). "
+            "Overwritten by specific angles."
+        ),
     )
     parser.add_argument(
         "--limit",
@@ -139,29 +144,32 @@ def add_parser(subparsers, help):
     parser.set_defaults(**parse_envargs("retrieve"), func=run)
 
 
-def query_tiles(provider, dsrs: list[str], modes: list[str], target: str):
+def query_tiles(
+    provider, dsrs: list[str], modes: list[str], radius: Angle, target: str
+):
     """
     Query the list of tiles for a given target, which may be a tile index, coordinates or object name.
     """
 
     if target.isdigit():
         logger.info(f"Tile: {target}")
-        return [tiling.Target(target, target, None)]
+        return [tiling.Target(target, target)]
 
-    if "," in target:
-        logger.info(f"Coordinates: {target}")
-        ra, dec = target.split(",")
+    t, r = parsing.parse_target(target, radius, otype=str)
+    if "," in t:
+        logger.info(f"Coordinates: {t}")
+        ra, dec = t.split(",")
         radec = SkyCoord(ra, dec, unit="deg")
     else:
-        logger.info(f"Named object: {target}")
-        radec = SkyCoord.from_name(target, parse=True)
+        logger.info(f"Named object: {t}")
+        radec = SkyCoord.from_name(t, parse=True)
         logger.bullet(f"Coordinates: {radec.ra.degree:.2f}° {radec.dec.degree:.2f}°")
 
     tiles = sort_tiles(provider.query_tiles(radec, dsrs), dsrs, modes)
 
-    for t in tiles:
-        logger.bullet(f"Tile: {t}")
-    targets = [tiling.Target(target, t.index, radec) for t in tiles]
+    for tile in tiles:
+        logger.bullet(f"Tile: {tile}")
+    targets = [tiling.Target(t, tile.index, radec, r) for tile in tiles]
     if len(targets) == 0:
         logger.warning("No tile found!")
     return list(targets)
@@ -179,8 +187,6 @@ def sort_tiles(
 
 def query_datafiles(provider, tile, dsr):
 
-    logger.header(2, f"Query datafiles for tile {tile} and dataset release {dsr}:")
-
     datafiles = provider.query_datafiles(tile, dsr)
     datafiles = {
         file: filter
@@ -195,9 +201,7 @@ def query_datafiles(provider, tile, dsr):
     return datafiles
 
 
-def download_datafiles(provider, datafiles, workdir, target, radius, overwrite):
-
-    logger.header(2, f"Download and extract datafiles to: {workdir}")
+def download_datafiles(provider, datafiles, workdir, target, overwrite):
 
     for name in datafiles:  # TODO parallelize?
         path = workdir / name.removesuffix(".gz")
@@ -208,12 +212,12 @@ def download_datafiles(provider, datafiles, workdir, target, radius, overwrite):
             if path.is_file():
                 logger.warning(f"Existing file will be overwritten: {path.name}")
 
-            tries = 3  # FIXME parameter
+            tries = 3  # TODO parameter?
             while tries > 0:
-                if radius is None:
+                if target.radius is None:
                     provider.download_datafile(name, path)
                 else:
-                    provider.download_cutout(name, path, target, radius)
+                    provider.download_cutout(name, path, target)
                 try:
                     with fits.open(path):
                         tries = 0
@@ -241,7 +245,7 @@ def run(args):
     else:
         logger.bullet("Enable local cutout service.")
         data_provider = cutout.LocalCutout(provider)
-    dsrs = args.dsr.split(",")
+    dsrs = args.dsr.split(",")  # FIXME raise if len(dsrs) = 0
     modes = args.survey.split(",")
     assert not args.force or len(args.targets) == 1
     ios = Workspace.from_args(args)
@@ -251,7 +255,7 @@ def run(args):
 
     targets = []
     for t in args.targets:
-        targets += query_tiles(tile_provider, dsrs, modes, t)[: args.limit]
+        targets += query_tiles(tile_provider, dsrs, modes, args.radius, t)[: args.limit]
     timer.tic_log()
 
     if args.query_only == "tiles":
@@ -260,11 +264,16 @@ def run(args):
 
     logger.header(1, "Retrieve targets", linebreaks=[1, 0])
 
-    for t in targets:
+    for i, t in enumerate(targets):
+        progress = f"[{i+1}/{len(targets)}]"
         if args.force is not None and len(args.force) > 0:
             datafiles = args.force
         else:
             for dsr in dsrs:
+                logger.header(
+                    2,
+                    f"{progress} Query datafiles for tile {t.tile} and dataset release {dsr}:",
+                )
                 datafiles = query_datafiles(provider, t.tile, dsr)
                 if len(datafiles) > 0:
                     break
@@ -277,12 +286,12 @@ def run(args):
 
         if not args.query_only:
             workdir = io.make_workdir(t.workdir(ios))
+            logger.header(2, f"{progress} Download and extract datafiles to: {workdir}")
             download_datafiles(
                 data_provider,
                 datafiles,
                 workdir,  # FIXME give ios instead
                 t,
-                args.radius,
                 args.force is not None,
             )
             timer.tic_log()

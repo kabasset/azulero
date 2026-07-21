@@ -2,7 +2,7 @@
 # SPDX-PackageSourceInfo: https://github.com/kabasset/azulero
 # SPDX-License-Identifier: Apache-2.0
 
-from astropy.coordinates import SkyCoord
+from astropy.coordinates import Angle, SkyCoord
 from dataclasses import dataclass, field
 import json
 from pathlib import Path
@@ -17,6 +17,7 @@ class Target:
     name: str
     tile: str
     coord: SkyCoord | None = field(default=None, compare=False)
+    radius: Angle | None = field(default=None, compare=False)
 
     def tiledir(self, ios: Workspace) -> Path:
         return Path(
