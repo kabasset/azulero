@@ -180,6 +180,12 @@ In general, spaces can be omitted, though, such that the two following lines are
 </span><span id="line-2"><span class="gp">$ </span>azul<span class="w"> </span>retrieve<span class="w"> </span>NGC6505
 </span></code></pre></div>
 </div>
+<p>Each target can be suffixed with a cone angle for cutout retrieval (more details in section Download).
+The syntax is <code class="docutils literal notranslate"><span class="pre">&lt;target&gt;[r=&lt;radius&gt;]</span></code>, e.g.:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">$ </span>azul<span class="w"> </span>retrieve<span class="w"> </span>NGC6505<span class="ge">[</span><span class="nv">r</span><span class="o">=</span>1m<span class="ge">]</span><span class="w"> </span><span class="m">270</span>.93,67.05<span class="ge">[</span><span class="nv">r</span><span class="o">=</span>10s<span class="ge">]</span><span class="w"> </span><span class="m">102157949</span>
+</span></code></pre></div>
+</div>
+<p>Depending on your system, quotes may be required.</p>
 </section>
 <section id="outputs">
 <h2>Outputs</h2>
@@ -269,13 +275,15 @@ This is especially handy when one wants to get exactly one image per target (<co
 <p>When retrieving coordinates or named objects, a cone radius can be passed as option <code class="docutils literal notranslate"><span class="pre">-r</span></code>,
 which triggers a cutout service and downloads only a square region around the target.
 All formats handled by Astropy’s <code class="docutils literal notranslate"><span class="pre">Angle</span></code> are accepted.</p>
-<p>The radius applies to all coordinates and named objects of the command line,
+<p>The radius applies to all coordinates and named objects without a specific radius given,
 but not to the tile targets.
 Therefore, the following line:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">$ </span>azul<span class="w"> </span>retrieve<span class="w"> </span>NGC6505<span class="w"> </span><span class="m">270</span>.93,67.05<span class="w"> </span><span class="m">102157949</span><span class="w"> </span><span class="ge">-r</span><span class="w"> </span>1m
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">$ </span>azul<span class="w"> </span>retrieve<span class="w"> </span>NGC6505<span class="w"> </span><span class="m">270</span>.93,67.05<span class="w"> </span>PGC61356<span class="o">[</span><span class="nv">r</span><span class="o">=</span>20s<span class="o">]</span><span class="w"> </span><span class="m">102157949</span><span class="w"> </span><span class="ge">-r</span><span class="w"> </span>1m
 </span></code></pre></div>
 </div>
-<p>downloads 2’ x 2’ regions for NGC6505 and (270.93, 67.05), as well as the whole 102157949 tile.</p>
+<p>downloads 2’ x 2’ regions around NGC6505 and (270.93, 67.05),
+a 40” x 40” region around  PGC61356,
+as well as the whole 102157949 tile.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>Provider <code class="docutils literal notranslate"><span class="pre">dss</span></code> does not natively support the cutout service.</p>
