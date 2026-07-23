@@ -55,6 +55,17 @@ def hot_pixels(i, y, j, h):
     return hot_i | hot_y | hot_j | hot_h
 
 
+def remove_large_components(mask: np.ndarray, threshold: int):
+    if not threshold:
+        return mask
+    analysis = cv2.connectedComponentsWithStats(mask, connectivity=4)
+    nb, labels, properties, _ = analysis
+    for i in range(1, nb):
+        if properties[i, cv2.CC_STAT_AREA] >= threshold:
+            mask[labels == i] = 0
+    return mask
+
+
 def inpaint(data: np.ndarray, mask: np.ndarray, axis: int = -1):
     if data.ndim > 2:
         return skinpaint.inpaint_biharmonic(

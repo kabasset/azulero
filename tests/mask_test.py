@@ -41,3 +41,17 @@ def test_inpainting():
     res = mask.inpaint(data, flags)
 
     assert np.all(res == 1)
+
+
+def test_continent_removal():
+
+    a = np.zeros([10, 10], dtype=np.uint8)
+    a[1:3, 1:3] = 1
+    a[4:8, 4:8] = 1
+
+    mask.remove_large_components(a, 16)
+    assert np.all(a[1:3, 1:3] == 1)
+    assert np.all(a[4:8, 4:8] == 0)
+
+    mask.remove_large_components(a, 4)
+    assert np.all(a[1:3, 1:3] == 0)
