@@ -5,6 +5,7 @@
 import enum
 import numpy as np
 from skimage.restoration import inpaint as skinpaint
+from skimage.segmentation import clear_border as skclear_border
 import cv2
 
 
@@ -44,6 +45,12 @@ def dead_pixels(iyjh):
     return iyjh == 0
 
 
+def clear_borders(mask):
+    for channel in mask:
+        skclear_border(channel, out=channel)
+    return mask
+
+
 def hot_pixels(i, y, j, h):
 
     abs_threshold = 10.0
@@ -56,14 +63,18 @@ def hot_pixels(i, y, j, h):
 
 
 def remove_large_components(mask: np.ndarray, threshold: int):
+    cvmask = np.astype(np.logical_or.reduce(mask), np.uint8)
+    res = []
     if not threshold:
-        return mask
-    analysis = cv2.connectedComponentsWithStats(mask, connectivity=4)
+        return res
+    analysis = cv2.connectedComponentsWithStats(cvmask, connectivity=4)
     nb, labels, properties, _ = analysis
     for i in range(1, nb):
-        if properties[i, cv2.CC_STAT_AREA] >= threshold:
-            mask[labels == i] = 0
-    return mask
+        area = properties[i, cv2.CC_STAT_AREA]
+        if area >= threshold:
+            mask[:, labels == i] = False
+            res.append(area)
+    return res
 
 
 def inpaint(data: np.ndarray, mask: np.ndarray, axis: int = -1):

@@ -262,7 +262,7 @@ def process_iyjh(
 
     logger.header(2, f"Detect bad pixels")
     dead = mask.dead_pixels(iyjh)
-    logger.bullet(f"Dead pixels: {', '.join(str(np.sum(channel)) for channel in dead)}")
+    logger.bullet(f"Bad pixels: {', '.join(str(np.sum(c)) for c in dead)}")
     if "{step}" in template:
         path = render_path_for_step(template, "mask")
         logger.bullet(f"Write: {path.name}")
@@ -270,9 +270,11 @@ def process_iyjh(
     timer.tic_log()
 
     logger.header(2, f"Inpaint dead pixels")
+    dead = mask.clear_borders(dead)
     iyjh[0] = mask.inpaint(iyjh[0], dead[0])
     nir_dead = dead[1] | dead[2] | dead[3]
     iyjh[1:] = mask.inpaint(iyjh[1:], nir_dead, 0)
+    logger.bullet(f"Inpainted pixels: {', '.join(str(np.sum(c)) for c in dead)}")
     timer.tic_log()
 
     logger.header(2, f"Sharpen channels")
