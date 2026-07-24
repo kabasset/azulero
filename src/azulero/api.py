@@ -24,6 +24,7 @@ Args:
     hue: Hue rotation angle in degrees
     saturation: Saturation gain
     stretch: Stretching parameter
+    neg_overshoot: Negative overshooting parameter
     bw: Black and white points in AB-mag
     bgr_curves: Curve adjustment knots for each channel
 """

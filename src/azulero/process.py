@@ -91,7 +91,7 @@ def add_parser(subparsers, help):
     parser.add_argument(
         "--overshoot",
         type=float,
-        default=default_transform.black_overshoot,
+        default=default_transform.neg_overshoot,
         metavar="RATE",
         help=(
             "Negative overshooting wrt. null flux: "
@@ -218,7 +218,7 @@ def run(args):
         saturation=args.saturation,
         stretch=args.stretch,
         bw=(args.offset, args.white),
-        black_overshoot=args.overshoot,
+        neg_overshoot=args.overshoot,
         bgr_curves=tuple(parsing.parse_map(c) for c in args.curves[::-1]),  # RGB to BGR
     )
 

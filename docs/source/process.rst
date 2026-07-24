@@ -50,6 +50,7 @@ The diagram below illustrates the various steps of the algorithm processing a si
    object Equalize {
    --zero
    --scaling
+   --overshoot
    }
    object Stretch {
    -w
@@ -257,6 +258,12 @@ The effect of ``-w`` is obvious at the heart of the galaxy, which is completely 
 Note how pushing ``-a`` deeper (top row) intensifies dimmer objects like background galaxies and the outer region of UGC 11116.
 Beware that it also increases noise and may make the background grainy and unpleasant.
 Azulero default values are carefully chosen to limit this phenomenon while keeping room for post-processing.
+
+The negative overshoot parameter (``--overshoot``) controls how much negative values remain in the rendered image.
+A value of 0 means that input null values are rendered as 0,
+while a value of 1 means that the offset value is rendered as 0.
+Higher overshoot values provide more degrees of freedom for post-processing,
+while lower values result in deeper blacks, which is better for using the rendered image directly.
 
 
 Blending

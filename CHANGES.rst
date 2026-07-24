@@ -20,6 +20,8 @@ New features
 ``azul process``
 
 - Enable reading of multi-extension FITS files.
+- Increase default ``--nirl`` to 0.2.
+- Add option ``--overshoot`` (v2.0 processing corresponds to ``--overshoot 1``).
 
 Bug fixes
 ^^^^^^^^^
