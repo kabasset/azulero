@@ -26,6 +26,7 @@ class Transform(object):
     saturation: float = 1.2
     stretch: float = 27.5
     bw: tuple = (28.5, 22.5)
+    black_overshoot: float = 0.4
     bgr_curves: tuple = ([(0.5, 0.55)], [], [])
 
 
@@ -51,7 +52,10 @@ def stretch_iyjh(iyjh: np.ndarray, transform: Transform):
     a = abmag_to_value(w, transform.stretch)
     b = -abmag_to_value(transform.bw[0], w)
     iyjh *= scaling
-    return asinh(iyjh, a, b)
+    overshoot = asinh(np.zeros([1], dtype=np.float32), a, b)[0] * (
+        1 - transform.black_overshoot
+    )
+    return (asinh(iyjh, a, b) - overshoot) / (1 - overshoot)
 
 
 def iyjh_to_lbgr(iyjh: np.ndarray, transform: Transform):

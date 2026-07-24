@@ -89,6 +89,17 @@ def add_parser(subparsers, help):
         help="Scaling factors applied immediately to the IYJH bands for white balance.",
     )
     parser.add_argument(
+        "--overshoot",
+        type=float,
+        default=default_transform.black_overshoot,
+        metavar="RATE",
+        help=(
+            "Negative overshooting wrt. null flux: "
+            "0 means an output null value is an input null flux, "
+            "while 1 means an output null value is the offset (which leaves more room for postprocessing)."
+        ),
+    )
+    parser.add_argument(
         "--fwhm",
         nargs=4,
         type=float,
@@ -206,8 +217,9 @@ def run(args):
         hue=args.hue,
         saturation=args.saturation,
         stretch=args.stretch,
-        bw=[args.offset, args.white],
-        bgr_curves=[parsing.parse_map(c) for c in args.curves[::-1]],  # RGB to BGR
+        bw=(args.offset, args.white),
+        black_overshoot=args.overshoot,
+        bgr_curves=tuple(parsing.parse_map(c) for c in args.curves[::-1]),  # RGB to BGR
     )
 
     ios = Workspace.from_args(args)
