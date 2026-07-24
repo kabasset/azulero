@@ -158,7 +158,7 @@ Intermediate files can be written, mostly for investigation.</p>
 <p>The diagram below illustrates the various steps of the algorithm processing a single workdir.</p>
 <figure class="align-center">
 <p class="plantuml">
-<object data="_images/plantuml-86ff90597b6b6c6d7099c1a8d6cbaa44869e58cf.svg" style="max-width:100%" type="image/svg+xml">
+<object data="_images/plantuml-4e457eb0d38e1b887bebf5798102c483c4e34002.svg" style="max-width:100%" type="image/svg+xml">
 <img alt="folder workdir {
 }
 object Stack {
@@ -172,6 +172,7 @@ object Sharpen {
 object Equalize {
 --zero
 --scaling
+--overshoot
 }
 object Stretch {
 -w
@@ -207,7 +208,7 @@ file adjusted {
 
 Inpaint --&gt; mask
 Blend --&gt; blended
-Adjust --&gt; adjusted" src="_images/plantuml-86ff90597b6b6c6d7099c1a8d6cbaa44869e58cf.png"/>
+Adjust --&gt; adjusted" src="_images/plantuml-4e457eb0d38e1b887bebf5798102c483c4e34002.png"/>
 </object></p>
 </figure>
 </section>
@@ -370,6 +371,11 @@ below is a matrix of UGC 11116 renderings in which we varied the parameters arou
 Note how pushing <code class="docutils literal notranslate"><span class="pre">-a</span></code> deeper (top row) intensifies dimmer objects like background galaxies and the outer region of UGC 11116.
 Beware that it also increases noise and may make the background grainy and unpleasant.
 Azulero default values are carefully chosen to limit this phenomenon while keeping room for post-processing.</p>
+<p>The negative overshoot parameter (<code class="docutils literal notranslate"><span class="pre">--overshoot</span></code>) controls how much negative values remain in the rendered image.
+A value of 0 means that input null values are rendered as 0,
+while a value of 1 means that the offset value is rendered as 0.
+Higher overshoot values provide more degrees of freedom for post-processing,
+while lower values result in deeper blacks, which is better for using the rendered image directly.</p>
 </section>
 <section id="blending">
 <h2>Blending</h2>
