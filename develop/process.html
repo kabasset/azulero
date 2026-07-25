@@ -158,7 +158,7 @@ Intermediate files can be written, mostly for investigation.</p>
 <p>The diagram below illustrates the various steps of the algorithm processing a single workdir.</p>
 <figure class="align-center">
 <p class="plantuml">
-<object data="_images/plantuml-4e457eb0d38e1b887bebf5798102c483c4e34002.svg" style="max-width:100%" type="image/svg+xml">
+<object data="_images/plantuml-47b8dffd85090069d739893b73db269f02c186a9.svg" style="max-width:100%" type="image/svg+xml">
 <img alt="folder workdir {
 }
 object Stack {
@@ -172,12 +172,12 @@ object Sharpen {
 object Equalize {
 --zero
 --scaling
---overshoot
 }
 object Stretch {
 -w
 -a
 -b
+--overshoot
 }
 object Blend {
 --ib
@@ -208,7 +208,7 @@ file adjusted {
 
 Inpaint --&gt; mask
 Blend --&gt; blended
-Adjust --&gt; adjusted" src="_images/plantuml-4e457eb0d38e1b887bebf5798102c483c4e34002.png"/>
+Adjust --&gt; adjusted" src="_images/plantuml-47b8dffd85090069d739893b73db269f02c186a9.png"/>
 </object></p>
 </figure>
 </section>
@@ -542,7 +542,7 @@ e.g. for some top-left region (<span class="math notranslate nohighlight">\(x &l
 </div><footer class="py-6 border-t border-border md:py-0">
 <div class="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
 <div class="flex flex-col items-center gap-4 px-8 md:flex-row md:gap-2 md:px-0">
-<p class="text-sm leading-loose text-center text-muted-foreground md:text-left">© 2025-2026, Antoine Basset (CNES) and contributors. Last updated: Jul 24, 2026. Built with <a class="font-medium underline underline-offset-4" href="https://www.sphinx-doc.org" rel="noreferrer">Sphinx 9.1.0</a></p>
+<p class="text-sm leading-loose text-center text-muted-foreground md:text-left">© 2025-2026, Antoine Basset (CNES) and contributors. Last updated: Jul 25, 2026. Built with <a class="font-medium underline underline-offset-4" href="https://www.sphinx-doc.org" rel="noreferrer">Sphinx 9.1.0</a></p>
 </div>
 </div>
 </footer>
