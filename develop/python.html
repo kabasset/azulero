@@ -21,9 +21,9 @@
 <meta content="#ffffff" media="(prefers-color-scheme: light)" name="theme-color"/>
 <meta content="#030711" media="(prefers-color-scheme: dark)" name="theme-color"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
-<title>Developer notes | Azulero 2.1</title>
-<meta content="Developer notes | Azulero 2.1" property="og:title"/>
-<meta content="Developer notes | Azulero 2.1" name="twitter:title"/>
+<title>Python API | Azulero 2.1</title>
+<meta content="Python API | Azulero 2.1" property="og:title"/>
+<meta content="Python API | Azulero 2.1" name="twitter:title"/>
 <link href="_static/pygments.css?v=e72c8e07" rel="stylesheet" type="text/css"/>
 <link href="_static/theme.css?v=d6d7c91b" rel="stylesheet" type="text/css"/>
 <link href="_static/sphinxcontrib-images/LightBox2/lightbox2/dist/css/lightbox.min.css?v=6e7d0de0" rel="stylesheet" type="text/css"/>
@@ -33,8 +33,8 @@
 <link href="_static/lists.css?v=79f77f08" rel="stylesheet" type="text/css"/>
 <link href="_static/favicon.png" rel="icon"/>
 <link href="search.html" rel="search" title="Search"/>
-<link href="ai.html" rel="next" title="Generative AI use"/>
-<link href="changes.html" rel="prev" title="Change log"/>
+<link href="changes.html" rel="next" title="Change log"/>
+<link href="pipelines.html" rel="prev" title="Pipelines"/>
 </head>
 <body :class="{ 'overflow-hidden': showSidebar }" class="min-h-screen font-sans antialiased bg-background text-foreground" x-data="{ showSidebar: false, showScrollTop: false }">
 <div @click.self="showSidebar = false" class="fixed inset-0 z-50 overflow-hidden bg-background/80 backdrop-blur-sm md:hidden" x-cloak="" x-show="showSidebar"></div><div class="relative flex flex-col min-h-screen" id="page"><a class="absolute top-0 left-0 z-[100] block bg-background p-4 text-xl transition -translate-x-full opacity-0 focus:translate-x-0 focus:opacity-100" href="#content">
@@ -102,9 +102,9 @@
 <li class="toctree-l1"><a class="reference internal" href="arrange.html"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">arrange</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="roam.html"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">roam</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="pipelines.html">Pipelines</a></li>
-<li class="toctree-l1"><a class="reference internal" href="python.html">Python API</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Python API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changes.html">Change log</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Developer notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="devnotes.html">Developer notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ai.html">Generative AI use</a></li>
 </ul>
 </nav>
@@ -119,75 +119,104 @@
 <main class="relative py-6 lg:gap-10 lg:py-8 xl:grid xl:grid-cols-[1fr_300px]">
 <div class="w-full min-w-0 mx-auto">
 <div id="content" role="main">
-<section id="developer-notes">
-<h1>Developer notes</h1>
-<section id="image-storage">
-<h2>Image storage</h2>
-<p>Color images are stored as <code class="docutils literal notranslate"><span class="pre">ndarray</span></code>’s following most OpenCV conventions:</p>
-<ul class="simple">
-<li><p>Axes are ordered as height, width, depth;</p></li>
-<li><p>Channels are ordered as BGRA;</p></li>
-<li><p>However, <strong>contrary to OpenCV, the y-axis points upward</strong> for compatibility with WCS.</p></li>
+<section id="python-api">
+<h1>Python API</h1>
+<section id="introduction">
+<h2>Introduction</h2>
+<p>In order to avoid generating useless files when working with data already in memory, a Python interface is published.
+The package comes with a library, public interface of which is contained in module <code class="docutils literal notranslate"><span class="pre">api</span></code>.
+For example, assuming the photometric channels are NumPy arrays <code class="docutils literal notranslate"><span class="pre">i,</span> <span class="pre">y,</span> <span class="pre">j</span> <span class="pre">h</span></code>, the RGB (or, rather, BGR image) is rendered as:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="kn">from</span><span class="w"> </span><span class="ge">azulero</span><span class="w"> </span><span class="kn">import</span> <span class="ge">api</span> <span class="k">as</span> <span class="ge">azul</span>
+</span><span id="line-2">
+</span><span id="line-3"><span class="n">iyjh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">i</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">h</span><span class="p">])</span>
+</span><span id="line-4"><span class="n">bgr</span> <span class="o">=</span> <span class="ge">azul</span><span class="o">.</span><span class="n">process_iyjh</span><span class="p">(</span><span class="n">iyjh</span><span class="p">)</span>
+</span></code></pre></div>
+</div>
+</section>
+<section id="module-azulero.api">
+<span id="api-reference"></span><h2>API reference</h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="azulero.api.Transform">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">azulero.api.</span></span><span class="sig-name descname"><span class="pre">Transform</span></span><span class="sig-paren">(</span>
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">iyjh_zero_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">(24.5,</span> <span class="pre">29.8,</span> <span class="pre">30.1,</span> <span class="pre">30.0)</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">iyjh_scaling</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">(2.2,</span> <span class="pre">1.3,</span> <span class="pre">1.2,</span> <span class="pre">1.0)</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">iyjh_fwhm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">(1.6,</span> <span class="pre">3.5,</span> <span class="pre">3.4,</span> <span class="pre">3.5)</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">sharpen_strength</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">nir_to_l</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.2</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">i_to_b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">y_to_g</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">j_to_r</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.25</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">hue</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-20.0</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">saturation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.2</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">stretch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">27.5</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">bw</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">(28.5,</span> <span class="pre">22.5)</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">neg_overshoot</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.4</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">bgr_curves</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">([(0.5,</span> <span class="pre">0.55)],</span> <span class="pre">[],</span> <span class="pre">[])</span></span></em>,</dd>
+</dl>
+<span class="sig-paren">)</span></dt>
+<dd><p>Transformation parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>iyjh_zero_points</strong> – Zero points of each channel</p></li>
+<li><p><strong>iyjh_scaling</strong> – Scaling of each channel (for white balance)</p></li>
+<li><p><strong>iyjh_fwhm</strong> – PSF full width at half-maximum of each channel</p></li>
+<li><p><strong>sharpen_strength</strong> – Unsharp masking strength</p></li>
+<li><p><strong>nir_to_l</strong> – NIR-to-L rate</p></li>
+<li><p><strong>i_to_b</strong> – I-to-B rate</p></li>
+<li><p><strong>y_to_g</strong> – Y-to-G rate</p></li>
+<li><p><strong>j_to_r</strong> – J-to-R rate</p></li>
+<li><p><strong>hue</strong> – Hue rotation angle in degrees</p></li>
+<li><p><strong>saturation</strong> – Saturation gain</p></li>
+<li><p><strong>stretch</strong> – Stretching parameter</p></li>
+<li><p><strong>neg_overshoot</strong> – Negative overshooting parameter</p></li>
+<li><p><strong>bw</strong> – Black and white points in AB-mag</p></li>
+<li><p><strong>bgr_curves</strong> – Curve adjustment knots for each channel</p></li>
 </ul>
-<p>Specifically, this impacts IOs, since non-FITS supported formats are stored from top to bottom.
-Therefore, image IOs should always be performed with the <code class="docutils literal notranslate"><span class="pre">azulero.image.io</span></code> module.</p>
-<p>Grayscale image stacks, such as the IYJH stack, use the first axis as an image index.</p>
-<p>We use the word <em>shape</em> following NumPy’s definition, while <em>format</em> is always the 2-element tuple of width and then height.</p>
-</section>
-<section id="inpainting">
-<h2>Inpainting</h2>
-<p>Different algorithms are used to inpaint VIS and NISP invalid pixels.
-Specifically, color images and image stacks are inpainted with SciKit’s biharmonic algorithm,
-while grayscale images are inpainted with OpenCV’s Navier-Stokes algorithm.
-The former is very memory-greedy but renders much smoother large regions,
-which often occur at the center of galaxies.</p>
-</section>
-<section id="sharpening">
-<h2>Sharpening</h2>
-<p>By default, we rely on MER’s PSF estimates, which are a tad wider than VIS’ and NIR’s estimates,
-in order to keep overshooting under control.</p>
-</section>
-<section id="dps-tile-lookup">
-<h2>DPS tile lookup</h2>
-<p>The DPS does not offer fast-enough spatial queries to find the tiles in which a target lies.
-Therefore, we used to rely on SMT’s Geojson tiling.
-In order to simplify the workflow by not requiring users to download and update the tiling themselves,
-we have implemented an optimized mechanism for spatial queries:</p>
-<ol class="arabic simple">
-<li><p>Query the <code class="docutils literal notranslate"><span class="pre">DpdMerMosaics</span></code> with a central declination (attribute <code class="docutils literal notranslate"><span class="pre">CRVAL2</span></code>) between two bounds
-computed from the target declination and some margin (the maximum half height of a tile).</p></li>
-<li><p>Perform the spatial query locally, using this subset of tiles, like we used to do with the Geojson tiling.</p></li>
-</ol>
-<p>Other optimizations could be implemented, like bounds on the right ascension, but that would be more tricky to compute
-while accounting for poles and anti-meridian discontinuities.</p>
-</section>
-<section id="dps-cutout-service">
-<h2>DPS cutout service</h2>
-<p>At the moment, there is no cutout service in the DPS.
-Therefore, we perform the cutout locally after downloading the full tile.
-This assumes the <code class="docutils literal notranslate"><span class="pre">-o</span></code> parameter specifies different tile and target workdirs,
-otherwise the tile will be overwritten by the cutout,
-which may result in undefined behavior for subsequent retrievals.</p>
-</section>
-<section id="sequence-file">
-<h2>Sequence file</h2>
-<p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">roam</span></code>’s sequence file is quite rich already, which may make it hard to read.
-In order to simplify reading, we chose to make everything explicit, i.e. there is no default value or unit.
-A data model would be welcome…</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="azulero.api.process_iyjh">
+<span class="sig-prename descclassname"><span class="pre">azulero.api.</span></span><span class="sig-name descname"><span class="pre">process_iyjh</span></span><span class="sig-paren">(</span>
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">iyjh</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">wcs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">WCS</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">transform</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#azulero.api.Transform" title="azulero.image.color.Transform"><span class="pre">Transform</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Transform()</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>,</dd>
+</dl>
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span></dt>
+<dd><p>Process an image according to transformation parameters,
+optionally save intermediate and final images.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>iyjh</strong> – A stack of the I, Y, J, H arrays (e.g. <code class="docutils literal notranslate"><span class="pre">iyjh[1]</span></code> is the NIR-Y channel).</p></li>
+<li><p><strong>wcs</strong> – The WCS parameters or <code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
+<li><p><strong>transform</strong> – The transformation parameters</p></li>
+<li><p><strong>output</strong> – The output file name (empty string to disable writing)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A normalized BGR image (OpenCV layout with bottom-up Y axis).</p>
+</dd>
+</dl>
+</dd></dl>
 </section>
 </section>
 </div><div class="flex justify-between items-center pt-6 mt-12 border-t border-border gap-4">
 <div class="mr-auto">
-<a class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors border border-input hover:bg-accent hover:text-accent-foreground py-2 px-4" href="changes.html">
+<a class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors border border-input hover:bg-accent hover:text-accent-foreground py-2 px-4" href="pipelines.html">
 <svg class="mr-2 h-4 w-4" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
 <polyline points="15 18 9 12 15 6"></polyline>
 </svg>
-        Change log
+        Pipelines
       </a>
 </div>
 <div class="ml-auto">
-<a class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors border border-input hover:bg-accent hover:text-accent-foreground py-2 px-4" href="ai.html">
-        Generative AI use
+<a class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors border border-input hover:bg-accent hover:text-accent-foreground py-2 px-4" href="changes.html">
+        Change log
         <svg class="ml-2 h-4 w-4" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
 <polyline points="9 18 15 12 9 6"></polyline>
 </svg>
@@ -196,12 +225,12 @@ A data model would be welcome…</p>
 </div></div><aside class="hidden text-sm xl:block" id="right-sidebar">
 <div class="sticky top-16 -mt-10 max-h-[calc(100vh-5rem)] h-full overflow-y-auto pt-6 space-y-2"><p class="font-medium">On this page</p>
 <ul>
-<li><a :data-current="activeSection === '#image-storage'" class="reference internal" href="#image-storage">Image storage</a></li>
-<li><a :data-current="activeSection === '#inpainting'" class="reference internal" href="#inpainting">Inpainting</a></li>
-<li><a :data-current="activeSection === '#sharpening'" class="reference internal" href="#sharpening">Sharpening</a></li>
-<li><a :data-current="activeSection === '#dps-tile-lookup'" class="reference internal" href="#dps-tile-lookup">DPS tile lookup</a></li>
-<li><a :data-current="activeSection === '#dps-cutout-service'" class="reference internal" href="#dps-cutout-service">DPS cutout service</a></li>
-<li><a :data-current="activeSection === '#sequence-file'" class="reference internal" href="#sequence-file">Sequence file</a></li>
+<li><a :data-current="activeSection === '#introduction'" class="reference internal" href="#introduction">Introduction</a></li>
+<li><a :data-current="activeSection === '#module-azulero.api'" class="reference internal" href="#module-azulero.api">API reference</a><ul>
+<li><a :data-current="activeSection === '#azulero.api.Transform'" class="reference internal" href="#azulero.api.Transform"><code class="docutils literal notranslate"><span class="pre">Transform</span></code></a></li>
+<li><a :data-current="activeSection === '#azulero.api.process_iyjh'" class="reference internal" href="#azulero.api.process_iyjh"><code class="docutils literal notranslate"><span class="pre">process_iyjh()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </div>
 </aside>

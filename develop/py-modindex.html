@@ -23,9 +23,9 @@
   <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff" />
   <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#030711" />
   
-  <title>Search | Azulero 2.1</title>
-  <meta property="og:title" content="Search | Azulero 2.1" />
-  <meta name="twitter:title" content="Search | Azulero 2.1" />
+  <title>Python Module Index | Azulero 2.1</title>
+  <meta property="og:title" content="Python Module Index | Azulero 2.1" />
+  <meta name="twitter:title" content="Python Module Index | Azulero 2.1" />
   <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=e72c8e07" />
   <link rel="stylesheet" type="text/css" href="_static/theme.css?v=d6d7c91b" />
   <link rel="stylesheet" type="text/css" href="_static/sphinxcontrib-images/LightBox2/lightbox2/dist/css/lightbox.min.css?v=6e7d0de0" />
@@ -34,7 +34,10 @@
   <link rel="stylesheet" type="text/css" href="_static/figures.css?v=1baf8845" />
   <link rel="stylesheet" type="text/css" href="_static/lists.css?v=79f77f08" />
   <link rel="icon" href="_static/favicon.png" />
-  <link rel="search" title="Search" href="#" />
+  <link rel="search" title="Search" href="search.html" />
+
+
+
 </head>
 
 <body x-data="{ showSidebar: false, showScrollTop: false }"
@@ -66,7 +69,7 @@
     </button>
     <div class="flex items-center justify-between flex-1 gap-2 sm:gap-4 md:justify-end">
       <div class="flex-1 w-full md:w-auto md:flex-none"><form id="searchbox"
-      action="#"
+      action="search.html"
       method="get"
       class="relative flex items-center group"
       @keydown.k.window.meta="$refs.search.focus()">
@@ -159,13 +162,30 @@
     </button>
   </aside>
           <main class="relative py-6 lg:gap-10 lg:py-8 xl:grid xl:grid-cols-[1fr_300px]">
-  <div class="w-full min-w-0 mx-auto">
-    <div id="content" role="main">
-      <div id="fallback" class="my-8 text-sm text-red-700">
-        <script>document.querySelector("#fallback").style.display = "none"</script>Please activate Javascript to enable searching the documentation.</div>
-      <div id="search-results"></div>
-    </div>
-  </div>
+
+   <h1>Python Module Index</h1>
+
+   <div class="modindex-jumpbox">
+   <a href="#cap-a"><strong>a</strong></a>
+   </div>
+
+   <table class="indextable modindextable">
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-a"><td></td><td>
+       <strong>a</strong></td><td></td></tr>
+     <tr>
+       <td><img src="_static/minus.png" class="toggler"
+              id="toggle-1" style="display: none" alt="-" /></td>
+       <td>
+       <code class="xref">azulero</code></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="python.html#module-azulero.api"><code class="xref">azulero.api</code></a></td><td>
+       <em></em></td></tr>
+   </table>
+
 
           </main>
         </div>
@@ -180,7 +200,6 @@
 </footer>
     </div>
     
-  
     <script src="_static/documentation_options.js?v=7f41d439"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
@@ -188,10 +207,6 @@
     <script src="_static/sphinxcontrib-images/LightBox2/lightbox2/dist/js/lightbox-plus-jquery.min.js?v=f0ca4bb6"></script>
     <script src="_static/sphinxcontrib-images/LightBox2/lightbox2-customize/jquery-noconflict.js?v=12818e64"></script>
     
-  <script src="_static/searchtools.js" defer></script>
-  <script src="_static/language_data.js" defer></script>
-  <script src="searchindex.js" defer></script>
-
 </body>
 
 </html>

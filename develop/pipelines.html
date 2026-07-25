@@ -33,7 +33,7 @@
 <link href="_static/lists.css?v=79f77f08" rel="stylesheet" type="text/css"/>
 <link href="_static/favicon.png" rel="icon"/>
 <link href="search.html" rel="search" title="Search"/>
-<link href="changes.html" rel="next" title="Change log"/>
+<link href="python.html" rel="next" title="Python API"/>
 <link href="roam.html" rel="prev" title="azul roam"/>
 </head>
 <body :class="{ 'overflow-hidden': showSidebar }" class="min-h-screen font-sans antialiased bg-background text-foreground" x-data="{ showSidebar: false, showScrollTop: false }">
@@ -102,6 +102,7 @@
 <li class="toctree-l1"><a class="reference internal" href="arrange.html"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">arrange</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="roam.html"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">roam</span></code></a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python.html">Python API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changes.html">Change log</a></li>
 <li class="toctree-l1"><a class="reference internal" href="devnotes.html">Developer notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ai.html">Generative AI use</a></li>
@@ -227,7 +228,7 @@ and generate a similar output in one pipeline (there are a lot of files to downl
 <li><p>arrange renderings into a 14-column grid,</p></li>
 <li><p>display the resulting collage:</p></li>
 </ul>
-<a class="" data-lightbox="group-99fb3fcc-11d3-4e03-bed1-c04894af14de" data-title="" href="_images/collage_56.46762095259402,-49.45093443791871_102020055_54.36856435116159,-28.53351499365056_102043551.png" title=""><img alt="" class="" height="auto" src="_images/collage_56.46762095259402,-49.45093443791871_102020055_54.36856435116159,-28.53351499365056_102043551.png" width="100%"/>
+<a class="" data-lightbox="group-902d948c-b967-4084-ba15-2d053c56784f" data-title="" href="_images/collage_56.46762095259402,-49.45093443791871_102020055_54.36856435116159,-28.53351499365056_102043551.png" title=""><img alt="" class="" height="auto" src="_images/collage_56.46762095259402,-49.45093443791871_102020055_54.36856435116159,-28.53351499365056_102043551.png" width="100%"/>
 </a></section>
 <section id="pipeline-clipboard-to-slideshow">
 <h2>Pipeline: Clipboard to slideshow</h2>
@@ -275,7 +276,7 @@ The pipeline will be fed by the clipboard, therefore we will just select the tab
 </span></code></pre></div>
 </div>
 <p>which gives:</p>
-<a class="" data-lightbox="group-9159d3d2-5c6b-486c-973d-03d4ba07fe72" data-title="" href="_images/collage_UGC11116_102159776_LEDA2697349_102159776.png" title=""><img alt="" class="" height="auto" src="_images/collage_UGC11116_102159776_LEDA2697349_102159776.png" width="100%"/>
+<a class="" data-lightbox="group-6a97e20f-b020-4284-bcf1-70451ef4b296" data-title="" href="_images/collage_UGC11116_102159776_LEDA2697349_102159776.png" title=""><img alt="" class="" height="auto" src="_images/collage_UGC11116_102159776_LEDA2697349_102159776.png" width="100%"/>
 </a><p>Since we did not pass option <code class="docutils literal notranslate"><span class="pre">-n</span> <span class="pre">1</span></code> to <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code>,
 all of the tiles which contain a target are retrieved,
 which is why there are two images of LEDA2697349.
@@ -351,8 +352,8 @@ collage -&gt; open' src="_images/plantuml-89f6e558cfca0d4a1224da1ce5abc4faf6dfd4
       </a>
 </div>
 <div class="ml-auto">
-<a class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors border border-input hover:bg-accent hover:text-accent-foreground py-2 px-4" href="changes.html">
-        Change log
+<a class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors border border-input hover:bg-accent hover:text-accent-foreground py-2 px-4" href="python.html">
+        Python API
         <svg class="ml-2 h-4 w-4" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
 <polyline points="9 18 15 12 9 6"></polyline>
 </svg>
