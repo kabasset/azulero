@@ -50,12 +50,12 @@ The diagram below illustrates the various steps of the algorithm processing a si
    object Equalize {
    --zero
    --scaling
-   --overshoot
    }
    object Stretch {
    -w
    -a
    -b
+   --overshoot
    }
    object Blend {
    --ib
