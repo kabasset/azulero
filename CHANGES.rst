@@ -16,6 +16,7 @@ New features
 - Retrieve tile indices with ``dss`` provider (option ``--tiling`` is kept as an optimization).
 - Add option ``-q tiles`` to query just tile indices and not filenames.
 - Add option ``--survey`` to select and sort processing modes.
+- Log progress (index of current retrieval).
 
 ``azul process``
 

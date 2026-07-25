@@ -214,14 +214,14 @@ def download_datafiles(provider, datafiles, workdir, target, overwrite):
 
             tries = 3  # TODO parameter?
             while tries > 0:
-                if target.radius is None:
-                    provider.download_datafile(name, path)
-                else:
-                    provider.download_cutout(name, path, target)
                 try:
+                    if target.radius is None:
+                        provider.download_datafile(name, path)
+                    else:
+                        provider.download_cutout(name, path, target)
                     with fits.open(path):
                         tries = 0
-                except OSError as e:
+                except Exception as e:
                     tries -= 1
                     if tries > 0:
                         logger.warning(f"{e}. Retry.")
