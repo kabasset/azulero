@@ -42,11 +42,11 @@ def process_iyjh(
 
     Args:
         iyjh: A stack of the I, Y, J, H arrays (e.g. ``iyjh[1]`` is the NIR-Y channel).
-        wcs: The WCS parameters
+        wcs: The WCS parameters or ``None``
         transform: The transformation parameters
         output: The output file name (empty string to disable writing)
 
     Returns:
-        A normalized BGR image (i.e. default OpenCV layout).
+        A normalized BGR image (OpenCV layout with bottom-up Y axis).
     """
-    return process.process_iyjh(iyjh, wcs, transform, output)
+    return process.process_iyjh(np.astype(iyjh, np.float32), wcs, transform, output)

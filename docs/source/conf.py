@@ -8,6 +8,8 @@ from azulero import _version
 
 
 extensions = [
+    "sphinx.ext.autodoc",
+    "sphinx.ext.napoleon",
     "sphinx.ext.githubpages",  # Add .nojekyll file
     "sphinxcontrib.images",
     "sphinxcontrib.plantuml",
@@ -189,3 +191,9 @@ html_theme_options = {
         },
     },
 }
+
+# Autodoc
+# =======
+
+maximum_signature_line_length = 1
+autodoc_preserve_defaults = True

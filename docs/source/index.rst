@@ -20,6 +20,7 @@ Azulero |version|
    arrange
    roam
    pipelines
+   python
    changes
    devnotes
    ai
