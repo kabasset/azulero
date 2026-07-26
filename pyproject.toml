@@ -8,7 +8,8 @@ authors = [
   {name="Gimenez, Rollin"},
   {name="Nguyen-Kim, Kane"},
   {name="Candini, Gian Paolo"},
-  {name="Malapert, Jean-Christophe"}
+  {name="Malapert, Jean-Christophe"},
+  {name="Wozny, Nicolas"}
 ]
 description = "Bring colors to Euclid tiles!"
 readme = "README.md"

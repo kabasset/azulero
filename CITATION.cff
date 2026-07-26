@@ -30,6 +30,9 @@ authors:
   - family-names: Malapert
     given-names: Jean-Christophe
     affiliation: CNES
+  - family-names: Wozny
+    given-names: Nicolas
+    affiliation: IAP
 identifiers:
   - type: doi
     value: 10.24400/815952/Azulero
