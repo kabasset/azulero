@@ -22,7 +22,7 @@ def add_parser(subparsers, help):
     parser = subparsers.add_parser(
         "arrange",
         help=help,
-        description="Crop or pad images and assemble them into a grid.",
+        description="Crop, pad or scale images and assemble them into a grid.",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
 
@@ -48,16 +48,23 @@ def add_parser(subparsers, help):
         help="Format of each image in the grid.",
     )
     parser.add_argument(
+        "--scale",
+        type=float,
+        default=1,
+        metavar="FACTOR",
+        help="Scale factor, or 0 to fit the image size to the cell size.",
+    )
+    parser.add_argument(
         "--margin",
         default="1%",
         metavar="SPACE",
-        help="Margin around the grid in pixels or or percentage of the maximum image extent.",
+        help="Margin around the grid in pixels or percentage of the maximum image extent.",
     )
     parser.add_argument(
         "--gap",
         default="1%",
         metavar="SPACE",
-        help="Margin between images in pixels or or percentage of the maximum image extent.",
+        help="Margin between cells in pixels or percentage of the maximum image extent.",
     )
     parser.add_argument(
         "--background",
@@ -93,8 +100,10 @@ def run(args):
 
     filenames = [ios.workspace / f for f in args.images]
     logger.header(1, f"Read {len(filenames)} image{'s' if len(filenames) > 1 else ''}")
-    images = [cv2.imread(f) for f in filenames]
+    images = [scale(cv2.imread(f), args.scale) for f in filenames]
     w, h = parse_format(args.format, images)
+    if args.scale == 0:
+        images = [scale_to_fit(i, (h, w)) for i in images]
     logger.bullet(f"Crop: {w} x {h}")
     timer.tic_log()
 
@@ -130,6 +139,19 @@ def run(args):
     write_pipe_args([ios.relative_to_workspace(output)])
 
 
+def scale(image: np.ndarray, factor: float):
+    if factor <= 0 or factor == 1:
+        return image
+    return cv2.resize(
+        image, dsize=None, fx=factor, fy=factor, interpolation=cv2.INTER_CUBIC
+    )
+
+
+def scale_to_fit(image: np.ndarray, shape: tuple[int, int]):
+    ratio = np.max(np.array(shape) / image.shape[:2])
+    return scale(image, ratio)
+
+
 def parse_format(arg, images):
     aggs = {"min": min, "max": max, "median": lambda l: int(np.median(l))}
     widths = [i.shape[1] for i in images]
@@ -149,6 +171,8 @@ def parse_format(arg, images):
             h = int(format[1])
         else:
             h = aggs[format[1]](heights)
+    # TODO Add small tolerance to prevent ugly gaps or scaling up or down by factors close to 1
+    # For example, if `w - 1 in widths`, reduce the size (be careful when `len(format) == 1`)
     return w, h
 
 
