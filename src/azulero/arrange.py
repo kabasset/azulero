@@ -68,6 +68,7 @@ def add_parser(subparsers, help):
     )
     parser.add_argument(
         "--background",
+        "-b",
         type=int,
         default=0,
         metavar="COLOR",

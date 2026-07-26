@@ -17,9 +17,10 @@ possibly with spacing between images and around the collage.
    object Initialize {
    -n
    --format
+   --scale
    --margin
    --gap
-   --background
+   -b
    }
    object Blit {
    }
@@ -58,7 +59,9 @@ Canvas initialization
 
 A canvas (the background of the collage) is initialized with a format and color.
 First, the width and height of the grid cells are computed
-from the input image sizes and option ``--format``.
+from the input image sizes and options ``--format`` and ``--scale``.
+
+If ``--scale`` is greater than zero, the images are first scaled accordingly.
 
 Option ``--format`` accepts one value for square cells or two comma-separated values for rectangular cells.
 In the latter case, the first value specifies the cell width and the second value specifies the cell height.
@@ -67,6 +70,8 @@ or via some internal computation based on the aggregation of input image formats
 The following aggregators are provided: ``min``, ``max``, ``median``.
 If only one value is passed to ``--format``, then a square format is enforced.
 Therefore, ``--format min,min`` (the default) is not the same as ``--format min``.
+
+If ``--scale`` is 0, then the images are scaled to fit the computed scale format.
 
 Once the cell format has been evaluated, the number of rows and columns is computed according to ``-n``
 which specifies the maximum number of columns.
@@ -78,7 +83,7 @@ For example, if the cell format is ``600,400``, then ``--gap 2%`` will produce 1
 
 A margin around the whole collage can also be specified to ``--margin`` in pixels or cell extent percentage.
 
-The color of the canvas is given to option ``--background``.
+The color of the canvas is given to option ``-b``.
 This impacts the color of the gap and margin pixels,
 as well as regions around cells which accommodate small images (see next session).
 
