@@ -127,16 +127,17 @@
 possibly with spacing between images and around the collage.</p>
 <figure class="align-center">
 <p class="plantuml">
-<object data="_images/plantuml-f49ec3c9c418a70d23ce22698fc731ce145365c3.svg" style="max-width:100%" type="image/svg+xml">
+<object data="_images/plantuml-7dfbdde1064bbe905752eb6041e5944093eaa018.svg" style="max-width:100%" type="image/svg+xml">
 <img alt="file images {
 }
 
 object Initialize {
 -n
 --format
+--scale
 --margin
 --gap
---background
+-b
 }
 object Blit {
 }
@@ -146,7 +147,7 @@ file collage {
 
 images --&gt; Initialize
 Initialize -&gt; Blit
-Blit --&gt; collage" src="_images/plantuml-f49ec3c9c418a70d23ce22698fc731ce145365c3.png"/>
+Blit --&gt; collage" src="_images/plantuml-7dfbdde1064bbe905752eb6041e5944093eaa018.png"/>
 </object></p>
 </figure>
 </section>
@@ -181,7 +182,8 @@ which do not need to have the same formats or shapes.</p>
 <h2>Canvas initialization</h2>
 <p>A canvas (the background of the collage) is initialized with a format and color.
 First, the width and height of the grid cells are computed
-from the input image sizes and option <code class="docutils literal notranslate"><span class="pre">--format</span></code>.</p>
+from the input image sizes and options <code class="docutils literal notranslate"><span class="pre">--format</span></code> and <code class="docutils literal notranslate"><span class="pre">--scale</span></code>.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">--scale</span></code> is greater than zero, the images are first scaled accordingly.</p>
 <p>Option <code class="docutils literal notranslate"><span class="pre">--format</span></code> accepts one value for square cells or two comma-separated values for rectangular cells.
 In the latter case, the first value specifies the cell width and the second value specifies the cell height.
 This can be done in absolute terms as integers (e.g. <code class="docutils literal notranslate"><span class="pre">600,400</span></code>),
@@ -189,6 +191,7 @@ or via some internal computation based on the aggregation of input image formats
 The following aggregators are provided: <code class="docutils literal notranslate"><span class="pre">min</span></code>, <code class="docutils literal notranslate"><span class="pre">max</span></code>, <code class="docutils literal notranslate"><span class="pre">median</span></code>.
 If only one value is passed to <code class="docutils literal notranslate"><span class="pre">--format</span></code>, then a square format is enforced.
 Therefore, <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">min,min</span></code> (the default) is not the same as <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">min</span></code>.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">--scale</span></code> is 0, then the images are scaled to fit the computed scale format.</p>
 <p>Once the cell format has been evaluated, the number of rows and columns is computed according to <code class="docutils literal notranslate"><span class="pre">-n</span></code>
 which specifies the maximum number of columns.
 If the parameter is not specified, then a single row is generated.</p>
@@ -196,7 +199,7 @@ If the parameter is not specified, then a single row is generated.</p>
 either in pixels or in percentage of the maximum cell extent if suffixed with <code class="docutils literal notranslate"><span class="pre">%</span></code>.
 For example, if the cell format is <code class="docutils literal notranslate"><span class="pre">600,400</span></code>, then <code class="docutils literal notranslate"><span class="pre">--gap</span> <span class="pre">2%</span></code> will produce 12-pixel gaps.</p>
 <p>A margin around the whole collage can also be specified to <code class="docutils literal notranslate"><span class="pre">--margin</span></code> in pixels or cell extent percentage.</p>
-<p>The color of the canvas is given to option <code class="docutils literal notranslate"><span class="pre">--background</span></code>.
+<p>The color of the canvas is given to option <code class="docutils literal notranslate"><span class="pre">-b</span></code>.
 This impacts the color of the gap and margin pixels,
 as well as regions around cells which accommodate small images (see next session).</p>
 </section>
