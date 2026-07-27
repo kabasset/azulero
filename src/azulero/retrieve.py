@@ -15,6 +15,7 @@ from azulero.tools.messaging import (
     read_pipe_args,
     write_pipe_args,
 )
+from azulero.tools.retry import retry
 from azulero.tools.timing import Timer
 from azulero.tools.workspace import Workspace
 
@@ -165,7 +166,11 @@ def query_tiles(
         radec = SkyCoord.from_name(t, parse=True)
         logger.bullet(f"Coordinates: {radec.ra.degree:.2f}° {radec.dec.degree:.2f}°")
 
-    tiles = sort_tiles(provider.query_tiles(radec, dsrs), dsrs, modes)
+    @retry(logger=logger, default=[])
+    def retry_query():
+        return provider.query_tiles(radec, dsrs)
+
+    tiles = sort_tiles(retry_query(), dsrs, modes)
 
     for tile in tiles:
         logger.bullet(f"Tile: {tile}")
@@ -187,7 +192,11 @@ def sort_tiles(
 
 def query_datafiles(provider, tile, dsr):
 
-    datafiles = provider.query_datafiles(tile, dsr)
+    @retry(logger=logger, default=[])
+    def retry_query():
+        return provider.query_datafiles(tile, dsr)
+
+    datafiles = retry_query()
     datafiles = {
         file: filter
         for file, filter in datafiles.items()
@@ -212,21 +221,16 @@ def download_datafiles(provider, datafiles, workdir, target, overwrite):
             if path.is_file():
                 logger.warning(f"Existing file will be overwritten: {path.name}")
 
-            tries = 3  # TODO parameter?
-            while tries > 0:
-                try:
-                    if target.radius is None:
-                        provider.download_datafile(name, path)
-                    else:
-                        provider.download_cutout(name, path, target)
-                    with fits.open(path):
-                        tries = 0
-                except Exception as e:
-                    tries -= 1
-                    if tries > 0:
-                        logger.warning(f"{e}. Retry.")
-                    else:
-                        logger.error("Retry failed.")
+            @retry(logger=logger)
+            def retry_query():
+                if target.radius is None:
+                    provider.download_datafile(name, path)
+                else:
+                    provider.download_cutout(name, path, target)
+                with fits.open(path):
+                    return
+
+            retry_query()
 
 
 def run(args):
