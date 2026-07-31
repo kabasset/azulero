@@ -6,6 +6,7 @@ import enum
 import numpy as np
 from skimage.restoration import inpaint as skinpaint
 from skimage.segmentation import clear_border as skclear_border
+from skimage.measure import label as sklabel
 import cv2
 
 
@@ -45,17 +46,29 @@ def dead_pixels(iyjh):
     return iyjh == 0
 
 
-def borders(mask):
+def common_borders_2d(mask):
     res = mask.copy()
     for channel in res:
         skclear_border(channel, out=channel)
-    res = np.logical_and.reduce(mask & ~res)
-    res &= ~skclear_border(res)
+    res = np.logical_and.reduce(mask & ~res)  # aggregated mask without borders
+    res &= ~skclear_border(res)  # reset remaining inner components
     return res
 
 
-def clear_borders(mask):
-    mask &= ~borders(mask)
+def corners_2d(mask: np.ndarray):
+    labels: np.ndarray = sklabel(mask, background=0)  # type: ignore
+    corners_indices = np.unique(
+        [labels[0, 0], labels[0, -1], labels[-1, 0], labels[-1, -1]]
+    )
+    return np.isin(labels, [i for i in corners_indices if i != 0])
+
+
+def common_corners_2d(mask: np.ndarray):
+    return np.logical_and.reduce([corners_2d(channel) for channel in mask])
+
+
+def clear_corners(mask):
+    mask &= ~common_corners_2d(mask)
     return mask
 
 

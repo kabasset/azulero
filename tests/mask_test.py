@@ -57,51 +57,67 @@ def test_continent_removal():
     assert np.all(a[1:3, 1:3] == 0)
 
 
-def test_corners_removal():
-
-    a = np.zeros([5, 5], dtype=bool)
-    a[0] = True
-    a[-1] = True
-
-    b = np.zeros_like(a)
-    b[:, 0] = True
-    b[:, -1] = True
-
-    m = np.stack([a, b])
-    m[:, 2, 2] = True
-
-    mask.clear_borders(m)
-
-    expected = [
+def test_corner_removal():
+    m = np.array(
         [
-            [False, True, True, True, False],
-            [False, False, False, False, False],
-            [False, False, True, False, False],
-            [False, False, False, False, False],
-            [False, True, True, True, False],
-        ],
+            [
+                [0, 0, 1],
+                [0, 0, 1],
+                [0, 0, 0],
+            ],
+            [
+                [0, 1, 1],
+                [0, 0, 0],
+                [0, 0, 0],
+            ],
+        ]
+    )
+    c = mask.clear_corners(m)
+    expected = np.array(
         [
-            [False, False, False, False, False],
-            [True, False, False, False, True],
-            [True, False, True, False, True],
-            [True, False, False, False, True],
-            [False, False, False, False, False],
-        ],
-    ]
-    assert np.all(m == expected)
+            [
+                [0, 0, 0],
+                [0, 0, 1],
+                [0, 0, 0],
+            ],
+            [
+                [0, 1, 0],
+                [0, 0, 0],
+                [0, 0, 0],
+            ],
+        ]
+    )
+    assert np.all(c == expected)
 
 
-def test_cross_non_removal():
-
-    a = np.zeros([5, 5], dtype=bool)
-    a[1:-1] = True
-
-    b = np.zeros_like(a)
-    b[:, 1:-1] = True
-
-    m = np.stack([a, b])
-
-    mask.clear_borders(m)
-
-    expected = np.stack([a, b])
-    assert np.all(m == expected)
+def test_edge_non_removal():
+    m = np.array(
+        [
+            [
+                [0, 1, 0],
+                [0, 1, 0],
+                [0, 0, 0],
+            ],
+            [
+                [0, 1, 1],
+                [0, 1, 0],
+                [0, 0, 0],
+            ],
+        ]
+    )
+    c = mask.clear_corners(m)
+    expected = np.array(
+        [
+            [
+                [0, 1, 0],
+                [0, 1, 0],
+                [0, 0, 0],
+            ],
+            [
+                [0, 1, 1],
+                [0, 1, 0],
+                [0, 0, 0],
+            ],
+        ]
+    )
+    assert np.all(c == expected)
