@@ -121,6 +121,33 @@
 <div id="content" role="main">
 <section id="what-s-new">
 <h1>What’s new</h1>
+<section id="version-2-1">
+<h2>Version 2.1</h2>
+<p>The main focus of this version is to make batch processing more flexible,
+for example by retrieving cutouts of different sizes,
+bypassing the download phase when working on the Datalabs,
+or calling Azulero directly from Python (notebooks).
+Additional upgrades include the revival of <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">crop</span></code>
+and the improvement of the background rendering with <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code>.</p>
+<p>Below are a few more details; for more, see the <a class="reference internal" href="changes.html"><span class="doc">Change log</span></a>.</p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code></dt><dd><ul class="simple">
+<li><p>In a single command, multiple radii are supported for cutout retrieval.</p></li>
+<li><p>On ESA Datalabs, no downloads or copies are performed with <code class="docutils literal notranslate"><span class="pre">--data</span> <span class="pre">labs</span></code>.</p></li>
+<li><p>Queries and downloads are retried on failure.</p></li>
+</ul>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code></dt><dd><ul class="simple">
+<li><p>The sky background is now darker by default, and less dependent on the white point,
+which makes it more stable with <code class="docutils literal notranslate"><span class="pre">-w</span> <span class="pre">0</span></code>.</p></li>
+<li><p>In incomplete tiles, the large empty regions are not inpainted anymore,
+which means the RAM usage is reasonable and the empty regions are rendered dark.</p></li>
+<li><p>Files with one extension per band are accepted as targets.</p></li>
+<li><p>A Python API is delivered.</p></li>
+</ul>
+</dd>
+</dl>
+</section>
 <section id="version-2-0">
 <h2>Version 2.0</h2>
 <p>This version is an almost complete rewriting of Azulero.
@@ -186,6 +213,7 @@ Here is an overview (for more details, see the <a class="reference internal" hre
 </div></div><aside class="hidden text-sm xl:block" id="right-sidebar">
 <div class="sticky top-16 -mt-10 max-h-[calc(100vh-5rem)] h-full overflow-y-auto pt-6 space-y-2"><p class="font-medium">On this page</p>
 <ul>
+<li><a :data-current="activeSection === '#version-2-1'" class="reference internal" href="#version-2-1">Version 2.1</a></li>
 <li><a :data-current="activeSection === '#version-2-0'" class="reference internal" href="#version-2-0">Version 2.0</a></li>
 </ul>
 </div>

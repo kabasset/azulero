@@ -132,7 +132,7 @@
 </ul>
 <p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code></p>
 <ul class="simple">
-<li><p>Enable retries if downloaded files are empty or corrupted.</p></li>
+<li><p>Enable retries.</p></li>
 <li><p>Enable multi-radii cutout retrieval with target syntax <code class="docutils literal notranslate"><span class="pre">&lt;target&gt;[r=&lt;radius&gt;]</span></code>.</p></li>
 <li><p>Access Datalabs datafiles without download or copy with option <code class="docutils literal notranslate"><span class="pre">--data</span> <span class="pre">labs</span></code>.</p></li>
 <li><p>Retrieve tile indices with <code class="docutils literal notranslate"><span class="pre">dss</span></code> provider (option <code class="docutils literal notranslate"><span class="pre">--tiling</span></code> is kept as an optimization).</p></li>
@@ -143,8 +143,13 @@
 <p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code></p>
 <ul class="simple">
 <li><p>Enable reading of multi-extension FITS files.</p></li>
+<li><p>Remove corners from the inpainting mask to cope with incomplete tiles.</p></li>
 <li><p>Increase default <code class="docutils literal notranslate"><span class="pre">--nirl</span></code> to 0.2.</p></li>
 <li><p>Add option <code class="docutils literal notranslate"><span class="pre">--overshoot</span></code> (v2.0 processing corresponds to <code class="docutils literal notranslate"><span class="pre">--overshoot</span> <span class="pre">1</span></code>).</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">arrange</span></code></p>
+<ul class="simple">
+<li><p>Enable automatic and manual scaling of images (option <code class="docutils literal notranslate"><span class="pre">--scale</span></code>)</p></li>
 </ul>
 </section>
 <section id="bug-fixes">

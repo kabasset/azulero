@@ -286,6 +286,11 @@ Azulero inpaints pixels with a null value after stacking.</p>
 Relying on bitmasks to detect them and decide on the inpainting technique would be nice, especially for VIS ghosts,
 yet we did not find a satisfying selection method, which would work both for WIDE and DEEP tiles.
 We keep this in mind for a future version…</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In order to cope with incomplete tiles, which have a large empty region,
+connected components from the bad pixel mask which touch a corner of the image are not inpainted.</p>
+</div>
 </section>
 <section id="sharpening">
 <h2>Sharpening</h2>
