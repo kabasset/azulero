@@ -50,9 +50,7 @@ def borders(mask):
     for channel in res:
         skclear_border(channel, out=channel)
     res = np.logical_and.reduce(mask & ~res)
-    print(res)
     res &= ~skclear_border(res)
-    print(res)
     return res
 
 
