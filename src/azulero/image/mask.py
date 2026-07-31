@@ -45,9 +45,19 @@ def dead_pixels(iyjh):
     return iyjh == 0
 
 
-def clear_borders(mask):
-    for channel in mask:
+def borders(mask):
+    res = mask.copy()
+    for channel in res:
         skclear_border(channel, out=channel)
+    res = np.logical_and.reduce(mask & ~res)
+    print(res)
+    res &= ~skclear_border(res)
+    print(res)
+    return res
+
+
+def clear_borders(mask):
+    mask &= ~borders(mask)
     return mask
 
 

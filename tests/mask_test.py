@@ -55,3 +55,53 @@ def test_continent_removal():
 
     mask.remove_large_components(a, 4)
     assert np.all(a[1:3, 1:3] == 0)
+
+
+def test_corners_removal():
+
+    a = np.zeros([5, 5], dtype=bool)
+    a[0] = True
+    a[-1] = True
+
+    b = np.zeros_like(a)
+    b[:, 0] = True
+    b[:, -1] = True
+
+    m = np.stack([a, b])
+    m[:, 2, 2] = True
+
+    mask.clear_borders(m)
+
+    expected = [
+        [
+            [False, True, True, True, False],
+            [False, False, False, False, False],
+            [False, False, True, False, False],
+            [False, False, False, False, False],
+            [False, True, True, True, False],
+        ],
+        [
+            [False, False, False, False, False],
+            [True, False, False, False, True],
+            [True, False, True, False, True],
+            [True, False, False, False, True],
+            [False, False, False, False, False],
+        ],
+    ]
+    assert np.all(m == expected)
+
+
+def test_cross_non_removal():
+
+    a = np.zeros([5, 5], dtype=bool)
+    a[1:-1] = True
+
+    b = np.zeros_like(a)
+    b[:, 1:-1] = True
+
+    m = np.stack([a, b])
+
+    mask.clear_borders(m)
+
+    expected = np.stack([a, b])
+    assert np.all(m == expected)
