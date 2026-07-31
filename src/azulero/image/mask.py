@@ -63,12 +63,16 @@ def corners_2d(mask: np.ndarray):
     return np.isin(labels, [i for i in corners_indices if i != 0])
 
 
-def common_corners_2d(mask: np.ndarray):
+def corners_2d_intersection(mask: np.ndarray):
     return np.logical_and.reduce([corners_2d(channel) for channel in mask])
 
 
+def corners_2d_union(mask: np.ndarray):
+    return np.logical_or.reduce([corners_2d(channel) for channel in mask])
+
+
 def clear_corners(mask):
-    mask &= ~common_corners_2d(mask)
+    mask &= ~corners_2d_union(mask)
     return mask
 
 
