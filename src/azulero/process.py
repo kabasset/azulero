@@ -276,7 +276,7 @@ def process_iyjh(
     dead = mask.dead_pixels(iyjh)
     logger.bullet(f"Bad pixels: {', '.join(str(np.sum(c)) for c in dead)}")
     dead = mask.clear_corners(dead)
-    logger.bullet(f"Inner bad pixels: {', '.join(str(np.sum(c)) for c in dead)}")
+    logger.bullet(f"Inpainting pixels: {', '.join(str(np.sum(c)) for c in dead)}")
     if "{step}" in template:
         path = render_path_for_step(template, "mask")
         logger.bullet(f"Write: {path.name}")

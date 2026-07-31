@@ -10,7 +10,7 @@ New features
 
 ``azul retrieve``
 
-- Enable retries if downloaded files are empty or corrupted.
+- Enable retries.
 - Enable multi-radii cutout retrieval with target syntax ``<target>[r=<radius>]``.
 - Access Datalabs datafiles without download or copy with option ``--data labs``.
 - Retrieve tile indices with ``dss`` provider (option ``--tiling`` is kept as an optimization).
@@ -21,8 +21,13 @@ New features
 ``azul process``
 
 - Enable reading of multi-extension FITS files.
+- Remove corners from the inpainting mask to cope with incomplete tiles.
 - Increase default ``--nirl`` to 0.2.
 - Add option ``--overshoot`` (v2.0 processing corresponds to ``--overshoot 1``).
+
+``azul arrange``
+
+- Enable automatic and manual scaling of images (option ``--scale``)
 
 Bug fixes
 ^^^^^^^^^

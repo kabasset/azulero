@@ -162,6 +162,11 @@ Relying on bitmasks to detect them and decide on the inpainting technique would 
 yet we did not find a satisfying selection method, which would work both for WIDE and DEEP tiles.
 We keep this in mind for a future version...
 
+.. note::
+
+   In order to cope with incomplete tiles, which have a large empty region,
+   connected components from the bad pixel mask which touch a corner of the image are not inpainted.
+
 
 Sharpening
 ----------
