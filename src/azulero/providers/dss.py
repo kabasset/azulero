@@ -8,12 +8,11 @@ import gzip
 from io import BytesIO, StringIO
 from pathlib import Path
 import requests
-from shapely import geometry
 
 from azulero.providers.tiling import Tile, query_geotiles
 
 
-class DSS(object):
+class DSS:
 
     def query_tiles(self, radec: SkyCoord, dsrs: list[str]):
         tiles = []
@@ -47,6 +46,7 @@ class DSS(object):
         r = requests.get(
             f"{root}?project=EUCLID&class_name=DpdMerBksMosaic&{dsr_query}&{dec_query}&fields={fields_text}"
         )
+        # FIXME use getpass in Datalabs
         r.raise_for_status()
         return self._parse_geotiles(r.text)
 
@@ -83,6 +83,7 @@ class DSS(object):
         }
 
         r = requests.get("https://eas-dps-rest-ops.esac.esa.int/REST", params=query)
+        # FIXME use getpass in Datalabs
         r.raise_for_status()
 
         lines = r.text.replace('"', "").split()
@@ -96,6 +97,7 @@ class DSS(object):
     def download_datafile(self, name: str, path: Path):
 
         r = requests.get(f"https://euclidsoc.esac.esa.int/{name}")
+        # FIXME use getpass in Datalabs
         r.raise_for_status()
 
         with gzip.GzipFile(fileobj=BytesIO(r.content)) as f:

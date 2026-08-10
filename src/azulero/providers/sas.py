@@ -37,6 +37,7 @@ class SAS:
             auth = netrc.netrc().authenticators("easidr.esac.esa.int")
             # FIXME raise if None
             self.euclid.login(user=auth[0], password=auth[2])
+            # FIXME use getpass in Datalabs
         if err.getvalue():
             raise RuntimeError(err.getvalue())
 
