@@ -4,14 +4,16 @@ What's new
 Version 2.1
 -----------
 
-The main focus of this version is to make batch processing more flexible,
+This version is the result of taking into account the feedback of v2.0's users; thank you all!
+
+The main focus is to make batch processing more flexible,
 for example by retrieving cutouts of different sizes,
 bypassing the download phase when working on the Datalabs,
 or calling Azulero directly from Python (notebooks).
-Additional upgrades include the revival of ``azul crop``
+Additional upgrades include the revival of ``azul crop`` without Matplotlib
 and the improvement of the background rendering with ``azul process``.
 
-Below are a few more details; for more, see the :doc:`changes`.
+Below are a few details; for more, see the :doc:`changes`.
 
 ``azul retrieve``
    * In a single command, multiple radii are supported for cutout retrieval.
@@ -23,8 +25,8 @@ Below are a few more details; for more, see the :doc:`changes`.
      which makes it more stable with ``-w 0``.
    * In incomplete tiles, the large empty regions are not inpainted anymore,
      which means the RAM usage is reasonable and the empty regions are rendered dark.
-   * Files with one extension per band are accepted as targets.
-   * A Python API is delivered.
+   * MEF files with one extension per band are accepted as targets.
+   * A Python API is exposed.
 
 
 Version 2.0

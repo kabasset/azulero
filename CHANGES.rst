@@ -7,6 +7,7 @@ New features
 - Read ``.env`` file.
 - Parse J-coordinates such as ``EUCLJ172902.75+641018.1``.
 - Revive ``azul crop`` (without Matplotlib).
+- Add Python API for ``azul process``.
 
 ``azul retrieve``
 
@@ -15,15 +16,15 @@ New features
 - Access Datalabs datafiles without download or copy with option ``--data labs``.
 - Retrieve tile indices with ``dss`` provider (option ``--tiling`` is kept as an optimization).
 - Add option ``-q tiles`` to query just tile indices and not filenames.
-- Add option ``--survey`` to select and sort processing modes.
-- Log progress (index of current retrieval).
+- Add option ``--survey`` to select and sort processing modes (e.g. ``--survey DEEP,WIDE``).
+- Log progress (index of current target retrieval).
 
 ``azul process``
 
 - Enable reading of multi-extension FITS files.
 - Remove corners from the inpainting mask to cope with incomplete tiles.
-- Increase default ``--nirl`` to 0.2.
-- Add option ``--overshoot`` (v2.0 processing corresponds to ``--overshoot 1``).
+- Increase default ``--nirl`` from 0.1 to 0.2.
+- Add option ``--overshoot`` to dim background (v2.0 processing corresponds to ``--overshoot 1``).
 
 ``azul arrange``
 
