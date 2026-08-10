@@ -129,6 +129,7 @@
 <li><p>Read <code class="docutils literal notranslate"><span class="pre">.env</span></code> file.</p></li>
 <li><p>Parse J-coordinates such as <code class="docutils literal notranslate"><span class="pre">EUCLJ172902.75+641018.1</span></code>.</p></li>
 <li><p>Revive <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">crop</span></code> (without Matplotlib).</p></li>
+<li><p>Add Python API for <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code>.</p></li>
 </ul>
 <p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code></p>
 <ul class="simple">
@@ -137,15 +138,15 @@
 <li><p>Access Datalabs datafiles without download or copy with option <code class="docutils literal notranslate"><span class="pre">--data</span> <span class="pre">labs</span></code>.</p></li>
 <li><p>Retrieve tile indices with <code class="docutils literal notranslate"><span class="pre">dss</span></code> provider (option <code class="docutils literal notranslate"><span class="pre">--tiling</span></code> is kept as an optimization).</p></li>
 <li><p>Add option <code class="docutils literal notranslate"><span class="pre">-q</span> <span class="pre">tiles</span></code> to query just tile indices and not filenames.</p></li>
-<li><p>Add option <code class="docutils literal notranslate"><span class="pre">--survey</span></code> to select and sort processing modes.</p></li>
-<li><p>Log progress (index of current retrieval).</p></li>
+<li><p>Add option <code class="docutils literal notranslate"><span class="pre">--survey</span></code> to select and sort processing modes (e.g. <code class="docutils literal notranslate"><span class="pre">--survey</span> <span class="pre">DEEP,WIDE</span></code>).</p></li>
+<li><p>Log progress (index of current target retrieval).</p></li>
 </ul>
 <p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code></p>
 <ul class="simple">
 <li><p>Enable reading of multi-extension FITS files.</p></li>
 <li><p>Remove corners from the inpainting mask to cope with incomplete tiles.</p></li>
-<li><p>Increase default <code class="docutils literal notranslate"><span class="pre">--nirl</span></code> to 0.2.</p></li>
-<li><p>Add option <code class="docutils literal notranslate"><span class="pre">--overshoot</span></code> (v2.0 processing corresponds to <code class="docutils literal notranslate"><span class="pre">--overshoot</span> <span class="pre">1</span></code>).</p></li>
+<li><p>Increase default <code class="docutils literal notranslate"><span class="pre">--nirl</span></code> from 0.1 to 0.2.</p></li>
+<li><p>Add option <code class="docutils literal notranslate"><span class="pre">--overshoot</span></code> to dim background (v2.0 processing corresponds to <code class="docutils literal notranslate"><span class="pre">--overshoot</span> <span class="pre">1</span></code>).</p></li>
 </ul>
 <p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">arrange</span></code></p>
 <ul class="simple">
@@ -529,7 +530,7 @@ which cannot handle positions around RA = 0° = 360° or dec = +/-90°
 </div><footer class="py-6 border-t border-border md:py-0">
 <div class="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
 <div class="flex flex-col items-center gap-4 px-8 md:flex-row md:gap-2 md:px-0">
-<p class="text-sm leading-loose text-center text-muted-foreground md:text-left">© 2025-2026, Antoine Basset (CNES) and contributors. Last updated: Jul 31, 2026. Built with <a class="font-medium underline underline-offset-4" href="https://www.sphinx-doc.org" rel="noreferrer">Sphinx 9.1.0</a></p>
+<p class="text-sm leading-loose text-center text-muted-foreground md:text-left">© 2025-2026, Antoine Basset (CNES) and contributors. Last updated: Aug 10, 2026. Built with <a class="font-medium underline underline-offset-4" href="https://www.sphinx-doc.org" rel="noreferrer">Sphinx 9.1.0</a></p>
 </div>
 </div>
 </footer>

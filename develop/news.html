@@ -123,13 +123,14 @@
 <h1>What’s new</h1>
 <section id="version-2-1">
 <h2>Version 2.1</h2>
-<p>The main focus of this version is to make batch processing more flexible,
+<p>This version is the result of taking into account the feedback of v2.0’s users; thank you all!</p>
+<p>The main focus is to make batch processing more flexible,
 for example by retrieving cutouts of different sizes,
 bypassing the download phase when working on the Datalabs,
 or calling Azulero directly from Python (notebooks).
-Additional upgrades include the revival of <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">crop</span></code>
+Additional upgrades include the revival of <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">crop</span></code> without Matplotlib
 and the improvement of the background rendering with <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code>.</p>
-<p>Below are a few more details; for more, see the <a class="reference internal" href="changes.html"><span class="doc">Change log</span></a>.</p>
+<p>Below are a few details; for more, see the <a class="reference internal" href="changes.html"><span class="doc">Change log</span></a>.</p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code></dt><dd><ul class="simple">
 <li><p>In a single command, multiple radii are supported for cutout retrieval.</p></li>
@@ -142,8 +143,8 @@ and the improvement of the background rendering with <code class="docutils liter
 which makes it more stable with <code class="docutils literal notranslate"><span class="pre">-w</span> <span class="pre">0</span></code>.</p></li>
 <li><p>In incomplete tiles, the large empty regions are not inpainted anymore,
 which means the RAM usage is reasonable and the empty regions are rendered dark.</p></li>
-<li><p>Files with one extension per band are accepted as targets.</p></li>
-<li><p>A Python API is delivered.</p></li>
+<li><p>MEF files with one extension per band are accepted as targets.</p></li>
+<li><p>A Python API is exposed.</p></li>
 </ul>
 </dd>
 </dl>
@@ -223,7 +224,7 @@ Here is an overview (for more details, see the <a class="reference internal" hre
 </div><footer class="py-6 border-t border-border md:py-0">
 <div class="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
 <div class="flex flex-col items-center gap-4 px-8 md:flex-row md:gap-2 md:px-0">
-<p class="text-sm leading-loose text-center text-muted-foreground md:text-left">© 2025-2026, Antoine Basset (CNES) and contributors. Last updated: Jul 31, 2026. Built with <a class="font-medium underline underline-offset-4" href="https://www.sphinx-doc.org" rel="noreferrer">Sphinx 9.1.0</a></p>
+<p class="text-sm leading-loose text-center text-muted-foreground md:text-left">© 2025-2026, Antoine Basset (CNES) and contributors. Last updated: Aug 10, 2026. Built with <a class="font-medium underline underline-offset-4" href="https://www.sphinx-doc.org" rel="noreferrer">Sphinx 9.1.0</a></p>
 </div>
 </div>
 </footer>
