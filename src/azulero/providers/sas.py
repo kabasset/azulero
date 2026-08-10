@@ -8,9 +8,9 @@ from astroquery.esa.euclid import EuclidClass
 import contextlib  # intercept astroquery prints
 from dataclasses import dataclass
 from io import StringIO
-import netrc
 
 from azulero.providers.tiling import Tile, Target
+from azulero.tools.secret import Auth
 
 
 def tile(res, target):
@@ -26,18 +26,16 @@ def tile(res, target):
 
 class SAS:
 
-    def __init__(self, env):
+    def __init__(self, env: str, user: str | None):
 
         self.env = env
         self.euclid = EuclidClass(environment=env)
+        auth = Auth("easidr.esac.esa.int", user)
 
         # Intercept stderr, stdout
         err, out = StringIO(), StringIO()
         with contextlib.redirect_stderr(err), contextlib.redirect_stdout(out):
-            auth = netrc.netrc().authenticators("easidr.esac.esa.int")
-            # FIXME raise if None
-            self.euclid.login(user=auth[0], password=auth[2])
-            # FIXME use getpass in Datalabs
+            self.euclid.login(user=auth.user, password=auth.password.value)
         if err.getvalue():
             raise RuntimeError(err.getvalue())
 

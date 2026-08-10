@@ -20,10 +20,10 @@ from azulero.tools.timing import Timer
 from azulero.tools.workspace import Workspace
 
 tile_providers = {
-    "pdr": lambda: sas.SAS("PDR"),
-    "idr": lambda: sas.SAS("IDR"),
-    "otf": lambda: sas.SAS("OTF"),
-    "dss": lambda: dss.DSS(),  # TODO enable DSS selection
+    "pdr": lambda user: sas.SAS("PDR", user),
+    "idr": lambda user: sas.SAS("IDR", user),
+    "otf": lambda user: sas.SAS("OTF", user),
+    "dss": lambda user: dss.DSS(user),  # TODO enable DSS selection
 }
 
 data_providers = {
@@ -72,6 +72,12 @@ def add_parser(subparsers, help):
         default="idr",
         choices=tile_providers.keys(),
         help="Data provider.",
+    )
+    parser.add_argument(
+        "--user",
+        type=str,
+        metavar="NAME",
+        help="Provider user name, in order to enable interactive password prompt.",
     )
     parser.add_argument(
         "--radius",
@@ -238,7 +244,9 @@ def run(args):
     timer = Timer()
 
     logger.header(1, "Setup data provider")
-    provider = tile_providers[vars(args)["from"].lower()]()  # from is a Python keyword
+    provider = tile_providers[vars(args)["from"].lower()](
+        args.user
+    )  # from is a Python keyword
     tile_provider = provider if args.tiling is None else tiling.Tiling(args.tiling)
     if args.data is not None:
         logger.bullet(f"Enable local data store: {args.data}")

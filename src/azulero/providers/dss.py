@@ -10,9 +10,16 @@ from pathlib import Path
 import requests
 
 from azulero.providers.tiling import Tile, query_geotiles
+from azulero.tools.secret import Auth
 
 
 class DSS:
+
+    def __init__(self, user: str | None):
+        self.dps_auth = Auth(
+            {"DPS": "eas-dps-rest-ops.esac.esa.int", "DSS": "euclidsoc.esac.esa.int"},
+            user,
+        )
 
     def query_tiles(self, radec: SkyCoord, dsrs: list[str]):
         tiles = []
@@ -46,7 +53,7 @@ class DSS:
         r = requests.get(
             f"{root}?project=EUCLID&class_name=DpdMerBksMosaic&{dsr_query}&{dec_query}&fields={fields_text}"
         )
-        # FIXME use getpass in Datalabs
+        # FIXME use selt.auth
         r.raise_for_status()
         return self._parse_geotiles(r.text)
 
@@ -83,7 +90,7 @@ class DSS:
         }
 
         r = requests.get("https://eas-dps-rest-ops.esac.esa.int/REST", params=query)
-        # FIXME use getpass in Datalabs
+        # FIXME use selt.auth
         r.raise_for_status()
 
         lines = r.text.replace('"', "").split()

@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 import getpass
+import netrc
 
 
 @dataclass
@@ -19,8 +20,29 @@ class Secret:
         return self.obfuscated
 
     @classmethod
-    def prompt(cls, text, char="*"):
+    def prompt(cls, text: str, echo_char: str = "*"):
         """
         Prompt the user for a secret without echoing.
+
+        Args:
+            text:
+                The prompt text.
+            echo_char:
+                The obfuscated character to display instead of input characters.
         """
-        return cls(getpass.getpass(prompt=text + ": ", echo_char=char))
+        # TODO log prompt as warning?
+        return cls(getpass.getpass(prompt=text, echo_char=echo_char))
+
+
+class Auth:
+
+    def __init__(self, host: str | dict, user: str | None):
+        self.host = host
+        if user is None:
+            auth = netrc.netrc().authenticators(self.host)
+            # FIXME raise if None
+            self.user = auth[0]
+            self.password = Secret(auth[2])
+        else:
+            self.user = user
+            self.password = Secret.prompt(f"Password for user {user}: ")
