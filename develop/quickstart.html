@@ -159,12 +159,12 @@ For example, to download a cutout without installing, launch:</p>
 </section>
 </section>
 <section id="setup">
-<h2>Setup</h2>
+<span id="id1"></span><h2>Setup</h2>
 <section id="for-euclid-members">
 <h3>For Euclid members</h3>
 <p>Accessing public data requires no configuration.</p>
 <p>Internal data retrieval requires authentication,
-which is set up in the netrc configuration file (<code class="docutils literal notranslate"><span class="pre">~/.netrc</span></code> on Unix, <code class="docutils literal notranslate"><span class="pre">%HOMEPATH%\_netrc</span></code> on Windows) as follows:</p>
+which can be set up in the netrc configuration file (<code class="docutils literal notranslate"><span class="pre">~/.netrc</span></code> on Unix, <code class="docutils literal notranslate"><span class="pre">%HOMEPATH%\_netrc</span></code> on Windows) as follows:</p>
 <ul>
 <li><p>For internal SAS data, use your LDAP credentials:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="n">machine</span> <span class="n">easidr</span><span class="o">.</span><span class="n">esac</span><span class="o">.</span><span class="n">esa</span><span class="o">.</span><span class="n">int</span>
@@ -184,6 +184,9 @@ which is set up in the netrc configuration file (<code class="docutils literal n
 </div>
 </li>
 </ul>
+<p>In order to avoid storing sensitive data in shared environments like Datalabs,
+passwords can be omitted, which triggers interactive mode:
+in this case, you will be prompted for your password at startup.</p>
 </section>
 <section id="for-other-users">
 <h3>For other users</h3>
@@ -199,6 +202,9 @@ Typically, Bash users may add the following to the <code class="docutils literal
 </section>
 <section id="esa-datalabs-users">
 <h3>ESA Datalabs users</h3>
+<p>For authenticating to private data providers,
+Datalabs users are encouraged to rely on interactive runs (see above)
+in order to avoid storing their credentials in any Datalabs file.</p>
 <p>MER datafiles are directly accessible from ESA Datalabs, such that no download is needed.
 To enable this feature permanently in Datalabs, add the following line to the <code class="docutils literal notranslate"><span class="pre">.bashrc</span></code> file
 (see <a class="reference internal" href="retrieve.html"><span class="doc">azul retrieve</span></a> for details):</p>

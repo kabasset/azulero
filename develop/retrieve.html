@@ -134,12 +134,13 @@ The retrieved files are organized in directories we call <strong>workdirs</stron
 </ol>
 <figure class="align-center">
 <p class="plantuml">
-<object data="_images/plantuml-3120741dce64d5c5399eca257e8bbb99eb51f64f.svg" style="max-width:100%" type="image/svg+xml">
+<object data="_images/plantuml-9108a30e1ef360cbfc8bdb26cd7b31f1172e1e18.svg" style="max-width:100%" type="image/svg+xml">
 <img alt="card target {
 }
 
 object Query {
 --from
+--user
 --dsr
 -n
 }
@@ -154,7 +155,7 @@ folder workdir {
 
 target --&gt; Query
 Query -&gt; Download
-Download --&gt; workdir" src="_images/plantuml-3120741dce64d5c5399eca257e8bbb99eb51f64f.png"/>
+Download --&gt; workdir" src="_images/plantuml-9108a30e1ef360cbfc8bdb26cd7b31f1172e1e18.png"/>
 </object></p>
 </figure>
 </section>
@@ -259,6 +260,9 @@ It is updated from time to time between data releases.</p>
 <dt><code class="docutils literal notranslate"><span class="pre">dss</span></code> (Distributed Storage System)</dt><dd><p>Contains everything but is much slower than other providers.</p>
 </dd>
 </dl>
+<p>For private data, if you did not setup a netrc file as described in <a class="reference internal" href="quickstart.html#setup"><span class="std std-ref">Setup</span></a>,
+please use option <code class="docutils literal notranslate"><span class="pre">--user</span></code> to enter your username;
+you will then be prompted for the associated password.</p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
 <p>In order to bypass the slow spatial queries of provider <code class="docutils literal notranslate"><span class="pre">dss</span></code>,
