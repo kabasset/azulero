@@ -21,9 +21,11 @@ As depicted below, ``azul retrieve`` consists of two main steps:
    card target {
    }
 
-   object Query {
+   object Setup {
    --from
    --user
+   }
+   object Query {
    --dsr
    -n
    }
@@ -36,6 +38,7 @@ As depicted below, ``azul retrieve`` consists of two main steps:
    folder workdir {
    }
 
+   Setup -> Query
    target --> Query
    Query -> Download
    Download --> workdir
@@ -128,13 +131,10 @@ Conversely, several targets (270.93,67.05 and PGC61356) belong a same tile (1018
 in which case workdirs have a common parent tile folder.
 
 
-Query
------
+Data provider setup
+-------------------
 
-The querying phase consists in finding the tile indices of the input coordinates and resolved objects,
-as well as the names of the files to be downloaded.
-
-This step relies on what we call a **data provider**, passed to option ``--from``
+Retrieval relies on what we call a **data provider**, passed to option ``--from``
 (or through environment variable ``AZULRETRIEVE_FROM``).
 and applies to all of the targets of the command line:
 
@@ -159,6 +159,13 @@ There are several such providers, which store different sets of data:
 For private data, if you did not setup a netrc file as described in :ref:`setup`,
 please use option ``--user`` to enter your username;
 you will then be prompted for the associated password.
+
+
+Query
+-----
+
+The querying phase consists in finding the tile indices of the input coordinates and resolved objects,
+as well as the names of the files to be downloaded.
 
 .. tip::
 
