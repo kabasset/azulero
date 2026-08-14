@@ -134,13 +134,15 @@ The retrieved files are organized in directories we call <strong>workdirs</stron
 </ol>
 <figure class="align-center">
 <p class="plantuml">
-<object data="_images/plantuml-9108a30e1ef360cbfc8bdb26cd7b31f1172e1e18.svg" style="max-width:100%" type="image/svg+xml">
+<object data="_images/plantuml-753720e64144fb57588b48f4aadf96c5b630b451.svg" style="max-width:100%" type="image/svg+xml">
 <img alt="card target {
 }
 
-object Query {
+object Setup {
 --from
 --user
+}
+object Query {
 --dsr
 -n
 }
@@ -153,9 +155,10 @@ object Download {
 folder workdir {
 }
 
+Setup -&gt; Query
 target --&gt; Query
 Query -&gt; Download
-Download --&gt; workdir" src="_images/plantuml-9108a30e1ef360cbfc8bdb26cd7b31f1172e1e18.png"/>
+Download --&gt; workdir" src="_images/plantuml-753720e64144fb57588b48f4aadf96c5b630b451.png"/>
 </object></p>
 </figure>
 </section>
@@ -237,11 +240,9 @@ such that several workdirs are created for each of them.
 Conversely, several targets (270.93,67.05 and PGC61356) belong a same tile (101836362),
 in which case workdirs have a common parent tile folder.</p>
 </section>
-<section id="query">
-<h2>Query</h2>
-<p>The querying phase consists in finding the tile indices of the input coordinates and resolved objects,
-as well as the names of the files to be downloaded.</p>
-<p>This step relies on what we call a <strong>data provider</strong>, passed to option <code class="docutils literal notranslate"><span class="pre">--from</span></code>
+<section id="data-provider-setup">
+<h2>Data provider setup</h2>
+<p>Retrieval relies on what we call a <strong>data provider</strong>, passed to option <code class="docutils literal notranslate"><span class="pre">--from</span></code>
 (or through environment variable <code class="docutils literal notranslate"><span class="pre">AZULRETRIEVE_FROM</span></code>).
 and applies to all of the targets of the command line:</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">$ </span>azul<span class="w"> </span>retrieve<span class="w"> </span>NGC6505<span class="w"> </span><span class="m">270</span>.93,67.05<span class="w"> </span><span class="m">102157949</span><span class="w"> </span><span class="ge">--from</span><span class="w"> </span>pdr
@@ -263,6 +264,11 @@ It is updated from time to time between data releases.</p>
 <p>For private data, if you did not setup a netrc file as described in <a class="reference internal" href="quickstart.html#setup"><span class="std std-ref">Setup</span></a>,
 please use option <code class="docutils literal notranslate"><span class="pre">--user</span></code> to enter your username;
 you will then be prompted for the associated password.</p>
+</section>
+<section id="query">
+<h2>Query</h2>
+<p>The querying phase consists in finding the tile indices of the input coordinates and resolved objects,
+as well as the names of the files to be downloaded.</p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
 <p>In order to bypass the slow spatial queries of provider <code class="docutils literal notranslate"><span class="pre">dss</span></code>,
@@ -364,6 +370,7 @@ Instead of getting proper FITS files in the tiledir, links to the Datalabs data 
 <li><a :data-current="activeSection === '#overview'" class="reference internal" href="#overview">Overview</a></li>
 <li><a :data-current="activeSection === '#inputs'" class="reference internal" href="#inputs">Inputs</a></li>
 <li><a :data-current="activeSection === '#outputs'" class="reference internal" href="#outputs">Outputs</a></li>
+<li><a :data-current="activeSection === '#data-provider-setup'" class="reference internal" href="#data-provider-setup">Data provider setup</a></li>
 <li><a :data-current="activeSection === '#query'" class="reference internal" href="#query">Query</a></li>
 <li><a :data-current="activeSection === '#download'" class="reference internal" href="#download">Download</a></li>
 <li><a :data-current="activeSection === '#more-on-data-providers'" class="reference internal" href="#more-on-data-providers">More on data providers</a></li>
