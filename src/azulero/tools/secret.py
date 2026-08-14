@@ -36,13 +36,19 @@ class Secret:
 
 class Auth:
 
-    def __init__(self, host: str | dict, user: str | None):
+    def __init__(self, host: str, user: str | None, file: str | None = None):
         self.host = host
         if user is None:
-            auth = netrc.netrc().authenticators(self.host)
-            # FIXME raise if None
+            auth = netrc.netrc(file).authenticators(self.host)
+            if auth is None:
+                raise ValueError(f"Unknown user for host: {self.host}")
             self.user = auth[0]
             self.password = Secret(auth[2])
+            if not self.password.value:
+                self._prompt()
         else:
             self.user = user
-            self.password = Secret.prompt(f"Password for user {user}: ")
+            self._prompt()
+
+    def _prompt(self):
+        self.password = Secret.prompt(f"Enter password for {self.user}@{self.host}: ")

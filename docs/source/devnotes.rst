@@ -35,6 +35,20 @@ By default, we rely on MER's PSF estimates, which are a tad wider than VIS' and 
 in order to keep overshooting under control.
 
 
+Authentication
+--------------
+
+Using private data providers requires authenticating with a username and password.
+Storing them locally in a netrc file is convenient in private machines such as laptops,
+as it does not require the user to enter their password manually for each command.
+However, doing so in shared environments like Datalabs and DCCs is unsecure,
+as the netrc file may be accessible to administrators and super users.
+For this purpose, an interactive mode was added, where the user is requested to enter their password.
+All other options have been discarded because they leave traces in files possibly accessed by other users,
+including command history files, and are not more secure than a netrc file.
+Anything more convenient than systematically entering the password would be nice, but we had no better idea...
+
+
 DPS tile lookup
 ---------------
 

@@ -53,6 +53,8 @@ For example, to download a cutout without installing, launch:
    $ uv run azul retrieve NGC6505 -r 1m
 
 
+.. _setup:
+
 Setup
 -----
 
@@ -62,7 +64,7 @@ For Euclid members
 Accessing public data requires no configuration.
 
 Internal data retrieval requires authentication,
-which is set up in the netrc configuration file (``~/.netrc`` on Unix, ``%HOMEPATH%\_netrc`` on Windows) as follows:
+which can be set up in the netrc configuration file (``~/.netrc`` on Unix, ``%HOMEPATH%\_netrc`` on Windows) as follows:
 
 * For internal SAS data, use your LDAP credentials:
 
@@ -85,6 +87,10 @@ which is set up in the netrc configuration file (``~/.netrc`` on Unix, ``%HOMEPA
        login <EC_login>
        password <EC_password>
 
+In order to avoid storing sensitive data in shared environments like Datalabs,
+passwords can be omitted, which triggers interactive mode:
+in this case, you will be prompted for your password at startup.
+
 
 For other users
 ^^^^^^^^^^^^^^^
@@ -105,6 +111,10 @@ No other configuration is needed for public data.
 
 ESA Datalabs users
 ^^^^^^^^^^^^^^^^^^
+
+For authenticating to private data providers,
+Datalabs users are encouraged to rely on interactive runs (see above)
+in order to avoid storing their credentials in any Datalabs file.
 
 MER datafiles are directly accessible from ESA Datalabs, such that no download is needed.
 To enable this feature permanently in Datalabs, add the following line to the ``.bashrc`` file

@@ -16,10 +16,7 @@ from azulero.tools.secret import Auth
 class DSS:
 
     def __init__(self, user: str | None):
-        self.dps_auth = Auth(
-            {"DPS": "eas-dps-rest-ops.esac.esa.int", "DSS": "euclidsoc.esac.esa.int"},
-            user,
-        )
+        self.auth = Auth("euclidsoc.esac.esa.int", user)
 
     def query_tiles(self, radec: SkyCoord, dsrs: list[str]):
         tiles = []
@@ -53,7 +50,7 @@ class DSS:
         r = requests.get(
             f"{root}?project=EUCLID&class_name=DpdMerBksMosaic&{dsr_query}&{dec_query}&fields={fields_text}"
         )
-        # FIXME use selt.auth
+        # FIXME use self.auth
         r.raise_for_status()
         return self._parse_geotiles(r.text)
 
@@ -90,7 +87,7 @@ class DSS:
         }
 
         r = requests.get("https://eas-dps-rest-ops.esac.esa.int/REST", params=query)
-        # FIXME use selt.auth
+        # FIXME use self.auth
         r.raise_for_status()
 
         lines = r.text.replace('"', "").split()

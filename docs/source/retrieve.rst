@@ -23,6 +23,7 @@ As depicted below, ``azul retrieve`` consists of two main steps:
 
    object Query {
    --from
+   --user
    --dsr
    -n
    }
@@ -154,6 +155,10 @@ There are several such providers, which store different sets of data:
    It is updated from time to time between data releases.
 ``dss`` (Distributed Storage System)
    Contains everything but is much slower than other providers.
+
+For private data, if you did not setup a netrc file as described in :ref:`setup`,
+please use option ``--user`` to enter your username;
+you will then be prompted for the associated password.
 
 .. tip::
 

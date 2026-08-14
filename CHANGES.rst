@@ -14,6 +14,7 @@ New features
 - Enable retries.
 - Enable multi-radii cutout retrieval with target syntax ``<target>[r=<radius>]``.
 - Access Datalabs datafiles without download or copy with option ``--data labs``.
+- Add interactive mode to prompt user for password and avoid storing credentials in a shared environment like Datalabs.
 - Retrieve tile indices with ``dss`` provider (option ``--tiling`` is kept as an optimization).
 - Add option ``-q tiles`` to query just tile indices and not filenames.
 - Add option ``--survey`` to select and sort processing modes (e.g. ``--survey DEEP,WIDE``).
