@@ -37,7 +37,7 @@ The diagram below illustrates the various steps of the algorithm processing a si
    :align: center
    :max-width: 100%
 
-   folder workdir {
+   folder target {
    }
    object Stack {
    }
@@ -69,7 +69,7 @@ The diagram below illustrates the various steps of the algorithm processing a si
    --curves
    }
 
-   workdir --> Stack
+   target --> Stack
    Stack -> Inpaint
    Inpaint -> Sharpen
    Sharpen -> Equalize
@@ -92,8 +92,16 @@ The diagram below illustrates the various steps of the algorithm processing a si
 Inputs
 ------
 
-Input files are discovered according to their names in the workdir (see :ref:`workspace`) and a glob pattern.
-For more details, see help messages of global options ``--workspace`` and ``--input``:
+The command takes as input a list of targets, which can be workdirs (see :ref:`workspace`) or multi-extension FITS files.
+Default option values are tailored for workdirs created with ``azul retrieve``.
+For data obtained differently, here is how to configure Azulero:
+
+* For each workdir, input files are discovered according to their names in the workdir and a glob pattern.
+  The glob pattern is built from a template given to global option ``--input``, e.g. ``*{channel}*.fits``
+  and a collection of four channel names given to ``--channels`` used to substitute placeholder ``{channel}``.
+* For each FITS file, the extension names must be named after global option ``--channels``.
+
+For more details, see help messages of global options ``--workspace``, ``--input`` and ``--channels``:
 
 .. code-block:: console
    :emphasize-text: -h
