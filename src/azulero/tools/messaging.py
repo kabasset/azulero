@@ -42,6 +42,9 @@ def write_pipe_args(args, log=True):
 
 
 def supports_color():
+    """
+    Check whether stderr supports color tags.
+    """
     # Inspired from Django https://github.com/django/django/blob/main/django/core/management/color.py
     return sys.stderr.isatty() and (
         sys.platform != "win32"
@@ -51,6 +54,9 @@ def supports_color():
 
 
 def colorize(code, message):
+    """
+    Add color tags to a message if stderr supports them.
+    """
     return f"\x1b[{code}m{message}\x1b[0m" if supports_color() else message
 
 
@@ -121,4 +127,15 @@ def _setup_logger():
     return logger
 
 
-logger = _setup_logger()
+def progress_str(sequence, format="[{i}/{n}]"):
+    """
+    Generate a progress string in addition to the element when iterating over a sequence.
+    """
+    i = 1
+    n = len(sequence)
+    for e in sequence:
+        yield format.format(i=i, n=n), e
+        i += 1
+
+
+logger = _setup_logger()  #: Stderr logger with support for headers and bullet lists
