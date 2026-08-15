@@ -99,7 +99,7 @@ For data obtained differently, here is how to configure Azulero:
 * For each workdir, input files are discovered according to their names in the workdir and a glob pattern.
   The glob pattern is built from a template given to global option ``--input``, e.g. ``*{channel}*.fits``
   and a collection of four channel names given to ``--channels`` used to substitute placeholder ``{channel}``.
-* For each FITS file, the extension names must be named after global option ``--channels``.
+* For each FITS file, the extension must be named after global option ``--channels``.
 
 For more details, see help messages of global options ``--workspace``, ``--input`` and ``--channels``:
 
@@ -129,8 +129,8 @@ Placeholder name Substitution value
 ================ ==================
 ``{workspace}``  Workspace path
 ``{workdir}``    Workdir path relative to the workspace
-``{0}``          First part of the workdir
-``{1}``          Second part of the workdir if it has several parts, otherwise ``Tile``
+``{n}``          0-based ``n``-th part of the workdir
+``{n|default}``  ``n``-th part of the workdir if it exists, otherwise ``default``
 ``{step}``       Name of the current step output (see below)
 ================ ==================
 
@@ -142,9 +142,9 @@ The latter will be replaced with the name of the intermediate step as follows:
 * ``blended`` -- The RGB image before color and curve adjustment.
 * ``adjusted`` -- The RGB image after color and curve adjustment, if any.
 
-For example, using the template ``{workspace}/{workdir}/{target}_{tile}_{step}.tiff``,
-the inpainting mask of target 102159776 will be saved as ``Tile_102159776_mask.tiff`` in the workdir.
-If, instead, ``-o {tile}.jpg`` is used, then the output will be a JPG file in the current directory
+For example, using the template ``{workspace}/{workdir}/{0}_{step}.tiff``,
+the inpainting mask of target 102159776 will be saved as ``102159776_mask.tiff`` in the workdir.
+If, instead, ``-o {0}.jpg`` is used, then the output will be a JPG file in the current directory
 accompanied by a ``.wcs`` file, and no intermediate steps will be saved.
 
 For each target, only the path to the final image (not to the intermediate files or WCS file) is streamed to ``stdout``.
@@ -255,7 +255,6 @@ below is a matrix of UGC 11116 renderings in which we varied the parameters arou
 .. table::
    :class: subfigure
    :widths: 10 30 30 30
-
 
    +-----------+------------+------------+------------+
    | a = 28.25 | |200-2825| | |225-2825| | |250-2825| |
