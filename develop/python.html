@@ -105,7 +105,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Python API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changes.html">Change log</a></li>
 <li class="toctree-l1"><a class="reference internal" href="devnotes.html">Developer notes</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ai.html">Generative AI use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai.html">AI use</a></li>
 </ul>
 </nav>
 </div>
@@ -126,10 +126,26 @@
 <p>In order to avoid generating useless files when working with data already in memory, a Python interface is published.
 The package comes with a library, public interface of which is contained in module <code class="docutils literal notranslate"><span class="pre">api</span></code>.
 For example, assuming the photometric channels are NumPy arrays <code class="docutils literal notranslate"><span class="pre">i,</span> <span class="pre">y,</span> <span class="pre">j</span> <span class="pre">h</span></code>, the RGB (or, rather, BGR image) is rendered as:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="kn">from</span><span class="w"> </span><span class="ge">azulero</span><span class="w"> </span><span class="kn">import</span> <span class="ge">api</span> <span class="k">as</span> <span class="ge">azul</span>
-</span><span id="line-2">
-</span><span id="line-3"><span class="n">iyjh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">i</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">h</span><span class="p">])</span>
-</span><span id="line-4"><span class="n">bgr</span> <span class="o">=</span> <span class="ge">azul</span><span class="o">.</span><span class="n">process_iyjh</span><span class="p">(</span><span class="n">iyjh</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+</span><span id="line-2"><span class="kn">from</span><span class="w"> </span><span class="ge">azulero</span><span class="w"> </span><span class="kn">import</span> <span class="ge">api</span> <span class="k">as</span> <span class="n">azul</span>
+</span><span id="line-3">
+</span><span id="line-4"><span class="n">iyjh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">i</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">h</span><span class="p">])</span>
+</span><span id="line-5"><span class="n">bgr</span> <span class="o">=</span> <span class="n">azul</span><span class="o">.</span><span class="ge">process_iyjh</span><span class="p">(</span><span class="n">iyjh</span><span class="p">)</span>
+</span></code></pre></div>
+</div>
+<p>For convenience, <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code> features have also been ported to the API, as class <code class="docutils literal notranslate"><span class="pre">DataProvider</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="kn">from</span><span class="w"> </span><span class="nn">astropy.coordinates</span><span class="w"> </span><span class="kn">import</span> <span class="n">Angle</span><span class="p">,</span> <span class="n">SkyCoord</span>
+</span><span id="line-2"><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+</span><span id="line-3"><span class="kn">from</span><span class="w"> </span><span class="ge">azulero</span><span class="w"> </span><span class="kn">import</span> <span class="ge">api</span> <span class="k">as</span> <span class="n">azul</span>
+</span><span id="line-4">
+</span><span id="line-5"><span class="n">coord</span> <span class="o">=</span> <span class="n">SkyCoord</span><span class="o">.</span><span class="n">from_name</span><span class="p">(</span><span class="s2">"NGC6505"</span><span class="p">)</span>
+</span><span id="line-6"><span class="n">radius</span> <span class="o">=</span> <span class="n">Angle</span><span class="p">(</span><span class="s2">"30s"</span><span class="p">)</span>
+</span><span id="line-7"><span class="n">dsr</span> <span class="o">=</span> <span class="s2">"DR1_R1"</span>
+</span><span id="line-8">
+</span><span id="line-9"><span class="n">provider</span> <span class="o">=</span> <span class="n">azul</span><span class="o">.</span><span class="ge">DataProvider</span><span class="p">(</span><span class="s2">"IDR"</span><span class="p">)</span>
+</span><span id="line-10"><span class="n">tiles</span> <span class="o">=</span> <span class="n">provider</span><span class="o">.</span><span class="ge">query_coord_tiles</span><span class="p">(</span><span class="n">coord</span><span class="p">,</span> <span class="p">[</span><span class="n">dsr</span><span class="p">],</span> <span class="p">[</span><span class="s2">"WIDE"</span><span class="p">])</span>
+</span><span id="line-11"><span class="n">datafiles</span> <span class="o">=</span> <span class="n">provider</span><span class="o">.</span><span class="ge">query_tile_datafiles</span><span class="p">(</span><span class="n">tiles</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dsr</span><span class="p">)</span>
+</span><span id="line-12"><span class="n">provider</span><span class="o">.</span><span class="ge">download_cutouts</span><span class="p">(</span><span class="n">datafiles</span><span class="p">,</span> <span class="n">Path</span><span class="p">(</span><span class="s2">"/tmp"</span><span class="p">),</span> <span class="n">coord</span><span class="p">,</span> <span class="n">radius</span><span class="p">)</span>
 </span></code></pre></div>
 </div>
 </section>
@@ -151,7 +167,7 @@ For example, assuming the photometric channels are NumPy arrays <code class="doc
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>name</strong> – The data provider name.</p></li>
 <li><p><strong>user</strong> – The data provider user name (optional if the netrc file was set up).</p></li>
-<li><p><strong>data_store</strong> – The data store name (use <cite>“labs”</cite> in ESA Datalabs).</p></li>
+<li><p><strong>data_store</strong> – The data store name (use <code class="docutils literal notranslate"><span class="pre">"labs"</span></code> in ESA Datalabs).</p></li>
 <li><p><strong>tiling_file</strong> – The tiling Geojson file, for optimization purpose.</p></li>
 </ul>
 </dd>
@@ -269,20 +285,20 @@ For example, assuming the photometric channels are NumPy arrays <code class="doc
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>iyjh_zero_points</strong> – Zero points of each channel</p></li>
-<li><p><strong>iyjh_scaling</strong> – Scaling of each channel (for white balance)</p></li>
-<li><p><strong>iyjh_fwhm</strong> – PSF full width at half-maximum of each channel</p></li>
-<li><p><strong>sharpen_strength</strong> – Unsharp masking strength</p></li>
-<li><p><strong>nir_to_l</strong> – NIR-to-L rate</p></li>
-<li><p><strong>i_to_b</strong> – I-to-B rate</p></li>
-<li><p><strong>y_to_g</strong> – Y-to-G rate</p></li>
-<li><p><strong>j_to_r</strong> – J-to-R rate</p></li>
-<li><p><strong>hue</strong> – Hue rotation angle in degrees</p></li>
-<li><p><strong>saturation</strong> – Saturation gain</p></li>
-<li><p><strong>stretch</strong> – Stretching parameter</p></li>
-<li><p><strong>neg_overshoot</strong> – Negative overshooting parameter</p></li>
-<li><p><strong>bw</strong> – Black and white points in AB-mag</p></li>
-<li><p><strong>bgr_curves</strong> – Curve adjustment knots for each channel</p></li>
+<li><p><strong>iyjh_zero_points</strong> – Zero points of each channel.</p></li>
+<li><p><strong>iyjh_scaling</strong> – Scaling of each channel (for white balance).</p></li>
+<li><p><strong>iyjh_fwhm</strong> – PSF full width at half-maximum of each channel.</p></li>
+<li><p><strong>sharpen_strength</strong> – Unsharp masking strength.</p></li>
+<li><p><strong>nir_to_l</strong> – NIR-to-L rate.</p></li>
+<li><p><strong>i_to_b</strong> – I-to-B rate.</p></li>
+<li><p><strong>y_to_g</strong> – Y-to-G rate.</p></li>
+<li><p><strong>j_to_r</strong> – J-to-R rate.</p></li>
+<li><p><strong>hue</strong> – Hue rotation angle in degrees.</p></li>
+<li><p><strong>saturation</strong> – Saturation gain.</p></li>
+<li><p><strong>stretch</strong> – Stretching parameter.</p></li>
+<li><p><strong>neg_overshoot</strong> – Negative overshooting parameter.</p></li>
+<li><p><strong>bw</strong> – Black and white points in AB-mag.</p></li>
+<li><p><strong>bgr_curves</strong> – Curve adjustment knots for each channel.</p></li>
 </ul>
 </dd>
 </dl>
@@ -298,18 +314,19 @@ For example, assuming the photometric channels are NumPy arrays <code class="doc
 </dl>
 <span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span></dt>
 <dd><p>Process an image according to transformation parameters,
-optionally save intermediate and final images.</p>
+optionally save the rendered color image.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>iyjh</strong> – A stack of the I, Y, J, H arrays (e.g. <code class="docutils literal notranslate"><span class="pre">iyjh[1]</span></code> is the NIR-Y channel).</p></li>
-<li><p><strong>wcs</strong> – The WCS parameters or <code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
-<li><p><strong>transform</strong> – The transformation parameters</p></li>
-<li><p><strong>output</strong> – The output file name (empty string to disable writing)</p></li>
+<li><p><strong>wcs</strong> – The WCS parameters or <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>transform</strong> – The transformation parameters.</p></li>
+<li><p><strong>output</strong> – The output file name.
+An empty string disables writing.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A normalized BGR image (OpenCV layout with bottom-up Y axis).</p>
+<dd class="field-even"><p>A normalized BGR image (OpenCV layout).</p>
 </dd>
 </dl>
 </dd></dl>
