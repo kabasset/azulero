@@ -28,10 +28,13 @@ class Secret:
             text:
                 The prompt text.
             echo_char:
-                The obfuscated character to display instead of input characters.
+                The obfuscated character to display instead of input characters (if supported).
         """
         # TODO log prompt as warning?
-        return cls(getpass.getpass(prompt=text, echo_char=echo_char))
+        try:
+            return cls(getpass.getpass(prompt=text, echo_char=echo_char))
+        except TypeError:
+            return cls(getpass.getpass(prompt=text))
 
 
 class Auth:
