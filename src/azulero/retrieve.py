@@ -35,18 +35,26 @@ data_stores = {
 
 class DataProvider:
     """
-    Database wrapper which implements all services,
-    possibly using surrogates approaches when the service is not natively supported.
+    Data provider factory which implements all services,
+    possibly using surrogate approaches when the service is not natively supported.
+
+    The class selects the different service implementations based on the construction arguments.
+
+    Args:
+        database: The data provider name.
+        user: The database user name.
+        data_store: The data store name or path template.
+        tiling_file: The tiling Geojson file, for optimization purpose.
     """
 
     def __init__(
         self,
-        database: str,
+        name: str,
         user: str | None = None,
         data_store: str | None = None,
         tiling_file: Path | None = None,
     ):
-        self.product_db = product_databases[database](user)
+        self.product_db = product_databases[name.lower()](user)
         self.spatial_db = (
             self.product_db if tiling_file is None else tiling.Tiling(tiling_file)
         )
@@ -60,11 +68,24 @@ class DataProvider:
             logger.bullet("Enable local cutout service.")
             self.data_store = cutout.LocalCutout(self.product_db)
 
-    def query_tiles(
-        self, dsrs: list[str], modes: list[str], radius: Angle, target: str
-    ):
+    def query_target_tiles(
+        self,
+        dsrs: list[str],
+        modes: list[str],
+        radius: Angle,
+        target: str,
+    ) -> list[tiling.Target]:
         """
         Query the list of tiles for a given target, which may be a tile index, coordinates or object name.
+
+        Args:
+            dsrs: The ordered list of dataset releases.
+            modes: The ordered list of processing modes.
+            radius: The global radius.
+            target: The target name.
+
+        Returns:
+            The list of target attributes.
         """
 
         if target.isdigit():
@@ -84,6 +105,29 @@ class DataProvider:
                 f"Coordinates: {radec.ra.degree:.2f}° {radec.dec.degree:.2f}°"
             )
 
+        return self.query_radec_tiles(t, radec, r, dsrs, modes)
+
+    def query_radec_tiles(
+        self,
+        target: str,
+        radec: SkyCoord,
+        radius: Angle,
+        dsrs: list[str],
+        modes: list[str],
+    ) -> list[tiling.Target]:
+        """
+        Query the list of tiles which contain a given RA/dec coordinates.
+
+        Args:
+            radec: The target coordinates.
+            radius: The target radius.
+            dsrs: The ordered list of dataset releases.
+            modes: The ordered list of processing modes.
+
+        Returns:
+            The list of target attributes.
+        """
+
         @retry(logger=logger, default=[])
         def retry_query():
             return self.spatial_db.query_tiles(radec, dsrs)
@@ -92,21 +136,30 @@ class DataProvider:
 
         for tile in tiles:
             logger.bullet(f"Tile: {tile}")
-        targets = [tiling.Target(t, tile.index, radec, r) for tile in tiles]
+        targets = [tiling.Target(target, tile.index, radec, radius) for tile in tiles]
         if len(targets) == 0:
             logger.warning("No tile found!")
         return list(targets)
 
     def sort_tiles(
-        self, tiles: list[tiling.Tile], dsrs: list[str], modes: list[str]
+        self,
+        tiles: list[tiling.Tile],
+        dsrs: list[str],
+        modes: list[str],
     ) -> list[tiling.Tile]:
+        """
+        Sort tiles according to given Dataset Release and processing mode orderings.
+        """
         res = set(t for t in tiles if (t.dsr in dsrs and t.mode in modes))
         res = sorted(res, key=lambda t: t.distance)
         res = sorted(res, key=lambda t: dsrs.index(t.dsr))
         res = sorted(res, key=lambda t: modes.index(t.mode))
         return res
 
-    def query_datafiles(self, tile, dsr):
+    def query_tile_datafiles(self, tile, dsr):
+        """
+        Query the datafiles of a tile.
+        """
 
         @retry(logger=logger, default=[])
         def retry_query():
@@ -125,7 +178,22 @@ class DataProvider:
             logger.bullet(f"[{datafiles[f]}] {f}")
         return datafiles
 
-    def download_datafiles(self, datafiles, workdir, target, overwrite):
+    def download_datafiles(
+        self,
+        datafiles: list[str],
+        workdir: Path,
+        target: tiling.Target,
+        overwrite: bool,
+    ):
+        """
+        Download datafiles.
+
+        Args:
+            datafiles: The list of datafile names.
+            workdir: The destination directory.
+            target: The target attributes.
+            overwrite: Boolean flag to enable or disable overwriting.
+        """
 
         for name in datafiles:  # TODO parallelize?
             path = workdir / name.removesuffix(".gz")
@@ -273,14 +341,10 @@ def run(args):
     timer = Timer()
 
     logger.header(1, "Setup data provider")
-    provider = DataProvider(
-        vars(args)["from"].lower(),
-        args.user,
-        args.data,
-        args.tiling,
-    )
-    dsrs = args.dsr.split(",")  # FIXME raise if len(dsrs) = 0
+    provider = DataProvider(vars(args)["from"], args.user, args.data, args.tiling)
+    dsrs = args.dsr.split(",")
     modes = args.survey.split(",")
+    # FIXME raise if len(dsrs/modes) == 0 => dedicated argparse type
     assert not args.force or len(args.targets) == 1
     ios = Workspace.from_args(args)
     timer.tic_log()
@@ -289,7 +353,8 @@ def run(args):
 
     targets = []
     for t in args.targets:
-        targets += provider.query_tiles(dsrs, modes, args.radius, t)[: args.limit]
+        target = provider.query_target_tiles(dsrs, modes, args.radius, t)
+        targets += target[: args.limit]
     timer.tic_log()
 
     if args.query_only == "tiles":
@@ -299,19 +364,19 @@ def run(args):
     logger.header(1, "Retrieve targets", linebreaks=[1, 0])
 
     for progress, t in progress_str(targets):
-        datafiles = []
+
         if args.force is not None and len(args.force) > 0:
             datafiles = args.force
         else:
+            logger.header(2, f"{progress} Query datafiles for tile {t.tile}")
+            datafiles = []
             for dsr in dsrs:
-                logger.header(
-                    2,
-                    f"{progress} Query datafiles for tile {t.tile} and dataset release {dsr}:",
-                )
-                datafiles = provider.query_datafiles(t.tile, dsr)
+                logger.info(f"Dataset Release {dsr}")
+                datafiles = provider.query_tile_datafiles(t.tile, dsr)
                 if len(datafiles) > 0:
-                    break
+                    break  # TODO avoid breaks
             timer.tic_log()
+
         if args.force is None and len(datafiles) < 4:
             logger.error(f"Only {len(datafiles)} files found; Skip tile: {t.tile}")
             continue
