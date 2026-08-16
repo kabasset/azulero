@@ -41,8 +41,8 @@ class DataProvider:
     The class selects the different service implementations based on the construction arguments.
 
     Args:
-        database: The data provider name.
-        user: The database user name.
+        name: The data provider name.
+        user: The data provider user name.
         data_store: The data store name or path template.
         tiling_file: The tiling Geojson file, for optimization purpose.
     """
@@ -72,7 +72,7 @@ class DataProvider:
         self,
         dsrs: list[str],
         modes: list[str],
-        radius: Angle,
+        radius: Angle | None,
         target: str,
     ) -> list[tiling.Target]:
         """
@@ -111,7 +111,7 @@ class DataProvider:
         self,
         target: str,
         radec: SkyCoord,
-        radius: Angle,
+        radius: Angle | None,
         dsrs: list[str],
         modes: list[str],
     ) -> list[tiling.Target]:
@@ -156,9 +156,13 @@ class DataProvider:
         res = sorted(res, key=lambda t: modes.index(t.mode))
         return res
 
-    def query_tile_datafiles(self, tile, dsr):
+    def query_tile_datafiles(self, tile: str, dsr: str):
         """
         Query the datafiles of a tile.
+
+        Args:
+            tile: The tile index.
+            dsr: The Dataset Release name.
         """
 
         @retry(logger=logger, default=[])

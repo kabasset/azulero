@@ -6,11 +6,11 @@ New features
 
 - Read ``.env`` file.
 - Parse J-coordinates such as ``EUCLJ172902.75+641018.1``.
-- Revive ``azul crop`` (without Matplotlib).
-- Add Python API for ``azul process``.
+- Revive ``azul crop`` as an experimental command (without Matplotlib).
 
 ``azul retrieve``
 
+- Add Python API.
 - Enable retries.
 - Enable multi-radii cutout retrieval with target syntax ``<target>[r=<radius>]``.
 - Access Datalabs datafiles without download or copy with option ``--data labs``.
@@ -22,6 +22,7 @@ New features
 
 ``azul process``
 
+- Add Python API.
 - Enable reading of multi-extension FITS files.
 - Remove corners from the inpainting mask to cope with incomplete tiles.
 - Increase default ``--nirl`` from 0.1 to 0.2.

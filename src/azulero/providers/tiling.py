@@ -14,8 +14,8 @@ from azulero.tools.workspace import Workspace
 @dataclass(frozen=True)
 class Target:
 
-    name: str
-    tile: str
+    name: str = ""
+    tile: str = ""
     coord: SkyCoord | None = field(default=None, compare=False)
     radius: Angle | None = field(default=None, compare=False)
 
