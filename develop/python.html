@@ -136,6 +136,116 @@ For example, assuming the photometric channels are NumPy arrays <code class="doc
 <section id="module-azulero.api">
 <span id="api-reference"></span><h2>API reference</h2>
 <dl class="py class">
+<dt class="sig sig-object py" id="azulero.api.DataProvider">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">azulero.api.</span></span><span class="sig-name descname"><span class="pre">DataProvider</span></span><span class="sig-paren">(</span>
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">data_store</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">tiling_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+</dl>
+<span class="sig-paren">)</span></dt>
+<dd><p>Data provider.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> – The data provider name.</p></li>
+<li><p><strong>user</strong> – The data provider user name (optional if the netrc file was set up).</p></li>
+<li><p><strong>data_store</strong> – The data store name (use <cite>“labs”</cite> in ESA Datalabs).</p></li>
+<li><p><strong>tiling_file</strong> – The tiling Geojson file, for optimization purpose.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="azulero.api.DataProvider.download_cutouts">
+<span class="sig-name descname"><span class="pre">download_cutouts</span></span><span class="sig-paren">(</span>
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">datafiles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">workdir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">center</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SkyCoord</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">radius</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Angle</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>,</dd>
+</dl>
+<span class="sig-paren">)</span></dt>
+<dd><p>Download cutouts.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>datafiles</strong> – The list of datafile names.</p></li>
+<li><p><strong>workdir</strong> – The destination directory (will be created if missing).</p></li>
+<li><p><strong>center</strong> – The cutout center.</p></li>
+<li><p><strong>radius</strong> – The cutout radius.</p></li>
+<li><p><strong>overwrite</strong> – Boolean flag to enable or disable overwriting.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="azulero.api.DataProvider.download_datafiles">
+<span class="sig-name descname"><span class="pre">download_datafiles</span></span><span class="sig-paren">(</span>
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">datafiles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">workdir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>,</dd>
+</dl>
+<span class="sig-paren">)</span></dt>
+<dd><p>Download datafiles of an entire tile.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>datafiles</strong> – The list of datafile names.</p></li>
+<li><p><strong>workdir</strong> – The destination directory.</p></li>
+<li><p><strong>overwrite</strong> – Boolean flag to enable or disable overwriting.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="azulero.api.DataProvider.query_coord_tiles">
+<span class="sig-name descname"><span class="pre">query_coord_tiles</span></span><span class="sig-paren">(</span>
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">coord</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SkyCoord</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">dsrs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">modes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>,</dd>
+</dl>
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span></dt>
+<dd><p>Query the list of tiles which contain a given coordinate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>coord</strong> – The target coordinate.</p></li>
+<li><p><strong>dsrs</strong> – The ordered list of dataset releases.</p></li>
+<li><p><strong>modes</strong> – The ordered list of processing modes.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The list of tile indices.</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="azulero.api.DataProvider.query_tile_datafiles">
+<span class="sig-name descname"><span class="pre">query_tile_datafiles</span></span><span class="sig-paren">(</span>
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">dsr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>,</dd>
+</dl>
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span></dt>
+<dd><p>Query the datafiles of a tile.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>index</strong> – The tile index.</p></li>
+<li><p><strong>dsr</strong> – The Dataset Release name.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The list of file names.</p>
+</dd>
+</dl>
+</dd></dl>
+</dd></dl>
+<dl class="py class">
 <dt class="sig sig-object py" id="azulero.api.Transform">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">azulero.api.</span></span><span class="sig-name descname"><span class="pre">Transform</span></span><span class="sig-paren">(</span>
 <dl>
@@ -227,6 +337,13 @@ optionally save intermediate and final images.</p>
 <ul>
 <li><a :data-current="activeSection === '#introduction'" class="reference internal" href="#introduction">Introduction</a></li>
 <li><a :data-current="activeSection === '#module-azulero.api'" class="reference internal" href="#module-azulero.api">API reference</a><ul>
+<li><a :data-current="activeSection === '#azulero.api.DataProvider'" class="reference internal" href="#azulero.api.DataProvider"><code class="docutils literal notranslate"><span class="pre">DataProvider</span></code></a><ul>
+<li><a :data-current="activeSection === '#azulero.api.DataProvider.download_cutouts'" class="reference internal" href="#azulero.api.DataProvider.download_cutouts"><code class="docutils literal notranslate"><span class="pre">DataProvider.download_cutouts()</span></code></a></li>
+<li><a :data-current="activeSection === '#azulero.api.DataProvider.download_datafiles'" class="reference internal" href="#azulero.api.DataProvider.download_datafiles"><code class="docutils literal notranslate"><span class="pre">DataProvider.download_datafiles()</span></code></a></li>
+<li><a :data-current="activeSection === '#azulero.api.DataProvider.query_coord_tiles'" class="reference internal" href="#azulero.api.DataProvider.query_coord_tiles"><code class="docutils literal notranslate"><span class="pre">DataProvider.query_coord_tiles()</span></code></a></li>
+<li><a :data-current="activeSection === '#azulero.api.DataProvider.query_tile_datafiles'" class="reference internal" href="#azulero.api.DataProvider.query_tile_datafiles"><code class="docutils literal notranslate"><span class="pre">DataProvider.query_tile_datafiles()</span></code></a></li>
+</ul>
+</li>
 <li><a :data-current="activeSection === '#azulero.api.Transform'" class="reference internal" href="#azulero.api.Transform"><code class="docutils literal notranslate"><span class="pre">Transform</span></code></a></li>
 <li><a :data-current="activeSection === '#azulero.api.process_iyjh'" class="reference internal" href="#azulero.api.process_iyjh"><code class="docutils literal notranslate"><span class="pre">process_iyjh()</span></code></a></li>
 </ul>
