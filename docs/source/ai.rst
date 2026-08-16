@@ -1,4 +1,6 @@
-Generative AI use
-=================
+AI use
+======
 
-None of the source code or artwork contained in this repository was created with the use of generative AI.
+None of the source code or artwork contained in this repository and website was created with the use of AI.
+
+Azulero image processing does not involve any kind of AI.

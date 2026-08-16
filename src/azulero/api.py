@@ -19,7 +19,7 @@ class DataProvider:
     Args:
         name: The data provider name.
         user: The data provider user name (optional if the netrc file was set up).
-        data_store: The data store name (use `"labs"` in ESA Datalabs).
+        data_store: The data store name (use ``"labs"`` in ESA Datalabs).
         tiling_file: The tiling Geojson file, for optimization purpose.
     """
 
@@ -109,20 +109,20 @@ Transform = color.Transform
 Transformation parameters.
 
 Args:
-    iyjh_zero_points: Zero points of each channel
-    iyjh_scaling: Scaling of each channel (for white balance)
-    iyjh_fwhm: PSF full width at half-maximum of each channel
-    sharpen_strength: Unsharp masking strength
-    nir_to_l: NIR-to-L rate
-    i_to_b: I-to-B rate
-    y_to_g: Y-to-G rate
-    j_to_r: J-to-R rate
-    hue: Hue rotation angle in degrees
-    saturation: Saturation gain
-    stretch: Stretching parameter
-    neg_overshoot: Negative overshooting parameter
-    bw: Black and white points in AB-mag
-    bgr_curves: Curve adjustment knots for each channel
+    iyjh_zero_points: Zero points of each channel.
+    iyjh_scaling: Scaling of each channel (for white balance).
+    iyjh_fwhm: PSF full width at half-maximum of each channel.
+    sharpen_strength: Unsharp masking strength.
+    nir_to_l: NIR-to-L rate.
+    i_to_b: I-to-B rate.
+    y_to_g: Y-to-G rate.
+    j_to_r: J-to-R rate.
+    hue: Hue rotation angle in degrees.
+    saturation: Saturation gain.
+    stretch: Stretching parameter.
+    neg_overshoot: Negative overshooting parameter.
+    bw: Black and white points in AB-mag.
+    bgr_curves: Curve adjustment knots for each channel.
 """
 
 
@@ -134,15 +134,21 @@ def process_iyjh(
 ) -> np.ndarray:
     """
     Process an image according to transformation parameters,
-    optionally save intermediate and final images.
+    optionally save the rendered color image.
 
     Args:
-        iyjh: A stack of the I, Y, J, H arrays (e.g. ``iyjh[1]`` is the NIR-Y channel).
-        wcs: The WCS parameters or ``None``
-        transform: The transformation parameters
-        output: The output file name (empty string to disable writing)
+        iyjh:
+            A stack of the I, Y, J, H arrays (e.g. ``iyjh[1]`` is the NIR-Y channel).
+        wcs:
+            The WCS parameters or ``None``.
+        transform:
+            The transformation parameters.
+        output:
+            The output file name.
+            An empty string disables writing.
 
     Returns:
-        A normalized BGR image (OpenCV layout with bottom-up Y axis).
+        A normalized BGR image (OpenCV layout).
     """
-    return process.process_iyjh(np.astype(iyjh, np.float32), wcs, transform, output)
+    bgr = process.process_iyjh(np.astype(iyjh, np.float32), wcs, transform, output)
+    return np.flipud(bgr)
