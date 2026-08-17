@@ -1,5 +1,6 @@
-ul {
+ul, ol {
     margin-top: calc(var(--spacing)*4) !important;
+    margin-bottom: calc(var(--spacing)*4) !important;
 }
 
 li, li p {

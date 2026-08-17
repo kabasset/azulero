@@ -70,16 +70,19 @@ class DataProvider:
         datafiles: list[str],
         workdir: Path,
         overwrite: bool = False,
-    ):
+    ) -> list[Path]:
         """
-        Download datafiles of an entire tile.
+        Download and decompress datafiles of an entire tile.
 
         Args:
             datafiles: The list of datafile names.
             workdir: The destination directory.
             overwrite: Boolean flag to enable or disable overwriting.
+
+        Returns:
+            The resulting list of datafile paths.
         """
-        self.provider.download_datafiles(datafiles, workdir, Target(), overwrite)
+        return self.provider.download_datafiles(datafiles, workdir, Target(), overwrite)
 
     def download_cutouts(
         self,
@@ -88,9 +91,9 @@ class DataProvider:
         center: SkyCoord,
         radius: Angle,
         overwrite: bool = False,
-    ):
+    ) -> list[Path]:
         """
-        Download cutouts.
+        Download tile cutouts.
 
         Args:
             datafiles: The list of datafile names.
@@ -98,8 +101,11 @@ class DataProvider:
             center: The cutout center.
             radius: The cutout radius.
             overwrite: Boolean flag to enable or disable overwriting.
+
+        Returns:
+            The resulting list of cutout paths.
         """
-        self.provider.download_datafiles(
+        return self.provider.download_datafiles(
             datafiles, workdir, Target("", "", center, radius), overwrite
         )
 
@@ -148,7 +154,6 @@ def process_iyjh(
             An empty string disables writing.
 
     Returns:
-        A normalized BGR image (OpenCV layout).
+        A normalized BGR image.
     """
-    bgr = process.process_iyjh(np.astype(iyjh, np.float32), wcs, transform, output)
-    return np.flipud(bgr)
+    return process.process_iyjh(np.astype(iyjh, np.float32), wcs, transform, output)

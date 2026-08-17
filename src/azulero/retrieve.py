@@ -188,9 +188,9 @@ class DataProvider:
         workdir: Path,
         target: tiling.Target,
         overwrite: bool,
-    ):
+    ) -> list[Path]:
         """
-        Download datafiles.
+        Download and decompress datafiles.
 
         Args:
             datafiles: The list of datafile names.
@@ -199,8 +199,8 @@ class DataProvider:
             overwrite: Boolean flag to enable or disable overwriting.
         """
 
-        for name in datafiles:  # TODO parallelize?
-            path = workdir / name.removesuffix(".gz")
+        paths = [workdir / n.removesuffix(".gz") for n in datafiles]
+        for name, path in zip(datafiles, paths):  # TODO parallelize?
             if path.is_file() and not overwrite:
                 logger.bullet(f"File already exists; skip: {path.name}")
             else:
@@ -218,6 +218,7 @@ class DataProvider:
                         return
 
                 retry_query()
+        return paths
 
 
 def add_parser(subparsers, help):

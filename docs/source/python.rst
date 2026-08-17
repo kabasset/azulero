@@ -17,6 +17,18 @@ For example, assuming the photometric channels are NumPy arrays ``i, y, j h``, t
    iyjh = np.stack([i, y, j, h])
    bgr = azul.process_iyjh(iyjh)
 
+.. admonition:: Image layout
+   :class: note
+
+   Grayscale image axes are:
+
+   0. Y-axis from bottom to top,
+   1. X-axis from left to right.
+
+   In addition, color images have a third axis:
+
+   2. color axis ordered as Blue, Green, Red.
+
 For convenience, ``azul retrieve`` features have also been ported to the API, as class ``DataProvider``:
 
 .. code-block:: python
