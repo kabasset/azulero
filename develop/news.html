@@ -132,9 +132,15 @@ Additional upgrades include the revival of <code class="docutils literal notrans
 and the improvement of the background rendering with <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code>.</p>
 <p>Below are a few details; for more, see the <a class="reference internal" href="changes.html"><span class="doc">Change log</span></a>.</p>
 <dl class="simple">
+<dt>For ESA Datalabs users</dt><dd><ul class="simple">
+<li><p>On Datalabs, no downloads or copies are performed.</p></li>
+<li><p>A Python API implements core features of <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code> and <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code>.</p></li>
+<li><p>Credentials do not need to be stored in a file:
+an interactive mode prompts the user for passwords.</p></li>
+</ul>
+</dd>
 <dt><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code></dt><dd><ul class="simple">
 <li><p>In a single command, multiple radii are supported for cutout retrieval.</p></li>
-<li><p>On ESA Datalabs, no downloads or copies are performed with <code class="docutils literal notranslate"><span class="pre">--data</span> <span class="pre">labs</span></code>.</p></li>
 <li><p>Queries and downloads are retried on failure.</p></li>
 </ul>
 </dd>
@@ -144,7 +150,6 @@ which makes it more stable with <code class="docutils literal notranslate"><span
 <li><p>In incomplete tiles, the large empty regions are not inpainted anymore,
 which means the RAM usage is reasonable and the empty regions are rendered dark.</p></li>
 <li><p>MEF files with one extension per band are accepted as targets.</p></li>
-<li><p>A Python API is exposed.</p></li>
 </ul>
 </dd>
 </dl>
