@@ -15,9 +15,14 @@ and the improvement of the background rendering with ``azul process``.
 
 Below are a few details; for more, see the :doc:`changes`.
 
+For ESA Datalabs users
+   * On Datalabs, no downloads or copies are performed.
+   * A Python API implements core features of ``azul retrieve`` and ``azul process``.
+   * Credentials do not need to be stored in a file:
+     an interactive mode prompts the user for passwords.
+
 ``azul retrieve``
    * In a single command, multiple radii are supported for cutout retrieval.
-   * On ESA Datalabs, no downloads or copies are performed with ``--data labs``.
    * Queries and downloads are retried on failure.
 
 ``azul process``
@@ -26,7 +31,6 @@ Below are a few details; for more, see the :doc:`changes`.
    * In incomplete tiles, the large empty regions are not inpainted anymore,
      which means the RAM usage is reasonable and the empty regions are rendered dark.
    * MEF files with one extension per band are accepted as targets.
-   * A Python API is exposed.
 
 
 Version 2.0
