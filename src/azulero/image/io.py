@@ -158,7 +158,7 @@ def _average(slices: list):
 def read_iyjh(
     workdir: Path,
     slicing: tuple | None = None,
-    template: str = "{}",
+    template: str = "*{channel}*.fits",
     channels: list[str] = ["VIS", "NIR-Y", "NIR-J", "NIR-H"],
 ):
     """

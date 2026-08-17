@@ -99,7 +99,7 @@ For data obtained differently, here is how to configure Azulero:
 * For each workdir, input files are discovered according to their names in the workdir and a glob pattern.
   The glob pattern is built from a template given to global option ``--input``, e.g. ``*{channel}*.fits``
   and a collection of four channel names given to ``--channels`` used to substitute placeholder ``{channel}``.
-* For each FITS file, the extension must be named after global option ``--channels``.
+* For each FITS file, the extensions must be named after global option ``--channels``.
 
 For more details, see help messages of global options ``--workspace``, ``--input`` and ``--channels``:
 

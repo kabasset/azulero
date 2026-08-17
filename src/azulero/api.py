@@ -8,7 +8,7 @@ import numpy as np
 from pathlib import Path
 
 from azulero import retrieve, process
-from azulero.image import color
+from azulero.image import color, io
 from azulero.providers.tiling import Target
 
 
@@ -130,6 +130,35 @@ Args:
     bw: Black and white points in AB-mag.
     bgr_curves: Curve adjustment knots for each channel.
 """
+
+
+def read_iyjh(
+    path: Path,
+    slicing: tuple[slice, slice] | None = None,
+    channels: list[str] = ["VIS", "NIR-Y", "NIR-J", "NIR-H"],
+    template: str = "*{channel}*.fits",
+):
+    """
+    Read the I, Y, J, H channels from a directory containing single-image FITS (SIF) files,
+    or from a single multi-extension FITS (MEF) file.
+    In the former case, if more than one SIF file is found for a channel, they will be median-stacked.
+
+    Args:
+        path:
+            The path to the directory or FITS file.
+        slicing:
+            An optional slicing for loading only a region in memory.
+        channels:
+            The channel names.
+            For a MEF file, the extension names must match the channel names.
+        template:
+            The glob pattern template in which `{channel}` will be substituted by the channel names,
+            in order to locate the SIF files.
+
+    Returns:
+        The I, Y, J, H stack.
+    """
+    return io.read_iyjh(path, slicing, template, channels)
 
 
 def process_iyjh(
