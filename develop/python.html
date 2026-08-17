@@ -348,6 +348,35 @@ An empty string disables writing.</p></li>
 </dd>
 </dl>
 </dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="azulero.api.read_iyjh">
+<span class="sig-prename descclassname"><span class="pre">azulero.api.</span></span><span class="sig-name descname"><span class="pre">read_iyjh</span></span><span class="sig-paren">(</span>
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">slicing</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">slice</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">slice</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">channels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">['VIS',</span> <span class="pre">'NIR-Y',</span> <span class="pre">'NIR-J',</span> <span class="pre">'NIR-H']</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'*{channel}*.fits'</span></span></em>,</dd>
+</dl>
+<span class="sig-paren">)</span></dt>
+<dd><p>Read the I, Y, J, H channels from a directory containing single-image FITS (SIF) files,
+or from a single multi-extension FITS (MEF) file.
+In the former case, if more than one SIF file is found for a channel, they will be median-stacked.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> – The path to the directory or FITS file.</p></li>
+<li><p><strong>slicing</strong> – An optional slicing for loading only a region in memory.</p></li>
+<li><p><strong>channels</strong> – The channel names.
+For a MEF file, the extension names must match the channel names.</p></li>
+<li><p><strong>template</strong> – The glob pattern template in which <cite>{channel}</cite> will be substituted by the channel names,
+in order to locate the SIF files.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The I, Y, J, H stack.</p>
+</dd>
+</dl>
+</dd></dl>
 </section>
 </section>
 </div><div class="flex justify-between items-center pt-6 mt-12 border-t border-border gap-4">
@@ -381,6 +410,7 @@ An empty string disables writing.</p></li>
 </li>
 <li><a :data-current="activeSection === '#azulero.api.Transform'" class="reference internal" href="#azulero.api.Transform"><code class="docutils literal notranslate"><span class="pre">Transform</span></code></a></li>
 <li><a :data-current="activeSection === '#azulero.api.process_iyjh'" class="reference internal" href="#azulero.api.process_iyjh"><code class="docutils literal notranslate"><span class="pre">process_iyjh()</span></code></a></li>
+<li><a :data-current="activeSection === '#azulero.api.read_iyjh'" class="reference internal" href="#azulero.api.read_iyjh"><code class="docutils literal notranslate"><span class="pre">read_iyjh()</span></code></a></li>
 </ul>
 </li>
 </ul>
