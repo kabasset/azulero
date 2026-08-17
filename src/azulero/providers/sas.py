@@ -29,20 +29,20 @@ class SAS:
     def __init__(self, env: str, user: str | None):
 
         self.env = env
-        self.euclid = EuclidClass(environment=env)
+        self.__euclid = EuclidClass(environment=env)
         auth = Auth("easidr.esac.esa.int", user)
 
         # Intercept stderr, stdout
         err, out = StringIO(), StringIO()
         with contextlib.redirect_stderr(err), contextlib.redirect_stdout(out):
-            self.euclid.login(user=auth.user, password=auth.password.value)
+            self.__euclid.login(user=auth.user, password=auth.password.value)
         if err.getvalue():
             raise RuntimeError(err.getvalue())
 
     def __del__(self):
         err, out = StringIO(), StringIO()
         with contextlib.redirect_stderr(err), contextlib.redirect_stdout(out):
-            self.euclid.logout()
+            self.__euclid.logout()
         if err.getvalue():
             raise RuntimeError(err.getvalue())
 
@@ -52,11 +52,11 @@ class SAS:
         if self.env != "PDR":
             select_text += ",processing_mode"
         q = f"SELECT {select_text} FROM sedm.mosaic_product WHERE (mosaic_product.data_set_release IN ({dsrs_text})) AND INTERSECTS(CIRCLE({radec.ra.value},{radec.dec.value},0),fov)=1"
-        res = self.euclid.launch_job(q).get_results()
+        res = self.__euclid.launch_job(q).get_results()
         return [tile(r, radec) for r in res]
 
     def query_datafiles(self, tile: str, dsr: str):
-        products = self.euclid.get_product_list(
+        products = self.__euclid.get_product_list(
             tile_index=tile, product_type="DpdMerBksMosaic"
         )
         return {
@@ -66,7 +66,7 @@ class SAS:
         }
 
     def download_datafile(self, name: str, path: Path):
-        self.euclid.get_product(file_name=name, output_file=path)
+        self.__euclid.get_product(file_name=name, output_file=path)
         return path
 
     def download_cutout(
@@ -76,8 +76,8 @@ class SAS:
         target: Target,
     ):
         q = f"SELECT file_path, instrument_name FROM sedm.mosaic_product WHERE file_name='{name}'"
-        res = self.euclid.launch_job(q).get_results()[0]  # type: ignore
-        self.euclid.get_cutout(
+        res = self.__euclid.launch_job(q).get_results()[0]  # type: ignore
+        self.__euclid.get_cutout(
             file_path=Path(res["file_path"]) / name,
             instrument=res["instrument_name"],
             id=target.tile,
