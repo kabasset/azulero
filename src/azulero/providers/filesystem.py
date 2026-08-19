@@ -2,6 +2,7 @@
 # SPDX-PackageSourceInfo: https://github.com/kabasset/azulero
 # SPDX-License-Identifier: Apache-2.0
 
+from astropy.coordinates import SkyCoord
 from pathlib import Path
 
 from azulero.providers.cutout import local_cutout
