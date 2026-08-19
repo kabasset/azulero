@@ -150,11 +150,16 @@ class DataProvider:
         """
         Sort tiles according to given Dataset Release and processing mode orderings.
         """
-        res = set(t for t in tiles if (t.dsr in dsrs and t.mode in modes))
+        res = {t for t in tiles if (t.dsr in dsrs and t.mode in modes)}
         res = sorted(res, key=lambda t: t.distance)
         res = sorted(res, key=lambda t: dsrs.index(t.dsr))
         res = sorted(res, key=lambda t: modes.index(t.mode))
-        return res
+
+        # We want a unique tile per index, while keeping them in order,
+        # which means, for each index, keeping the tile with best DSR.
+        # We reverse the list twice so that better tiles override others at dict creation.
+        d = {t.index: t for t in reversed(res)}
+        return list(reversed(d.values()))
 
     def query_tile_datafiles(self, tile: tiling.Tile):
         """
