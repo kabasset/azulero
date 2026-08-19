@@ -42,7 +42,10 @@ class Auth:
     def __init__(self, host: str, user: str | None, file: str | None = None):
         self.host = host
         if user is None:
-            auth = netrc.netrc(file).authenticators(self.host)
+            try:
+                auth = netrc.netrc(file).authenticators(self.host)
+            except FileNotFoundError:
+                auth = None
             if auth is None or not auth[0]:
                 self._prompt_user()
             else:
