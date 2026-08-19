@@ -57,7 +57,7 @@ class SAS:
             raise RuntimeError(f"The query returned an object of type: {type(res)}")
         return res
 
-    def query_tiles(self, radec: SkyCoord, dsrs: list[str]):
+    def query_tiles(self, radec: SkyCoord, dsrs: list[str]) -> list[Tile]:
         dsrs_text = ",".join("'" + d + "'" for d in dsrs)
         select_text = "tile_index,ra,dec,data_set_release"
         if self.env != "PDR":

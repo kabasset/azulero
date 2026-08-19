@@ -8,7 +8,7 @@ from astropy.coordinates import Angle, SkyCoord
 from pathlib import Path
 
 from azulero.image import io
-from azulero.providers import dss, sas, tiling, cutout, datalabs
+from azulero.providers import dss, sas, tiling, cutout, datalabs, filesystem
 from azulero.tools import parsing
 from azulero.tools.messaging import (
     logger,
@@ -58,9 +58,15 @@ class DataProvider:
         self.spatial_db = (
             self.product_db if tiling_file is None else tiling.Tiling(tiling_file)
         )
-        if data_store and data_store in data_stores:
+        if data_store:
             logger.bullet(f"Enable local data store: {data_store}")
-            self.data_store = data_stores[data_store](self.product_db)
+            if data_store in data_stores:
+                self.data_store = data_stores[data_store](self.product_db)
+            else:
+                self.product_db = filesystem.LocalFileSystem(
+                    self.product_db, data_store
+                )
+                self.data_store = self.product_db
         elif hasattr(self.product_db, "download_cutout"):
             logger.bullet(f"Enable distant cutout service.")
             self.data_store = self.product_db
@@ -204,7 +210,7 @@ class DataProvider:
             overwrite: Boolean flag to enable or disable overwriting.
         """
 
-        paths = [workdir / n.removesuffix(".gz") for n in datafiles]
+        paths = [workdir / Path(n).name.removesuffix(".gz") for n in datafiles]
         for name, path in zip(datafiles, paths):  # TODO parallelize?
             if path.is_file() and not overwrite:
                 logger.bullet(f"File already exists; skip: {path.name}")
