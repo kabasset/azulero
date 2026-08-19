@@ -43,15 +43,23 @@ class Auth:
         self.host = host
         if user is None:
             auth = netrc.netrc(file).authenticators(self.host)
-            if auth is None:
-                raise ValueError(f"Unknown user for host: {self.host}")
-            self.user = auth[0]
-            self.password = Secret(auth[2])
-            if not self.password.value:
-                self._prompt()
+            if auth is None or not auth[0]:
+                self._prompt_user()
+            else:
+                self.user = auth[0]
+            if auth is None or not auth[2]:
+                self._prompt_password()
+            else:
+                self.password = Secret(auth[2])
         else:
             self.user = user
-            self._prompt()
+            self._prompt_password()
 
-    def _prompt(self):
+    def _prompt_clear_text(self, text):
+        return input(text)
+
+    def _prompt_user(self):
+        self.user = self._prompt_clear_text(f"Enter user name for host {self.host}: ")
+
+    def _prompt_password(self):
         self.password = Secret.prompt(f"Enter password for {self.user}@{self.host}: ")
