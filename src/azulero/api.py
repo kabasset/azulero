@@ -63,7 +63,7 @@ class DataProvider:
         Returns:
             The list of file names.
         """
-        return [f for f in self.provider.query_tile_datafiles(index, dsr)]
+        return [f for f in self.provider.query_tile_datafiles(Tile(index, dsr=dsr))]
 
     def download_datafiles(
         self,
