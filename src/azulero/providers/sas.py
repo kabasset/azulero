@@ -31,8 +31,12 @@ class SAS:
 
         self.env = env
         self.__euclid = EuclidClass(environment=env)
-        auth = Auth("easidr.esac.esa.int", user)
 
+        if self.env != "PDR":  # The only environment without authentication
+            self._authenticate(user)
+
+    def _authenticate(self, user: str | None):
+        auth = Auth("easidr.esac.esa.int", user)
         # Intercept stderr, stdout
         err, out = StringIO(), StringIO()
         with contextlib.redirect_stderr(err), contextlib.redirect_stdout(out):
