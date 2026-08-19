@@ -70,7 +70,7 @@ If you use this software for academic publications, please cite as follows:
 .. code-block:: bibtex
 
    @software{Basset_Azulero,
-     author = {Basset, Antoine and Schirmer, Mischa and Bouvard, Téo and Gimenez, Rollin and Nguyen-Kim, Kane and Candini, Gian Paolo and Malapert, Jean-Christophe and Wozny, Nicolas},
+     author = {Basset, Antoine and Schirmer, Mischa and Bouvard, Téo and Gimenez, Rollin and Nguyen-Kim, Kane and Candini, Gian Paolo and Malapert, Jean-Christophe and Wozny, Nicolas and Golawska, Hanna},
      license = {Apache-2.0},
      title = {Azulero},
      version = {2.0},
@@ -100,6 +100,8 @@ Jean-Christophe Malapert (CNES)
    Implemented robust spatial queries on the sphere.
 Nicolas Wozny (IAP)
    Investigated SAS retrieval failures, drafted workarounds.
+Hanna Golawska (ESA)
+   Provided feedback and support for the integration in ESA Datalabs.
 
 In addition to these direct contributions, we would like to thank the Euclid community very warmly
 for the support they showed and the quick and surprisingly detailed answers they gave to our sometimes dummy questions.
