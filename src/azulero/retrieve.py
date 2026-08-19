@@ -90,7 +90,7 @@ class DataProvider:
 
         if target.isdigit():
             logger.info(f"Tile: {target}")
-            return [tiling.Target(target, target)]
+            return [tiling.Target(target, tiling.Tile(target))]  # FIXME find DSR
 
         t, r = parsing.parse_target(target, radius, otype=str)
         if "," in t:
@@ -136,7 +136,7 @@ class DataProvider:
 
         for tile in tiles:
             logger.bullet(f"Tile: {tile}")
-        targets = [tiling.Target(target, tile.index, radec, radius) for tile in tiles]
+        targets = [tiling.Target(target, tile, radec, radius) for tile in tiles]
         if len(targets) == 0:
             logger.warning("No tile found!")
         return list(targets)
@@ -156,7 +156,7 @@ class DataProvider:
         res = sorted(res, key=lambda t: modes.index(t.mode))
         return res
 
-    def query_tile_datafiles(self, tile: str, dsr: str):
+    def query_tile_datafiles(self, tile: tiling.Tile):
         """
         Query the datafiles of a tile.
 
@@ -167,7 +167,7 @@ class DataProvider:
 
         @retry(logger=logger, default=[])
         def retry_query():
-            return self.product_db.query_datafiles(tile, dsr)
+            return self.product_db.query_datafiles(tile)
 
         datafiles = retry_query()
         datafiles = {
@@ -334,7 +334,10 @@ def add_parser(subparsers, help):
         * ``{workspace}`` is replaced with the workspace directory,
         * ``{tile}`` is replaced with the target tile index,
         * ``{target}`` is replaced with the input target object name or coordinates
-          or ignored if the input target is a tile index.
+          or ignored if the input target is a tile index,
+        * ``{dsr}`` is replaced with the dataset release name,
+        * ``{radius}`` is replaced with the cutout radius
+          or ignored if the target is a complete tile.
         """,
     )
 
@@ -377,7 +380,7 @@ def run(args):
             datafiles = []
             for dsr in dsrs:
                 logger.info(f"Dataset Release {dsr}")
-                datafiles = provider.query_tile_datafiles(t.tile, dsr)
+                datafiles = provider.query_tile_datafiles(t.tile)
                 if len(datafiles) > 0:
                     break  # TODO avoid breaks
             timer.tic_log()

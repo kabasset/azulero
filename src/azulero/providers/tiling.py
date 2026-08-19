@@ -2,6 +2,7 @@
 # SPDX-PackageSourceInfo: https://github.com/kabasset/azulero
 # SPDX-License-Identifier: Apache-2.0
 
+from astropy import units
 from astropy.coordinates import Angle, SkyCoord
 from dataclasses import dataclass, field
 import json
@@ -12,10 +13,21 @@ from azulero.tools.workspace import Workspace
 
 
 @dataclass(frozen=True)
+class Tile(object):
+    index: str = ""
+    mode: str = "UNKNOWN"
+    dsr: str = ""
+    distance: float = 0.0  # FIXME Angle
+
+    def __str__(self) -> str:
+        return f"{self.mode}: {self.index} ({self.dsr}); distance: {self.distance:.2f}°"
+
+
+@dataclass(frozen=True)
 class Target:
 
     name: str = ""
-    tile: str = ""
+    tile: Tile = Tile()
     coord: SkyCoord | None = field(default=None, compare=False)
     radius: Angle | None = field(default=None, compare=False)
 
@@ -27,22 +39,28 @@ class Target:
         )
 
     def workdir(self, ios: Workspace) -> Path:
-        target = "" if self.name == self.tile else self.name
+
+        if self.name == self.tile.index:
+            target = ""
+        else:
+            target = self.name
+
+        unit_str = {units.degree: "d", units.arcminute: "m", units.arcsecond: "s"}
+        if self.radius is None:
+            radius = ""
+        elif self.radius.unit in unit_str:
+            radius = f"r{self.radius.value}{unit_str[self.radius.unit]}"
+        else:
+            radius = f"r{self.radius / units.arcsecond}{unit_str[units.arcsecond]}"
+
         workdir = ios.output_template.format(
-            workspace=ios.workspace, tile=self.tile, target=target
+            workspace=ios.workspace,
+            tile=self.tile.index,
+            target=target,
+            dsr=self.tile.dsr,
+            radius=radius,
         )
         return Path(workdir)
-
-
-@dataclass(frozen=True)
-class Tile(object):
-    index: str
-    mode: str
-    dsr: str
-    distance: float
-
-    def __str__(self) -> str:
-        return f"{self.mode}: {self.index} ({self.dsr}); distance: {self.distance:.2f}°"
 
 
 class Tiling:

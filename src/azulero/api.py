@@ -9,7 +9,7 @@ from pathlib import Path
 
 from azulero import retrieve, process
 from azulero.image import color, io
-from azulero.providers.tiling import Target
+from azulero.providers.tiling import Target, Tile
 
 
 class DataProvider:
@@ -50,7 +50,7 @@ class DataProvider:
             The list of tile indices.
         """
         targets = self.provider.query_radec_tiles("", coord, None, dsrs, modes)
-        return [t.tile for t in targets]
+        return [t.tile.index for t in targets]
 
     def query_tile_datafiles(self, index: str, dsr: str) -> list[str]:
         """
@@ -106,7 +106,7 @@ class DataProvider:
             The resulting list of cutout paths.
         """
         return self.provider.download_datafiles(
-            datafiles, workdir, Target("", "", center, radius), overwrite
+            datafiles, workdir, Target("", Tile(), center, radius), overwrite
         )
 
 

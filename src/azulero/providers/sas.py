@@ -4,6 +4,7 @@
 
 from pathlib import Path
 from astropy.coordinates import Angle, SkyCoord
+from astropy.table import Table
 from astroquery.esa.euclid import EuclidClass
 import contextlib  # intercept astroquery prints
 from dataclasses import dataclass
@@ -46,23 +47,30 @@ class SAS:
         if err.getvalue():
             raise RuntimeError(err.getvalue())
 
+    def get_table(self, query: str) -> Table:
+        res = self.__euclid.launch_job(query).get_results()  # type: ignore
+        if not isinstance(res, Table):
+            raise RuntimeError(f"The query returned an object of type: {type(res)}")
+        return res
+
     def query_tiles(self, radec: SkyCoord, dsrs: list[str]):
         dsrs_text = ",".join("'" + d + "'" for d in dsrs)
         select_text = "tile_index,ra,dec,data_set_release"
         if self.env != "PDR":
             select_text += ",processing_mode"
         q = f"SELECT {select_text} FROM sedm.mosaic_product WHERE (mosaic_product.data_set_release IN ({dsrs_text})) AND INTERSECTS(CIRCLE({radec.ra.value},{radec.dec.value},0),fov)=1"
-        res = self.__euclid.launch_job(q).get_results()
+        res = self.get_table(q)
         return [tile(r, radec) for r in res]
 
-    def query_datafiles(self, tile: str, dsr: str):
+    def query_datafiles(self, tile: Tile):
         products = self.__euclid.get_product_list(
-            tile_index=tile, product_type="DpdMerBksMosaic"
+            tile_index=tile.index, product_type="DpdMerBksMosaic"
         )
+        assert products is not None  # FIXME raise
         return {
             str(p["file_name"]): str(p["filter_name"])
             for p in products
-            if str(p["release_name"]) == dsr
+            if str(p["release_name"]) == tile.dsr
         }
 
     def download_datafile(self, name: str, path: Path):
@@ -76,11 +84,11 @@ class SAS:
         target: Target,
     ):
         q = f"SELECT file_path, instrument_name FROM sedm.mosaic_product WHERE file_name='{name}'"
-        res = self.__euclid.launch_job(q).get_results()[0]  # type: ignore
+        res = self.get_table(q)[0]
         self.__euclid.get_cutout(
-            file_path=Path(res["file_path"]) / name,
+            file_path=Path(res["file_path"]) / name,  # type: ignore
             instrument=res["instrument_name"],
-            id=target.tile,
+            id=target.tile.index,
             coordinate=target.coord,
             radius=target.radius,
             output_file=path,

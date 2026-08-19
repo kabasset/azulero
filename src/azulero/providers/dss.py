@@ -29,7 +29,7 @@ class DSS:
         ring = self._query_tile_ring(radec, dsr).values()
         return query_geotiles(radec, ring)
 
-    def _query_tile_ring(self, radec: SkyCoord, dsr: str):
+    def _query_tile_ring(self, radec: SkyCoord, dsr: str) -> dict:
         root = "https://eas-dps-rest-ops.esac.esa.int/REST"
         dsr_query = f"Header.DataSetRelease={dsr}"
         dec_deg: float = radec.dec.degree  # type: ignore
@@ -55,9 +55,9 @@ class DSS:
         r.raise_for_status()
         return self._parse_geotiles(r.text)
 
-    def _parse_geotiles(self, text: str):
+    def _parse_geotiles(self, text: str) -> dict:
         """
-        Parse tiles in geojson format from DPS response.
+        Parse tiles in Geojson format from DPS response.
         """
         tiles = {}
         reader = csv.reader(StringIO(text))
@@ -77,13 +77,13 @@ class DSS:
             tiles[product]["geometry"]["coordinates"][0].append([float(ra), float(dec)])
         return tiles
 
-    def query_datafiles(self, tile: Tile, dsr: str):
+    def query_datafiles(self, tile: Tile) -> dict[str, str]:
 
         query = {
             "project": "EUCLID",
             "class_name": "DpdMerBksMosaic",
-            "Data.TileIndex": tile,
-            "Header.DataSetRelease": dsr,
+            "Data.TileIndex": tile.index,
+            "Header.DataSetRelease": tile.dsr,
             "fields": "Data.DataStorage.DataContainer.FileName:Data.Filter.Name",
         }
 
@@ -102,7 +102,7 @@ class DSS:
                 datafiles[file_name] = filter_name
         return datafiles
 
-    def download_datafile(self, name: str, path: Path):
+    def download_datafile(self, name: str, path: Path) -> Path:
 
         r = requests.get(f"https://euclidsoc.esac.esa.int/{name}")
         # FIXME use getpass in Datalabs

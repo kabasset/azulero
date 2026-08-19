@@ -3,16 +3,15 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from pathlib import Path
-from astropy.coordinates import Angle, SkyCoord
 
+from azulero.providers.cutout import local_cutout
 from azulero.providers.tiling import Target
 from azulero.providers.sas import SAS
-from azulero.providers.cutout import local_cutout
 
 
 class Datalabs:
 
-    def __init__(self, sas):
+    def __init__(self, sas: SAS):
         self._sas = sas
 
     def download_datafile(self, name: str, path: Path):
@@ -30,5 +29,5 @@ class Datalabs:
 
     def _datafile_path(self, name):
         q = f"SELECT file_name, datalabs_path FROM sedm.mosaic_product WHERE file_name='{name}'"
-        res = self._sas.euclid.launch_job(q).get_results()[0]  # type: ignore
+        res = self._sas.get_table(q)[0]
         return Path(res["datalabs_path"]) / res["file_name"]  # type: ignore

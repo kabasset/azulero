@@ -106,6 +106,8 @@ Placeholder name Substitution value
 ``{workspace}``  Workspace path
 ``{tile}``       Resolved target tile index
 ``{target}``     Verbatim target argument in command line, or nothing if the target is a tile index
+``{dsr}``        Dataset release name
+``{radius}``     Cutout radius
 ================ ==================
 
 By default, the workdirs are named after the targets, grouped by tile index.
