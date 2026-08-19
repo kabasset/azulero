@@ -36,12 +36,31 @@ Bug fixes
 ^^^^^^^^^
 
 - Some commands were not reading the environment variables.
-- Remove deprecated commands ``azul assemble``, ``azul find``.
+
+``azul retrieve``
+
+- When there are several Dataset Releases per tile, only the best Dataset Release is now kept.
 
 Cleaning
 ^^^^^^^^
 
+- Remove deprecated commands ``azul assemble``, ``azul find``.
 - Remove Matplotlib dependency
+
+Known issues
+^^^^^^^^^^^^
+
+``azul retrieve``
+
+- #35 -- Cartesian coordinates are used,
+  which cannot handle positions around RA = 0° = 360° or dec = +/-90°
+  (where there are no public Euclid data).
+
+``azul roam``
+
+- #104 -- Field of view is approximate with Gaia Sky.
+- #55 -- Zoom < 1° is not supported for Gaia Sky.
+- #31 -- Zoom > 100% is not supported.
 
 
 2.0.1
