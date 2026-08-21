@@ -313,7 +313,7 @@ def process_iyjh(
         io.write_normalized_bgr(path, bgr, wcs)
     timer.tic_log()
 
-    if len(transform.bgr_curves) > 0:  # FIXME always 3, check values
+    if len(transform.bgr_curves) > 0:
         logger.header(2, f"Adjust curves")
         for i in range(len(transform.bgr_curves)):
             bgr[:, :, i] = color.adjust_curve(bgr[:, :, i], transform.bgr_curves[i])

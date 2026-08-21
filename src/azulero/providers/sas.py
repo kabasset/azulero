@@ -57,7 +57,10 @@ class SAS:
             raise RuntimeError(f"The query returned an object of type: {type(res)}")
         return res
 
-    def query_tiles(self, radec: SkyCoord, dsrs: list[str]) -> list[Tile]:
+    def query_tile_attributes(self, index: str) -> list[Tile]:
+        return [Tile(index)]  # FIXME mode, dsrs
+
+    def query_radec_tiles(self, radec: SkyCoord, dsrs: list[str]) -> list[Tile]:
         dsrs_text = ",".join("'" + d + "'" for d in dsrs)
         select_text = "tile_index,ra,dec,data_set_release"
         if self.env != "PDR":
@@ -66,7 +69,7 @@ class SAS:
         res = self.get_table(q)
         return [tile(r, radec) for r in res]
 
-    def query_datafiles(self, tile: Tile):
+    def query_tile_datafiles(self, tile: Tile) -> dict[str, str]:
         products = self.__euclid.get_product_list(
             tile_index=tile.index, product_type="DpdMerBksMosaic"
         )
@@ -79,14 +82,8 @@ class SAS:
 
     def download_datafile(self, name: str, path: Path):
         self.__euclid.get_product(file_name=name, output_file=path)
-        return path
 
-    def download_cutout(
-        self,
-        name: str,
-        path: Path,
-        target: Target,
-    ):
+    def download_cutout(self, name: str, path: Path, target: Target):
         q = f"SELECT file_path, instrument_name FROM sedm.mosaic_product WHERE file_name='{name}'"
         res = self.get_table(q)[0]
         self.__euclid.get_cutout(
@@ -97,4 +94,3 @@ class SAS:
             radius=target.radius,
             output_file=path,
         )  # type: ignore
-        return path

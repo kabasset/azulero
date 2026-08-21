@@ -9,7 +9,7 @@ from astropy.nddata import Cutout2D
 from astropy.wcs import WCS
 
 from azulero.tools.messaging import logger
-from azulero.providers import tiling
+from azulero.providers import tiling, protocol
 
 
 class LocalCutout:
@@ -19,31 +19,26 @@ class LocalCutout:
     and cutouts are extracted from them and written to the workdir.
     """
 
-    def __init__(self, provider):
+    def __init__(self, provider: protocol.DataStore):
         self.provider = provider
 
-    def download_datafile(self, name: str, path: Path) -> Path:
+    def download_datafile(self, name: str, path: Path):
         if (path).exists():
             logger.bullet(f"Tile file already exists; Skip: {name}")
-            return path
-        return self.provider.download_datafile(name, path)
+        else:
+            self.provider.download_datafile(name, path)
 
-    def download_cutout(
-        self,
-        name: str,
-        path: Path,
-        target: tiling.Target,
-    ) -> Path:
+    def download_cutout(self, name: str, path: Path, target: tiling.Target):
         tiledir = path.parent.parent  # FIXME resolve tile folder
         logger.warning(
             f"Cutout retrieval is not supported by this provider. "
             f"Cutting locally a full tile to be retrieved in: {tiledir}"
         )
-        tile = self.download_datafile(name, tiledir / path.name)
-        return local_cutout(tile, path, target.coord, target.radius)
+        self.download_datafile(name, tiledir / path.name)
+        local_cutout(tiledir / path.name, path, target.coord, target.radius)
 
 
-def local_cutout(input: Path, output: Path, coord: SkyCoord, radius: Angle) -> Path:
+def local_cutout(input: Path, output: Path, coord: SkyCoord, radius: Angle):
     with fits.open(input) as f:
         hdu = f[0]
         wcs = WCS(hdu.header)
@@ -51,4 +46,3 @@ def local_cutout(input: Path, output: Path, coord: SkyCoord, radius: Angle) -> P
         hdu.data = cutout.data
         hdu.header.update(cutout.wcs.to_header())
         hdu.writeto(output, overwrite=True)  # FIXME overwrite policy from args
-    return output

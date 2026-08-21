@@ -68,7 +68,7 @@ class Tiling:
     def __init__(self, filename: Path):
         self.filename = filename
 
-    def query_tiles(self, radec: SkyCoord, dsrs: list[str]):
+    def query_radec_tiles(self, radec: SkyCoord, dsrs: list[str]):
         with open(self.filename) as f:
             tiles = json.load(f)["features"]
         return query_geotiles(radec, tiles, dsrs)

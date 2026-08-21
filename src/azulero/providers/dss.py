@@ -17,9 +17,12 @@ class DSS:
 
     def __init__(self, user: str | None):
         auth = Auth("euclidsoc.esac.esa.int", user)
-        self.__auth = requests.auth.HTTPBasicAuth(auth.user, auth.password.value)
+        self.__auth = requests.auth.HTTPBasicAuth(auth.user, auth.password.value)  # type: ignore
 
-    def query_tiles(self, radec: SkyCoord, dsrs: list[str]):
+    def query_tile_attributes(self, index: str) -> list[Tile]:
+        return [Tile(index)]  # FIXME mode, dsrs
+
+    def query_radec_tiles(self, radec: SkyCoord, dsrs: list[str]):
         tiles = []
         for d in dsrs:
             tiles += self._query_dsr_tiles(radec, d)
@@ -77,7 +80,7 @@ class DSS:
             tiles[product]["geometry"]["coordinates"][0].append([float(ra), float(dec)])
         return tiles
 
-    def query_datafiles(self, tile: Tile) -> dict[str, str]:
+    def query_tile_datafiles(self, tile: Tile) -> dict[str, str]:
 
         query = {
             "project": "EUCLID",
@@ -102,7 +105,7 @@ class DSS:
                 datafiles[file_name] = filter_name
         return datafiles
 
-    def download_datafile(self, name: str, path: Path) -> Path:
+    def download_datafile(self, name: str, path: Path):
 
         r = requests.get(f"https://euclidsoc.esac.esa.int/{name}")
         # FIXME use getpass in Datalabs
@@ -112,4 +115,3 @@ class DSS:
             content = f.read()
         with open(path, "wb") as f:
             f.write(content)
-        return path
