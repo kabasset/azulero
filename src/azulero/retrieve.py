@@ -181,13 +181,8 @@ def run(args):
         if args.force is not None and len(args.force) > 0:
             datafiles = args.force
         else:
-            logger.header(2, f"{progress} Query datafiles for tile {t.tile}")
-            datafiles = []
-            for dsr in dsrs:
-                logger.info(f"Dataset Release {dsr}")
-                datafiles = provider.query_tile_datafiles(t.tile)
-                if len(datafiles) > 0:
-                    break  # TODO avoid breaks
+            logger.header(2, f"{progress} Query datafiles for tile {t.tile.index}")
+            datafiles = provider.query_tile_datafiles(t.tile)
             timer.tic_log()
 
         if args.force is None and len(datafiles) < 4:
