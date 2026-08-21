@@ -10,16 +10,10 @@ from azulero.providers.tiling import Tile, Target
 
 
 @runtime_checkable
-class ProductDatabase(Protocol):
+class ProductDatabase(Protocol):  # FIXME rename as FileDatabase
     """
     Abstract base class for product databases.
     """
-
-    def query_tile_attributes(self, index: str) -> list[Tile]:
-        """
-        Get the list of tiles with given index.
-        """
-        ...
 
     def query_tile_datafiles(self, tile: Tile) -> dict[str, str]:
         """
@@ -36,6 +30,12 @@ class SpatialDatabase(Protocol):
     """
     Abstract base class for spatial databases.
     """
+
+    def query_tile_attributes(self, index: str) -> list[Tile]:
+        """
+        Get the list of tiles with given index.
+        """
+        ...
 
     def query_radec_tiles(self, radec: SkyCoord, dsrs: list[str]) -> list[Tile]:
         """

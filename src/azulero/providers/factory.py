@@ -57,6 +57,7 @@ class DataProvider:
             assert isinstance(self.product_db, protocol.SpatialDatabase)
             self.spatial_db = self.product_db
         else:
+            logger.bullet(f"Enable local tiling: {tiling_file}")
             self.spatial_db = tiling.Tiling(tiling_file)
         if data_store:
             logger.bullet(f"Enable local data store: {data_store}")
@@ -72,7 +73,9 @@ class DataProvider:
             logger.bullet(f"Enable distant cutout service.")
             self.data_store = self.product_db
         else:
-            logger.bullet("Enable local cutout service.")
+            logger.bullet(
+                "No distant cutout service available. Fall back to local cutout."
+            )
             assert isinstance(self.product_db, protocol.DataStore)
             self.data_store = cutout.LocalCutout(self.product_db)
 
@@ -131,7 +134,7 @@ class DataProvider:
 
         @retry(logger=logger, default=[])
         def retry_query():
-            return self.product_db.query_tile_attributes(index)
+            return self.spatial_db.query_tile_attributes(index)
 
         tiles = self.sort_tiles(retry_query(), dsrs, modes)
         for t in tiles:

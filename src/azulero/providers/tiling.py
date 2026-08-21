@@ -69,12 +69,22 @@ class Target:
 class Tiling:
 
     def __init__(self, filename: Path):
-        self.filename = filename
+        with open(filename) as f:
+            self.tiles = json.load(f)["features"]
+
+    def query_tile_attributes(self, index: str) -> list[Tile]:
+        return [
+            Tile(
+                index,
+                t["properties"]["ProcessingMode"],
+                t["properties"]["DatasetRelease"],
+            )
+            for t in self.tiles
+            if t["properties"]["TileIndex"] == index
+        ]
 
     def query_radec_tiles(self, radec: SkyCoord, dsrs: list[str]):
-        with open(self.filename) as f:
-            tiles = json.load(f)["features"]
-        return query_geotiles(radec, tiles, dsrs)
+        return query_geotiles(radec, self.tiles, dsrs)
 
 
 def query_geotiles(radec: SkyCoord, geotiles: list, dsrs: list[str] | None = None):
