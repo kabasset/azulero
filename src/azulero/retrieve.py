@@ -167,7 +167,7 @@ def run(args):
         targets += target[: args.limit]
 
     logger.info("")
-    logger.info(f"Tile{'s' if len(targets)>1 else ''} found: {len(targets)}")
+    logger.info(f"Target tile{'s' if len(targets)>1 else ''}: {len(targets)}")
     timer.tic_log()
 
     if args.query_only == "tiles":
