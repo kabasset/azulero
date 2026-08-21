@@ -165,6 +165,9 @@ def run(args):
     for t in args.targets:
         target = provider.query_target_tiles(dsrs, modes, args.radius, t)
         targets += target[: args.limit]
+
+    logger.info("")
+    logger.info(f"Tile{'s' if len(targets)>1 else ''} found: {len(targets)}")
     timer.tic_log()
 
     if args.query_only == "tiles":
