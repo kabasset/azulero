@@ -57,7 +57,7 @@ def add_parser(subparsers, help):
         "--from",
         type=str,
         default="idr",
-        choices=product_databases.keys(),
+        choices=factory.product_databases.keys(),
         help="Data provider.",
     )
     parser.add_argument(
@@ -168,7 +168,7 @@ def run(args):
     timer.tic_log()
 
     if args.query_only == "tiles":
-        write_pipe_args([t.tile for t in targets])
+        write_pipe_args([t.tile.index for t in targets])
         return
 
     logger.header(1, "Retrieve targets", linebreaks=[1, 0])

@@ -6,12 +6,12 @@ from abc import abstractmethod
 from astropy.coordinates import SkyCoord
 from pathlib import Path
 
-from azulero.providers import abc
+from azulero.providers import protocol
 from azulero.providers.cutout import local_cutout
 from azulero.providers.tiling import Target, Tile
 
 
-class LocalDataStore(abc.DataStoreWithCutoutService):
+class LocalDataStore:
 
     def download_datafile(self, name: str, path: Path):
         path.symlink_to(self._datafile_path(name))
@@ -31,13 +31,17 @@ class LocalDataStore(abc.DataStoreWithCutoutService):
         pass
 
 
-class LocalFileSystem(LocalDataStore, abc.SpatialProductDatabase):
+class LocalFileSystem(LocalDataStore):
 
-    def __init__(self, provider: abc.SpatialProductDatabase, template: str):
+    def __init__(self, provider: protocol.ProductDatabase, template: str):
         self.provider = provider
         self.template = template
 
+    def query_tile_attributes(self, index: str) -> list[Tile]:
+        return self.provider.query_tile_attributes(index)
+
     def query_radec_tiles(self, radec: SkyCoord, dsrs: list[str]) -> list[Tile]:
+        assert isinstance(self.provider, protocol.SpatialDatabase)  # TODO log? raise?
         return self.provider.query_radec_tiles(radec, dsrs)
 
     def query_tile_datafiles(self, tile: Tile) -> dict[str, str]:

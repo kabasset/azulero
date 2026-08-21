@@ -19,8 +19,29 @@ class DSS:
         auth = Auth("euclidsoc.esac.esa.int", user)
         self.__auth = requests.auth.HTTPBasicAuth(auth.user, auth.password.value)  # type: ignore
 
+    def _get(self, fields: list[str], params: dict[str, str]):
+        query = {
+            "project": "EUCLID",
+            "class_name": "DpdMerBksMosaic",
+            "fields": ":".join(fields),
+        }
+        query.update(params)
+
+        r = requests.get(
+            "https://eas-dps-rest-ops.esac.esa.int/REST",
+            params=query,
+            auth=self.__auth,
+        )
+        r.raise_for_status()
+        lines = r.text.replace('"', "").split()
+        return [l.split(",") for l in lines[1:]]
+
     def query_tile_attributes(self, index: str) -> list[Tile]:
-        return [Tile(index)]  # FIXME mode, dsrs
+        res = self._get(
+            ["Data.ProcessingMode", "Header.DataSetRelease"],
+            {"Data.TileIndex": index},
+        )
+        return [Tile(index, r[0], r[1]) for r in res]
 
     def query_radec_tiles(self, radec: SkyCoord, dsrs: list[str]):
         tiles = []

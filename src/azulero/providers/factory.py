@@ -98,8 +98,8 @@ class DataProvider:
 
         if target.isdigit():
             logger.info(f"Tile: {target}")
-            tiles = self.query_tile_attributes(target)
-            return [tiling.Target(target, t) for t in tiles]  # FIXME find DSR
+            tiles = self.query_tile_attributes(target, dsrs, modes)
+            return [tiling.Target(target, t) for t in tiles]
 
         t, r = parsing.parse_target(target, radius, otype=str)
         assert r is None or isinstance(r, Angle)
@@ -119,13 +119,24 @@ class DataProvider:
 
         return self.query_radec_tiles(t, radec, r, dsrs, modes)
 
-    def query_tile_attributes(self, index: str) -> list[tiling.Tile]:
+    def query_tile_attributes(
+        self, index: str, dsrs: list[str], modes: list[str]
+    ) -> list[tiling.Tile]:
+        """
+        Get the list of tiles with a given index.
+        """
+
+        # if len(dsrs) == 1:
+        #     return [tiling.Tile(index)]
 
         @retry(logger=logger, default=[])
         def retry_query():
             return self.product_db.query_tile_attributes(index)
 
-        return retry_query()
+        tiles = self.sort_tiles(retry_query(), dsrs, modes)
+        for t in tiles:
+            logger.bullet(f"{t}")
+        return tiles
 
     def query_radec_tiles(
         self,
@@ -154,8 +165,8 @@ class DataProvider:
 
         tiles = self.sort_tiles(retry_query(), dsrs, modes)
 
-        for tile in tiles:
-            logger.bullet(f"Tile: {tile}")
+        for t in tiles:
+            logger.bullet(f"Tile: {t}")
         targets = [tiling.Target(target, tile, radec, radius) for tile in tiles]
         if len(targets) == 0:
             logger.warning("No tile found!")
@@ -170,6 +181,7 @@ class DataProvider:
         """
         Sort tiles according to given Dataset Release and processing mode orderings.
         """
+        dsrs = dsrs + ["UNKNOWN"]
         res = {t for t in tiles if (t.dsr in dsrs and t.mode in modes)}
         res = sorted(res, key=lambda t: t.distance)
         res = sorted(res, key=lambda t: dsrs.index(t.dsr))

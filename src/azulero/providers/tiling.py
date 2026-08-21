@@ -16,11 +16,14 @@ from azulero.tools.workspace import Workspace
 class Tile(object):
     index: str = ""
     mode: str = "UNKNOWN"
-    dsr: str = ""
+    dsr: str = "UNKNOWN"
     distance: float = 0.0  # FIXME Angle
 
     def __str__(self) -> str:
-        return f"{self.mode}: {self.index} ({self.dsr}); distance: {self.distance:.2f}°"
+        res = f"{self.index}: dataset {self.dsr}, survey {self.mode}"
+        if self.distance > 0:
+            res += f" (distance: {self.distance:.2f}°)"
+        return res
 
 
 @dataclass(frozen=True)

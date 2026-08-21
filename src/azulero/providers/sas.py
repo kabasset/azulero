@@ -58,7 +58,19 @@ class SAS:
         return res
 
     def query_tile_attributes(self, index: str) -> list[Tile]:
-        return [Tile(index)]  # FIXME mode, dsrs
+        select_text = "data_set_release"
+        if self.env != "PDR":
+            select_text += ",processing_mode"
+        q = f"SELECT {select_text} FROM sedm.mosaic_product WHERE mosaic_product.tile_index={index}"
+        res = self.get_table(q)
+        return [
+            Tile(
+                index,
+                r.get("processing_mode", "UNKNOWN"),
+                r.get("data_set_release", "UNKNOWN"),
+            )
+            for r in res
+        ]
 
     def query_radec_tiles(self, radec: SkyCoord, dsrs: list[str]) -> list[Tile]:
         dsrs_text = ",".join("'" + d + "'" for d in dsrs)
