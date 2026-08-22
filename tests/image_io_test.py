@@ -62,4 +62,5 @@ def check_data_io(filename, data, wcs):
         if wcs is None:
             assert res[1] is None
         else:
+            assert res[1] is not None
             assert res[1].to_header_string() == wcs.to_header_string()

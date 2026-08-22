@@ -25,7 +25,7 @@ supported_formats: dict[str, list[str]] = {
 supported_wcs_formats: list[str] = [".fits", ".tiff"]
 
 
-def standard_extension(path: Path) -> str | None:
+def standard_extension(path: str | Path) -> str | None:
     """
     Get the standard supported extension of a path, if any, or ``None`` otherwise.
     """

@@ -47,4 +47,4 @@ def local_cutout(input: Path, output: Path, coord: SkyCoord, radius: Angle):
         hdu.data = cutout.data
         assert cutout.wcs is not None
         hdu.header.update(cutout.wcs.to_header())
-        hdu.writeto(output, overwrite=True)  # FIXME overwrite policy from args
+        hdu.writeto(output, overwrite=True)

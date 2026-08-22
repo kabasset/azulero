@@ -11,11 +11,16 @@
         "azulero",
         "BGRA",
         "datalabs",
+        "DSR",
+        "DSRs",
         "fwhm",
         "iyjh",
         "lbgr",
+        "lerp",
         "NISP",
         "radec",
+        "skimage",
+        "tiledir",
         "WCSAXES",
         "workdirs"
     ]
