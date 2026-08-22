@@ -30,7 +30,9 @@ class DataProvider:
         data_store: str | None = None,
         tiling_file: Path | None = None,
     ):
-        self.provider = retrieve.DataProvider(name, user, data_store, tiling_file)
+        self.provider = retrieve.factory.DataProvider(
+            name, user, data_store, tiling_file
+        )
 
     def query_coord_tiles(
         self,
