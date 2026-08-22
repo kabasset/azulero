@@ -79,7 +79,7 @@ class DSS:
         r.raise_for_status()
         return self._parse_geotiles(r.text)
 
-    def _parse_geotiles(self, text: str) -> dict:
+    def _parse_geotiles(self, text: str) -> dict[str, dict]:
         """
         Parse tiles in Geojson format from DPS response.
         """

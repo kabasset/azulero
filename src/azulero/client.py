@@ -80,7 +80,7 @@ def run():
     parser = add_parser()
     args = parser.parse_args()
 
-    logger.setLevel(args.log)
+    logger.level = args.log
 
     log_title()
 

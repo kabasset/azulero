@@ -13,7 +13,7 @@ from azulero.tools import parsing
 from azulero.tools.messaging import logger
 from azulero.tools.retry import retry
 
-product_databases: dict[str, Callable[[str], protocol.DataProvider]] = {
+product_databases: dict[str, Callable[[str | None], protocol.DataProvider]] = {
     "pdr": lambda user: sas.SAS("PDR", user),
     "idr": lambda user: sas.SAS("IDR", user),
     "otf": lambda user: sas.SAS("OTF", user),
@@ -41,8 +41,8 @@ class DataProvider:
         tiling_file: The tiling Geojson file, for optimization purpose.
     """
 
-    product_db: protocol.DataProvider
-    spatial_db: protocol.SpatialDatabase
+    product_db: protocol.ProductDatabase
+    tiling_db: protocol.TilingDatabase
     data_store: protocol.CutoutStore
 
     def __init__(
@@ -54,21 +54,20 @@ class DataProvider:
     ):
         self.product_db = product_databases[name.lower()](user)
         if tiling_file is None:
-            assert isinstance(self.product_db, protocol.SpatialDatabase)
-            self.spatial_db = self.product_db
+            assert isinstance(self.product_db, protocol.TilingDatabase)
+            self.tiling_db = self.product_db
         else:
             logger.bullet(f"Enable local tiling: {tiling_file}")
-            self.spatial_db = tiling.Tiling(tiling_file)
+            self.tiling_db = tiling.Tiling(tiling_file)
         if data_store:
             logger.bullet(f"Enable local data store: {data_store}")
             if data_store in data_stores:
                 assert isinstance(self.product_db, sas.SAS)  # TODO accept other DBs?
                 self.data_store = data_stores[data_store](self.product_db)
             else:
-                self.product_db = filesystem.LocalFileSystem(
+                self.data_store = filesystem.LocalFileSystem(
                     self.product_db, data_store
                 )
-                self.data_store = self.product_db
         elif isinstance(self.product_db, protocol.CutoutStore):
             logger.bullet(f"Enable distant cutout service.")
             self.data_store = self.product_db
@@ -76,7 +75,6 @@ class DataProvider:
             logger.bullet(
                 "No distant cutout service available. Fall back to local cutout."
             )
-            assert isinstance(self.product_db, protocol.DataStore)
             self.data_store = cutout.LocalCutout(self.product_db)
 
     def query_target_tiles(
@@ -134,7 +132,7 @@ class DataProvider:
 
         @retry(logger=logger, default=[])
         def retry_query():
-            return self.spatial_db.query_tile_attributes(index)
+            return self.tiling_db.query_tile_attributes(index)
 
         tiles = self.sort_tiles(retry_query(), dsrs, modes)
         for t in tiles:
@@ -164,7 +162,7 @@ class DataProvider:
 
         @retry(logger=logger, default=[])
         def retry_query():
-            return self.spatial_db.query_radec_tiles(radec, dsrs)
+            return self.tiling_db.query_radec_tiles(radec, dsrs)
 
         tiles = self.sort_tiles(retry_query(), dsrs, modes)
 
@@ -184,7 +182,6 @@ class DataProvider:
         """
         Sort tiles according to given Dataset Release and processing mode orderings.
         """
-        dsrs = dsrs + ["UNKNOWN"]
         res = {t for t in tiles if (t.dsr in dsrs and t.mode in modes)}
         res = sorted(res, key=lambda t: t.distance)
         res = sorted(res, key=lambda t: dsrs.index(t.dsr))

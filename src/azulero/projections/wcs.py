@@ -28,7 +28,9 @@ def capture_frame(
     hfov = np.deg2rad(frame.hfov)
     vfov = vfov_in_radians(hfov, video_format)
     fov = Angle([hfov, vfov], unit="rad")
-    xyz = _xyzpers(fov, np.deg2rad(frame.center), video_format, np.deg2rad(frame.roll))
+    xyz = _xyzpers(
+        fov, np.deg2rad(frame.center), video_format, np.deg2rad(frame.roll)
+    )  # FIXME use Angle to convert to radians
     u, v = _xyz2uv(xyz)
     ra = 360 - np.rad2deg(u)
     dec = np.rad2deg(v)

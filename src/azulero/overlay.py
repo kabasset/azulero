@@ -118,13 +118,13 @@ class Footprints:
 
 def read_wcs(path):
     with fits.open(path) as hdul:
-        header = hdul[0].header
+        header = hdul[0].header  # type: ignore
     return wcs.WCS(header)
 
 
 def read_catalog(path):
     with fits.open(path) as hdul:
-        data = hdul[1].data
+        data = hdul[1].data  # type: ignore
     return data
 
 
@@ -173,6 +173,7 @@ def run(args):
     print(f"- WCS: {image_path.name}")
     wcs = read_wcs(image_path)
     print(f"- Image: {image_path.name}")
+    assert wcs.array_shape is not None
     image = np.zeros((wcs.array_shape[1], wcs.array_shape[0], 3), dtype=np.uint8)
     print(f"- Catalog: {catalog_path.name}")
     catalog = read_catalog(catalog_path)

@@ -69,6 +69,7 @@ def run(args):
     path = list(workdir.glob(args.input.format(channel=args.channels[0])))[0]
     # FIXME duplicate read_channel
     data, wcs = io.read_product(path)
+    assert data is not None
     shape = data.shape
     logger.bullet(f"Image shape: {shape[1]} x {shape[0]}")
     data = np.asinh(

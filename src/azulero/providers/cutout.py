@@ -35,14 +35,16 @@ class LocalCutout:
             f"Cutting locally a full tile to be retrieved in: {tiledir}"
         )
         self.download_datafile(name, tiledir / path.name)
+        assert target.coord is not None and target.radius is not None
         local_cutout(tiledir / path.name, path, target.coord, target.radius)
 
 
 def local_cutout(input: Path, output: Path, coord: SkyCoord, radius: Angle):
     with fits.open(input) as f:
-        hdu = f[0]
+        hdu: fits.ImageHDU = f[0]  # type: ignore
         wcs = WCS(hdu.header)
         cutout = Cutout2D(hdu.data, position=coord, size=2 * radius, wcs=wcs)
         hdu.data = cutout.data
+        assert cutout.wcs is not None
         hdu.header.update(cutout.wcs.to_header())
         hdu.writeto(output, overwrite=True)  # FIXME overwrite policy from args

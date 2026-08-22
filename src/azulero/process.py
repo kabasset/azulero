@@ -272,6 +272,8 @@ def process_iyjh(
     timer: Timer = Timer(),
 ) -> np.ndarray:
 
+    path = Path(template)
+
     logger.header(2, f"Detect bad pixels")
     dead = mask.dead_pixels(iyjh)
     logger.bullet(f"Bad pixels: {', '.join(str(np.sum(c)) for c in dead)}")

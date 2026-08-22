@@ -2,6 +2,8 @@
 # SPDX-PackageSourceInfo: https://github.com/kabasset/azulero
 # SPDX-License-Identifier: Apache-2.0
 
+from typing import Iterable
+
 from astropy import units
 from astropy.coordinates import Angle, SkyCoord
 from dataclasses import dataclass, field
@@ -52,9 +54,11 @@ class Target:
         if self.radius is None:
             radius = ""
         elif self.radius.unit in unit_str:
-            radius = f"r{self.radius.value}{unit_str[self.radius.unit]}"
+            radius = f"r{self.radius.value}{unit_str[self.radius.unit]}"  # type: ignore
         else:
-            radius = f"r{self.radius / units.arcsecond}{unit_str[units.arcsecond]}"
+            radius = (
+                f"r{float(self.radius / units.arcsecond)}{unit_str[units.arcsecond]}"
+            )
 
         workdir = ios.output_template.format(
             workspace=ios.workspace,
@@ -87,7 +91,7 @@ class Tiling:
         return query_geotiles(radec, self.tiles, dsrs)
 
 
-def query_geotiles(radec: SkyCoord, geotiles: list, dsrs: list[str] | None = None):
+def query_geotiles(radec: SkyCoord, geotiles: Iterable, dsrs: list[str] | None = None):
     point = geometry.Point(radec.ra.degree, radec.dec.degree)  # type: ignore
     res = []
     for tile in geotiles:

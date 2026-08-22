@@ -45,7 +45,7 @@ class Projection:
         image_shape: tuple[int, int],
         video_format: tuple[int, int],
     ):
-        xyz = _xyzpers(*fov, *center, list(reversed(video_format)), orientation)
+        xyz = _xyzpers(*fov, *center, (video_format[1], video_format[0]), orientation)
         u, v = _xyz2uv(xyz)
         x, y = uv2coor(u, v, *image_shape)
         return cls(x, y)
@@ -72,7 +72,7 @@ def _xyzpers(
     return out.dot(Rx).dot(Ry).dot(Ri).astype(np.float32)
 
 
-def _xyz2uv(xyz: np.array) -> tuple[np.array, np.array]:
+def _xyz2uv(xyz: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     """Transform cartesian (x,y,z) to spherical(r, u, v), and only outputs (u, v).
 
     Parameters

@@ -37,13 +37,6 @@ class LocalFileSystem(LocalDataStore):
         self.provider = provider
         self.template = template
 
-    def query_tile_attributes(self, index: str) -> list[Tile]:
-        return self.provider.query_tile_attributes(index)
-
-    def query_radec_tiles(self, radec: SkyCoord, dsrs: list[str]) -> list[Tile]:
-        assert isinstance(self.provider, protocol.SpatialDatabase)  # TODO log? raise?
-        return self.provider.query_radec_tiles(radec, dsrs)
-
     def query_tile_datafiles(self, tile: Tile) -> dict[str, str]:
         datafiles = self.provider.query_tile_datafiles(tile)
         render = lambda f, c: self.template.format(

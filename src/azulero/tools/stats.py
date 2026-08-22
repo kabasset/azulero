@@ -2,6 +2,8 @@
 # SPDX-PackageSourceInfo: https://github.com/kabasset/azulero
 # SPDX-License-Identifier: Apache-2.0
 
+from typing import Sequence
+
 from dataclasses import dataclass
 import numpy as np
 
@@ -12,8 +14,8 @@ class KeysValues:
     Ordered, possibly-float indexed, dict.
     """
 
-    keys: list
-    values: list
+    keys: Sequence
+    values: Sequence
 
     def __iter__(self):
         return iter(self.keys)

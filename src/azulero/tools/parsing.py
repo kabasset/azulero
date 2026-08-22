@@ -80,7 +80,7 @@ def parse_lengths_or_angles(text: str, references: tuple | None = None):
 
 def parse_target(
     text: str, default_slicing=None, otype: type = Path
-) -> tuple["otype", slice | Angle | tuple | None]:
+) -> tuple["otype", slice | Angle | tuple | None]:  # type: ignore
     """
     Parse the path and slicing from a target string.
 

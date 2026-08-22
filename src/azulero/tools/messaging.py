@@ -60,15 +60,27 @@ def colorize(code, message):
     return f"\x1b[{code}m{message}\x1b[0m" if supports_color() else message
 
 
+def progress_str(sequence, format="[{i}/{n}]"):
+    """
+    Generate a progress string in addition to the element when iterating over a sequence.
+    """
+    i = 1
+    n = len(sequence)
+    for e in sequence:
+        yield format.format(i=i, n=n), e
+        i += 1
+
+
 class _LogFormatter(logging.Formatter):
 
-    def __init__(self, sep=" - "):
+    def __init__(self, logger, sep=" - "):
         super().__init__()
+        self._logger = logger
         self.sep = sep
 
     def format(self, record):
 
-        is_debug = logger.getEffectiveLevel() < logging.INFO
+        is_debug = self._logger.getEffectiveLevel() < logging.INFO
 
         if record.levelname == "INFO" and not is_debug:
             fmt = "%(message)s"
@@ -95,47 +107,56 @@ class _LogFormatter(logging.Formatter):
 header_color_codes = {1: "92;1", 2: "96;1", 3: "94;1"}
 
 
-def _log_header(self, level, message, linebreaks=[1]):
-    for _ in range(linebreaks[0]):
-        self.info("")
-    self.info(colorize(header_color_codes.get(level, "0"), message))
-    for _ in range(linebreaks[-1]):
-        self.info("")
-
-
-def _log_bullet(self, message, symbol="•"):
-    self.info(f"{symbol} {message}")
-
-
-def _log_command(self, command):
-    self.info("")
-    self.info("You may now run:")
-    self.info("")
-    self.info(command)
-    self.info("")
-
-
-def _setup_logger():
-    global logger
-    logger = logging.getLogger("azulero")
-    handler = logging.StreamHandler(sys.stderr)
-    handler.setFormatter(_LogFormatter())
-    logger.addHandler(handler)
-    setattr(logging.getLoggerClass(), "header", _log_header)
-    setattr(logging.getLoggerClass(), "command", _log_command)
-    setattr(logging.getLoggerClass(), "bullet", _log_bullet)
-    return logger
-
-
-def progress_str(sequence, format="[{i}/{n}]"):
+class FancyStderrLogger:
     """
-    Generate a progress string in addition to the element when iterating over a sequence.
+    Stderr logger with support for fancy messages such as headers and bullet lists.
     """
-    i = 1
-    n = len(sequence)
-    for e in sequence:
-        yield format.format(i=i, n=n), e
-        i += 1
+
+    def __init__(self, name="azulero"):
+        self._logger = logging.getLogger(name)
+        handler = logging.StreamHandler(sys.stderr)
+        handler.setFormatter(_LogFormatter(self._logger))
+        self._logger.addHandler(handler)
+
+    @property
+    def level(self):
+        return self._logger.getEffectiveLevel()
+
+    @level.setter
+    def level(self, value):
+        self._logger.setLevel(value)
+
+    def debug(self, message):
+        self._logger.debug(message)
+
+    def info(self, message):
+        self._logger.info(message)
+
+    def warning(self, message):
+        self._logger.warning(message)
+
+    def error(self, message):
+        self._logger.error(message)
+
+    def critical(self, message):
+        self._logger.critical(message)
+
+    def header(self, level, message, linebreaks=[1]):
+        for _ in range(linebreaks[0]):
+            self.info("")
+        self.info(colorize(header_color_codes.get(level, "0"), message))
+        for _ in range(linebreaks[-1]):
+            self.info("")
+
+    def bullet(self, message, symbol="•"):
+        self.info(f"{symbol} {message}")
+
+    def command(self, command):
+        self.info("")
+        self.info("You may now run:")
+        self.info("")
+        self.info(command)
+        self.info("")
 
 
-logger = _setup_logger()  #: Stderr logger with support for headers and bullet lists
+logger = FancyStderrLogger()  #: Azulero logger

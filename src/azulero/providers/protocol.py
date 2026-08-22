@@ -26,7 +26,7 @@ class ProductDatabase(Protocol):  # FIXME rename as FileDatabase
 
 
 @runtime_checkable
-class SpatialDatabase(Protocol):
+class TilingDatabase(Protocol):
     """
     Abstract base class for spatial databases.
     """

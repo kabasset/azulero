@@ -3,11 +3,10 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from pathlib import Path
-from astropy.coordinates import Angle, SkyCoord
+from astropy.coordinates import SkyCoord
 from astropy.table import Table
 from astroquery.esa.euclid import EuclidClass
 import contextlib  # intercept astroquery prints
-from dataclasses import dataclass
 from io import StringIO
 
 from azulero.providers.tiling import Tile, Target
@@ -66,8 +65,8 @@ class SAS:
         return [
             Tile(
                 index,
-                r.get("processing_mode", "UNKNOWN"),
-                r.get("data_set_release", "UNKNOWN"),
+                r.get("processing_mode", "UNKNOWN"),  # type: ignore
+                r.get("data_set_release", "UNKNOWN"),  # type: ignore
             )
             for r in res
         ]
@@ -77,7 +76,12 @@ class SAS:
         select_text = "tile_index,ra,dec,data_set_release"
         if self.env != "PDR":
             select_text += ",processing_mode"
-        q = f"SELECT {select_text} FROM sedm.mosaic_product WHERE (mosaic_product.data_set_release IN ({dsrs_text})) AND INTERSECTS(CIRCLE({radec.ra.value},{radec.dec.value},0),fov)=1"
+        assert radec.ra is not None and radec.dec is not None
+        q = (
+            f"SELECT {select_text} FROM sedm.mosaic_product "
+            f"WHERE (mosaic_product.data_set_release IN ({dsrs_text})) "
+            f"AND INTERSECTS(CIRCLE({radec.ra.value},{radec.dec.value},0),fov)=1"
+        )
         res = self.get_table(q)
         return [tile(r, radec) for r in res]
 
