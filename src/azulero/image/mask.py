@@ -56,7 +56,7 @@ def common_borders_2d(mask):
 
 
 def corners_2d(mask: np.ndarray):
-    labels: np.ndarray = sklabel(mask, background=0)  # type: ignore
+    labels: np.ndarray = sklabel(mask, background=0, connectivity=1)  # type: ignore
     corners_indices = np.unique(
         [labels[0, 0], labels[0, -1], labels[-1, 0], labels[-1, -1]]
     )

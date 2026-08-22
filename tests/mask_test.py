@@ -73,20 +73,7 @@ def test_corner_removal():
         ]
     )
     c = mask.clear_corners(m)
-    expected = np.array(
-        [
-            [
-                [0, 0, 0],
-                [0, 0, 1],
-                [0, 0, 0],
-            ],
-            [
-                [0, 1, 0],
-                [0, 0, 0],
-                [0, 0, 0],
-            ],
-        ]
-    )
+    expected = np.zeros([2, 3, 3])
     assert np.all(c == expected)
 
 
@@ -95,26 +82,46 @@ def test_edge_non_removal():
         [
             [
                 [0, 1, 0],
-                [0, 1, 0],
+                [1, 1, 0],
                 [0, 0, 0],
             ],
             [
-                [0, 1, 1],
                 [0, 1, 0],
+                [0, 1, 1],
                 [0, 0, 0],
             ],
         ]
     )
     c = mask.clear_corners(m)
+    assert np.all(c == m)
+
+
+def test_inner_non_removal():
+    m = np.array(
+        [
+            [
+                [1, 0, 0],
+                [0, 1, 0],
+                [0, 0, 1],
+            ],
+            [
+                [0, 0, 1],
+                [0, 1, 0],
+                [1, 0, 0],
+            ],
+        ]
+    )
+    c = mask.clear_corners(m)
+    print(c)
     expected = np.array(
         [
             [
-                [0, 1, 0],
+                [0, 0, 0],
                 [0, 1, 0],
                 [0, 0, 0],
             ],
             [
-                [0, 1, 1],
+                [0, 0, 0],
                 [0, 1, 0],
                 [0, 0, 0],
             ],
