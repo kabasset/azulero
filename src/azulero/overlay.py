@@ -40,7 +40,7 @@ class Scale:
         start = stop - np.array(
             [np.round(self.width * zoom / 100), self.height], dtype=int
         )
-        cv2.rectangle(tmp, start, stop, self.color, -1)
+        cv2.rectangle(tmp, start, stop, self.color, -1)  # type: ignore
         image[:] = tmp[:]
 
     def _draw_text(self, image):

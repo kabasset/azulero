@@ -62,6 +62,7 @@ def roam_gaiasky(params, fps, video_format, output):
         python_parameters=PythonParameters(),
     )
     api = gateway.entry_point.apiv2
+    assert api is not None
 
     api.input.disable()
     api.camera.stop()

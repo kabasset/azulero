@@ -3,6 +3,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import argparse
+from astropy import units
+from astropy.coordinates import Angle
 import numpy as np
 from pathlib import Path
 import cv2
@@ -29,7 +31,7 @@ supported_codecs = {".mp4": "mp4v", ".avi": "xvid", ".mkv": "ffv1"}
 
 def fourcc(path: Path):
     ext = path.suffix.lower()
-    return cv2.VideoWriter_fourcc(*supported_codecs[ext])
+    return cv2.VideoWriter_fourcc(*supported_codecs[ext])  # type: ignore
 
 
 def add_parser(subparsers, help):
@@ -199,6 +201,7 @@ def run(args):
         for i, c, z, a in zip(range(len(centers)), centers, hfovs, rolls)
     ]
     if slicing is not None:
+        assert isinstance(slicing, slice)
         params = params[slicing]
         logger.bullet(f"Rendering range: [{slicing.start}, {slicing.stop})")
     timer.tic_log()
@@ -285,7 +288,7 @@ def crop_planar(
     image: np.ndarray,
     params: sequence.Frame,
     video_format: tuple[int, int],
-):
+) -> np.ndarray:
     """
     Crop a planar image according to planar parameters.
     """
@@ -293,7 +296,7 @@ def crop_planar(
     scaling = video_format[0] / params.hfov
     viewport_format = np.array([params.hfov, video_format[1] / scaling])
     roll = params.roll_in_degrees() % 360
-    viewport = cv2.RotatedRect(params.center, viewport_format, roll)
+    viewport = cv2.RotatedRect(params.center, viewport_format, roll)  # type: ignore
     x0, y0, w, h = viewport.boundingRect()
     # FIXME if bbox outside image, return black frame
     vertical = w < h
@@ -320,12 +323,12 @@ def crop_planar(
         return np.zeros([video_format[1], video_format[0], 3], dtype=image.dtype)
     offset = np.array([x0, y0])
     patch = image[y0:y1, x0:x1]
-    rotation = cv2.getRotationMatrix2D(center - offset, -roll, scaling)
+    rotation = cv2.getRotationMatrix2D(center - offset, -roll, scaling)  # type: ignore
     rotation_format = (w, h)
     rotated_image = cv2.warpAffine(
         patch, rotation, rotation_format, flags=cv2.INTER_LINEAR
     )
-    res = cv2.getRectSubPix(rotated_image, video_format, center - offset)
+    res = cv2.getRectSubPix(rotated_image, video_format, center - offset)  # type: ignore
     if vertical:
         return np.flipud(res)
     return res
@@ -340,8 +343,9 @@ def crop_equirectangular(
     h, w = image.shape[:2]
     hfov = np.deg2rad(params.hfov_in_degrees())
     vfov = 2 * np.atan(np.tan(hfov / 2) * h / w)
-    u = float(np.deg2rad(params.center[0].value))
-    v = float(np.deg2rad(params.center[1].value))
+    assert isinstance(params.center, Angle)
+    u = float(np.deg2rad(params.center[0] / units.degree))
+    v = float(np.deg2rad(params.center[1] / units.degree))
     a = float(np.deg2rad(params.roll_in_degrees()))
     proj = Projection.from_perspective(
         (hfov, vfov),
