@@ -42,13 +42,6 @@ class ConvexSphericalPolygon:
         return bool(np.all(self.normals @ p <= eps))
 
 
-def _normalized(v: np.ndarray) -> np.ndarray:
-    """
-    Normalize a vector.
-    """
-    return v / np.linalg.norm(v)
-
-
 def _compute_normals(vertices: np.ndarray) -> np.ndarray:
     """
     Compute 3D outward-oriented face normals.
@@ -56,25 +49,17 @@ def _compute_normals(vertices: np.ndarray) -> np.ndarray:
     Each normal corresponds to the plane containing the sphere center and edge endpoints.
     """
 
-    # Approximate interior point
-    center = _normalized(np.sum(vertices, axis=0))
-
     n = len(vertices)
-    normals = np.zeros([n, 3], dtype=float)
+
+    center = np.sum(vertices, axis=0)
+
+    out_normals = np.zeros([n, 3], dtype=float)
 
     for i in range(n):
+        normal = np.cross(vertices[i], vertices[(i + 1) % n])
+        out_normals[i] = normal if np.dot(normal, center) < 0 else -normal
 
-        a = vertices[i]
-        b = vertices[(i + 1) % n]
-
-        # Plane normal
-        normal = _normalized(np.cross(a, b))
-
-        # Plane normal outside
-        normals[i] = normal if np.dot(normal, center) < 0 else -normal
-        # TODO simplify sign of dot?
-
-    return np.asarray(normals, dtype=np.float64)
+    return np.asarray(out_normals, dtype=np.float64)
 
 
 def _coord_to_vector(radec: SkyCoord) -> np.ndarray:
