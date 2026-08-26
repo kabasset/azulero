@@ -19,8 +19,8 @@ class ConvexSphericalPolygon:
     """
 
     def __init__(self, vertices: Sequence[SkyCoord]):
-        self.vertices = np.stack([_coord_to_vector(v) for v in vertices])
-        self.normals = _compute_normals(self.vertices)
+        vectors = np.stack([_coord_to_vector(v) for v in vertices])
+        self.normals = _compute_normals(vectors)
 
     def __contains__(self, coord: SkyCoord) -> bool:
         """
@@ -59,8 +59,6 @@ def _compute_normals(vertices: np.ndarray) -> np.ndarray:
     # Approximate interior point
     center = _normalized(np.sum(vertices, axis=0))
 
-    normals = []
-
     n = len(vertices)
     normals = np.zeros([n, 3], dtype=float)
 
@@ -72,11 +70,9 @@ def _compute_normals(vertices: np.ndarray) -> np.ndarray:
         # Plane normal
         normal = _normalized(np.cross(a, b))
 
-        # Orient normal outward
-        if np.dot(normal, center) > 0:
-            normal = -normal
-
-        normals[i] = normal
+        # Plane normal outside
+        normals[i] = normal if np.dot(normal, center) < 0 else -normal
+        # TODO simplify sign of dot?
 
     return np.asarray(normals, dtype=np.float64)
 
