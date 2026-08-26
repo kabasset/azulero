@@ -42,24 +42,23 @@ class ConvexSphericalPolygon:
         return bool(np.all(self.normals @ p <= eps))
 
 
-def _compute_normals(vertices: Sequence) -> np.ndarray:
+def _compute_normals(vectors: Sequence) -> np.ndarray:
     """
     Compute 3D outward-oriented face normals.
 
     Each normal corresponds to the plane containing the sphere center and edge endpoints.
     """
 
-    n = len(vertices)
+    pointing = np.sum(vectors, axis=0)
 
-    center = np.sum(vertices, axis=0)
-
+    n = len(vectors)
     out_normals = np.zeros([n, 3], dtype=float)
 
     for i in range(n):
-        normal = np.cross(vertices[i], vertices[(i + 1) % n])
-        out_normals[i] = normal if np.dot(normal, center) < 0 else -normal
+        normal = np.cross(vectors[i], vectors[(i + 1) % n])
+        out_normals[i] = normal if np.dot(normal, pointing) <= 0 else -normal
 
-    return np.asarray(out_normals, dtype=np.float64)
+    return out_normals
 
 
 def _coord_to_vector(radec: SkyCoord) -> np.ndarray:
