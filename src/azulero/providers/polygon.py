@@ -4,7 +4,7 @@
 
 from typing import Sequence
 
-from astropy.coordinates import SkyCoord
+from astropy.coordinates import Angle, SkyCoord
 import numpy as np
 
 
@@ -66,11 +66,10 @@ def _coord_to_vector(radec: SkyCoord) -> np.ndarray:
     """
     Convert RA/dec coordinates to a unit 3D vector.
     """
-    # TODO optimize with np.sincos
 
-    assert radec.ra is not None and radec.dec is not None
-    ra = np.deg2rad(radec.ra.degree)  # type: ignore
-    dec = np.deg2rad(radec.dec.degree)  # type: ignore
+    assert isinstance(radec.ra, Angle) and isinstance(radec.dec, Angle)
+    ra = radec.ra.radian
+    dec = radec.dec.radian
     cos_dec = np.cos(dec)
 
     return np.asarray(
