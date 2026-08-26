@@ -19,7 +19,7 @@ class ConvexSphericalPolygon:
     """
 
     def __init__(self, vertices: Sequence[SkyCoord]):
-        vectors = np.stack([_coord_to_vector(v) for v in vertices])
+        vectors = [_coord_to_vector(v) for v in vertices]
         self.normals = _compute_normals(vectors)
 
     def __contains__(self, coord: SkyCoord) -> bool:
@@ -42,7 +42,7 @@ class ConvexSphericalPolygon:
         return bool(np.all(self.normals @ p <= eps))
 
 
-def _compute_normals(vertices: np.ndarray) -> np.ndarray:
+def _compute_normals(vertices: Sequence) -> np.ndarray:
     """
     Compute 3D outward-oriented face normals.
 
@@ -66,6 +66,7 @@ def _coord_to_vector(radec: SkyCoord) -> np.ndarray:
     """
     Convert RA/dec coordinates to a unit 3D vector.
     """
+    # TODO optimize with np.sincos
 
     assert radec.ra is not None and radec.dec is not None
     ra = np.deg2rad(radec.ra.degree)  # type: ignore
