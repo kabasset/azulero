@@ -9,8 +9,8 @@ from astropy.coordinates import Angle, SkyCoord
 from dataclasses import dataclass, field
 import json
 from pathlib import Path
-from shapely import geometry
 
+from azulero.providers.polygon import ConvexSphericalPolygon
 from azulero.tools.workspace import Workspace
 
 
@@ -92,17 +92,14 @@ class Tiling:
 
 
 def query_geotiles(radec: SkyCoord, geotiles: Iterable, dsrs: list[str] | None = None):
-    point = geometry.Point(radec.ra.degree, radec.dec.degree)  # type: ignore
     res = []
     for tile in geotiles:
-        polygon = geometry.shape(tile["geometry"])
-        if polygon.contains(point):
-            # FIXME use JC's code for spherical geometry
+        polygon = ConvexSphericalPolygon.from_geojson(tile["geometry"])
+        if radec in polygon:
             index = tile["properties"]["TileIndex"]
             mode = tile["properties"]["ProcessingMode"]
             dsr = tile["properties"]["DatasetRelease"]
-            center = SkyCoord(ra=polygon.centroid.x, dec=polygon.centroid.y, unit="deg")
-            distance = center.separation(radec).value
+            distance = polygon.centroid.separation(radec).value
             if distance < 1 and (dsrs is None or dsr in dsrs):
                 res.append(Tile(index, mode, dsr, distance))
     return res

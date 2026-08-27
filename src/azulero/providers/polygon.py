@@ -20,7 +20,23 @@ class ConvexSphericalPolygon:
 
     def __init__(self, vertices: Sequence[SkyCoord]):
         vectors = [_coord_to_vector(v) for v in vertices]
-        self.normals = _compute_normals(vectors)
+        self._centroid = np.sum(vectors, axis=0)
+        self._normals = _compute_normals(vectors, self._centroid)
+
+    @classmethod
+    def from_geojson(cls, geometry: dict):
+        """
+        Instantiate a polygon from a GeoJSON polygon geometry.
+        """
+        vertices = [
+            SkyCoord(ra=ra, dec=dec, unit="deg")
+            for ra, dec in geometry["coordinates"][0]
+        ]
+        return cls(vertices)
+
+    @property
+    def centroid(self):
+        return _vector_to_coord(self._centroid)
 
     def __contains__(self, coord: SkyCoord) -> bool:
         """
@@ -39,31 +55,29 @@ class ConvexSphericalPolygon:
 
         p = _coord_to_vector(coord)
         eps = np.finfo(float).eps
-        return bool(np.all(self.normals @ p <= eps))
+        return bool(np.all(self._normals @ p <= eps))
 
 
-def _compute_normals(vectors: Sequence) -> np.ndarray:
+def _compute_normals(vectors: Sequence[np.ndarray], inside: np.ndarray) -> np.ndarray:
     """
     Compute 3D outward-oriented face normals.
 
     Each normal corresponds to the plane containing the sphere center and edge endpoints.
     """
 
-    pointing = np.sum(vectors, axis=0)
-
     n = len(vectors)
     out_normals = np.zeros([n, 3], dtype=float)
 
     for i in range(n):
         normal = np.cross(vectors[i], vectors[(i + 1) % n])
-        out_normals[i] = normal if np.dot(normal, pointing) <= 0 else -normal
+        out_normals[i] = normal if np.dot(normal, inside) <= 0 else -normal
 
     return out_normals
 
 
 def _coord_to_vector(radec: SkyCoord) -> np.ndarray:
     """
-    Convert RA/dec coordinates to a unit 3D vector.
+    Convert RA/dec coordinates into a unit 3D vector.
     """
 
     assert isinstance(radec.ra, Angle) and isinstance(radec.dec, Angle)
@@ -75,3 +89,13 @@ def _coord_to_vector(radec: SkyCoord) -> np.ndarray:
         [cos_dec * np.cos(ra), cos_dec * np.sin(ra), np.sin(dec)],
         dtype=np.float64,
     )
+
+
+def _vector_to_coord(vector: np.ndarray) -> SkyCoord:
+    """
+    Convert a 3D vector into RA/dec coordinates.
+    """
+    x, y, z = vector
+    ra = np.arctan2(y, x)
+    dec = np.arctan2(z, np.sqrt(x * x + y * y))
+    return SkyCoord(ra=ra, dec=dec, unit="rad")
