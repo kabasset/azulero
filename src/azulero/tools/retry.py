@@ -23,6 +23,7 @@ def retry(retries=2, exceptions=Exception, default=None, logger=None):
                             logger.warning(f"Caught error: {e}. Retry {r}/{retries}.")
                         else:
                             logger.error(f"Caught error: {e}. Last retry failed.")
+                            logger.exception(e)
             return default
 
         return call

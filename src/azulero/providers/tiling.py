@@ -10,7 +10,7 @@ from dataclasses import dataclass, field
 import json
 from pathlib import Path
 
-from azulero.providers.polygon import ConvexSphericalPolygon
+from azulero.providers.polygon import ConvexSphericalPolygon, _coord_to_xyz
 from azulero.tools.workspace import Workspace
 
 
@@ -93,9 +93,10 @@ class Tiling:
 
 def query_geotiles(radec: SkyCoord, geotiles: Iterable, dsrs: list[str] | None = None):
     res = []
+    p = _coord_to_xyz(radec.ra, radec.dec)
     for tile in geotiles:
         polygon = ConvexSphericalPolygon.from_geojson(tile["geometry"])
-        if radec in polygon:
+        if p in polygon:
             index = tile["properties"]["TileIndex"]
             mode = tile["properties"]["ProcessingMode"]
             dsr = tile["properties"]["DatasetRelease"]

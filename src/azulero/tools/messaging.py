@@ -141,6 +141,9 @@ class FancyStderrLogger:
     def critical(self, message):
         self._logger.critical(message)
 
+    def exception(self, message):
+        self._logger.exception(message)
+
     def header(self, level, message, linebreaks=[1]):
         for _ in range(linebreaks[0]):
             self.info("")
