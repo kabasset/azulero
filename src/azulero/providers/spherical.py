@@ -18,7 +18,7 @@ class ConvexSphericalPolygon:
     """
 
     def __init__(self, ra, dec):
-        xyz = _coord_to_xyz(ra, dec)
+        xyz = radec_to_xyz(ra, dec)
         self._centroid = np.sum(xyz, axis=1)
         self._normals = _compute_normals(xyz, self._centroid)
 
@@ -32,7 +32,7 @@ class ConvexSphericalPolygon:
 
     @property
     def centroid(self):
-        return _xyz_to_coord(self._centroid)
+        return xyz_to_radec(self._centroid)
 
     def __contains__(self, p: SkyCoord | np.ndarray) -> bool:
         """
@@ -50,7 +50,7 @@ class ConvexSphericalPolygon:
         """
 
         if isinstance(p, SkyCoord):
-            p = _coord_to_xyz(p.ra, p.dec)
+            p = radec_to_xyz(p.ra, p.dec)
         eps = np.finfo(float).eps
         for n in self._normals:
             if np.dot(n, p) > eps:
@@ -75,7 +75,7 @@ def _compute_normals(xyz: np.ndarray, inside: np.ndarray) -> np.ndarray:
     return out_normals
 
 
-def _coord_to_xyz(ra, dec) -> np.ndarray:
+def radec_to_xyz(ra, dec) -> np.ndarray:
     """
     Convert RA/dec coordinates into unit 3D vectors.
     """
@@ -96,7 +96,7 @@ def _coord_to_xyz(ra, dec) -> np.ndarray:
     return np.stack([x, y, z])
 
 
-def _xyz_to_coord(xyz: np.ndarray) -> SkyCoord:
+def xyz_to_radec(xyz: np.ndarray) -> SkyCoord:
     """
     Convert 3D vectors into RA/dec coordinates.
     """
@@ -106,15 +106,28 @@ def _xyz_to_coord(xyz: np.ndarray) -> SkyCoord:
     return SkyCoord(ra=ra, dec=dec, unit="rad")
 
 
-def in_convex_polygon(p, ra, dec) -> SkyCoord | None:
-    n = len(ra)
-    xyz = _coord_to_xyz(ra, dec)
-    centroid = np.sum(xyz, axis=1)
-    tol = np.finfo(float).eps
-    for i in range(len(ra)):
-        normal = np.cross(xyz[:, i], xyz[:, (i + 1) % n])
-        if np.dot(normal, centroid) > 0:
-            normal = -normal
-        if np.dot(normal, p) > tol:
-            return None
-    return _xyz_to_coord(centroid)
+class ConvexPolygon:
+
+    def __init__(self, ra, dec):
+        self._xyz = radec_to_xyz(ra, dec)
+        self._centroid = np.sum(self._xyz, axis=1)
+
+    @property
+    def centroid(self):
+        return xyz_to_radec(self._centroid)
+
+    def __len__(self):
+        return self._xyz.shape[1]
+
+    def __contains__(self, p):
+        if isinstance(p, SkyCoord):
+            p = radec_to_xyz(p.ra, p.dec)
+        n = len(self)
+        tol = np.finfo(float).eps
+        for i in range(n):
+            normal = np.cross(self._xyz[:, i], self._xyz[:, (i + 1) % n])
+            if np.dot(normal, self._centroid) > 0:
+                normal = -normal
+            if np.dot(normal, p) > tol:
+                return False
+        return True

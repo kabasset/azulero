@@ -4,12 +4,12 @@
 
 from astropy.coordinates import SkyCoord
 
-from azulero.providers import polygon
+from azulero.providers import spherical
 
 
 def test_meridian():
 
-    footprint = polygon.ConvexSphericalPolygon([-1, 1, 1, -1], [10, 10, 20, 20])
+    footprint = spherical.ConvexPolygon([-1, 1, 1, -1], [10, 10, 20, 20])
 
     assert footprint.centroid in footprint
 
@@ -19,7 +19,7 @@ def test_meridian():
 
 def test_antimeridian():
 
-    footprint = polygon.ConvexSphericalPolygon([179, -179, -179, 179], [10, 10, 20, 20])
+    footprint = spherical.ConvexPolygon([179, -179, -179, 179], [10, 10, 20, 20])
 
     assert footprint.centroid in footprint
 
@@ -31,7 +31,7 @@ def test_antimeridian():
 def test_edge():
 
     vertices = SkyCoord(ra=[0, 1, 1, 0], dec=[0, 0, 1, 1], unit="deg")
-    footprint = polygon.ConvexSphericalPolygon(vertices.ra, vertices.dec)
+    footprint = spherical.ConvexPolygon(vertices.ra, vertices.dec)
 
     assert footprint.centroid in footprint
 

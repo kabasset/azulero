@@ -10,7 +10,7 @@ from dataclasses import dataclass, field
 import json
 from pathlib import Path
 
-from azulero.providers.polygon import ConvexSphericalPolygon, _coord_to_xyz
+from azulero.providers.spherical import ConvexSphericalPolygon, radec_to_xyz
 from azulero.tools.workspace import Workspace
 
 
@@ -75,6 +75,7 @@ class Tiling:
     def __init__(self, filename: Path):
         with open(filename) as f:
             self.tiles = json.load(f)["features"]
+        # FIXME instantiate ConvexPolygon here
 
     def query_tile_attributes(self, index: str) -> list[Tile]:
         return [
@@ -93,9 +94,10 @@ class Tiling:
 
 def query_geotiles(radec: SkyCoord, geotiles: Iterable, dsrs: list[str] | None = None):
     res = []
-    p = _coord_to_xyz(radec.ra, radec.dec)
+    p = radec_to_xyz(radec.ra, radec.dec)
     for tile in geotiles:
         polygon = ConvexSphericalPolygon.from_geojson(tile["geometry"])
+        # FIXME use ConvexPolygon
         if p in polygon:
             index = tile["properties"]["TileIndex"]
             mode = tile["properties"]["ProcessingMode"]

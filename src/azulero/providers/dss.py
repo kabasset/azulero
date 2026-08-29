@@ -10,9 +10,9 @@ from pathlib import Path
 import requests
 
 from azulero.providers.tiling import Tile
-from azulero.providers.polygon import (
-    in_convex_polygon,
-    _coord_to_xyz,
+from azulero.providers.spherical import (
+    ConvexPolygon,
+    radec_to_xyz,
 )
 from azulero.tools.secret import Auth
 
@@ -56,15 +56,16 @@ class DSS:
     def _query_dsr_tiles(self, radec: SkyCoord, dsr: str):
         ring = self._query_tile_ring(radec, dsr).values()
         res = []
-        p = _coord_to_xyz(radec.ra, radec.dec)
+        p = radec_to_xyz(radec.ra, radec.dec)
         for tile in ring:
-            if (centroid := in_convex_polygon(p, tile["ra"], tile["dec"])) is not None:
+            polygon = ConvexPolygon(tile["ra"], tile["dec"])
+            if p in polygon:
                 res.append(
                     Tile(
                         tile["index"],
                         tile["mode"],
                         tile["dsr"],
-                        centroid.separation(radec).value,
+                        polygon.centroid.separation(radec).value,
                     )
                 )
         return res
@@ -114,28 +115,6 @@ class DSS:
             tiles[product]["ra"].append(float(ra))
             tiles[product]["dec"].append(float(dec))
 
-        return tiles
-
-    def _parse_geotiles(self, text: str) -> dict[str, dict]:
-        """
-        Parse tiles in Geojson format from DPS response.
-        """
-        tiles = {}
-        reader = csv.reader(StringIO(text))
-        next(reader)
-        for row in reader:
-            product, index, dsr, mode, ra, dec = row
-            if product not in tiles:
-                properties = {
-                    "TileIndex": index,
-                    "DatasetRelease": dsr,
-                    "ProcessingMode": mode,
-                }
-                tiles[product] = {
-                    "properties": properties,
-                    "geometry": {"type": "Polygon", "coordinates": [[]]},
-                }
-            tiles[product]["geometry"]["coordinates"][0].append([float(ra), float(dec)])
         return tiles
 
     def query_tile_datafiles(self, tile: Tile) -> dict[str, str]:
