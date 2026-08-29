@@ -40,21 +40,16 @@ Bug fixes
 ``azul retrieve``
 
 - When there are several Dataset Releases per tile, only the best Dataset Release is now kept.
+- Spherical polygons are used to retrieve tiles with provider ``dss`` or from a tiling file.
 
 Cleaning
 ^^^^^^^^
 
 - Remove deprecated commands ``azul assemble``, ``azul find``.
-- Remove Matplotlib dependency
+- Remove Matplotlib and Shapely dependencies.
 
 Known issues
 ^^^^^^^^^^^^
-
-``azul retrieve``
-
-- #35 -- Cartesian coordinates are used,
-  which cannot handle positions around RA = 0° = 360° or dec = +/-90°
-  (where there are no public Euclid data).
 
 ``azul roam``
 
