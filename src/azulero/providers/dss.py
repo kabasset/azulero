@@ -2,6 +2,8 @@
 # SPDX-PackageSourceInfo: https://github.com/kabasset/azulero
 # SPDX-License-Identifier: Apache-2.0
 
+from typing import Iterable
+
 from astropy.coordinates import SkyCoord
 import csv
 import gzip
@@ -15,6 +17,28 @@ from azulero.providers.spherical import (
     radec_to_xyz,
 )
 from azulero.tools.secret import Auth
+
+
+class Rest:
+
+    def __init__(self, dpd):
+        self.params = []
+        self["project"] = "EUCLID"
+        self["class_name"] = dpd
+
+    def _append(self, params, key, op, value):
+        params += [f"{key}{op}{value}"]
+
+    def __setitem__(self, key, value):
+        if isinstance(value, dict):
+            for op, v in value.items():
+                self._append(self.params, key, op, v)
+        else:
+            self._append(self.params, key, "=", value)
+
+    def __getitem__(self, *fields) -> str:
+        params = ["fields=" + ":".join(fields)]
+        return "&".join(self.params + params)
 
 
 class DSS:
@@ -54,6 +78,9 @@ class DSS:
         return tiles
 
     def _query_dsr_tiles(self, radec: SkyCoord, dsr: str):
+        ring = self._query_ring_footprints(radec)
+        for t in ring:
+            print(t)
         ring = self._query_tile_ring(radec, dsr).values()
         res = []
         p = radec_to_xyz(radec.ra, radec.dec)
@@ -69,6 +96,21 @@ class DSS:
                     )
                 )
         return res
+
+    def _query_ring_footprints(self, radec: SkyCoord) -> Iterable[list[str]]:
+        dec_deg: float = radec.dec.degree  # type: ignore
+        margin_deg = 38.4 / 60 / 2
+        rest = Rest("DpdMerTile")
+        rest["Data.DecCen"] = {">": dec_deg - margin_deg, "<": dec_deg + margin_deg}
+        print(rest["Data.TileIndex"])
+        r = requests.get(
+            "https://eas-dps-rest-ops.esac.esa.int/REST?" + rest["Data.TileIndex"],
+            auth=self.__auth,
+        )
+        r.raise_for_status()
+        reader = csv.reader(StringIO(r.text))
+        next(reader)
+        return reader
 
     def _query_tile_ring(self, radec: SkyCoord, dsr: str) -> dict:
         root = "https://eas-dps-rest-ops.esac.esa.int/REST"
