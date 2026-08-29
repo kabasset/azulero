@@ -32,7 +32,6 @@ dependencies = [
     "rich-argparse",
     "scikit-image",
     "scipy",
-    "shapely",
     "tifffile"
 ]
 
