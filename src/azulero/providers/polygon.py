@@ -52,7 +52,10 @@ class ConvexSphericalPolygon:
         if isinstance(p, SkyCoord):
             p = _coord_to_xyz(p.ra, p.dec)
         eps = np.finfo(float).eps
-        return bool(np.all(self._normals @ p <= eps))
+        for n in self._normals:
+            if np.dot(n, p) > eps:
+                return False
+        return True
 
 
 def _compute_normals(xyz: np.ndarray, inside: np.ndarray) -> np.ndarray:
@@ -101,3 +104,17 @@ def _xyz_to_coord(xyz: np.ndarray) -> SkyCoord:
     ra = np.arctan2(y, x)
     dec = np.arctan2(z, np.sqrt(x * x + y * y))
     return SkyCoord(ra=ra, dec=dec, unit="rad")
+
+
+def in_convex_polygon(p, ra, dec) -> SkyCoord | None:
+    n = len(ra)
+    xyz = _coord_to_xyz(ra, dec)
+    centroid = np.sum(xyz, axis=1)
+    tol = np.finfo(float).eps
+    for i in range(len(ra)):
+        normal = np.cross(xyz[:, i], xyz[:, (i + 1) % n])
+        if np.dot(normal, centroid) > 0:
+            normal = -normal
+        if np.dot(normal, p) > tol:
+            return None
+    return _xyz_to_coord(centroid)

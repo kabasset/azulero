@@ -9,7 +9,11 @@ from io import BytesIO, StringIO
 from pathlib import Path
 import requests
 
-from azulero.providers.tiling import Tile, query_geotiles
+from azulero.providers.tiling import Tile
+from azulero.providers.polygon import (
+    in_convex_polygon,
+    _coord_to_xyz,
+)
 from azulero.tools.secret import Auth
 
 
@@ -51,7 +55,19 @@ class DSS:
 
     def _query_dsr_tiles(self, radec: SkyCoord, dsr: str):
         ring = self._query_tile_ring(radec, dsr).values()
-        return query_geotiles(radec, ring)
+        res = []
+        p = _coord_to_xyz(radec.ra, radec.dec)
+        for tile in ring:
+            if (centroid := in_convex_polygon(p, tile["ra"], tile["dec"])) is not None:
+                res.append(
+                    Tile(
+                        tile["index"],
+                        tile["mode"],
+                        tile["dsr"],
+                        centroid.separation(radec).value,
+                    )
+                )
+        return res
 
     def _query_tile_ring(self, radec: SkyCoord, dsr: str) -> dict:
         root = "https://eas-dps-rest-ops.esac.esa.int/REST"
@@ -77,7 +93,28 @@ class DSS:
             auth=self.__auth,
         )
         r.raise_for_status()
-        return self._parse_geotiles(r.text)
+        return self._parse_tiles(r.text)
+
+    def _parse_tiles(self, text: str) -> dict:
+
+        tiles = {}
+        reader = csv.reader(StringIO(text))
+        next(reader)
+
+        for row in reader:
+            product, index, dsr, mode, ra, dec = row
+            if product not in tiles:
+                tiles[product] = {
+                    "index": index,
+                    "mode": mode,
+                    "dsr": dsr,
+                    "ra": [],
+                    "dec": [],
+                }
+            tiles[product]["ra"].append(float(ra))
+            tiles[product]["dec"].append(float(dec))
+
+        return tiles
 
     def _parse_geotiles(self, text: str) -> dict[str, dict]:
         """
