@@ -12,19 +12,17 @@ from pathlib import Path
 import requests
 
 from azulero.providers.tiling import Tile
-from azulero.providers.spherical import (
-    ConvexPolygon,
-    radec_to_xyz,
-)
+from azulero.providers.spherical import ConvexPolygon, radec_to_xyz
 from azulero.tools.secret import Auth
 
 
-class Rest:
+class Query:
 
     def __init__(self, dpd):
         self.params = []
         self["project"] = "EUCLID"
         self["class_name"] = dpd
+        self["Header.ManualValidationStatus"] = {"!=": "INVALID"}
 
     def _append(self, params, key, op, value):
         params += [f"{key}{op}{value}"]
@@ -36,7 +34,7 @@ class Rest:
         else:
             self._append(self.params, key, "=", value)
 
-    def __getitem__(self, *fields) -> str:
+    def __call__(self, *fields) -> str:
         params = ["fields=" + ":".join(fields)]
         return "&".join(self.params + params)
 
@@ -47,64 +45,9 @@ class DSS:
         auth = Auth("euclidsoc.esac.esa.int", user)
         self.__auth = requests.auth.HTTPBasicAuth(auth.user, auth.password.value)  # type: ignore
 
-    def _get(self, fields: list[str], params: dict[str, str]):
-        query = {
-            "project": "EUCLID",
-            "class_name": "DpdMerBksMosaic",
-            "fields": ":".join(fields),
-        }
-        query.update(params)
-
+    def _query(self, q: str):
         r = requests.get(
-            "https://eas-dps-rest-ops.esac.esa.int/REST",
-            params=query,
-            auth=self.__auth,
-        )
-        r.raise_for_status()
-        lines = r.text.replace('"', "").split()
-        return [l.split(",") for l in lines[1:]]
-
-    def query_tile_attributes(self, index: str) -> list[Tile]:
-        res = self._get(
-            ["Data.ProcessingMode", "Header.DataSetRelease"],
-            {"Data.TileIndex": index},
-        )
-        return [Tile(index, r[0], r[1]) for r in res]
-
-    def query_radec_tiles(self, radec: SkyCoord, dsrs: list[str]):
-        tiles = []
-        for d in dsrs:
-            tiles += self._query_dsr_tiles(radec, d)
-        return tiles
-
-    def _query_dsr_tiles(self, radec: SkyCoord, dsr: str):
-        ring = self._query_ring_footprints(radec)
-        for t in ring:
-            print(t)
-        ring = self._query_tile_ring(radec, dsr).values()
-        res = []
-        p = radec_to_xyz(radec.ra, radec.dec)
-        for tile in ring:
-            polygon = ConvexPolygon(tile["ra"], tile["dec"])
-            if p in polygon:
-                res.append(
-                    Tile(
-                        tile["index"],
-                        tile["mode"],
-                        tile["dsr"],
-                        polygon.centroid.separation(radec).value,
-                    )
-                )
-        return res
-
-    def _query_ring_footprints(self, radec: SkyCoord) -> Iterable[list[str]]:
-        dec_deg: float = radec.dec.degree  # type: ignore
-        margin_deg = 38.4 / 60 / 2
-        rest = Rest("DpdMerTile")
-        rest["Data.DecCen"] = {">": dec_deg - margin_deg, "<": dec_deg + margin_deg}
-        print(rest["Data.TileIndex"])
-        r = requests.get(
-            "https://eas-dps-rest-ops.esac.esa.int/REST?" + rest["Data.TileIndex"],
+            f"https://eas-dps-rest-ops.esac.esa.int/REST?{q}",
             auth=self.__auth,
         )
         r.raise_for_status()
@@ -112,51 +55,73 @@ class DSS:
         next(reader)
         return reader
 
-    def _query_tile_ring(self, radec: SkyCoord, dsr: str) -> dict:
-        root = "https://eas-dps-rest-ops.esac.esa.int/REST"
-        dsr_query = f"Header.DataSetRelease={dsr}"
+    def query_tile_attributes(self, index: str) -> list[Tile]:
+        query = Query("DpdMerBksMosaic")
+        query["Data.TileIndex"] = index
+        q = query("Data.ProcessingMode", "Header.DataSetRelease")
+        return [Tile(index, row[0], row[1]) for row in self._query(q)]
+
+    def _has_dsr(self, index: str, dsr: str) -> int:
+        query = Query("DpdMerBksMosaic")
+        query["Data.TileIndex"] = index
+        query["Header.DataSetRelease"] = dsr
+        q = query("Data.ProcessingMode")
+        res = self._query(q)
+        print(len(list(res)))
+        return len(list(res))
+
+    def query_radec_tiles(self, radec: SkyCoord, dsrs: list[str]):
+        ring = self._query_ring_footprints(radec)
+        res = []
+        p = radec_to_xyz(radec.ra, radec.dec)
+        for tile in ring.values():
+            polygon = ConvexPolygon(tile["ra"], tile["dec"])
+            if p in polygon:
+                distance = polygon.centroid.separation(radec).value
+                res += [
+                    Tile(
+                        tile["index"],
+                        tile["mode"],
+                        attr.dsr,
+                        distance,
+                    )
+                    for attr in self.query_tile_attributes(tile["index"])
+                    if attr.dsr in dsrs
+                ]
+                # TODO Find a faster way of getting the DSR.
+        return res
+
+    def _query_ring_footprints(self, radec: SkyCoord) -> dict:
         dec_deg: float = radec.dec.degree  # type: ignore
-        margin_deg = 38.4 / 60.0 / 2
-        # About the max height of a tile, Martin Kuemmel says:
-        # The papers (Q1 and DR1) quote something like 5%.
-        # [...]
+        # Regarding the max height deviation of a tile, Martin Kuemmel wrote in Slack:
+        # The papers (Q1 and DR1) quote something like 5%. [...]
         # The max width and height is 39.6' and 38.4', respectively. That would be rather 10% in each direction.
-        dec_query = f"Data.WCS.CRVAL2>{dec_deg - margin_deg}&Data.WCS.CRVAL2<{dec_deg + margin_deg}"
-        fields = [
+        margin_deg = 38.4 / 60 / 2
+        query = Query("DpdMerTile")
+        query["Data.DecCen"] = {">": dec_deg - margin_deg, "<": dec_deg + margin_deg}
+        q = query(
             "Header.ProductId.LimitedString",
             "Data.TileIndex",
-            "Header.DataSetRelease",
-            "Data.ProcessingMode",
-            "Data.ImgSpatialFootprint.Polygon.Vertex.C1",  # RA
-            "Data.ImgSpatialFootprint.Polygon.Vertex.C2",  # Dec
-        ]
-        fields_text = ":".join(fields)
-        r = requests.get(
-            f"{root}?project=EUCLID&class_name=DpdMerBksMosaic&{dsr_query}&{dec_query}&fields={fields_text}",
-            auth=self.__auth,
+            "Data.TileUseCase",
+            "Data.OuterSpatialFootprint.Polygon.Vertex.C1",  # RA
+            "Data.OuterSpatialFootprint.Polygon.Vertex.C2",  # Dec
         )
-        r.raise_for_status()
-        return self._parse_tiles(r.text)
+        reader = self._query(q)
+        return self._parse_tiles(reader)
 
-    def _parse_tiles(self, text: str) -> dict:
-
+    def _parse_tiles(self, reader: Iterable[list[str]]) -> dict:
         tiles = {}
-        reader = csv.reader(StringIO(text))
-        next(reader)
-
-        for row in reader:
-            product, index, dsr, mode, ra, dec = row
+        for product, index, mode, ra, dec in reader:
             if product not in tiles:
                 tiles[product] = {
                     "index": index,
                     "mode": mode,
-                    "dsr": dsr,
+                    "dsr": "UNKNOWN",
                     "ra": [],
                     "dec": [],
                 }
             tiles[product]["ra"].append(float(ra))
             tiles[product]["dec"].append(float(dec))
-
         return tiles
 
     def query_tile_datafiles(self, tile: Tile) -> dict[str, str]:
