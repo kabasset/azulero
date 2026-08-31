@@ -13,6 +13,7 @@ import requests
 
 from azulero.providers.tiling import Tile
 from azulero.providers.spherical import ConvexPolygon, radec_to_xyz
+from azulero.tools.messaging import logger
 from azulero.tools.secret import Auth
 
 
@@ -46,8 +47,10 @@ class DSS:
         self.__auth = requests.auth.HTTPBasicAuth(auth.user, auth.password.value)  # type: ignore
 
     def _query(self, q: str):
+        url = f"https://eas-dps-rest-ops.esac.esa.int/REST?{q}"
+        logger.debug(url)
         r = requests.get(
-            f"https://eas-dps-rest-ops.esac.esa.int/REST?{q}",
+            url,
             auth=self.__auth,
         )
         r.raise_for_status()
@@ -60,15 +63,6 @@ class DSS:
         query["Data.TileIndex"] = index
         q = query("Data.ProcessingMode", "Header.DataSetRelease")
         return [Tile(index, row[0], row[1]) for row in self._query(q)]
-
-    def _has_dsr(self, index: str, dsr: str) -> int:
-        query = Query("DpdMerBksMosaic")
-        query["Data.TileIndex"] = index
-        query["Header.DataSetRelease"] = dsr
-        q = query("Data.ProcessingMode")
-        res = self._query(q)
-        print(len(list(res)))
-        return len(list(res))
 
     def query_radec_tiles(self, radec: SkyCoord, dsrs: list[str]):
         ring = self._query_ring_footprints(radec)
@@ -126,27 +120,16 @@ class DSS:
 
     def query_tile_datafiles(self, tile: Tile) -> dict[str, str]:
 
-        query = {
-            "project": "EUCLID",
-            "class_name": "DpdMerBksMosaic",
-            "Data.TileIndex": tile.index,
-            "Header.DataSetRelease": tile.dsr,
-            "fields": "Data.DataStorage.DataContainer.FileName:Data.Filter.Name",
-        }
+        query = Query("DpdMerBksMosaic")
+        query["Data.TileIndex"] = tile.index
+        query["Header.DataSetRelease"] = tile.dsr
+        query["allow_array"] = True
+        q = query("Data.DataStorage.DataContainer.FileName", "Data.Filter.Name")
+        rows = self._query(q)
 
-        r = requests.get(
-            "https://eas-dps-rest-ops.esac.esa.int/REST",
-            params=query,
-            auth=self.__auth,
-        )
-        r.raise_for_status()
-
-        lines = r.text.replace('"', "").split()
         datafiles = {}
-        for l in lines:
-            if "VIS" in l or "NIR" in l:  # FIXME handled by caller
-                file_name, filter_name = l.split(",")
-                datafiles[file_name] = filter_name
+        for file_name, filter_name in rows:
+            datafiles[file_name] = filter_name
         return datafiles
 
     def download_datafile(self, name: str, path: Path):
