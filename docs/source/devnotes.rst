@@ -55,14 +55,26 @@ DPS tile lookup
 The DPS does not offer fast-enough spatial queries to find the tiles in which a target lies.
 Therefore, we used to rely on SMT's Geojson tiling.
 In order to simplify the workflow by not requiring users to download and update the tiling themselves,
-we have implemented an optimized mechanism for spatial queries:
+we have implemented an optimized mechanism for spatial queries based solely on the DPS:
 
-1. Query the ``DpdMerMosaics`` with a central declination (attribute ``CRVAL2``) between two bounds
+1. Query the ``DpdMerTile`` products with a central declination (attribute ``DecCen``) between two bounds
    computed from the target declination and some margin (the maximum half height of a tile).
 2. Perform the spatial query locally, using this subset of tiles, like we used to do with the Geojson tiling.
+3. Among the remaining tiles, find the ones for which ``DpdMerBksMosaic`` products with suitable Dataset Releases are available.
 
 Other optimizations could be implemented, like bounds on the right ascension, but that would be more tricky to compute
 while accounting for poles and anti-meridian discontinuities.
+
+Step 1 is much faster with ``DpdMerTile`` than with ``DpdMerBksMosaic`` because there are much less tiles than mosaics.
+However, ``DpdMerTile`` products have dummy Dataset Releases (``NA``), such that we still have to get it from the ``DpdMerBksMosaic`` table.
+This is slow but necessary to filter on the Dataset Release.
+The filtering could be implemented in ``download_datafiles()`` instead, which would bypass step 3
+and may improve overall retrieval time at the cost of a complicated algorithm.
+
+DPS datafile name retrieval is extremely slow (3 minutes per tile) by default.
+Adding ``allow_array=True`` to the query speeds it up by two orders of magnitude (2 seconds per tile),
+although there is no explanation (see https://euclid.roe.ac.uk/issues/28760).
+The trick does not work for other queries, and there is no guarantee this will hold in the future: to be assessed regularly.
 
 
 DPS cutout service
