@@ -134,8 +134,7 @@ class DSS:
 
     def download_datafile(self, name: str, path: Path):
 
-        r = requests.get(f"https://euclidsoc.esac.esa.int/{name}")
-        # FIXME use getpass in Datalabs
+        r = requests.get(f"https://euclidsoc.esac.esa.int/{name}", auth=self.__auth)
         r.raise_for_status()
 
         with gzip.GzipFile(fileobj=BytesIO(r.content)) as f:
