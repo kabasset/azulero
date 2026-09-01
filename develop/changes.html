@@ -137,7 +137,8 @@
 <li><p>Enable multi-radii cutout retrieval with target syntax <code class="docutils literal notranslate"><span class="pre">&lt;target&gt;[r=&lt;radius&gt;]</span></code>.</p></li>
 <li><p>Access Datalabs datafiles without download or copy with option <code class="docutils literal notranslate"><span class="pre">--data</span> <span class="pre">labs</span></code>.</p></li>
 <li><p>Add interactive mode to prompt user for password and avoid storing credentials in a shared environment like Datalabs.</p></li>
-<li><p>Retrieve tile indices with <code class="docutils literal notranslate"><span class="pre">dss</span></code> provider (option <code class="docutils literal notranslate"><span class="pre">--tiling</span></code> is kept as an optimization).</p></li>
+<li><p>Retrieve tile indices with <code class="docutils literal notranslate"><span class="pre">dss</span></code> provider
+(option <code class="docutils literal notranslate"><span class="pre">--tiling</span></code> is kept as an optimization, and now relies on spherical polygons).</p></li>
 <li><p>Add option <code class="docutils literal notranslate"><span class="pre">-q</span> <span class="pre">tiles</span></code> to query just tile indices and not filenames.</p></li>
 <li><p>Add option <code class="docutils literal notranslate"><span class="pre">--survey</span></code> to select and sort processing modes (e.g. <code class="docutils literal notranslate"><span class="pre">--survey</span> <span class="pre">DEEP,WIDE</span></code>).</p></li>
 <li><p>Log progress (index of current target retrieval).</p></li>
@@ -163,23 +164,18 @@
 <p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code></p>
 <ul class="simple">
 <li><p>When there are several Dataset Releases per tile, only the best Dataset Release is now kept.</p></li>
+<li><p>Spherical polygons are used to retrieve tiles with provider <code class="docutils literal notranslate"><span class="pre">dss</span></code> or from a tiling file.</p></li>
 </ul>
 </section>
 <section id="cleaning">
 <h3>Cleaning</h3>
 <ul class="simple">
 <li><p>Remove deprecated commands <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">assemble</span></code>, <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">find</span></code>.</p></li>
-<li><p>Remove Matplotlib dependency</p></li>
+<li><p>Remove Matplotlib and Shapely dependencies.</p></li>
 </ul>
 </section>
 <section id="known-issues">
 <h3>Known issues</h3>
-<p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code></p>
-<ul class="simple">
-<li><p>#35 – Cartesian coordinates are used,
-which cannot handle positions around RA = 0° = 360° or dec = +/-90°
-(where there are no public Euclid data).</p></li>
-</ul>
 <p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">roam</span></code></p>
 <ul class="simple">
 <li><p>#104 – Field of view is approximate with Gaia Sky.</p></li>
@@ -552,7 +548,7 @@ which cannot handle positions around RA = 0° = 360° or dec = +/-90°
 </div><footer class="py-6 border-t border-border md:py-0">
 <div class="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
 <div class="flex flex-col items-center gap-4 px-8 md:flex-row md:gap-2 md:px-0">
-<p class="text-sm leading-loose text-center text-muted-foreground md:text-left">© 2025-2026, Antoine Basset (CNES) and contributors. Last updated: Aug 26, 2026. Built with <a class="font-medium underline underline-offset-4" href="https://www.sphinx-doc.org" rel="noreferrer">Sphinx 9.1.0</a></p>
+<p class="text-sm leading-loose text-center text-muted-foreground md:text-left">© 2025-2026, Antoine Basset (CNES) and contributors. Last updated: Sep 01, 2026. Built with <a class="font-medium underline underline-offset-4" href="https://www.sphinx-doc.org" rel="noreferrer">Sphinx 9.1.0</a></p>
 </div>
 </div>
 </footer>
