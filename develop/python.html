@@ -284,6 +284,8 @@ For example, assuming the photometric channels are NumPy arrays <code class="doc
 <dt class="sig sig-object py" id="azulero.api.Transform">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">azulero.api.</span></span><span class="sig-name descname"><span class="pre">Transform</span></span><span class="sig-paren">(</span>
 <dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">inpaint_edges</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">inpaint_area</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-1</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">iyjh_zero_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">(24.5,</span> <span class="pre">29.8,</span> <span class="pre">30.1,</span> <span class="pre">30.0)</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">iyjh_scaling</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">(2.2,</span> <span class="pre">1.3,</span> <span class="pre">1.2,</span> <span class="pre">1.0)</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">iyjh_fwhm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">(1.6,</span> <span class="pre">3.5,</span> <span class="pre">3.4,</span> <span class="pre">3.5)</span></span></em>,</dd>
@@ -304,6 +306,8 @@ For example, assuming the photometric channels are NumPy arrays <code class="doc
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><strong>inpaint_edges</strong> – Enable edge inpainting.</p></li>
+<li><p><strong>inpaint_area</strong> – Upper limit on the inpainting region areas.</p></li>
 <li><p><strong>iyjh_zero_points</strong> – Zero points of each channel.</p></li>
 <li><p><strong>iyjh_scaling</strong> – Scaling of each channel (for white balance).</p></li>
 <li><p><strong>iyjh_fwhm</strong> – PSF full width at half-maximum of each channel.</p></li>

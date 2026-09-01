@@ -159,12 +159,14 @@ Intermediate files can be written, mostly for investigation.</p>
 <p>The diagram below illustrates the various steps of the algorithm processing a single workdir.</p>
 <figure class="align-center">
 <p class="plantuml">
-<object data="_images/plantuml-24faa18cd1d36fd437d3e99b4d072312a69b69e3.svg" style="max-width:100%" type="image/svg+xml">
+<object data="_images/plantuml-2472ba3e92f27066b92d6dd0255b99e4a014bedc.svg" style="max-width:100%" type="image/svg+xml">
 <img alt="folder target {
 }
 object Stack {
 }
 object Inpaint {
+--inpaint
+--inpaint-noedge
 }
 object Sharpen {
 --fwhm
@@ -209,7 +211,7 @@ file adjusted {
 
 Inpaint --&gt; mask
 Blend --&gt; blended
-Adjust --&gt; adjusted" src="_images/plantuml-24faa18cd1d36fd437d3e99b4d072312a69b69e3.png"/>
+Adjust --&gt; adjusted" src="_images/plantuml-2472ba3e92f27066b92d6dd0255b99e4a014bedc.png"/>
 </object></p>
 </figure>
 </section>
@@ -290,14 +292,21 @@ No alignment is performed since we assume the images are already MER-aligned.</p
 because correction would be detrimental to science (hallucination, increased noise level, uncalibrated response).
 Most of the so-called <em>bad pixels</em> are assigned value 0 in the mosaics.
 Azulero inpaints pixels with a null value after stacking.</p>
+<p>In order to cope with so-called edge tiles (the ones not completely covered by observations), which have a large empty region,
+connected components from the bad pixel mask which touch a corner of the image are not inpainted by default.
+This behavior can be changed and it is also possible to disable inpainting for large bad regions
+using one of the mutually exclusive options <code class="docutils literal notranslate"><span class="pre">--inpaint</span></code> and <code class="docutils literal notranslate"><span class="pre">--inpaint-noedge</span></code>.
+They take as argument the maximum region area to inpaint, in pixels.
+The former will inpaint regions at the corners while the latter won’t.
+Value <code class="docutils literal notranslate"><span class="pre">-1</span></code> means no threshold.
+For example, the default behavior corresponds to <code class="docutils literal notranslate"><span class="pre">--inpaint-noedge</span> <span class="pre">-1</span></code>
+and inpainting can be entirely disabled with <code class="docutils literal notranslate"><span class="pre">--inpaint</span> <span class="pre">0</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
 <p>Some defects may remain when they are not null in the mosaic (which may happen for a variety of reasons).
 Relying on bitmasks to detect them and decide on the inpainting technique would be nice, especially for VIS ghosts,
 yet we did not find a satisfying selection method, which would work both for WIDE and DEEP tiles.
 We keep this in mind for a future version…</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>In order to cope with incomplete tiles, which have a large empty region,
-connected components from the bad pixel mask which touch a corner of the image are not inpainted.</p>
 </div>
 </section>
 <section id="sharpening">
