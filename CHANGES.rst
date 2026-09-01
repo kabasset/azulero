@@ -25,13 +25,14 @@ New features
 
 - Add Python API.
 - Enable reading of multi-extension FITS files.
-- Remove corners from the inpainting mask to cope with incomplete tiles.
+- By default, remove corners from the inpainting mask to cope with edge tiles.
+- Add options ``--inpaint`` and ``--inpaint-noedge`` to control inpainting.
 - Increase default ``--nirl`` from 0.1 to 0.2.
 - Add option ``--overshoot`` to dim background (v2.0 processing corresponds to ``--overshoot 1``).
 
 ``azul arrange``
 
-- Enable automatic and manual scaling of images (option ``--scale``)
+- Enable automatic and manual scaling of images (option ``--scale``).
 
 Bug fixes
 ^^^^^^^^^
