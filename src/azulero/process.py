@@ -72,6 +72,20 @@ def add_parser(subparsers, help):
           then intermediate steps are not saved.
         """,
     )
+    group = parser.add_mutually_exclusive_group(required=False)
+    group.add_argument(
+        "--inpaint",
+        type=int,
+        metavar="PIXELS",
+        help="Maximum inpainting area with edge inpainting.",
+    )
+    group.add_argument(
+        "--inpaint-noedge",
+        type=int,
+        default=-1,
+        metavar="PIXELS",
+        help="Maximum inpainting area without edge inpainting.",
+    )
     parser.add_argument(
         "--zero",
         nargs=4,
@@ -205,7 +219,15 @@ def render_path_for_step(template, step):
 
 def run(args):
 
+    area = args.inpaint
+    if area is None:
+        area = args.inpaint_noedge
+    if area is None:
+        area = -1
+
     transform = color.Transform(
+        inpaint_edges=args.inpaint is not None,
+        inpaint_area=area,
         iyjh_zero_points=args.zero,
         iyjh_scaling=args.scaling,
         iyjh_fwhm=args.fwhm,
@@ -274,23 +296,31 @@ def process_iyjh(
 
     path = Path(template)
 
-    logger.header(2, f"Detect bad pixels")
-    dead = mask.dead_pixels(iyjh)
-    logger.bullet(f"Bad pixels: {', '.join(str(np.sum(c)) for c in dead)}")
-    dead = mask.clear_corners(dead)
-    logger.bullet(f"Inpainting pixels: {', '.join(str(np.sum(c)) for c in dead)}")
-    if "{step}" in template:
-        path = render_path_for_step(template, "mask")
-        logger.bullet(f"Write: {path.name}")
-        io.write_mask(dead, path)
-    timer.tic_log()
+    dead = None
+    area = transform.inpaint_area
+    if area != 0:
+        logger.header(2, f"Detect bad pixels")
+        dead = mask.dead_pixels(iyjh)
+        logger.bullet(f"Bad pixels: {', '.join(str(np.sum(c)) for c in dead)}")
+        if not transform.inpaint_edges:
+            logger.bullet(f"Discard edges.")
+            dead = mask.clear_corners(dead)
+        if area > 0:
+            logger.bullet(f"Discard regions larger than: {area} pixels")
+            mask.remove_large_components(dead, area)
+        logger.bullet(f"Inpainting pixels: {', '.join(str(np.sum(c)) for c in dead)}")
+        if "{step}" in template:
+            path = render_path_for_step(template, "mask")
+            logger.bullet(f"Write: {path.name}")
+            io.write_mask(dead, path)
+        timer.tic_log()
 
-    logger.header(2, f"Inpaint dead pixels")
-    iyjh[0] = mask.inpaint(iyjh[0], dead[0])
-    nir_dead = dead[1] | dead[2] | dead[3]
-    iyjh[1:] = mask.inpaint(iyjh[1:], nir_dead, 0)
-    logger.bullet(f"Inpainted pixels: {', '.join(str(np.sum(c)) for c in dead)}")
-    timer.tic_log()
+        logger.header(2, f"Inpaint dead pixels")
+        iyjh[0] = mask.inpaint(iyjh[0], dead[0])
+        nir_dead = dead[1] | dead[2] | dead[3]
+        iyjh[1:] = mask.inpaint(iyjh[1:], nir_dead, 0)
+        logger.bullet(f"Inpainted pixels: {', '.join(str(np.sum(c)) for c in dead)}")
+        timer.tic_log()
 
     logger.header(2, f"Sharpen channels")
     iyjh = color.sharpen(
@@ -308,7 +338,8 @@ def process_iyjh(
     del iyjh
     bgr = color.lbgr_to_bgr(lbgr, transform)
     del lbgr
-    bgr[dead[0]] = mask.resaturate(bgr[dead[0]])
+    if dead is not None:
+        bgr[dead[0]] = mask.resaturate(bgr[dead[0]])
     if "{step}" in template or len(transform.bgr_curves) == 0:
         path = render_path_for_step(template, "blended")
         logger.bullet(f"Write: {path.name}")

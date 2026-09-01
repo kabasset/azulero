@@ -42,6 +42,8 @@ The diagram below illustrates the various steps of the algorithm processing a si
    object Stack {
    }
    object Inpaint {
+   --inpaint
+   --inpaint-noedge
    }
    object Sharpen {
    --fwhm
@@ -165,15 +167,22 @@ because correction would be detrimental to science (hallucination, increased noi
 Most of the so-called *bad pixels* are assigned value 0 in the mosaics.
 Azulero inpaints pixels with a null value after stacking.
 
-Some defects may remain when they are not null in the mosaic (which may happen for a variety of reasons).
-Relying on bitmasks to detect them and decide on the inpainting technique would be nice, especially for VIS ghosts,
-yet we did not find a satisfying selection method, which would work both for WIDE and DEEP tiles.
-We keep this in mind for a future version...
+In order to cope with so-called edge tiles (the ones not completely covered by observations), which have a large empty region,
+connected components from the bad pixel mask which touch a corner of the image are not inpainted by default.
+This behavior can be changed and it is also possible to disable inpainting for large bad regions
+using one of the mutually exclusive options ``--inpaint`` and ``--inpaint-noedge``.
+They take as argument the maximum region area to inpaint, in pixels.
+The former will inpaint regions at the corners while the latter won't.
+Value ``-1`` means no threshold.
+For example, the default behavior corresponds to ``--inpaint-noedge -1``
+and inpainting can be entirely disabled with ``--inpaint 0``.
 
 .. note::
 
-   In order to cope with incomplete tiles, which have a large empty region,
-   connected components from the bad pixel mask which touch a corner of the image are not inpainted.
+   Some defects may remain when they are not null in the mosaic (which may happen for a variety of reasons).
+   Relying on bitmasks to detect them and decide on the inpainting technique would be nice, especially for VIS ghosts,
+   yet we did not find a satisfying selection method, which would work both for WIDE and DEEP tiles.
+   We keep this in mind for a future version...
 
 
 Sharpening

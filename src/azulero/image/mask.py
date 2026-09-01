@@ -46,6 +46,17 @@ def dead_pixels(iyjh):
     return iyjh == 0
 
 
+def hot_pixels(iyjh):
+    i, y, j, h = iyjh
+    abs_threshold = 10.0
+    rel_threshold = 10.0
+    hot_i = (i > abs_threshold) & (i > rel_threshold * h)
+    hot_y = (y > abs_threshold) & (y > rel_threshold * j)
+    hot_j = (j > abs_threshold) & (j > rel_threshold * h)
+    hot_h = (h > abs_threshold) & (h > rel_threshold * y)
+    return hot_i | hot_y | hot_j | hot_h
+
+
 def common_borders_2d(mask):
     res = mask.copy()
     for channel in res:
@@ -76,30 +87,14 @@ def clear_corners(mask):
     return mask
 
 
-def hot_pixels(i, y, j, h):
-
-    abs_threshold = 10.0
-    rel_threshold = 10.0
-    hot_i = (i > abs_threshold) & (i > rel_threshold * h)
-    hot_y = (y > abs_threshold) & (y > rel_threshold * j)
-    hot_j = (j > abs_threshold) & (j > rel_threshold * h)
-    hot_h = (h > abs_threshold) & (h > rel_threshold * y)
-    return hot_i | hot_y | hot_j | hot_h
-
-
 def remove_large_components(mask: np.ndarray, threshold: int):
     cvmask = np.astype(np.logical_or.reduce(mask), np.uint8)
-    res = []
-    if not threshold:
-        return res
     analysis = cv2.connectedComponentsWithStats(cvmask, connectivity=4)
     nb, labels, properties, _ = analysis
-    for i in range(1, nb):
-        area = properties[i, cv2.CC_STAT_AREA]
-        if area >= threshold:
-            mask[:, labels == i] = False
-            res.append(area)
-    return res
+    areas = properties[:, cv2.CC_STAT_AREA]
+    large = [i for i in range(1, nb) if areas[i] > threshold]
+    mask[:, np.isin(labels, large)] = False
+    return mask
 
 
 def inpaint(data: np.ndarray, mask: np.ndarray, axis: int = -1):
@@ -108,7 +103,6 @@ def inpaint(data: np.ndarray, mask: np.ndarray, axis: int = -1):
             data, mask, channel_axis=axis, split_into_regions=True
         )
     return cv2.inpaint(data, mask.astype(np.uint8), 3, cv2.INPAINT_NS)
-    # return skinpaint.inpaint_biharmonic(data, mask)
 
 
 def _resaturate(x):

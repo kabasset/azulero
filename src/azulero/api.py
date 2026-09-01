@@ -117,6 +117,8 @@ Transform = color.Transform
 Transformation parameters.
 
 Args:
+    inpaint_edges: Enable edge inpainting.
+    inpaint_area: Upper limit on the inpainting region areas.
     iyjh_zero_points: Zero points of each channel.
     iyjh_scaling: Scaling of each channel (for white balance).
     iyjh_fwhm: PSF full width at half-maximum of each channel.

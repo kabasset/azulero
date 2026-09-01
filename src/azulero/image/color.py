@@ -14,6 +14,8 @@ from azulero.tools.messaging import logger
 
 @dataclass
 class Transform(object):
+    inpaint_edges: bool = False
+    inpaint_area: int = -1
     iyjh_zero_points: tuple = (24.5, 29.8, 30.1, 30.0)
     iyjh_scaling: tuple = (2.2, 1.3, 1.2, 1.0)
     iyjh_fwhm: tuple = (1.6, 3.5, 3.4, 3.5)
