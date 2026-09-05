@@ -216,15 +216,21 @@ def write_product(path: Path, data: np.ndarray, wcs: WCS | None = None) -> Path 
 
     ext = standard_extension(path)
     if ext == ".fits":
-        fits.PrimaryHDU(data, header=product_header(wcs)).writeto(path, overwrite=True)
-        # FIXME get overwrite policy from args
-        res = True  # FIXME False if fits.verify.VerifyError raised
+        try:
+            fits.PrimaryHDU(data, header=product_header(wcs)).writeto(
+                path,
+                overwrite=True,  # TODO get overwrite policy from args
+            )
+            res = True
+        except fits.verify.VerifyError as e:
+            logger.exception(e)
+            res = False
     elif ext == ".tiff":
         if data.ndim == 3:
             data = data[:, :, ::-1]
-            # FIXME what about alpha? use cv2.RGBA2BGRA and the likes
+            # TODO what about alpha? use cv2.RGBA2BGRA and the likes
         tifffile.imwrite(path, np.flipud(data), metadata=product_metadata(wcs))
-        res = True  # FIXME
+        res = True  # No status is returned by tifffile
     else:
         res = cv2.imwrite(path, np.flipud(data))
         if wcs is not None:

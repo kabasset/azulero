@@ -67,7 +67,6 @@ def run(args):
 
     logger.header(2, f"Read {args.channels[0]} channel in: {workdir}")
     path = list(workdir.glob(args.input.format(channel=args.channels[0])))[0]
-    # FIXME duplicate read_channel
     data, wcs = io.read_product(path)
     assert data is not None
     shape = data.shape

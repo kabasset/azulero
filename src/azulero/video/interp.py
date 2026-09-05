@@ -34,7 +34,7 @@ def sin_step(start: sequence.IndexedValue, stop: sequence.IndexedValue):
     ]
 
 
-def lerp(x, a, b):  # FIXME duplicates
+def lerp(x, a, b):
     if x == 0:
         return b
     if x == 1:

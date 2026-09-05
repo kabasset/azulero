@@ -152,10 +152,22 @@ def run(args):
         args.data,
         args.tiling,
     )
+
+    if not args.dsr:
+        raise ValueError("Missing value for --dsr")
     dsrs = args.dsr.split(",")
+
+    if not args.survey:
+        raise ValueError("Missing value for --survey")
     modes = args.survey.split(",")
-    # FIXME raise if len(dsrs/modes) == 0 => dedicated argparse type
-    assert not args.force or len(args.targets) == 1
+
+    if args.force and len(args.targets) != 1:
+        enum = lambda l: ", ".join(l)
+        raise ValueError(
+            f"Option --force with parameters ({enum(args.force)}) "
+            f"is incompatible with the retrieval of multiple targets ({enum(args.targets)})."
+        )
+
     ios = Workspace.from_args(args)
     timer.tic_log()
 
@@ -196,10 +208,11 @@ def run(args):
             logger.header(2, f"{progress} Download and extract datafiles to: {workdir}")
             provider.download_datafiles(
                 datafiles,
-                workdir,  # FIXME give ios instead
+                workdir,
                 t,
                 args.force is not None,
             )
+            # FIXME Pass ios instead of workdir in order to resolve the tiledir in LocalCutout
             timer.tic_log()
 
     res = [ios.relative_to_workspace(t.workdir(ios)) for t in targets]

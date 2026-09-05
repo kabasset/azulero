@@ -75,7 +75,7 @@ class Tiling:
     def __init__(self, filename: Path):
         with open(filename) as f:
             self.tiles = json.load(f)["features"]
-        # FIXME instantiate ConvexPolygon here
+        self.polygons = [ConvexPolygon.from_geojson(t["geometry"]) for t in self.tiles]
 
     def query_tile_attributes(self, index: str) -> list[Tile]:
         return [
@@ -89,20 +89,14 @@ class Tiling:
         ]
 
     def query_radec_tiles(self, radec: SkyCoord, dsrs: list[str]):
-        return query_geotiles(radec, self.tiles, dsrs)
-
-
-def query_geotiles(radec: SkyCoord, geotiles: Iterable, dsrs: list[str] | None = None):
-    res = []
-    p = radec_to_xyz(radec.ra, radec.dec)
-    for tile in geotiles:
-        polygon = ConvexPolygon.from_geojson(tile["geometry"])
-        # FIXME use ConvexPolygon
-        if p in polygon:
-            index = tile["properties"]["TileIndex"]
-            mode = tile["properties"]["ProcessingMode"]
-            dsr = tile["properties"]["DatasetRelease"]
-            distance = polygon.centroid.separation(radec).value
-            if distance < 1 and (dsrs is None or dsr in dsrs):
-                res.append(Tile(index, mode, dsr, distance))
-    return res
+        res = []
+        p = radec_to_xyz(radec.ra, radec.dec)
+        for polygon, tile in zip(self.polygons, self.tiles):
+            if p in polygon:
+                index = tile["properties"]["TileIndex"]
+                mode = tile["properties"]["ProcessingMode"]
+                dsr = tile["properties"]["DatasetRelease"]
+                distance = polygon.centroid.separation(radec).value
+                if distance < 1 and (dsrs is None or dsr in dsrs):
+                    res.append(Tile(index, mode, dsr, distance))
+        return res

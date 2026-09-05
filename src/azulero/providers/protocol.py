@@ -10,7 +10,7 @@ from azulero.providers.tiling import Tile, Target
 
 
 @runtime_checkable
-class ProductDatabase(Protocol):  # FIXME rename as FileDatabase
+class ProductDatabase(Protocol):  # TODO rename as FileDatabase?
     """
     Abstract base class for product databases.
     """

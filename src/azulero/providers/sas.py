@@ -89,7 +89,8 @@ class SAS:
         products = self.__euclid.get_product_list(
             tile_index=tile.index, product_type="DpdMerBksMosaic"
         )
-        assert products is not None  # FIXME raise
+        if products is None:
+            raise FileNotFoundError(tile.index)
         return {
             str(p["file_name"]): str(p["filter_name"])
             for p in products
