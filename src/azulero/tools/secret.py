@@ -4,6 +4,11 @@ import netrc
 import sys
 
 
+def _print(text):
+    sys.stderr.write(text)
+    sys.stderr.flush()
+
+
 @dataclass
 class Secret:
     """
@@ -31,11 +36,11 @@ class Secret:
             echo_char:
                 The obfuscated character to display instead of input characters (if supported).
         """
-        # TODO log prompt as warning?
+        _print(text)
         try:
-            return cls(getpass.getpass(prompt=text, echo_char=echo_char))
+            return cls(getpass.getpass("", echo_char=echo_char))
         except TypeError:
-            return cls(getpass.getpass(prompt=text))
+            return cls(getpass.getpass(""))
 
 
 class Auth:
@@ -60,10 +65,8 @@ class Auth:
             self._prompt_password()
 
     def _prompt_clear_text(self, text):
-        if not sys.stdout.isatty():
-            sys.stderr.write(text)
-            return input()
-        return input(text)
+        _print(text)
+        return input()
 
     def _prompt_user(self):
         self.user = self._prompt_clear_text(f"Enter user name for host {self.host}: ")
