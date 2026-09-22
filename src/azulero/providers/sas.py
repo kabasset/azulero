@@ -58,7 +58,7 @@ class SAS:
 
     def query_tile_attributes(self, index: str) -> list[Tile]:
         select_text = "data_set_release"
-        if self.env != "PDR":
+        if self.env != "PDR":  # FIXME what will happen when DR1 will be in PDR?
             select_text += ",processing_mode"
         q = f"SELECT {select_text} FROM sedm.mosaic_product WHERE mosaic_product.tile_index={index}"
         res = self.get_table(q)

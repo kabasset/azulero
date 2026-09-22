@@ -38,7 +38,7 @@ class DataProvider:
         self,
         coord: SkyCoord,
         dsrs: list[str],
-        modes: list[str],
+        modes: list[str] = ["DEEP", "WIDE", "UNKNOWN"],
     ) -> list[str]:
         """
         Query the list of tiles which contain a given coordinate.
@@ -46,7 +46,7 @@ class DataProvider:
         Args:
             coord: The target coordinate.
             dsrs: The ordered list of dataset releases.
-            modes: The ordered list of processing modes.
+            modes: The ordered list of processing modes (`"UNKNOWN"` is required for dataset release `"Q1_R1"`).
 
         Returns:
             The list of tile indices.
