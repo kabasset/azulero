@@ -26,6 +26,7 @@
 <meta content="Quick start | Azulero 2.1" name="twitter:title"/>
 <link href="_static/pygments.css?v=e72c8e07" rel="stylesheet" type="text/css"/>
 <link href="_static/theme.css?v=d6d7c91b" rel="stylesheet" type="text/css"/>
+<link href="_static/sphinx-new-tab-link.css?v=d87cb1ac" rel="stylesheet" type="text/css"/>
 <link href="_static/sphinxcontrib-images/LightBox2/lightbox2/dist/css/lightbox.min.css?v=6e7d0de0" rel="stylesheet" type="text/css"/>
 <link href="_static/sphinxcontrib-images/LightBox2/lightbox2-customize/pointer.css?v=c97663ff" rel="stylesheet" type="text/css"/>
 <link href="_static/code.css?v=7ade5f64" rel="stylesheet" type="text/css"/>
@@ -125,7 +126,7 @@
 <h2>Installation</h2>
 <section id="latest-release">
 <h3>Latest release</h3>
-<p>Azulero is a Python package deployed to <a class="reference external" href="https://pypi.org/project/azulero/">PyPI</a>.
+<p>Azulero is a Python package deployed to <a class="reference external" href="https://pypi.org/project/azulero/" rel="noreferrer" target="_blank">PyPI</a>.
 The simplest way to install it is with <code class="docutils literal notranslate"><span class="pre">pip</span></code>:</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">$ </span>pip<span class="w"> </span>install<span class="w"> </span><span class="ge">azulero</span>
 </span></code></pre></div>
@@ -149,7 +150,7 @@ better clone the repository locally:</p>
 </span><span id="line-4"><span class="gp">$ </span>pip<span class="w"> </span>install<span class="w"> </span>.
 </span></code></pre></div>
 </div>
-<p>Azulero is packaged with <a class="reference external" href="https://docs.astral.sh/uv/">uv</a>.
+<p>Azulero is packaged with <a class="reference external" href="https://docs.astral.sh/uv/" rel="noreferrer" target="_blank">uv</a>.
 Hence, there is no need to install the package in order to execute the scripts.
 Instead, from the clone directory, you can prepend commands with <code class="docutils literal notranslate"><span class="pre">uv</span> <span class="pre">run</span></code>.
 For example, to download a cutout without installing, launch:</p>
@@ -218,7 +219,7 @@ To enable this feature permanently in Datalabs, add the following line to the <c
 <p>Because you may not want to read documentation now that everything was just setup,
 we propose to create an image before (carefully) reading the next pages!</p>
 <p>We will start by downloading some Euclid data around a colorful and large-enough-but-not-too-large galaxy:
-<a class="reference external" href="https://www.cosmos.esa.int/web/euclid/euclid-nearby-galaxies-collage">UGC 11169</a>.
+<a class="reference external" href="https://www.cosmos.esa.int/web/euclid/euclid-nearby-galaxies-collage" rel="noreferrer" target="_blank">UGC 11169</a>.
 Go to your favorite directory and run:</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">$ </span>azul<span class="w"> </span><span class="ge">retrieve</span><span class="w"> </span>UGC11169<span class="w"> </span>-r<span class="w"> </span>30s<span class="w"> </span><span class="p">|</span><span class="w"> </span>azul<span class="w"> </span><span class="ge">process</span><span class="w"> </span>-w<span class="w"> </span><span class="m">0</span>
 </span></code></pre></div>

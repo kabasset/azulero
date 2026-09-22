@@ -26,6 +26,7 @@
 <meta content="azul process | Azulero 2.1" name="twitter:title"/>
 <link href="_static/pygments.css?v=e72c8e07" rel="stylesheet" type="text/css"/>
 <link href="_static/theme.css?v=d6d7c91b" rel="stylesheet" type="text/css"/>
+<link href="_static/sphinx-new-tab-link.css?v=d87cb1ac" rel="stylesheet" type="text/css"/>
 <link href="_static/sphinxcontrib-images/LightBox2/lightbox2/dist/css/lightbox.min.css?v=6e7d0de0" rel="stylesheet" type="text/css"/>
 <link href="_static/sphinxcontrib-images/LightBox2/lightbox2-customize/pointer.css?v=c97663ff" rel="stylesheet" type="text/css"/>
 <link href="_static/code.css?v=7ade5f64" rel="stylesheet" type="text/css"/>
@@ -156,6 +157,11 @@ Intermediate files can be written, mostly for investigation.</p>
 </tr>
 </tbody>
 </table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">process</span></code> was used with default parameter values to colorize the entire Q1 data release.
+The result can be assessed in <a class="reference external" href="https://kabasset.github.io/azulite/index.html" rel="noreferrer" target="_blank">Azulite</a>.</p>
+</div>
 <p>The diagram below illustrates the various steps of the algorithm processing a single workdir.</p>
 <figure class="align-center">
 <p class="plantuml">
@@ -238,7 +244,7 @@ depending on the extension of the file name parameter (<code class="docutils lit
 <p>WCS parameters are written as follows:</p>
 <ul class="simple">
 <li><p>TIFF outputs contain WCS parameters as <code class="docutils literal notranslate"><span class="pre">ImageDescription</span></code> metadata,
-for compatibility with <a class="reference external" href="https://github.com/schirmermischa/euniverse">euniverse</a>;</p></li>
+for compatibility with <a class="reference external" href="https://github.com/schirmermischa/euniverse" rel="noreferrer" target="_blank">euniverse</a>;</p></li>
 <li><p>PNG and JPEG outputs are accompanied with YAML files containing WCS parameters,
 named after the image file with <code class="docutils literal notranslate"><span class="pre">.wcs</span></code> extension.</p></li>
 </ul>
@@ -449,7 +455,7 @@ As default parameters, we have chosen to use only I to generate B, and to compre
 Other research groups made different choices
 like skipping completely J for ERO images,
 using I only for L and YJH for RGB in many articles,
-or merging YJ into G and use only H for R in the <a class="reference external" href="https://github.com/schirmermischa/eummy">eummy</a> package.
+or merging YJ into G and use only H for R in the <a class="reference external" href="https://github.com/schirmermischa/eummy" rel="noreferrer" target="_blank">eummy</a> package.
 The default parameters of Azulero were challenged on thousands of various objects and always gave pleasant results.
 That being said, there is no good or bad approach and you can create your own palette by varying the blending parameters.</p>
 </section>

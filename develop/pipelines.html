@@ -26,6 +26,7 @@
 <meta content="Pipelines | Azulero 2.1" name="twitter:title"/>
 <link href="_static/pygments.css?v=e72c8e07" rel="stylesheet" type="text/css"/>
 <link href="_static/theme.css?v=d6d7c91b" rel="stylesheet" type="text/css"/>
+<link href="_static/sphinx-new-tab-link.css?v=d87cb1ac" rel="stylesheet" type="text/css"/>
 <link href="_static/sphinxcontrib-images/LightBox2/lightbox2/dist/css/lightbox.min.css?v=6e7d0de0" rel="stylesheet" type="text/css"/>
 <link href="_static/sphinxcontrib-images/LightBox2/lightbox2-customize/pointer.css?v=c97663ff" rel="stylesheet" type="text/css"/>
 <link href="_static/code.css?v=7ade5f64" rel="stylesheet" type="text/css"/>
@@ -158,7 +159,7 @@ In this example, we will use galaxy names as input:</p>
 such that more than two images may be rendered.
 If this is unwanted, set option <code class="docutils literal notranslate"><span class="pre">-n</span> <span class="pre">1</span></code>.
 Conversely, several targets may belong the same tile,
-which is the case for those two galaxies in <a class="reference external" href="https://www.youtube.com/watch?v=z1-V0zz4p_s">Q1 tile 102159776</a>.</p>
+which is the case for those two galaxies in <a class="reference external" href="https://www.youtube.com/watch?v=z1-V0zz4p_s" rel="noreferrer" target="_blank">Q1 tile 102159776</a>.</p>
 <p>The above command will generate two images:</p>
 <table class="subfigure docutils align-default">
 <tbody>
@@ -203,7 +204,7 @@ and <code class="docutils literal notranslate"><span class="pre">-P</span> <span
 <section id="pipeline-online-catalog-to-collage">
 <h2>Pipeline: Online catalog to collage</h2>
 <p>Let us run Azulero on the lens catalog which was used to render
-<a class="reference external" href="https://www.esa.int/ESA_Multimedia/Images/2025/03/Strong_gravitational_lenses_captured_by_Euclid">the Q1 strong lensing collage</a>
+<a class="reference external" href="https://www.esa.int/ESA_Multimedia/Images/2025/03/Strong_gravitational_lenses_captured_by_Euclid" rel="noreferrer" target="_blank">the Q1 strong lensing collage</a>
 and generate a similar output in one pipeline (there are a lot of files to download, this may take more than ten minutes to complete):</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">$ </span>wget<span class="w"> </span>-q<span class="w"> </span>-O<span class="w"> </span>-<span class="w"> </span>https://zenodo.org/records/15025832/files/q1_discovery_engine_lens_catalog.csv<span class="w"> </span><span class="se">\</span>
 </span><span id="line-2"><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-n+2<span class="w"> </span><span class="se">\</span>
@@ -228,7 +229,7 @@ and generate a similar output in one pipeline (there are a lot of files to downl
 <li><p>arrange renderings into a 14-column grid,</p></li>
 <li><p>display the resulting collage:</p></li>
 </ul>
-<a class="" data-lightbox="group-9c6334e7-2ab0-425d-b080-292627b1d262" data-title="" href="_images/collage_56.46762095259402,-49.45093443791871_102020055_54.36856435116159,-28.53351499365056_102043551.png" title=""><img alt="" class="" height="auto" src="_images/collage_56.46762095259402,-49.45093443791871_102020055_54.36856435116159,-28.53351499365056_102043551.png" width="100%"/>
+<a class="" data-lightbox="group-004c54eb-d047-4d0a-befd-6a9ced89d74a" data-title="" href="_images/collage_56.46762095259402,-49.45093443791871_102020055_54.36856435116159,-28.53351499365056_102043551.png" title=""><img alt="" class="" height="auto" src="_images/collage_56.46762095259402,-49.45093443791871_102020055_54.36856435116159,-28.53351499365056_102043551.png" width="100%"/>
 </a></section>
 <section id="pipeline-clipboard-to-slideshow">
 <h2>Pipeline: Clipboard to slideshow</h2>
@@ -246,7 +247,7 @@ To this end, we will rely on ImageMagick’s <code class="docutils literal notra
 </ul>
 <p>As targets, we will use Q1 nearby galaxies.
 The pipeline will be fed by the clipboard, therefore we will just select the table at the bottom of
-<a class="reference external" href="https://www.cosmos.esa.int/web/euclid/euclid-nearby-galaxies-collage">this page</a> and run:</p>
+<a class="reference external" href="https://www.cosmos.esa.int/web/euclid/euclid-nearby-galaxies-collage" rel="noreferrer" target="_blank">this page</a> and run:</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">$ </span>xclip<span class="w"> </span>-o<span class="w"> </span><span class="se">\</span>
 </span><span id="line-2"><span class="p">|</span><span class="w"> </span>sed<span class="w"> </span><span class="s1">'s/ //g'</span><span class="w"> </span><span class="se">\</span>
 </span><span id="line-3"><span class="p">|</span><span class="w"> </span><span class="ge">azul</span><span class="w"> </span><span class="ge">retrieve</span><span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="w"> </span>-r<span class="w"> </span>30s<span class="w"> </span><span class="se">\</span>
@@ -276,7 +277,7 @@ The pipeline will be fed by the clipboard, therefore we will just select the tab
 </span></code></pre></div>
 </div>
 <p>which gives:</p>
-<a class="" data-lightbox="group-a5a30cb6-aded-407a-abab-84f0c6b696c8" data-title="" href="_images/collage_UGC11116_102159776_LEDA2697349_102159776.png" title=""><img alt="" class="" height="auto" src="_images/collage_UGC11116_102159776_LEDA2697349_102159776.png" width="100%"/>
+<a class="" data-lightbox="group-5a1f30a5-8453-4c90-b103-8f485796de3d" data-title="" href="_images/collage_UGC11116_102159776_LEDA2697349_102159776.png" title=""><img alt="" class="" height="auto" src="_images/collage_UGC11116_102159776_LEDA2697349_102159776.png" width="100%"/>
 </a><p>Since we did not pass option <code class="docutils literal notranslate"><span class="pre">-n</span> <span class="pre">1</span></code> to <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code>,
 all of the tiles which contain a target are retrieved,
 which is why there are two images of LEDA2697349.
