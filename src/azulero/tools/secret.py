@@ -60,7 +60,7 @@ class Auth:
             self._prompt_password()
 
     def _prompt_clear_text(self, text):
-        if sys.stdout.isatty():
+        if not sys.stdout.isatty():
             sys.stderr.write(text)
             return input()
         return input(text)
