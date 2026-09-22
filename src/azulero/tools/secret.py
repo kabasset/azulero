@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 import getpass
 import netrc
+import sys
 
 
 @dataclass
@@ -59,7 +60,8 @@ class Auth:
             self._prompt_password()
 
     def _prompt_clear_text(self, text):
-        return input(text)
+        sys.stderr.write(text)
+        return input()
 
     def _prompt_user(self):
         self.user = self._prompt_clear_text(f"Enter user name for host {self.host}: ")
