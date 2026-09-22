@@ -31,6 +31,11 @@ Intermediate files can be written, mostly for investigation.
    | I band   | Y band   | J band   | H band   | Output    |
    +----------+----------+----------+----------+-----------+
 
+.. note::
+
+   ``azul process`` was used with default parameter values to colorize the entire Q1 data release.
+   The result can be assessed in Azulite_.
+
 The diagram below illustrates the various steps of the algorithm processing a single workdir.
 
 .. plantuml::
@@ -405,5 +410,7 @@ Depending on your system, it may be necessary to add quotes:
 
 For a more user-friendly way of cropping, see :doc:`crop`.
 
+
+.. _Azulite: https://kabasset.github.io/azulite/index.html
 .. _eummy: https://github.com/schirmermischa/eummy
 .. _euniverse: https://github.com/schirmermischa/euniverse

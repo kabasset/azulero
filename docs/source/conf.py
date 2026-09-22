@@ -15,6 +15,7 @@ extensions = [
     "sphinxcontrib.plantuml",
     "sphinxcontrib.video",
     "sphinx_changelog",
+    "sphinx_new_tab_link",
 ]
 source_suffix = {".rst": "restructuredtext"}
 templates_path = ["_templates"]

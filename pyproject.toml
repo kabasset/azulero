@@ -45,6 +45,7 @@ dev = [
   "sphinxcontrib-images",
   "sphinxcontrib-plantuml",
   "sphinxcontrib-video",
+  "sphinx-new-tab-link",
   "gitpython",
 ]
 

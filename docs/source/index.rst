@@ -43,6 +43,11 @@ including with parallelization (see :doc:`pipelines`).
 As an example, the collage on the right is the unedited output of a single command line
 (credit: ESA Euclid / Euclid Consortium / NASA / Q1-2025 / Antoine Basset, CNES).
 
+.. tip::
+   
+   Check our Q1 processing in Azulite_,
+   where you can navigate the sky in full Azulero colors and export cutouts.
+
 
 License
 -------
@@ -109,5 +114,6 @@ It is a real pleasure and an extraordinary journey working in such a collaborati
 with so many world-renowned experts and brilliant newcomers.
 
 
+.. _Azulite: https://kabasset.github.io/azulite/index.html
 .. _eummy: https://github.com/schirmermischa/eummy
 .. _euniverse: https://github.com/schirmermischa/euniverse
