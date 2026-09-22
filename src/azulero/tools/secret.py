@@ -60,8 +60,10 @@ class Auth:
             self._prompt_password()
 
     def _prompt_clear_text(self, text):
-        sys.stderr.write(text)
-        return input()
+        if sys.stdout.isatty():
+            sys.stderr.write(text)
+            return input()
+        return input(text)
 
     def _prompt_user(self):
         self.user = self._prompt_clear_text(f"Enter user name for host {self.host}: ")
