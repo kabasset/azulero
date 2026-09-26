@@ -154,12 +154,11 @@ For example, assuming the photometric channels are NumPy arrays <code class="doc
 </span><span id="line-4">
 </span><span id="line-5"><span class="n">coord</span> <span class="o">=</span> <span class="n">SkyCoord</span><span class="o">.</span><span class="n">from_name</span><span class="p">(</span><span class="s2">"NGC6505"</span><span class="p">)</span>
 </span><span id="line-6"><span class="n">radius</span> <span class="o">=</span> <span class="n">Angle</span><span class="p">(</span><span class="s2">"30s"</span><span class="p">)</span>
-</span><span id="line-7"><span class="n">dsr</span> <span class="o">=</span> <span class="s2">"Q1_R1"</span>
-</span><span id="line-8">
-</span><span id="line-9"><span class="n">provider</span> <span class="o">=</span> <span class="n">azul</span><span class="o">.</span><span class="ge">DataProvider</span><span class="p">(</span><span class="s2">"PDR"</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="s2">"labs"</span><span class="p">)</span>
-</span><span id="line-10"><span class="n">tiles</span> <span class="o">=</span> <span class="n">provider</span><span class="o">.</span><span class="ge">query_coord_tiles</span><span class="p">(</span><span class="n">coord</span><span class="p">,</span> <span class="p">[</span><span class="n">dsr</span><span class="p">],</span> <span class="p">[</span><span class="s2">"WIDE"</span><span class="p">])</span>
-</span><span id="line-11"><span class="n">datafiles</span> <span class="o">=</span> <span class="n">provider</span><span class="o">.</span><span class="ge">query_tile_datafiles</span><span class="p">(</span><span class="n">tiles</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dsr</span><span class="p">)</span>
-</span><span id="line-12"><span class="n">provider</span><span class="o">.</span><span class="ge">download_cutouts</span><span class="p">(</span><span class="n">datafiles</span><span class="p">,</span> <span class="n">Path</span><span class="p">(</span><span class="s2">"workdir"</span><span class="p">),</span> <span class="n">coord</span><span class="p">,</span> <span class="n">radius</span><span class="p">)</span>
+</span><span id="line-7">
+</span><span id="line-8"><span class="n">provider</span> <span class="o">=</span> <span class="n">azul</span><span class="o">.</span><span class="ge">DataProvider</span><span class="p">(</span><span class="s2">"PDR"</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="s2">"labs"</span><span class="p">)</span>
+</span><span id="line-9"><span class="n">tiles</span> <span class="o">=</span> <span class="n">provider</span><span class="o">.</span><span class="ge">query_coord_tiles</span><span class="p">(</span><span class="n">coord</span><span class="p">,</span> <span class="p">[</span><span class="s2">"Q1_R1"</span><span class="p">])</span>
+</span><span id="line-10"><span class="n">datafiles</span> <span class="o">=</span> <span class="n">provider</span><span class="o">.</span><span class="ge">query_tile_datafiles</span><span class="p">(</span><span class="n">tiles</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</span><span id="line-11"><span class="n">provider</span><span class="o">.</span><span class="ge">download_cutouts</span><span class="p">(</span><span class="n">datafiles</span><span class="p">,</span> <span class="n">Path</span><span class="p">(</span><span class="s2">"workdir"</span><span class="p">),</span> <span class="n">coord</span><span class="p">,</span> <span class="n">radius</span><span class="p">)</span>
 </span></code></pre></div>
 </div>
 </section>
@@ -244,7 +243,7 @@ For example, assuming the photometric channels are NumPy arrays <code class="doc
 <dd><em class="sig-param"><span class="n"><span class="pre">dsrs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">modes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">['DEEP',</span> <span class="pre">'WIDE',</span> <span class="pre">'UNKNOWN']</span></span></em>,</dd>
 </dl>
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span></dt>
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#azulero.api.Tile" title="azulero.providers.tiling.Tile"><span class="pre">Tile</span></a><span class="p"><span class="pre">]</span></span></span></span></dt>
 <dd><p>Query the list of tiles which contain a given coordinate.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -255,7 +254,7 @@ For example, assuming the photometric channels are NumPy arrays <code class="doc
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The list of tile indices.</p>
+<dd class="field-even"><p>The list of tiles.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -263,23 +262,41 @@ For example, assuming the photometric channels are NumPy arrays <code class="doc
 <dt class="sig sig-object py" id="azulero.api.DataProvider.query_tile_datafiles">
 <span class="sig-name descname"><span class="pre">query_tile_datafiles</span></span><span class="sig-paren">(</span>
 <dl>
-<dd><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">dsr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">tile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#azulero.api.Tile" title="azulero.providers.tiling.Tile"><span class="pre">Tile</span></a></span></em>,</dd>
 </dl>
 <span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span></dt>
 <dd><p>Query the datafiles of a tile.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>index</strong> – The tile index.</p></li>
-<li><p><strong>dsr</strong> – The Dataset Release name.</p></li>
-</ul>
+<dd class="field-odd"><p><strong>tile</strong> – The tile attributes including index and Dataset Release name.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The list of file names.</p>
 </dd>
 </dl>
 </dd></dl>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="azulero.api.Tile">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">azulero.api.</span></span><span class="sig-name descname"><span class="pre">Tile</span></span><span class="sig-paren">(</span>
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'UNKNOWN'</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">dsr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'UNKNOWN'</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">distance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>,</dd>
+</dl>
+<span class="sig-paren">)</span></dt>
+<dd><p>Tile attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>index</strong> – The tile index.</p></li>
+<li><p><strong>mode</strong> – The survey mode.</p></li>
+<li><p><strong>dsr</strong> – The Dataset Release name.</p></li>
+<li><p><strong>distance</strong> – The optional distance to target.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 <dl class="py class">
 <dt class="sig sig-object py" id="azulero.api.Transform">
@@ -414,6 +431,7 @@ in order to locate the SIF files.</p></li>
 <li><a :data-current="activeSection === '#azulero.api.DataProvider.query_tile_datafiles'" class="reference internal" href="#azulero.api.DataProvider.query_tile_datafiles"><code class="docutils literal notranslate"><span class="pre">DataProvider.query_tile_datafiles()</span></code></a></li>
 </ul>
 </li>
+<li><a :data-current="activeSection === '#azulero.api.Tile'" class="reference internal" href="#azulero.api.Tile"><code class="docutils literal notranslate"><span class="pre">Tile</span></code></a></li>
 <li><a :data-current="activeSection === '#azulero.api.Transform'" class="reference internal" href="#azulero.api.Transform"><code class="docutils literal notranslate"><span class="pre">Transform</span></code></a></li>
 <li><a :data-current="activeSection === '#azulero.api.process_iyjh'" class="reference internal" href="#azulero.api.process_iyjh"><code class="docutils literal notranslate"><span class="pre">process_iyjh()</span></code></a></li>
 <li><a :data-current="activeSection === '#azulero.api.read_iyjh'" class="reference internal" href="#azulero.api.read_iyjh"><code class="docutils literal notranslate"><span class="pre">read_iyjh()</span></code></a></li>
@@ -427,7 +445,7 @@ in order to locate the SIF files.</p></li>
 </div><footer class="py-6 border-t border-border md:py-0">
 <div class="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
 <div class="flex flex-col items-center gap-4 px-8 md:flex-row md:gap-2 md:px-0">
-<p class="text-sm leading-loose text-center text-muted-foreground md:text-left">© 2025-2026, Antoine Basset (CNES) and contributors. Last updated: Sep 22, 2026. Built with <a class="font-medium underline underline-offset-4" href="https://www.sphinx-doc.org" rel="noreferrer">Sphinx 9.1.0</a></p>
+<p class="text-sm leading-loose text-center text-muted-foreground md:text-left">© 2025-2026, Antoine Basset (CNES) and contributors. Last updated: Sep 26, 2026. Built with <a class="font-medium underline underline-offset-4" href="https://www.sphinx-doc.org" rel="noreferrer">Sphinx 9.1.0</a></p>
 </div>
 </div>
 </footer>
