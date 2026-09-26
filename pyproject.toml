@@ -9,7 +9,8 @@ authors = [
   {name="Nguyen-Kim, Kane"},
   {name="Candini, Gian Paolo"},
   {name="Malapert, Jean-Christophe"},
-  {name="Wozny, Nicolas"}
+  {name="Wozny, Nicolas"},
+  {name="Golawska,Hanna"},
 ]
 description = "Bring colors to Euclid tiles!"
 readme = "README.md"
@@ -17,6 +18,7 @@ requires-python = ">=3.10"
 classifiers = [
     "Programming Language :: Python :: 3",
     "Operating System :: OS Independent",
+    "Topic :: Scientific/Engineering :: Astronomy",
 ]
 license = "Apache-2.0"
 license-files = ["LICEN[CS]E*"]
@@ -29,7 +31,6 @@ dependencies = [
     "python-dotenv",
     "pyyaml",
     "requests",
-    "rich-argparse",
     "scikit-image",
     "scipy",
     "tifffile"
