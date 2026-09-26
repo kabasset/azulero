@@ -41,11 +41,10 @@ For convenience, ``azul retrieve`` features have also been ported to the API, as
 
    coord = SkyCoord.from_name("NGC6505")
    radius = Angle("30s")
-   dsr = "Q1_R1"
 
    provider = azul.DataProvider("PDR", data="labs")
-   tiles = provider.query_coord_tiles(coord, [dsr], ["WIDE"])
-   datafiles = provider.query_tile_datafiles(tiles[0], dsr)
+   tiles = provider.query_coord_tiles(coord, ["Q1_R1"])
+   datafiles = provider.query_tile_datafiles(tiles[0])
    provider.download_cutouts(datafiles, Path("workdir"), coord, radius)
 
 

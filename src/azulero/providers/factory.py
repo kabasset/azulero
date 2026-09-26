@@ -198,8 +198,7 @@ class DataProvider:
         Query the datafiles of a tile.
 
         Args:
-            tile: The tile index.
-            dsr: The Dataset Release name.
+            tile: The tile attributes including index and Dataset Release name.
         """
 
         @retry(logger=logger, default=[])

@@ -9,7 +9,18 @@ from pathlib import Path
 
 from azulero import retrieve, process
 from azulero.image import color, io
-from azulero.providers.tiling import Target, Tile
+from azulero.providers import tiling
+
+Tile = tiling.Tile
+"""
+Tile attributes.
+
+Args:
+    index: The tile index.
+    mode: The survey mode.
+    dsr: The Dataset Release name.
+    distance: The optional distance to target.
+"""
 
 
 class DataProvider:
@@ -39,7 +50,7 @@ class DataProvider:
         coord: SkyCoord,
         dsrs: list[str],
         modes: list[str] = ["DEEP", "WIDE", "UNKNOWN"],
-    ) -> list[str]:
+    ) -> list[Tile]:
         """
         Query the list of tiles which contain a given coordinate.
 
@@ -49,23 +60,22 @@ class DataProvider:
             modes: The ordered list of processing modes (`"UNKNOWN"` is required for dataset release `"Q1_R1"`).
 
         Returns:
-            The list of tile indices.
+            The list of tiles.
         """
         targets = self.provider.query_radec_tiles("", coord, None, dsrs, modes)
-        return [t.tile.index for t in targets]
+        return [t.tile for t in targets]
 
-    def query_tile_datafiles(self, index: str, dsr: str) -> list[str]:
+    def query_tile_datafiles(self, tile: Tile) -> list[str]:
         """
         Query the datafiles of a tile.
 
         Args:
-            index: The tile index.
-            dsr: The Dataset Release name.
+            tile: The tile attributes including index and Dataset Release name.
 
         Returns:
             The list of file names.
         """
-        return [f for f in self.provider.query_tile_datafiles(Tile(index, dsr=dsr))]
+        return [f for f in self.provider.query_tile_datafiles(tile)]
 
     def download_datafiles(
         self,
@@ -84,7 +94,9 @@ class DataProvider:
         Returns:
             The resulting list of datafile paths.
         """
-        return self.provider.download_datafiles(datafiles, workdir, Target(), overwrite)
+        return self.provider.download_datafiles(
+            datafiles, workdir, tiling.Target(), overwrite
+        )
 
     def download_cutouts(
         self,
@@ -108,7 +120,7 @@ class DataProvider:
             The resulting list of cutout paths.
         """
         return self.provider.download_datafiles(
-            datafiles, workdir, Target("", Tile(), center, radius), overwrite
+            datafiles, workdir, tiling.Target("", Tile(), center, radius), overwrite
         )
 
 
