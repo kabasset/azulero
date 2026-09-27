@@ -142,19 +142,26 @@ Specifically, color images and image stacks are inpainted with SciKit’s biharm
 while grayscale images are inpainted with OpenCV’s Navier-Stokes algorithm.
 The former is very memory-greedy but renders much smoother large regions,
 which often occur at the center of galaxies.</p>
+<p>To avoid exceeding memory limits with edge tiles where millions of pixels may be invalid,
+connected components at the corners of the bad pixel mask are disabled by default.
+There may be very rare cases where the corners are bad and should be rendered,
+e.g. a saturated star core exactly at the corner.
+The purpose of option <code class="docutils literal notranslate"><span class="pre">--inpaint</span></code> is precisely to force inpainting in such cases.</p>
 </section>
 <section id="sharpening">
 <h2>Sharpening</h2>
 <p>By default, we rely on MER’s PSF estimates, which are a tad wider than VIS’ and NIR’s estimates,
-in order to keep overshooting under control.</p>
+in order to keep sharpening artifacts (overshooting) under control.
+It would be nice to have a sharpening scale factor parameter to control the sharpening radius,
+in addition to the unsharp masking amplitude control offered by option <code class="docutils literal notranslate"><span class="pre">--strength</span></code>.</p>
 </section>
 <section id="authentication">
 <h2>Authentication</h2>
 <p>Using private data providers requires authenticating with a username and password.
 Storing them locally in a netrc file is convenient in private machines such as laptops,
 as it does not require the user to enter their password manually for each command.
-However, doing so in shared environments like Datalabs and DCCs is unsecure,
-as the netrc file may be accessible to administrators and super users.
+However, doing so in shared environments like Datalabs and SDCs is not secure,
+as the netrc file may be accessible to administrators and privileged users.
 For this purpose, an interactive mode was added, where the user is requested to enter their password.
 All other options have been discarded because they leave traces in files possibly accessed by other users,
 including command history files, and are not more secure than a netrc file.
@@ -165,7 +172,8 @@ Anything more convenient than systematically entering the password would be nice
 <p>The DPS does not offer fast-enough spatial queries to find the tiles in which a target lies.
 Therefore, we used to rely on SMT’s Geojson tiling.
 In order to simplify the workflow by not requiring users to download and update the tiling themselves,
-we have implemented an optimized mechanism for spatial queries based solely on the DPS:</p>
+we have implemented an optimized mechanism for spatial queries based solely on fast-enough DPS queries
+and local computation for the spherical geometry functions:</p>
 <ol class="arabic simple">
 <li><p>Query the <code class="docutils literal notranslate"><span class="pre">DpdMerTile</span></code> products with a central declination (attribute <code class="docutils literal notranslate"><span class="pre">DecCen</span></code>) between two bounds
 computed from the target declination and some margin (the maximum half height of a tile).</p></li>
@@ -234,7 +242,7 @@ A data model would be welcome…</p>
 </div><footer class="py-6 border-t border-border md:py-0">
 <div class="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
 <div class="flex flex-col items-center gap-4 px-8 md:flex-row md:gap-2 md:px-0">
-<p class="text-sm leading-loose text-center text-muted-foreground md:text-left">© 2025-2026, Antoine Basset (CNES) and contributors. Last updated: Sep 26, 2026. Built with <a class="font-medium underline underline-offset-4" href="https://www.sphinx-doc.org" rel="noreferrer">Sphinx 9.1.0</a></p>
+<p class="text-sm leading-loose text-center text-muted-foreground md:text-left">© 2025-2026, Antoine Basset (CNES) and contributors. Last updated: Sep 27, 2026. Built with <a class="font-medium underline underline-offset-4" href="https://www.sphinx-doc.org" rel="noreferrer">Sphinx 9.1.0</a></p>
 </div>
 </div>
 </footer>

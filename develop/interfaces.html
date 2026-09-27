@@ -138,7 +138,7 @@ All commands follow the same pattern:</p>
 <dt><code class="docutils literal notranslate"><span class="pre">&lt;command&gt;</span></code></dt><dd><p>The name of the command (e.g. <code class="docutils literal notranslate"><span class="pre">retrieve</span></code>).</p>
 </dd>
 <dt><code class="docutils literal notranslate"><span class="pre">&lt;input&gt;</span></code></dt><dd><p>The space-separated list of inputs (e.g. <code class="docutils literal notranslate"><span class="pre">UGC11116</span> <span class="pre">PGC61356</span></code>).
-If the list is empty, then <code class="docutils literal notranslate"><span class="pre">stdin</span></code> is read (see <a class="reference internal" href="#streams"><span class="std std-ref">Standard streams</span></a> section below and <a class="reference internal" href="pipelines.html"><span class="doc">Pipelines</span></a> page).</p>
+If the list is empty, then <code class="docutils literal notranslate"><span class="pre">stdin</span></code> is read (see the <a class="reference internal" href="#streams"><span class="std std-ref">Standard streams</span></a> section below and the <a class="reference internal" href="pipelines.html"><span class="doc">Pipelines</span></a> page).</p>
 </dd>
 <dt><code class="docutils literal notranslate"><span class="pre">[options]</span></code></dt><dd><p>Optional command arguments (e.g. <code class="docutils literal notranslate"><span class="pre">-r</span> <span class="pre">1m</span></code>).</p>
 </dd>
@@ -168,17 +168,18 @@ Tiledirs are named after the tile index.</p>
 unless they are absolute paths.
 Output paths are often specified as templates with curly brace-enclosed placeholders.
 The placeholders are replaced with values depending on the command parameters.
-For example, most output path start with placeholder <code class="docutils literal notranslate"><span class="pre">{workspace}</span></code>,
+For example, most output paths start with placeholder <code class="docutils literal notranslate"><span class="pre">{workspace}</span></code>,
 which will be rendered as the actual workspace path.</p>
 </section>
 <section id="sky-and-image-coordinates">
 <span id="coordinates"></span><h2>Sky and image coordinates</h2>
-<p>Most command take coordinates as parameters:</p>
+<p>Most commands take coordinates as parameters:</p>
 <dl class="simple">
 <dt>Sky coordinates</dt><dd><p>They are specified as RA/Dec in the International Celestial Reference Frame (ICRF).</p>
 </dd>
 <dt>Image coordinates</dt><dd><p>They are given from left to right and from bottom to top.
-Integral values are the pixel centers.</p>
+Integral values are the pixel centers.
+Only for slicing notations, we follow NumPy’s convention with the vertical axis first.</p>
 </dd>
 </dl>
 </section>
@@ -295,7 +296,7 @@ Check the help messages in order to find the long-from options
 <div class="warning admonition">
 <p class="admonition-title">Finding errors?</p>
 <p>If you find discrepancies between the documentation and help messages,
-or any other kind of mistakes down here,
+or any other kind of mistake down here,
 please <a class="reference external" href="https://github.com/kabasset/azulero/issues/new" rel="noreferrer" target="_blank">open issues</a> or contact us.
 This really helps!</p>
 </div>
@@ -336,7 +337,7 @@ This really helps!</p>
 </div><footer class="py-6 border-t border-border md:py-0">
 <div class="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
 <div class="flex flex-col items-center gap-4 px-8 md:flex-row md:gap-2 md:px-0">
-<p class="text-sm leading-loose text-center text-muted-foreground md:text-left">© 2025-2026, Antoine Basset (CNES) and contributors. Last updated: Sep 26, 2026. Built with <a class="font-medium underline underline-offset-4" href="https://www.sphinx-doc.org" rel="noreferrer">Sphinx 9.1.0</a></p>
+<p class="text-sm leading-loose text-center text-muted-foreground md:text-left">© 2025-2026, Antoine Basset (CNES) and contributors. Last updated: Sep 27, 2026. Built with <a class="font-medium underline underline-offset-4" href="https://www.sphinx-doc.org" rel="noreferrer">Sphinx 9.1.0</a></p>
 </div>
 </div>
 </footer>
