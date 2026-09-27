@@ -22,7 +22,7 @@ with:
    The name of the command (e.g. ``retrieve``).
 ``<input>``
    The space-separated list of inputs (e.g. ``UGC11116 PGC61356``).
-   If the list is empty, then ``stdin`` is read (see :ref:`streams` section below and :doc:`pipelines` page).
+   If the list is empty, then ``stdin`` is read (see the :ref:`streams` section below and the :doc:`pipelines` page).
 ``[options]``
    Optional command arguments (e.g. ``-r 1m``).
 
@@ -57,7 +57,7 @@ By default, all paths passed as input of a command are assumed to be relative to
 unless they are absolute paths.
 Output paths are often specified as templates with curly brace-enclosed placeholders.
 The placeholders are replaced with values depending on the command parameters.
-For example, most output path start with placeholder ``{workspace}``,
+For example, most output paths start with placeholder ``{workspace}``,
 which will be rendered as the actual workspace path.
 
 
@@ -66,13 +66,14 @@ which will be rendered as the actual workspace path.
 Sky and image coordinates
 -------------------------
 
-Most command take coordinates as parameters:
+Most commands take coordinates as parameters:
 
 Sky coordinates
    They are specified as RA/Dec in the International Celestial Reference Frame (ICRF).
 Image coordinates
    They are given from left to right and from bottom to top.
    Integral values are the pixel centers.
+   Only for slicing notations, we follow NumPy's convention with the vertical axis first.
 
 
 Global options
@@ -214,6 +215,6 @@ Check the help messages in order to find the long-from options
    :class: warning
 
    If you find discrepancies between the documentation and help messages,
-   or any other kind of mistakes down here,
+   or any other kind of mistake down here,
    please `open issues <https://github.com/kabasset/azulero/issues/new>`_ or contact us.
    This really helps!

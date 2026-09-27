@@ -27,12 +27,20 @@ while grayscale images are inpainted with OpenCV's Navier-Stokes algorithm.
 The former is very memory-greedy but renders much smoother large regions,
 which often occur at the center of galaxies.
 
+To avoid exceeding memory limits with edge tiles where millions of pixels may be invalid,
+connected components at the corners of the bad pixel mask are disabled by default.
+There may be very rare cases where the corners are bad and should be rendered,
+e.g. a saturated star core exactly at the corner.
+The purpose of option ``--inpaint`` is precisely to force inpainting in such cases.
+
 
 Sharpening
 ----------
 
 By default, we rely on MER's PSF estimates, which are a tad wider than VIS' and NIR's estimates,
-in order to keep overshooting under control.
+in order to keep sharpening artifacts (overshooting) under control.
+It would be nice to have a sharpening scale factor parameter to control the sharpening radius,
+in addition to the unsharp masking amplitude control offered by option ``--strength``.
 
 
 Authentication
@@ -41,8 +49,8 @@ Authentication
 Using private data providers requires authenticating with a username and password.
 Storing them locally in a netrc file is convenient in private machines such as laptops,
 as it does not require the user to enter their password manually for each command.
-However, doing so in shared environments like Datalabs and DCCs is unsecure,
-as the netrc file may be accessible to administrators and super users.
+However, doing so in shared environments like Datalabs and SDCs is not secure,
+as the netrc file may be accessible to administrators and privileged users.
 For this purpose, an interactive mode was added, where the user is requested to enter their password.
 All other options have been discarded because they leave traces in files possibly accessed by other users,
 including command history files, and are not more secure than a netrc file.
@@ -55,7 +63,8 @@ DPS tile lookup
 The DPS does not offer fast-enough spatial queries to find the tiles in which a target lies.
 Therefore, we used to rely on SMT's Geojson tiling.
 In order to simplify the workflow by not requiring users to download and update the tiling themselves,
-we have implemented an optimized mechanism for spatial queries based solely on the DPS:
+we have implemented an optimized mechanism for spatial queries based solely on fast-enough DPS queries
+and local computation for the spherical geometry functions:
 
 1. Query the ``DpdMerTile`` products with a central declination (attribute ``DecCen``) between two bounds
    computed from the target declination and some margin (the maximum half height of a tile).
