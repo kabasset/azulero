@@ -308,7 +308,7 @@ def process_iyjh(
         if area > 0:
             logger.bullet(f"Discard regions larger than: {area} pixels")
             mask.remove_large_components(dead, area)
-        logger.bullet(f"Inpainting pixels: {', '.join(str(np.sum(c)) for c in dead)}")
+        logger.bullet(f"Pixels to inpaint: {', '.join(str(np.sum(c)) for c in dead)}")
         if "{step}" in template:
             path = render_path_for_step(template, "mask")
             logger.bullet(f"Write: {path.name}")

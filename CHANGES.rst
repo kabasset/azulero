@@ -1,5 +1,21 @@
-2.1
+2.2
 ---
+
+New features
+^^^^^^^^^^^^
+
+``azul process``
+
+- Increase default values of options ``-a`` and ``-b`` following SNR improvement in DR1 wrt. Q1.
+
+Cleaning
+^^^^^^^^
+
+- Silent runtime warning `All-NaN slice encountered`.
+
+
+2.1.0
+-----
 
 New features
 ^^^^^^^^^^^^
