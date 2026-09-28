@@ -247,49 +247,88 @@ set the following environment variable:
 To demonstrate the effect and sensitivity of ``-w`` and ``-a``,
 below is a matrix of UGC 11116 renderings in which we varied the parameters around their default values.
 
-.. |200-2575| thumbnail:: _static/matrix/20-25.75.png
-   :group: matrix
-.. |225-2575| thumbnail:: _static/matrix/22.5-25.75.png
-   :group: matrix
-.. |250-2575| thumbnail:: _static/matrix/25-25.75.png
-   :group: matrix
-.. |200-2700| thumbnail:: _static/matrix/20-27.png
-   :group: matrix
-.. |225-2700| thumbnail:: _static/matrix/22.5-27.png
-   :group: matrix
-.. |250-2700| thumbnail:: _static/matrix/25-27.png
-   :group: matrix
-.. |200-2825| thumbnail:: _static/matrix/20-28.25.png
-   :group: matrix
-.. |225-2825| thumbnail:: _static/matrix/22.5-28.25.png
-   :group: matrix
-.. |250-2825| thumbnail:: _static/matrix/25-28.25.png
-   :group: matrix
+.. |w-a+| thumbnail:: _static/matrix/w_2150_a_2875.jpg
+   :group: wa_matrix
+.. |w=a+| thumbnail:: _static/matrix/a_2875.jpg
+   :group: wa_matrix
+.. |w+a+| thumbnail:: _static/matrix/w_2350_a_2875.jpg
+   :group: wa_matrix
+.. |w-a=| thumbnail:: _static/matrix/w_2150.jpg
+   :group: wa_matrix
+.. |w=a=| thumbnail:: _static/matrix/default.jpg
+   :group: wa_matrix
+.. |w+a=| thumbnail:: _static/matrix/w_2350.jpg
+   :group: wa_matrix
+.. |w-a-| thumbnail:: _static/matrix/w_2150_a_2775.jpg
+   :group: wa_matrix
+.. |w=a-| thumbnail:: _static/matrix/a_2775.jpg
+   :group: wa_matrix
+.. |w+a-| thumbnail:: _static/matrix/w_2350_a_2775.jpg
+   :group: wa_matrix
 
 .. table::
    :class: subfigure
    :widths: 10 30 30 30
 
-   +-----------+------------+------------+------------+
-   | a = 28.25 | |200-2825| | |225-2825| | |250-2825| |
-   +-----------+------------+------------+------------+
-   | a = 27.00 | |200-2700| | |225-2700| | |250-2700| |
-   +-----------+------------+------------+------------+
-   | a = 25.75 | |200-2575| | |225-2575| | |250-2575| |
-   +-----------+------------+------------+------------+
-   |           | w = 20.0   | w = 22.5   | w = 25.0   |
-   +-----------+------------+------------+------------+
+   +------------+------------+------------+------------+
+   | a = 28.75  | |w-a+|     | |w=a+|     | |w+a+|     |
+   +------------+------------+------------+------------+
+   | a = 28.25  | |w-a=|     | |w=a=|     | |w+a=|     |
+   +------------+------------+------------+------------+
+   | a = 25.75  | |w-a-|     | |w=a-|     | |w+a-|     |
+   +------------+------------+------------+------------+
+   |            | w = 21.5   | w = 22.5   | w = 23.5   |
+   +------------+------------+------------+------------+
 
-The effect of ``-w`` is obvious at the heart of the galaxy, which is completely burnt in the rightmost column.
+The effect of ``-w`` is obvious at the heart of the galaxy, which is burnt in the rightmost column.
 Note how pushing ``-a`` deeper (top row) intensifies dimmer objects like background galaxies and the outer region of UGC 11116.
 Beware that it also increases noise and may make the background grainy and unpleasant.
 Azulero default values are carefully chosen to limit this phenomenon while keeping room for post-processing.
 
-The negative overshoot parameter (``--overshoot``) controls how much negative values remain in the rendered image.
-A value of 0 means that input null values are rendered as 0,
+Parameter ``-b`` controls the offset of an input zero *before* stretching.
+The lower in AB-magnitude, the higher the background intensity and noise.
+
+The negative overshoot parameter (``--overshoot``) controls how much negative values remain in the rendered image *after* stretching.
+A value of 0 means that input zeros are rendered as 0,
 while a value of 1 means that the offset value is rendered as 0.
 Higher overshoot values provide more degrees of freedom for post-processing,
 while lower values result in deeper blacks, which is better for using the rendered image directly.
+
+Again, here is a matrix of parameters to visualize the impact of ``-b`` and ``--overshoot`` (denoted "over"):
+
+
+.. |b+o+| thumbnail:: _static/matrix/b_3100_overshoot_1.jpg
+   :group: bo_matrix
+.. |b=o+| thumbnail:: _static/matrix/overshoot_1.jpg
+   :group: bo_matrix
+.. |b-o+| thumbnail:: _static/matrix/b_2700_overshoot_1.jpg
+   :group: bo_matrix
+.. |b+o=| thumbnail:: _static/matrix/b_3100.jpg
+   :group: bo_matrix
+.. |b=o=| thumbnail:: _static/matrix/default.jpg
+   :group: bo_matrix
+.. |b-o=| thumbnail:: _static/matrix/b_2700.jpg
+   :group: bo_matrix
+.. |b+o-| thumbnail:: _static/matrix/b_3100_overshoot_0.jpg
+   :group: bo_matrix
+.. |b=o-| thumbnail:: _static/matrix/overshoot_0.jpg
+   :group: bo_matrix
+.. |b-o-| thumbnail:: _static/matrix/b_2700_overshoot_0.jpg
+   :group: bo_matrix
+
+.. table::
+   :class: subfigure
+   :widths: 10 30 30 30
+
+   +------------+------------+------------+------------+
+   | over = 1.0 | |b+o+|     | |b=o+|     | |b-o+|     |
+   +------------+------------+------------+------------+
+   | over = 0.4 | |b+o=|     | |b=o=|     | |b-o=|     |
+   +------------+------------+------------+------------+
+   | over = 0.0 | |b+o-|     | |b=o-|     | |b-o-|     |
+   +------------+------------+------------+------------+
+   |            | b = 31     | b = 29     | b = 27     |
+   +------------+------------+------------+------------+
 
 
 Blending

@@ -1,0 +1,13 @@
+-o default.jpg
+-w 21.50 -o w_2150.jpg
+-w 21.50 -a 27.75 -o w_2150_a_2775.jpg
+-w 21.50 -a 28.75 -o w_2150_a_2875.jpg
+-w 23.50 -o w_2350.jpg
+-w 23.50 -a 27.75 -o w_2350_a_2775.jpg
+-w 23.50 -a 28.75 -o w_2350_a_2875.jpg
+-a 27.75 -o a_2775.jpg
+-a 28.75 -o a_2875.jpg
+-b 27.00 -o b_2700.jpg
+-b 31.00 -o b_3100.jpg
+--overshoot 0 -o overshoot_0.jpg
+--overshoot 1 -o overshoot_1.jpg
