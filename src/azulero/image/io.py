@@ -9,6 +9,7 @@ import json
 import numpy as np
 from pathlib import Path
 import tifffile
+import warnings
 import yaml
 
 from azulero import _version
@@ -152,7 +153,10 @@ def _average(slices: list):
         )
     stack = np.stack(valid_slices)
     stack[stack == 0] = np.nan
-    return np.nan_to_num(np.nanmedian(stack, axis=0))
+    with warnings.catch_warnings():
+        # Silent warning about nan in all slices
+        warnings.simplefilter("ignore", category=RuntimeWarning)
+        return np.nan_to_num(np.nanmedian(stack, axis=0))
 
 
 def read_iyjh(
