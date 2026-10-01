@@ -7,7 +7,7 @@ import dotenv
 from pathlib import Path
 
 from azulero import _version
-from azulero import (
+from azulero.cli import (
     retrieve,
     process,
     arrange,

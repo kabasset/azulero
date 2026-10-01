@@ -9,7 +9,7 @@ import numpy as np
 from pathlib import Path
 import cv2
 
-from azulero import overlay
+from azulero.cli import overlay  # FIXME no import from cli
 from azulero.image import io
 from azulero.projections.equirectangular import Projection  # FIXME
 from azulero.projections.wcs import capture_frame as wcs_frame

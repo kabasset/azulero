@@ -7,7 +7,7 @@ from astropy.coordinates import Angle, SkyCoord
 import numpy as np
 from pathlib import Path
 
-from azulero import retrieve, process
+from azulero.cli import retrieve, process
 from azulero.image import color, io
 from azulero.providers import tiling
 
