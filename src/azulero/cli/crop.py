@@ -12,6 +12,7 @@ from azulero.tools.messaging import (
     logger,
     header_color_codes,
     colorize,
+    parse_envargs,
     write_pipe_args,
 )
 from azulero.tools.timing import Timer
@@ -56,7 +57,7 @@ def add_parser(subparsers, help):
         ),
     )
 
-    parser.set_defaults(func=run)
+    parser.set_defaults(**parse_envargs("crop"), func=run)
 
 
 def run(args):

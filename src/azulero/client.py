@@ -8,6 +8,7 @@ from pathlib import Path
 
 from azulero import _version
 from azulero.cli import (
+    env,
     retrieve,
     process,
     arrange,
@@ -61,6 +62,7 @@ def add_parser():
     )
 
     subparsers = parser.add_subparsers(title="Commands", dest="cmd")
+    env.add_parser(subparsers, "Use presets.")
     retrieve.add_parser(subparsers, "Retrieve channels of MER tiles or cutouts.")
     crop.add_parser(subparsers, "Graphically select a region to be processed.")
     process.add_parser(subparsers, "Process MER channels to render a color image.")
