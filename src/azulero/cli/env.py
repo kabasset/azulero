@@ -57,9 +57,9 @@ def preset_datalabs():
 
 
 presets = {
-    "Q1": preset_q1,
-    "DR1": preset_dr1,
-    "OTF": preset_otf,
+    "q1": preset_q1,
+    "dr1": preset_dr1,
+    "otf": preset_otf,
     "datalabs": preset_datalabs,
 }
 
@@ -69,18 +69,24 @@ def add_parser(subparsers, help):
     parser = subparsers.add_parser(
         "env",
         help=help,
-        description=("Use predefined environment variables."),
+        description=(
+            "Set predefined and custom environment variables. "
+            "The command outputs a list of variables which can be written to a .env file, e.g.: "
+            "``azul env dr1 datalabs AZULPROCESS_WHITE=0 > .env``"
+        ),
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
 
     parser.add_argument(
-        "presets",
+        "variables",
         type=str,
         nargs="*",
         default=read_pipe_args(),
-        metavar="NAMES",
-        help="Ordered list of preset names. If empty, print the list of available presets.",
-        choices=presets.keys(),
+        help=(
+            "Ordered list of preset names and/or variables: "
+            "arguments which contain ``=`` are considered variables. "
+            "If empty, print the list of available presets."
+        ),
     )
     parser.add_argument(
         "--prefix",
@@ -93,11 +99,18 @@ def add_parser(subparsers, help):
 
 
 def run(args):
-    if not args.presets:
+    if not args.variables:
         return list_presets(args.prefix)
-    variables = {
-        args.prefix + k: presets[p]()[k] for p in args.presets for k in presets[p]()
-    }
+    variables = {}
+    for arg in args.variables:
+        if "=" in arg:
+            k, v = arg.split("=")
+            k = args.prefix + k.removeprefix(args.prefix)
+            variables[k] = v
+        else:
+            preset = presets[arg.lower()]()
+            for k in preset:
+                variables[args.prefix + k] = preset[k]
     lines = [f"{v}={variables[v]}" for v in variables]
     write_pipe_args(lines)
 
@@ -108,7 +121,7 @@ def list_presets(prefix):
     )
     for p in presets:
         preset = presets[p]
-        logger.header(2, p)
+        logger.header(2, '"' + p + '"')
         desc = (
             preset.__doc__.removeprefix("\n").removesuffix("\n")
             or "No description available."
