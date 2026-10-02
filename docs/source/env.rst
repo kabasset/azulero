@@ -32,6 +32,8 @@ Variables
    Environment variables are specified as ``<name>=<value>``, e.g. ``AZULPROCESS_WHITE=0``.
 Preset names
    Presets are specified by their name, e.g. ``dr1``.
+   Special preset ``current`` lists all of the currently defined environment variables
+   which start with a given prefix (see below).
 
 If no value is given, the list of available presets is printed.
 
@@ -59,3 +61,8 @@ The different input arguments are processed in order as follows, starting from a
 * If there is an equal sign, append the environment variable to the environment;
 * Otherwise, find the preset with given name and append all of its environment variables to the environment.
 
+All predefined variables are prefixed with the value of ``--prefix``,
+which defaults to the value of environment variable ``AZULERO_PREFIX`` if defined or ``AZUL``.
+
+Using different prefixes is a convenient way to work with a single ``.env`` file
+and activate the various groups of variables defined in it by changing ``AZULERO_PREFIX``.

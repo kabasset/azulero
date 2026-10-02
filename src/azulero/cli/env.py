@@ -4,7 +4,6 @@
 
 import argparse
 import os
-from typing import Annotated
 
 from azulero.tools.messaging import (
     logger,
@@ -14,49 +13,57 @@ from azulero.tools.messaging import (
 )
 
 
-def preset_q1():
+def current_env(prefix):
+    """
+    All Azulero environment variables currently defined.
+    """
+    return {k: v for (k, v) in os.environ.items() if k.startswith(prefix)}
+
+
+def preset_q1(prefix):
     """
     Retrieval parameters and default processing parameters for Q1 data.
     """
     return {
-        "RETRIEVE_FROM": "PDR",
-        "RETRIEVE_DSR": "Q1",
-        "PROCESS_WHITE": 22.5,
-        "PROCESS_STRETCH": 28.25,
-        "PROCESS_BLACK": 29.0,
+        prefix + "RETRIEVE_FROM": "PDR",
+        prefix + "RETRIEVE_DSR": "Q1",
+        prefix + "PROCESS_WHITE": 22.5,
+        prefix + "PROCESS_STRETCH": 28.25,
+        prefix + "PROCESS_BLACK": 29.0,
     }
 
 
-def preset_dr1():
+def preset_dr1(prefix):
     """
     Retrieval parameters for DR1 data.
     """
     return {
-        "RETRIEVE_FROM": "IDR",
-        "RETRIEVE_DSR": "DR1_R1,DR1_R2",
+        prefix + "RETRIEVE_FROM": "IDR",
+        prefix + "RETRIEVE_DSR": "DR1_R1,DR1_R2",
     }
 
 
-def preset_otf():
+def preset_otf(prefix):
     """
     Retrieval parameters for on-the-fly data.
     """
     return {
-        "RETRIEVE_FROM": "OTF",
-        "RETRIEVE_DSR": "F-006",
+        prefix + "RETRIEVE_FROM": "OTF",
+        prefix + "RETRIEVE_DSR": "F-006",
     }
 
 
-def preset_datalabs():
+def preset_datalabs(prefix):
     """
     Retrieval parameters for ESA Datalabs.
     """
     return {
-        "RETRIEVE_DATA": "labs",
+        prefix + "RETRIEVE_DATA": "labs",
     }
 
 
 presets = {
+    "current": current_env,
     "q1": preset_q1,
     "dr1": preset_dr1,
     "otf": preset_otf,
@@ -104,17 +111,14 @@ def add_parser(subparsers, help):
 def run(args):
     if not args.variables:
         return list_presets(args.prefix)
-    variables = {}
+    environment = {}
     for arg in args.variables:
         if "=" in arg:
             k, v = arg.split("=")
-            k = args.prefix + k.removeprefix(args.prefix)
-            variables[k] = v
+            environment[k] = v
         else:
-            preset = presets[arg.lower()]()
-            for k in preset:
-                variables[args.prefix + k] = preset[k]
-    lines = [f"{v}={variables[v]}" for v in variables]
+            environment.update(presets[arg.lower()](args.prefix))
+    lines = [f"{e}={environment[e]}" for e in environment]
     write_pipe_args(lines)
 
 
@@ -130,5 +134,8 @@ def list_presets(prefix):
             or "No description available."
         )
         logger.header(3, desc, linebreaks=[0, 1])
-        for k in preset():
-            logger.bullet(f"{prefix+k}={preset()[k]}")
+        preset = preset(prefix)
+        if not preset:
+            logger.info("No variable defined.")
+        for k in preset:
+            logger.bullet(f"{k}={preset[k]}")
