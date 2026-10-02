@@ -19,6 +19,7 @@ Azulero |version|
    crop
    arrange
    roam
+   env
    pipelines
    python
    changes

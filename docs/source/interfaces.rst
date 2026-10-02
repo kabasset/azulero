@@ -158,7 +158,10 @@ Within the above environment, the following lines are equivalent:
    $ azul retrieve NGC6505 UGC11116 | azul process
    $ azul --log DEBUG retrieve NGC6505 UGC11116 -r 1m --from pdr | azul --log DEBUG process
 
-The variables can be set in a ``.env`` file in the directory from which the command is triggered.
+Environments can be saved as ``.env`` files for subsequent use:
+If a ``.env`` file is found in the directory from which an Azulero command is triggered,
+its variables will be exploited by the command.
+Command :doc:`env` is meant to ease the writing of such files.
 
 .. admonition:: Precedence
    :class: note

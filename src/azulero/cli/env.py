@@ -92,7 +92,10 @@ def add_parser(subparsers, help):
         "--prefix",
         default=os.environ.get("AZULERO_PREFIX", "AZUL"),
         metavar="PREFIX",
-        help="Environment variables prefix.",
+        help=(
+            "Environment variables prefix. "
+            "Defaults to the value of ``$AZULERO_PREFIX`` if defined, or ``AZUL``."
+        ),
     )
 
     parser.set_defaults(**parse_envargs("env"), func=run)
