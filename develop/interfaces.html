@@ -223,11 +223,14 @@ for further use by commands down a pipeline.</p>
 <p>For pipelining and batch processing, Azulero offers an environment-level mechanism
 for setting named options like global option <code class="docutils literal notranslate"><span class="pre">--log</span></code> or <a class="reference internal" href="retrieve.html"><span class="doc">azul retrieve</span></a> option <code class="docutils literal notranslate"><span class="pre">--from</span></code>.
 Each named option can be read from an environment variable named as follows:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="go">AZUL&lt;</span><span class="ge">COMMAND</span><span class="go">&gt;_&lt;</span><span class="ge">OPTION</span><span class="go">&gt;</span>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="go">&lt;</span><span class="ge">PREFIX</span><span class="go">&gt;&lt;</span><span class="ge">COMMAND</span><span class="go">&gt;_&lt;</span><span class="ge">OPTION</span><span class="go">&gt;</span>
 </span></code></pre></div>
 </div>
 <p>with:</p>
 <dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">&lt;PREFIX&gt;</span></code></dt><dd><p>The so-called <strong>Azulero prefix</strong>, which is defined as the value of environment variable <code class="docutils literal notranslate"><span class="pre">AZULERO_PREFIX</span></code>
+if it exists and defaults to <code class="docutils literal notranslate"><span class="pre">AZUL</span></code> otherwise.</p>
+</dd>
 <dt><code class="docutils literal notranslate"><span class="pre">&lt;COMMAND&gt;</span></code></dt><dd><p>The uppercase command name, if any, such as <code class="docutils literal notranslate"><span class="pre">RETRIEVE</span></code> or <code class="docutils literal notranslate"><span class="pre">PROCESS</span></code>,
 or nothing for global options.</p>
 </dd>
