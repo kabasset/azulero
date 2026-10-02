@@ -35,7 +35,7 @@
 <link href="_static/favicon.png" rel="icon"/>
 <link href="search.html" rel="search" title="Search"/>
 <link href="python.html" rel="next" title="Python API"/>
-<link href="roam.html" rel="prev" title="azul roam"/>
+<link href="env.html" rel="prev" title="azul env"/>
 </head>
 <body :class="{ 'overflow-hidden': showSidebar }" class="min-h-screen font-sans antialiased bg-background text-foreground" x-data="{ showSidebar: false, showScrollTop: false }">
 <div @click.self="showSidebar = false" class="fixed inset-0 z-50 overflow-hidden bg-background/80 backdrop-blur-sm md:hidden" x-cloak="" x-show="showSidebar"></div><div class="relative flex flex-col min-h-screen" id="page"><a class="absolute top-0 left-0 z-[100] block bg-background p-4 text-xl transition -translate-x-full opacity-0 focus:translate-x-0 focus:opacity-100" href="#content">
@@ -102,6 +102,7 @@
 <li class="toctree-l1"><a class="reference internal" href="crop.html"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">crop</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="arrange.html"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">arrange</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="roam.html"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">roam</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="env.html"><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">env</span></code></a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Pipelines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="python.html">Python API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changes.html">Change log</a></li>
@@ -229,7 +230,7 @@ and generate a similar output in one pipeline (there are a lot of files to downl
 <li><p>arrange renderings into a 14-column grid,</p></li>
 <li><p>display the resulting collage:</p></li>
 </ul>
-<a class="" data-lightbox="group-a1405a35-b822-4b93-8302-cac8dcae0818" data-title="" href="_images/collage_56.46762095259402,-49.45093443791871_102020055_54.36856435116159,-28.53351499365056_102043551.png" title=""><img alt="" class="" height="auto" src="_images/collage_56.46762095259402,-49.45093443791871_102020055_54.36856435116159,-28.53351499365056_102043551.png" width="100%"/>
+<a class="" data-lightbox="group-9062de88-756c-4cf5-889d-a214cae344e0" data-title="" href="_images/collage_56.46762095259402,-49.45093443791871_102020055_54.36856435116159,-28.53351499365056_102043551.png" title=""><img alt="" class="" height="auto" src="_images/collage_56.46762095259402,-49.45093443791871_102020055_54.36856435116159,-28.53351499365056_102043551.png" width="100%"/>
 </a></section>
 <section id="pipeline-clipboard-to-slideshow">
 <h2>Pipeline: Clipboard to slideshow</h2>
@@ -277,7 +278,7 @@ The pipeline will be fed by the clipboard, therefore we will just select the tab
 </span></code></pre></div>
 </div>
 <p>which gives:</p>
-<a class="" data-lightbox="group-09c88aaf-9f50-400e-80b9-71497b99f1f8" data-title="" href="_images/collage_UGC11116_102159776_LEDA2697349_102159776.png" title=""><img alt="" class="" height="auto" src="_images/collage_UGC11116_102159776_LEDA2697349_102159776.png" width="100%"/>
+<a class="" data-lightbox="group-a5878a2a-fc5f-48a4-ab1f-38eaffe09022" data-title="" href="_images/collage_UGC11116_102159776_LEDA2697349_102159776.png" title=""><img alt="" class="" height="auto" src="_images/collage_UGC11116_102159776_LEDA2697349_102159776.png" width="100%"/>
 </a><p>Since we did not pass option <code class="docutils literal notranslate"><span class="pre">-n</span> <span class="pre">1</span></code> to <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code>,
 all of the tiles which contain a target are retrieved,
 which is why there are two images of LEDA2697349.
@@ -345,11 +346,11 @@ collage -&gt; open' src="_images/plantuml-89f6e558cfca0d4a1224da1ce5abc4faf6dfd4
 </section>
 </div><div class="flex justify-between items-center pt-6 mt-12 border-t border-border gap-4">
 <div class="mr-auto">
-<a class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors border border-input hover:bg-accent hover:text-accent-foreground py-2 px-4" href="roam.html">
+<a class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors border border-input hover:bg-accent hover:text-accent-foreground py-2 px-4" href="env.html">
 <svg class="mr-2 h-4 w-4" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
 <polyline points="15 18 9 12 15 6"></polyline>
 </svg>
-        azul roam
+        azul env
       </a>
 </div>
 <div class="ml-auto">
