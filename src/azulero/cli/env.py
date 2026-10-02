@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import argparse
+from functools import lru_cache
 import os
 
 from azulero.tools.messaging import (
@@ -13,11 +14,26 @@ from azulero.tools.messaging import (
 )
 
 
+@lru_cache
+def azulero_prefix():
+    return os.environ.get("AZULERO_PREFIX", "AZUL")
+
+
+def reprefix(key, prefix):
+    if key.startswith(azulero_prefix()):
+        return prefix + key.removeprefix(azulero_prefix())
+    return key
+
+
 def current_env(prefix):
     """
     All Azulero environment variables currently defined.
     """
-    return {k: v for (k, v) in os.environ.items() if k.startswith(prefix)}
+    return {
+        reprefix(k, prefix): v
+        for (k, v) in os.environ.items()
+        if k.startswith(azulero_prefix())
+    }
 
 
 def preset_q1(prefix):
@@ -26,7 +42,7 @@ def preset_q1(prefix):
     """
     return {
         prefix + "RETRIEVE_FROM": "PDR",
-        prefix + "RETRIEVE_DSR": "Q1",
+        prefix + "RETRIEVE_DSR": "Q1_R1",
         prefix + "PROCESS_WHITE": 22.5,
         prefix + "PROCESS_STRETCH": 28.25,
         prefix + "PROCESS_BLACK": 29.0,
@@ -97,12 +113,9 @@ def add_parser(subparsers, help):
     )
     parser.add_argument(
         "--prefix",
-        default=os.environ.get("AZULERO_PREFIX", "AZUL"),
+        default=azulero_prefix(),
         metavar="PREFIX",
-        help=(
-            "Environment variables prefix. "
-            "Defaults to the value of ``$AZULERO_PREFIX`` if defined, or ``AZUL``."
-        ),
+        help="Environment variables prefix. Defaults to the Azulero prefix.",
     )
 
     parser.set_defaults(**parse_envargs("env"), func=run)
@@ -115,7 +128,7 @@ def run(args):
     for arg in args.variables:
         if "=" in arg:
             k, v = arg.split("=")
-            environment[k] = v
+            environment[reprefix(k, args.prefix)] = v
         else:
             environment.update(presets[arg.lower()](args.prefix))
     lines = [f"{e}={environment[e]}" for e in environment]

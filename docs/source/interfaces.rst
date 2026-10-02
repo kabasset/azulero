@@ -125,12 +125,15 @@ for setting named options like global option ``--log`` or :doc:`retrieve` option
 Each named option can be read from an environment variable named as follows:
 
 .. code-block:: console
-   :emphasize-text: COMMAND OPTION
+   :emphasize-text: PREFIX COMMAND OPTION
 
-   AZUL<COMMAND>_<OPTION>
+   <PREFIX><COMMAND>_<OPTION>
 
 with:
 
+``<PREFIX>``
+   The so-called **Azulero prefix**, which is defined as the value of environment variable ``AZULERO_PREFIX``
+   if it exists and defaults to ``AZUL`` otherwise.
 ``<COMMAND>``
    The uppercase command name, if any, such as ``RETRIEVE`` or ``PROCESS``,
    or nothing for global options.
