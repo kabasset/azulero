@@ -27,7 +27,7 @@ def reprefix(key, prefix):
 
 def current_env(prefix):
     """
-    All Azulero environment variables currently defined.
+    Collect all current environment variables which start with the Azulero prefix.
     """
     return {
         reprefix(k, prefix): v
@@ -36,54 +36,99 @@ def current_env(prefix):
     }
 
 
-def preset_q1(prefix):
+def preset_q1_data(prefix):
     """
-    Retrieval parameters and default processing parameters for Q1 data.
+    Retrieve Q1 data.
     """
     return {
-        prefix + "RETRIEVE_FROM": "PDR",
+        prefix + "RETRIEVE_FROM": "pdr",
         prefix + "RETRIEVE_DSR": "Q1_R1",
+    }
+
+
+def preset_q1_processing(prefix):
+    """
+    Process with Q1 default parameters.
+    """
+    return {
         prefix + "PROCESS_WHITE": 22.5,
         prefix + "PROCESS_STRETCH": 28.25,
         prefix + "PROCESS_BLACK": 29.0,
     }
 
 
-def preset_dr1(prefix):
+def preset_q1(prefix):
     """
-    Retrieval parameters for DR1 data.
+    Retrieve Q1 data and process with Q1 default parameters.
+    """
+    return {**preset_q1_data(prefix), **preset_q1_processing(prefix)}
+
+
+def preset_dr1_data(prefix):
+    """
+    Retrieve DR1 data.
     """
     return {
-        prefix + "RETRIEVE_FROM": "IDR",
         prefix + "RETRIEVE_DSR": "DR1_R1,DR1_R2",
     }
 
 
-def preset_otf(prefix):
+def preset_otf_data(prefix):
     """
-    Retrieval parameters for on-the-fly data.
+    Retrieve on-the-fly data.
     """
     return {
-        prefix + "RETRIEVE_FROM": "OTF",
+        prefix + "RETRIEVE_FROM": "otf",
         prefix + "RETRIEVE_DSR": "F-006",
+    }
+
+
+def preset_dss(prefix):
+    """
+    Retrieve on-the-fly or DR1 data from the DSS.
+    """
+    return {
+        prefix + "RETRIEVE_FROM": "dss",
+        prefix + "RETRIEVE_DSR": "F-006,DR1_R2,DR1_R1",
     }
 
 
 def preset_datalabs(prefix):
     """
-    Retrieval parameters for ESA Datalabs.
+    Retrieve from ESA Datalabs.
+    """
+    return {prefix + "RETRIEVE_DATA": "labs"}
+
+
+def preset_yjh_to_bgr(prefix):
+    """
+    Process with NIR colors only.
     """
     return {
-        prefix + "RETRIEVE_DATA": "labs",
+        prefix + "PROCESS_IB": 0,
+        prefix + "PROCESS_YG": 0,
+        prefix + "PROCESS_JR": 0,
     }
+
+
+def preset_yhj_to_lbgr(prefix):
+    """
+    Process with NIR colors and lightness only.
+    """
+    return {**preset_yjh_to_bgr(prefix), prefix + "PROCESS_NIRL": 1}
 
 
 presets = {
     "current": current_env,
+    "q1-data": preset_q1_data,
+    "q1-processing": preset_q1_processing,
     "q1": preset_q1,
-    "dr1": preset_dr1,
-    "otf": preset_otf,
+    "dr1": preset_dr1_data,
+    "otf": preset_otf_data,
+    "dss": preset_dss,
     "datalabs": preset_datalabs,
+    "yjh-bgr": preset_yjh_to_bgr,
+    "yjh-lbgr": preset_yhj_to_lbgr,
 }
 
 
@@ -142,10 +187,8 @@ def list_presets(prefix):
     for p in presets:
         preset = presets[p]
         logger.header(2, '"' + p + '"')
-        desc = (
-            preset.__doc__.removeprefix("\n").removesuffix("\n")
-            or "No description available."
-        )
+        desc = preset.__doc__ or "No description available."
+        desc = desc.removeprefix("\n").removesuffix("\n")
         logger.header(3, desc, linebreaks=[0, 1])
         preset = preset(prefix)
         if not preset:
