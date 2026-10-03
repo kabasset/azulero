@@ -9,6 +9,19 @@ def _print(text):
     sys.stderr.flush()
 
 
+def prompt_clear(text):
+    _print(text + " ")
+    return input()
+
+
+def prompt_obfuscated(text, echo_char="*"):
+    _print(text + " ")
+    try:
+        return getpass.getpass("", echo_char=echo_char)
+    except TypeError:
+        return getpass.getpass("")
+
+
 @dataclass
 class Secret:
     """
@@ -36,11 +49,7 @@ class Secret:
             echo_char:
                 The obfuscated character to display instead of input characters (if supported).
         """
-        _print(text)
-        try:
-            return cls(getpass.getpass("", echo_char=echo_char))
-        except TypeError:
-            return cls(getpass.getpass(""))
+        return cls(prompt_obfuscated(text, echo_char))
 
 
 class Auth:
@@ -64,12 +73,8 @@ class Auth:
             self.user = user
             self._prompt_password()
 
-    def _prompt_clear_text(self, text):
-        _print(text)
-        return input()
-
     def _prompt_user(self):
-        self.user = self._prompt_clear_text(f"Enter user name for host {self.host}: ")
+        self.user = prompt_clear(f"Enter user name for host {self.host}:")
 
     def _prompt_password(self):
-        self.password = Secret.prompt(f"Enter password for {self.user}@{self.host}: ")
+        self.password = Secret.prompt(f"Enter password for {self.user}@{self.host}:")

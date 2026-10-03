@@ -12,6 +12,7 @@ from azulero.tools.messaging import (
     read_pipe_args,
     write_pipe_args,
 )
+from azulero.tools.setup import setup_wizard
 
 
 @lru_cache
@@ -73,6 +74,13 @@ def preset_dr1_data(prefix):
     }
 
 
+def preset_pdr(prefix):
+    """
+    Retrieve public data.
+    """
+    return {prefix + "RETRIEVE_FROM": "pdr"}
+
+
 def preset_otf_data(prefix):
     """
     Retrieve on-the-fly data.
@@ -124,6 +132,7 @@ presets = {
     "q1-processing": preset_q1_processing,
     "q1": preset_q1,
     "dr1": preset_dr1_data,
+    "pdr": preset_pdr,
     "otf": preset_otf_data,
     "dss": preset_dss,
     "datalabs": preset_datalabs,
@@ -162,11 +171,15 @@ def add_parser(subparsers, help):
         metavar="PREFIX",
         help="Environment variables prefix. Defaults to the Azulero prefix.",
     )
+    parser.add_argument("--setup", action="store_true", help="Start the setup wizard.")
 
     parser.set_defaults(**parse_envargs("env"), func=run)
 
 
 def run(args):
+    if args.setup:
+        setup_wizard(args.workspace, args.prefix)
+        return
     if not args.variables:
         return list_presets(args.prefix)
     environment = {}
