@@ -5,8 +5,8 @@
 import os
 from pathlib import Path
 
-from azulero.tools.messaging import logger
-from azulero.tools.secret import prompt_clear, Auth
+from azulero.tools.messaging import colorize, header_color_codes, logger, clear_term
+from azulero.tools.secret import prompt_clear, prompt_obfuscated, Auth
 from azulero.tools.retry import retry
 
 
@@ -24,36 +24,58 @@ def prompt_choice(prompt, choices: list[str] = ["no", "yes"]):
 
 
 def setup_wizard(workspace: Path, prefix: str):
+
+    clear_term()
     logger.header(1, "Welcome to the setup wizard!")
-    logger.info("We are going to configure your access to the data providers.")
 
     if prompt_choice("Are you a Euclid Consortium member?"):
-        setup_euclid()
+        clear_term()
+        setup_euclid(workspace, prefix)
     else:
+        clear_term()
         setup_public(workspace, prefix)
+
+    logger.info("")
+    prompt_obfuscated("Press Enter to continue.", echo_char=None)  # Wait for Enter
+    clear_term()
+    logger.header(1, "Setup complete!")
+    logger.info(f"You can now use Azulero commands, e.g.:")
+    logger.command("azul retrieve UGC11169 -r 30s | azul process -w 0")
+    logger.info(
+        f"Don't forget to read the docs: "
+        + colorize(
+            header_color_codes[2],
+            "https://kabasset.github.io/azulero/develop/quickstart.html",
+        )
+    )
 
 
 def setup_public(workspace: Path, prefix: str):
+    logger.header(1, "Access to public data")
+    logger.header(2, "Verify the workspace")
+
     if prompt_choice(
         f"Currently configured workspace is '{str(workspace.absolute())}'. "
         f"Do you want to change it?"
     ):
         workspace = Path(prompt_clear("Please enter a new workspace:"))
     workspace.mkdir(parents=True, exist_ok=True)
-    logger.info(
-        "The following command should be run in your workspace "
-        "before working with Azulero:"
-    )
+
+    logger.header(2, "Set the data provider to 'pdr'")
+
     dotenv = workspace / ".env"
     cmd = "azul env pdr >> " + str(dotenv)
-    logger.info(cmd)
+
+    logger.info("The following command should be run before working with Azulero:")
+    logger.command(cmd)
     if prompt_choice("Do you want me to run it?"):
         with open(dotenv, "a+") as f:
             f.write(prefix + "RETRIEVE_FROM=PDR\n")
-    logger.header(1, "Setup complete!", linebreaks=[1, 0])
+    else:
+        logger.info("It's your choice!")
 
 
-def setup_euclid():
+def setup_euclid(workspace: Path, prefix: str):
     logger.warning(
         "The wizard will ask for your credentials. "
         "If you don't want to store your username or password, just press Enter."
@@ -64,7 +86,6 @@ def setup_euclid():
 
     logger.header(2, "SGS authentication")
     if prompt_choice("Are you an SGS member?"):
-        logger.info("Let us configure the EAS/DPS authentication...")
         eas_auth = setup_eas(cosmos_auth)
         write_to_netrc(eas_auth, "eas-dps-rest-ops.esac.esa.int")
         write_to_netrc(eas_auth, "euclidsoc.esac.esa.int")
@@ -83,6 +104,8 @@ def setup_eas(cosmos_auth):
 def write_to_netrc(auth: Auth, host: str = ""):
     machine = host or auth.host
     netrc = Path("~/.netrc").expanduser()  # FIXME support Windows
+
+    # FIXME check if machine already exists
 
     os.umask(0)
     descriptor = os.open(

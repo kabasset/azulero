@@ -9,12 +9,12 @@ def _print(text):
     sys.stderr.flush()
 
 
-def prompt_clear(text):
+def prompt_clear(text: str):
     _print(text + " ")
     return input()
 
 
-def prompt_obfuscated(text, echo_char="*"):
+def prompt_obfuscated(text: str, echo_char: str | None = "*"):
     _print(text + " ")
     try:
         return getpass.getpass("", echo_char=echo_char)

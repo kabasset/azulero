@@ -6,6 +6,7 @@ from functools import lru_cache
 import logging
 import os
 import shlex
+import subprocess
 import sys
 
 
@@ -58,6 +59,11 @@ def colorize(code, message):
     Add color tags to a message if stderr supports them.
     """
     return f"\x1b[{code}m{message}\x1b[0m" if supports_color() else message
+
+
+def clear_term():
+    command = ["cmd", "/c", "cls"] if os.name == "nt" else ["clear"]
+    subprocess.run(command, check=False)
 
 
 def progress_str(sequence, format="[{i}/{n}]"):
@@ -156,9 +162,7 @@ class FancyStderrLogger:
 
     def command(self, command):
         self.info("")
-        self.info("You may now run:")
-        self.info("")
-        self.info(command)
+        self.info(colorize(header_color_codes[3], command))
         self.info("")
 
 
