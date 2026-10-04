@@ -4,9 +4,17 @@
 New features
 ^^^^^^^^^^^^
 
+- New command ``azul env`` dedicated to environment setup.
+
 ``azul process``
 
 - Increase default values of options ``-a`` and ``-b`` following SNR improvement in DR1 wrt. Q1.
+
+``azul env``
+
+- Initial setup with ``--setup`` (command-line setup wizard).
+- Preset- and option-based environments.
+- Definition of multiple environments with different Azulero prefixes.
 
 Cleaning
 ^^^^^^^^

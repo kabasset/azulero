@@ -58,6 +58,19 @@ For example, to download a cutout without installing, launch:
 Setup
 -----
 
+.. tip::
+
+   The setup wizard will guide you through the initial setup.
+   It will perform the steps described in this section.
+   You can either follow the instructions below
+   or run the following command from your target Azulero workspace:
+
+   .. code-block:: console
+      :emphasize-text: --setup
+
+      $ azul env --setup
+
+
 For Euclid members
 ^^^^^^^^^^^^^^^^^^
 
