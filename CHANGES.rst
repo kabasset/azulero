@@ -11,7 +11,8 @@ New features
 Cleaning
 ^^^^^^^^
 
-- Silent runtime warning `All-NaN slice encountered`.
+- Document the use of ``.netrc`` instead of deprecated ``_netrc`` on Windows.
+- Silent runtime warning ``All-NaN slice encountered``.
 
 
 2.1.0

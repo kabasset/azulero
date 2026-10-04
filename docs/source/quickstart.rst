@@ -64,7 +64,7 @@ For Euclid members
 Accessing public data requires no configuration.
 
 Internal data retrieval requires authentication,
-which can be set up in the netrc configuration file (``~/.netrc`` on Unix, ``%HOMEPATH%\_netrc`` on Windows) as follows:
+which can be set up in the netrc configuration file (``~/.netrc`` on Unix, ``%HOMEPATH%\.netrc`` on Windows) as follows:
 
 * For internal SAS data, use your LDAP credentials:
 

@@ -103,7 +103,7 @@ def setup_eas(cosmos_auth):
 
 def write_to_netrc(auth: Auth, host: str = ""):
     machine = host or auth.host
-    netrc = Path("~/.netrc").expanduser()  # FIXME support Windows
+    netrc = Path.home() / ".netrc"
 
     # FIXME check if machine already exists
 
