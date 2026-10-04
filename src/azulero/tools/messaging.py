@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from functools import lru_cache
+import getpass
 import logging
 import os
 import shlex
@@ -120,6 +121,7 @@ class FancyStderrLogger:
 
     def __init__(self, name="azulero"):
         self._logger = logging.getLogger(name)
+        self._empty_line = False
         handler = logging.StreamHandler(sys.stderr)
         handler.setFormatter(_LogFormatter(self._logger))
         self._logger.addHandler(handler)
@@ -132,20 +134,29 @@ class FancyStderrLogger:
     def level(self, value):
         self._logger.setLevel(value)
 
+    def _log(self, level, message):
+        if message:
+            self._empty_line = False
+        elif self._empty_line:
+            return
+        else:
+            self._empty_line = True
+        self._logger.log(level, message)
+
     def debug(self, message):
-        self._logger.debug(message)
+        self._log(logging.DEBUG, message)
 
     def info(self, message):
-        self._logger.info(message)
+        self._log(logging.INFO, message)
 
     def warning(self, message):
-        self._logger.warning(message)
+        self._log(logging.WARNING, message)
 
     def error(self, message):
-        self._logger.error(message)
+        self._log(logging.ERROR, message)
 
     def critical(self, message):
-        self._logger.critical(message)
+        self._log(logging.CRITICAL, message)
 
     def exception(self, message):
         self._logger.exception(message)
@@ -164,6 +175,22 @@ class FancyStderrLogger:
         self.info("")
         self.info(colorize(header_color_codes[3], command))
         self.info("")
+
+    def _print(self, text):
+        sys.stderr.write(text)
+        sys.stderr.flush()
+        self._empty_line = False
+
+    def prompt_clear(self, text: str):
+        self._print(text + " ")
+        return input()
+
+    def prompt_obfuscated(self, text: str, echo_char: str | None = "*"):
+        self._print(text + " ")
+        try:
+            return getpass.getpass("", echo_char=echo_char)
+        except TypeError:
+            return getpass.getpass("")
 
 
 logger = FancyStderrLogger()  #: Azulero logger

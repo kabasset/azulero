@@ -1,25 +1,7 @@
 from dataclasses import dataclass
-import getpass
 import netrc
-import sys
 
-
-def _print(text):
-    sys.stderr.write(text)
-    sys.stderr.flush()
-
-
-def prompt_clear(text: str):
-    _print(text + " ")
-    return input()
-
-
-def prompt_obfuscated(text: str, echo_char: str | None = "*"):
-    _print(text + " ")
-    try:
-        return getpass.getpass("", echo_char=echo_char)
-    except TypeError:
-        return getpass.getpass("")
+from azulero.tools.messaging import logger
 
 
 @dataclass
@@ -49,7 +31,7 @@ class Secret:
             echo_char:
                 The obfuscated character to display instead of input characters (if supported).
         """
-        return cls(prompt_obfuscated(text, echo_char))
+        return cls(logger.prompt_obfuscated(text, echo_char))
 
 
 class Auth:
@@ -74,7 +56,7 @@ class Auth:
             self._prompt_password()
 
     def _prompt_user(self):
-        self.user = prompt_clear(f"Enter user name for host {self.host}:")
+        self.user = logger.prompt_clear(f"Enter user name for host {self.host}:")
 
     def _prompt_password(self):
         self.password = Secret.prompt(f"Enter password for {self.user}@{self.host}:")

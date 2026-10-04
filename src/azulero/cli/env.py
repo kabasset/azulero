@@ -194,15 +194,13 @@ def run(args):
 
 
 def list_presets(prefix):
-    logger.header(
-        1, "Available presets (name, description, variables)", linebreaks=[1, 0]
-    )
+    logger.header(1, "Available presets (name, description, variables)")
     for p in presets:
         preset = presets[p]
         logger.header(2, '"' + p + '"')
         desc = preset.__doc__ or "No description available."
         desc = desc.removeprefix("\n").removesuffix("\n")
-        logger.header(3, desc, linebreaks=[0, 1])
+        logger.header(3, desc)
         preset = preset(prefix)
         if not preset:
             logger.info("No variable defined.")

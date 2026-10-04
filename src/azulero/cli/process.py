@@ -252,7 +252,7 @@ def run(args):
 
 def process_target(ios: Workspace, arg: str, transform: color.Transform):
 
-    logger.header(1, f"Target: {arg}", linebreaks=[1, 0])
+    logger.header(1, f"Target: {arg}")
 
     target, slicing = parsing.parse_target(arg)
     parts = list(Path(target).parts)

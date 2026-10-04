@@ -186,7 +186,7 @@ def run(args):
         write_pipe_args([t.tile.index for t in targets])
         return
 
-    logger.header(1, "Retrieve targets", linebreaks=[1, 0])
+    logger.header(1, "Retrieve targets")
 
     for progress, t in progress_str(targets):
 

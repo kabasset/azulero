@@ -6,7 +6,7 @@ import os
 from pathlib import Path
 
 from azulero.tools.messaging import colorize, header_color_codes, logger, clear_term
-from azulero.tools.secret import prompt_clear, prompt_obfuscated, Auth
+from azulero.tools.secret import Auth
 from azulero.tools.retry import retry
 
 
@@ -16,7 +16,7 @@ def choice_str(choices: list[str]):
 
 @retry(2, logger=logger)
 def prompt_choice(prompt, choices: list[str] = ["no", "yes"]):
-    answer = prompt_clear(prompt + " [" + "/".join(choices) + "]")
+    answer = logger.prompt_clear(prompt + " [" + "/".join(choices) + "]")
     try:
         return choices.index(answer)
     except ValueError:
@@ -36,7 +36,7 @@ def setup_wizard(workspace: Path, prefix: str):
         setup_public(workspace, prefix)
 
     logger.info("")
-    prompt_obfuscated("Press Enter to continue.", echo_char=None)  # Wait for Enter
+    logger.prompt_obfuscated("Press Enter to continue.", echo_char=None)
     clear_term()
     logger.header(1, "Setup complete!")
     logger.info(f"You can now use Azulero commands, e.g.:")
@@ -58,7 +58,7 @@ def setup_public(workspace: Path, prefix: str):
         f"Currently configured workspace is '{str(workspace.absolute())}'. "
         f"Do you want to change it?"
     ):
-        workspace = Path(prompt_clear("Please enter a new workspace:"))
+        workspace = Path(logger.prompt_clear("Please enter a new workspace:"))
     workspace.mkdir(parents=True, exist_ok=True)
 
     logger.header(2, "Set the data provider to 'pdr'")

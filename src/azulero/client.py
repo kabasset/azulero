@@ -116,7 +116,7 @@ def log_args(args):
 
 
 def log_citation():
-    logger.header(1, "Citation", linebreaks=[0, 0])
+    logger.header(1, "Citation")
 
     logger.header(
         2, "If you publish images rendered with this software, please credit:"
