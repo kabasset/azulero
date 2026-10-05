@@ -277,6 +277,7 @@ def write_rgb(
 def write_normalized_bgr(
     path: Path, bgr: np.ndarray, wcs: WCS | None, bits=0
 ) -> Path | None:
+    bgr = np.clip(bgr, 0, 1)
     if bits == 0:
         bits = 16 if standard_extension(path) == ".tiff" else 8
     if bits == 1:

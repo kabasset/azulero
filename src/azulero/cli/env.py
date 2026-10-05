@@ -134,18 +134,19 @@ def preset_adjust_not(prefix):
     """
     return {
         prefix + "PROCESS_HUE": 0,
-        prefix + "PROCESS_SATURATION": 0,
-        prefix + "PROCESS_CURVES": "",
+        prefix + "PROCESS_SATURATION": 1,
+        prefix + "PROCESS_CURVES": [],
     }
 
 
 def preset_process_heavy(prefix):
     """
-    Process more aggressively.
+    Process more aggressively (heavier sharpening, saturation, overflow clipping).
     """
     return {
         prefix + "PROCESS_FWHM": tuple(w * 1.5 for w in default_transform.iyjh_fwhm),
-        prefix + "PROCESS_SATURATION": 1.6,
+        prefix + "PROCESS_SHARPEN": 0.7,
+        prefix + "PROCESS_SATURATION": 1.4,
         prefix + "PROCESS_OVERFLOW": 0.1,
     }
 
