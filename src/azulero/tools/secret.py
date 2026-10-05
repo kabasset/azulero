@@ -52,8 +52,11 @@ class Auth:
             else:
                 self.password = Secret(auth[2])
         else:
-            self.user = user
-            self._prompt_password()
+            self.user, _, password = user.partition(":")
+            if password:
+                self.password = Secret(password)
+            else:
+                self._prompt_password()
 
     def _prompt_user(self):
         self.user = logger.prompt_clear(f"Enter user name for host {self.host}:")

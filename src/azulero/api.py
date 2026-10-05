@@ -25,13 +25,22 @@ Args:
 
 class DataProvider:
     """
-    Data provider.
+    Data provider factory.
 
     Args:
         name: The data provider name.
-        user: The data provider user name (optional if the netrc file was set up).
-        data_store: The data store name (use ``"labs"`` in ESA Datalabs).
+        user: The data provider user name.
+        data_store: The data store name (use ``"labs"`` for ESA Datalabs).
         tiling_file: The tiling Geojson file, for optimization purpose.
+
+    For public data provider ``"pdr"``, authentication is skipped.
+    For other providers:
+
+    * If ``name`` is empty, Azulero looks for a ``.netrc`` file.
+      If none is found or the user name or password is missing for the data provider,
+      you will be prompted for your user name or password.
+    * If ``name`` contains a colon, it is considered a separator between the user name and password.
+      Otherwise, you will be prompted for the password associated to the given user name.
     """
 
     def __init__(
