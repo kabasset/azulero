@@ -175,17 +175,26 @@ For example, assuming the photometric channels are NumPy arrays <code class="doc
 <dd><em class="sig-param"><span class="n"><span class="pre">tiling_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 </dl>
 <span class="sig-paren">)</span></dt>
-<dd><p>Data provider.</p>
+<dd><p>Data provider factory.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>name</strong> – The data provider name.</p></li>
-<li><p><strong>user</strong> – The data provider user name (optional if the netrc file was set up).</p></li>
-<li><p><strong>data_store</strong> – The data store name (use <code class="docutils literal notranslate"><span class="pre">"labs"</span></code> in ESA Datalabs).</p></li>
+<li><p><strong>user</strong> – The data provider user name.</p></li>
+<li><p><strong>data_store</strong> – The data store name (use <code class="docutils literal notranslate"><span class="pre">"labs"</span></code> for ESA Datalabs).</p></li>
 <li><p><strong>tiling_file</strong> – The tiling Geojson file, for optimization purpose.</p></li>
 </ul>
 </dd>
 </dl>
+<p>For public data provider <code class="docutils literal notranslate"><span class="pre">"pdr"</span></code>, authentication is skipped.
+For other providers:</p>
+<ul class="simple">
+<li><p>If <code class="docutils literal notranslate"><span class="pre">name</span></code> is empty, Azulero looks for a <code class="docutils literal notranslate"><span class="pre">.netrc</span></code> file.
+If none is found or the user name or password is missing for the data provider,
+you will be prompted for your user name or password.</p></li>
+<li><p>If <code class="docutils literal notranslate"><span class="pre">name</span></code> contains a colon, it is considered a separator between the user name and password.
+Otherwise, you will be prompted for the password associated to the given user name.</p></li>
+</ul>
 <dl class="py method">
 <dt class="sig sig-object py" id="azulero.api.DataProvider.download_cutouts">
 <span class="sig-name descname"><span class="pre">download_cutouts</span></span><span class="sig-paren">(</span>
@@ -446,7 +455,7 @@ in order to locate the SIF files.</p></li>
 </div><footer class="py-6 border-t border-border md:py-0">
 <div class="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
 <div class="flex flex-col items-center gap-4 px-8 md:flex-row md:gap-2 md:px-0">
-<p class="text-sm leading-loose text-center text-muted-foreground md:text-left">© 2025-2026, Antoine Basset (CNES) and contributors. Last updated: Oct 04, 2026. Built with <a class="font-medium underline underline-offset-4" href="https://www.sphinx-doc.org" rel="noreferrer">Sphinx 9.1.0</a></p>
+<p class="text-sm leading-loose text-center text-muted-foreground md:text-left">© 2025-2026, Antoine Basset (CNES) and contributors. Last updated: Oct 05, 2026. Built with <a class="font-medium underline underline-offset-4" href="https://www.sphinx-doc.org" rel="noreferrer">Sphinx 9.1.0</a></p>
 </div>
 </div>
 </footer>
