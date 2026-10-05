@@ -123,6 +123,19 @@
 <div id="content" role="main">
 <section id="what-s-new">
 <h1>What’s new</h1>
+<section id="version-2-2">
+<h2>Version 2.2</h2>
+<p>This version simplifies <strong>environment management</strong>:</p>
+<ul class="simple">
+<li><p>For first-time users, new command <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">env</span> <span class="pre">--setup</span></code> opens a setup wizard.</p></li>
+<li><p>For regular users, new command <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">env</span></code> aims at specifying multiple environments
+made of both predefined and arbitrary variables.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">env</span> <span class="pre">q1</span></code> optimizes processing parameters for Q1 data,
+therefore we updated the default parameters to match the improved signal-to-noise ratio of DR1 data.</p></li>
+<li><p>Finally, the <a class="reference internal" href="python.html"><span class="doc">Python API</span></a> supports passing of both user name and password (as option <code class="docutils literal notranslate"><span class="pre">user=f"{name}:{password}"</span></code>)
+to the data provider factory in case they were already stored in Python variables.</p></li>
+</ul>
+</section>
 <section id="version-2-1">
 <h2>Version 2.1</h2>
 <p>This version is the result of taking into account the feedback of v2.0’s users; thank you all!</p>
@@ -221,6 +234,7 @@ Here is an overview (for more details, see the <a class="reference internal" hre
 </div></div><aside class="hidden text-sm xl:block" id="right-sidebar">
 <div class="sticky top-16 -mt-10 max-h-[calc(100vh-5rem)] h-full overflow-y-auto pt-6 space-y-2"><p class="font-medium">On this page</p>
 <ul>
+<li><a :data-current="activeSection === '#version-2-2'" class="reference internal" href="#version-2-2">Version 2.2</a></li>
 <li><a :data-current="activeSection === '#version-2-1'" class="reference internal" href="#version-2-1">Version 2.1</a></li>
 <li><a :data-current="activeSection === '#version-2-0'" class="reference internal" href="#version-2-0">Version 2.0</a></li>
 </ul>
