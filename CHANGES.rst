@@ -16,6 +16,10 @@ New features
 - Preset- and option-based environments.
 - Definition of multiple environments with different Azulero prefixes.
 
+Python API
+
+- Data provider user password can be passed to the factory as ``"name:password"``.
+
 Cleaning
 ^^^^^^^^
 

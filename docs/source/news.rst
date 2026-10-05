@@ -1,6 +1,19 @@
 What's new
 ==========
 
+Version 2.2
+-----------
+
+This version simplifies **environment management**:
+
+* For first-time users, new command ``azul env --setup`` opens a setup wizard.
+* For regular users, new command ``azul env`` aims at specifying multiple environments
+  made of both predefined and arbitrary variables.
+* ``azul env q1`` optimizes processing parameters for Q1 data,
+  therefore we updated the default parameters to match the improved signal-to-noise ratio of DR1 data.
+* Finally, the :doc:`python` supports passing of both user name and password (as option ``user=f"{name}:{password}"``)
+  to the data provider factory in case they were already stored in Python variables.
+
 Version 2.1
 -----------
 
