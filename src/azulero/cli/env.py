@@ -6,6 +6,7 @@ import argparse
 from functools import lru_cache
 import os
 
+from azulero.cli.process import default_transform, default_workspace
 from azulero.tools.messaging import (
     logger,
     parse_envargs,
@@ -116,6 +117,7 @@ def preset_yjh_to_bgr(prefix):
         prefix + "PROCESS_IB": 0,
         prefix + "PROCESS_YG": 0,
         prefix + "PROCESS_JR": 0,
+        prefix + "PROCESS_HUE": 0,
     }
 
 
@@ -124,6 +126,48 @@ def preset_yhj_to_lbgr(prefix):
     Process with NIR colors and lightness only.
     """
     return {**preset_yjh_to_bgr(prefix), prefix + "PROCESS_NIRL": 1}
+
+
+def preset_adjust_not(prefix):
+    """
+    Process without adjustment (hue shift, saturation gain, curves).
+    """
+    return {
+        prefix + "PROCESS_HUE": 0,
+        prefix + "PROCESS_SATURATION": 0,
+        prefix + "PROCESS_CURVES": "",
+    }
+
+
+def preset_process_heavy(prefix):
+    """
+    Process more aggressively.
+    """
+    return {
+        prefix + "PROCESS_FWHM": tuple(w * 1.5 for w in default_transform.iyjh_fwhm),
+        prefix + "PROCESS_SATURATION": 1.6,
+        prefix + "PROCESS_OVERFLOW": 0.1,
+    }
+
+
+def preset_process_jpg(prefix):
+    """
+    Process as JPG.
+    """
+    return {
+        prefix
+        + "PROCESS_OUTPUT": default_workspace.output_template.replace(".tiff", ".jpg")
+    }
+
+
+def preset_process_png(prefix):
+    """
+    Process as PNG.
+    """
+    return {
+        prefix
+        + "PROCESS_OUTPUT": default_workspace.output_template.replace(".tiff", ".png")
+    }
 
 
 presets = {
@@ -138,6 +182,10 @@ presets = {
     "datalabs": preset_datalabs,
     "yjh-bgr": preset_yjh_to_bgr,
     "yjh-lbgr": preset_yhj_to_lbgr,
+    "adjust-not": preset_adjust_not,
+    "process-heavy": preset_process_heavy,
+    "process-jpg": preset_process_jpg,
+    "process-png": preset_process_png,
 }
 
 
