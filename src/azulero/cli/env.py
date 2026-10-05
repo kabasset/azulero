@@ -238,7 +238,7 @@ def run(args):
         else:
             environment.update(presets[arg.lower()](args.prefix))
     lines = [f"{e}={environment[e]}" for e in environment]
-    write_pipe_args(lines)
+    write_pipe_args(lines, sh=False)
 
 
 def list_presets(prefix):

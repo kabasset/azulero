@@ -32,13 +32,14 @@ def read_pipe_args():
     return []
 
 
-def write_pipe_args(args, log=True):
+def write_pipe_args(args, log=True, sh=True):
     if args and log:
         logger.header(1, "Output")
         for a in args:
             logger.bullet(str(a))
     if not sys.stdout.isatty():
-        print("\n".join(shlex.quote(str(a)) for a in args))
+        encode = lambda a: shlex.quote(str(a)) if sh else str(a)
+        print("\n".join(encode(a) for a in args))
         return True
     return False
 
