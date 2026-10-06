@@ -27,10 +27,9 @@ For example, assuming the photometric channels are NumPy arrays ``i, y, j h``, t
 
    In addition, color images have a third axis:
 
-   2. color axis ordered as Blue, Green, Red.
+   2. Color axis ordered as **Blue, Green, Red**.
 
-For convenience, ``azul retrieve`` features have also been ported to the API, as class ``DataProvider``
-(argument ``data="labs"`` triggers Datalabs retrieval mode, see :doc:`retrieve`):
+For convenience, ``azul retrieve`` features have also been ported to the API, as class ``DataProvider``:
 
 .. code-block:: python
    :emphasize-text: azulero api DataProvider query_coord_tiles query_tile_datafiles download_cutouts
@@ -42,7 +41,7 @@ For convenience, ``azul retrieve`` features have also been ported to the API, as
    coord = SkyCoord.from_name("NGC6505")
    radius = Angle("30s")
 
-   provider = azul.DataProvider("PDR", data="labs")
+   provider = azul.DataProvider("pdr")
    tiles = provider.query_coord_tiles(coord, ["Q1_R1"])
    datafiles = provider.query_tile_datafiles(tiles[0])
    provider.download_cutouts(datafiles, Path("workdir"), coord, radius)

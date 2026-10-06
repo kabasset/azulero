@@ -17,9 +17,9 @@ Tile attributes.
 
 Args:
     index: The tile index.
-    mode: The survey mode.
-    dsr: The Dataset Release name.
-    distance: The optional distance to target.
+    mode: The survey mode (or ``"UNKNOWN"`` if unknown).
+    dsr: The Dataset Release name (or ``"UNKNOWN"`` if unknown).
+    distance: The distance to target (or 0 if unknown).
 """
 
 
@@ -28,19 +28,19 @@ class DataProvider:
     Data provider factory.
 
     Args:
-        name: The data provider name.
-        user: The data provider user name.
+        name: The data provider name (see :doc:`retrieve`).
+        user: The data provider user (see below).
         data_store: The data store name (use ``"labs"`` for ESA Datalabs).
-        tiling_file: The tiling Geojson file, for optimization purpose.
+        tiling_file: The tiling Geojson file, for optimization purpose (see :doc:`retrieve`).
 
     For public data provider ``"pdr"``, authentication is skipped.
     For other providers:
 
-    * If ``name`` is empty, Azulero looks for a ``.netrc`` file.
+    * If ``user`` is empty, Azulero looks for a ``.netrc`` file.
       If none is found or the user name or password is missing for the data provider,
       you will be prompted for your user name or password.
-    * If ``name`` contains a colon, it is considered a separator between the user name and password.
-      Otherwise, you will be prompted for the password associated to the given user name.
+    * If ``user`` contains a colon (e.g. ``"janedoe:123Eguzki!"``), it is considered a separator between the user name and password.
+      Otherwise, you will be prompted for the password associated with the given user name.
     """
 
     def __init__(
@@ -66,7 +66,7 @@ class DataProvider:
         Args:
             coord: The target coordinate.
             dsrs: The ordered list of dataset releases.
-            modes: The ordered list of processing modes (`"UNKNOWN"` is required for dataset release `"Q1_R1"`).
+            modes: The ordered list of processing modes (``"UNKNOWN"`` is required for dataset release ``"Q1_R1"``).
 
         Returns:
             The list of tiles.
@@ -79,7 +79,7 @@ class DataProvider:
         Query the datafiles of a tile.
 
         Args:
-            tile: The tile attributes including index and Dataset Release name.
+            tile: The tile attributes including index and Dataset Release name (survey mode and distance are ignored).
 
         Returns:
             The list of file names.
@@ -97,7 +97,7 @@ class DataProvider:
 
         Args:
             datafiles: The list of datafile names.
-            workdir: The destination directory.
+            workdir: The destination directory (will be created if missing).
             overwrite: Boolean flag to enable or disable overwriting.
 
         Returns:
@@ -135,7 +135,7 @@ class DataProvider:
 
 Transform = color.Transform
 """
-Transformation parameters.
+Transformation parameters (see :doc:`process`).
 
 Args:
     inpaint_edges: Enable edge inpainting.
@@ -177,7 +177,7 @@ def read_iyjh(
             The channel names.
             For a MEF file, the extension names must match the channel names.
         template:
-            The glob pattern template in which `{channel}` will be substituted by the channel names,
+            The glob pattern template in which ``{channel}`` will be substituted by the channel names,
             in order to locate the SIF files.
 
     Returns:
@@ -194,7 +194,7 @@ def process_iyjh(
 ) -> np.ndarray:
     """
     Process an image according to transformation parameters,
-    optionally save the rendered color image.
+    optionally save the rendered color image (see :doc:`process`).
 
     Args:
         iyjh:

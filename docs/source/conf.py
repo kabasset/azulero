@@ -198,3 +198,4 @@ html_theme_options = {
 
 maximum_signature_line_length = 1
 autodoc_preserve_defaults = True
+autodoc_member_order = "bysource"
