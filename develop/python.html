@@ -144,11 +144,10 @@ For example, assuming the photometric channels are NumPy arrays <code class="doc
 </ol>
 <p>In addition, color images have a third axis:</p>
 <ol class="arabic simple" start="2">
-<li><p>color axis ordered as Blue, Green, Red.</p></li>
+<li><p>Color axis ordered as <strong>Blue, Green, Red</strong>.</p></li>
 </ol>
 </div>
-<p>For convenience, <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code> features have also been ported to the API, as class <code class="docutils literal notranslate"><span class="pre">DataProvider</span></code>
-(argument <code class="docutils literal notranslate"><span class="pre">data="labs"</span></code> triggers Datalabs retrieval mode, see <a class="reference internal" href="retrieve.html"><span class="doc">azul retrieve</span></a>):</p>
+<p>For convenience, <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code> features have also been ported to the API, as class <code class="docutils literal notranslate"><span class="pre">DataProvider</span></code>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="kn">from</span><span class="w"> </span><span class="nn">astropy.coordinates</span><span class="w"> </span><span class="kn">import</span> <span class="n">Angle</span><span class="p">,</span> <span class="n">SkyCoord</span>
 </span><span id="line-2"><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 </span><span id="line-3"><span class="kn">import</span><span class="w"> </span><span class="ge">azulero</span><span class="nn">.</span><span class="ge">api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">azul</span>
@@ -156,7 +155,7 @@ For example, assuming the photometric channels are NumPy arrays <code class="doc
 </span><span id="line-5"><span class="n">coord</span> <span class="o">=</span> <span class="n">SkyCoord</span><span class="o">.</span><span class="n">from_name</span><span class="p">(</span><span class="s2">"NGC6505"</span><span class="p">)</span>
 </span><span id="line-6"><span class="n">radius</span> <span class="o">=</span> <span class="n">Angle</span><span class="p">(</span><span class="s2">"30s"</span><span class="p">)</span>
 </span><span id="line-7">
-</span><span id="line-8"><span class="n">provider</span> <span class="o">=</span> <span class="n">azul</span><span class="o">.</span><span class="ge">DataProvider</span><span class="p">(</span><span class="s2">"PDR"</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="s2">"labs"</span><span class="p">)</span>
+</span><span id="line-8"><span class="n">provider</span> <span class="o">=</span> <span class="n">azul</span><span class="o">.</span><span class="ge">DataProvider</span><span class="p">(</span><span class="s2">"pdr"</span><span class="p">)</span>
 </span><span id="line-9"><span class="n">tiles</span> <span class="o">=</span> <span class="n">provider</span><span class="o">.</span><span class="ge">query_coord_tiles</span><span class="p">(</span><span class="n">coord</span><span class="p">,</span> <span class="p">[</span><span class="s2">"Q1_R1"</span><span class="p">])</span>
 </span><span id="line-10"><span class="n">datafiles</span> <span class="o">=</span> <span class="n">provider</span><span class="o">.</span><span class="ge">query_tile_datafiles</span><span class="p">(</span><span class="n">tiles</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 </span><span id="line-11"><span class="n">provider</span><span class="o">.</span><span class="ge">download_cutouts</span><span class="p">(</span><span class="n">datafiles</span><span class="p">,</span> <span class="n">Path</span><span class="p">(</span><span class="s2">"workdir"</span><span class="p">),</span> <span class="n">coord</span><span class="p">,</span> <span class="n">radius</span><span class="p">)</span>
@@ -165,6 +164,28 @@ For example, assuming the photometric channels are NumPy arrays <code class="doc
 </section>
 <section id="module-azulero.api">
 <span id="api-reference"></span><h2>API reference</h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="azulero.api.Tile">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">azulero.api.</span></span><span class="sig-name descname"><span class="pre">Tile</span></span><span class="sig-paren">(</span>
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'UNKNOWN'</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">dsr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'UNKNOWN'</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">distance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>,</dd>
+</dl>
+<span class="sig-paren">)</span></dt>
+<dd><p>Tile attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>index</strong> – The tile index.</p></li>
+<li><p><strong>mode</strong> – The survey mode (or <code class="docutils literal notranslate"><span class="pre">"UNKNOWN"</span></code> if unknown).</p></li>
+<li><p><strong>dsr</strong> – The Dataset Release name (or <code class="docutils literal notranslate"><span class="pre">"UNKNOWN"</span></code> if unknown).</p></li>
+<li><p><strong>distance</strong> – The distance to target (or 0 if unknown).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 <dl class="py class">
 <dt class="sig sig-object py" id="azulero.api.DataProvider">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">azulero.api.</span></span><span class="sig-name descname"><span class="pre">DataProvider</span></span><span class="sig-paren">(</span>
@@ -179,22 +200,85 @@ For example, assuming the photometric channels are NumPy arrays <code class="doc
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> – The data provider name.</p></li>
-<li><p><strong>user</strong> – The data provider user name.</p></li>
+<li><p><strong>name</strong> – The data provider name (see <a class="reference internal" href="retrieve.html"><span class="doc">azul retrieve</span></a>).</p></li>
+<li><p><strong>user</strong> – The data provider user (see below).</p></li>
 <li><p><strong>data_store</strong> – The data store name (use <code class="docutils literal notranslate"><span class="pre">"labs"</span></code> for ESA Datalabs).</p></li>
-<li><p><strong>tiling_file</strong> – The tiling Geojson file, for optimization purpose.</p></li>
+<li><p><strong>tiling_file</strong> – The tiling Geojson file, for optimization purpose (see <a class="reference internal" href="retrieve.html"><span class="doc">azul retrieve</span></a>).</p></li>
 </ul>
 </dd>
 </dl>
 <p>For public data provider <code class="docutils literal notranslate"><span class="pre">"pdr"</span></code>, authentication is skipped.
 For other providers:</p>
 <ul class="simple">
-<li><p>If <code class="docutils literal notranslate"><span class="pre">name</span></code> is empty, Azulero looks for a <code class="docutils literal notranslate"><span class="pre">.netrc</span></code> file.
+<li><p>If <code class="docutils literal notranslate"><span class="pre">user</span></code> is empty, Azulero looks for a <code class="docutils literal notranslate"><span class="pre">.netrc</span></code> file.
 If none is found or the user name or password is missing for the data provider,
 you will be prompted for your user name or password.</p></li>
-<li><p>If <code class="docutils literal notranslate"><span class="pre">name</span></code> contains a colon, it is considered a separator between the user name and password.
-Otherwise, you will be prompted for the password associated to the given user name.</p></li>
+<li><p>If <code class="docutils literal notranslate"><span class="pre">user</span></code> contains a colon (e.g. <code class="docutils literal notranslate"><span class="pre">"janedoe:123Eguzki!"</span></code>), it is considered a separator between the user name and password.
+Otherwise, you will be prompted for the password associated with the given user name.</p></li>
 </ul>
+<dl class="py method">
+<dt class="sig sig-object py" id="azulero.api.DataProvider.query_coord_tiles">
+<span class="sig-name descname"><span class="pre">query_coord_tiles</span></span><span class="sig-paren">(</span>
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">coord</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SkyCoord</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">dsrs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">modes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">['DEEP',</span> <span class="pre">'WIDE',</span> <span class="pre">'UNKNOWN']</span></span></em>,</dd>
+</dl>
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#azulero.api.Tile" title="azulero.providers.tiling.Tile"><span class="pre">Tile</span></a><span class="p"><span class="pre">]</span></span></span></span></dt>
+<dd><p>Query the list of tiles which contain a given coordinate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>coord</strong> – The target coordinate.</p></li>
+<li><p><strong>dsrs</strong> – The ordered list of dataset releases.</p></li>
+<li><p><strong>modes</strong> – The ordered list of processing modes (<code class="docutils literal notranslate"><span class="pre">"UNKNOWN"</span></code> is required for dataset release <code class="docutils literal notranslate"><span class="pre">"Q1_R1"</span></code>).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The list of tiles.</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="azulero.api.DataProvider.query_tile_datafiles">
+<span class="sig-name descname"><span class="pre">query_tile_datafiles</span></span><span class="sig-paren">(</span>
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">tile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#azulero.api.Tile" title="azulero.providers.tiling.Tile"><span class="pre">Tile</span></a></span></em>,</dd>
+</dl>
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span></dt>
+<dd><p>Query the datafiles of a tile.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>tile</strong> – The tile attributes including index and Dataset Release name (survey mode and distance are ignored).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The list of file names.</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="azulero.api.DataProvider.download_datafiles">
+<span class="sig-name descname"><span class="pre">download_datafiles</span></span><span class="sig-paren">(</span>
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">datafiles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">workdir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>,</dd>
+</dl>
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></span></dt>
+<dd><p>Download and decompress datafiles of an entire tile.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>datafiles</strong> – The list of datafile names.</p></li>
+<li><p><strong>workdir</strong> – The destination directory (will be created if missing).</p></li>
+<li><p><strong>overwrite</strong> – Boolean flag to enable or disable overwriting.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The resulting list of datafile paths.</p>
+</dd>
+</dl>
+</dd></dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="azulero.api.DataProvider.download_cutouts">
 <span class="sig-name descname"><span class="pre">download_cutouts</span></span><span class="sig-paren">(</span>
@@ -222,91 +306,6 @@ Otherwise, you will be prompted for the password associated to the given user na
 </dd>
 </dl>
 </dd></dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="azulero.api.DataProvider.download_datafiles">
-<span class="sig-name descname"><span class="pre">download_datafiles</span></span><span class="sig-paren">(</span>
-<dl>
-<dd><em class="sig-param"><span class="n"><span class="pre">datafiles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">workdir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>,</dd>
-</dl>
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></span></dt>
-<dd><p>Download and decompress datafiles of an entire tile.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>datafiles</strong> – The list of datafile names.</p></li>
-<li><p><strong>workdir</strong> – The destination directory.</p></li>
-<li><p><strong>overwrite</strong> – Boolean flag to enable or disable overwriting.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The resulting list of datafile paths.</p>
-</dd>
-</dl>
-</dd></dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="azulero.api.DataProvider.query_coord_tiles">
-<span class="sig-name descname"><span class="pre">query_coord_tiles</span></span><span class="sig-paren">(</span>
-<dl>
-<dd><em class="sig-param"><span class="n"><span class="pre">coord</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SkyCoord</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">dsrs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">modes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">['DEEP',</span> <span class="pre">'WIDE',</span> <span class="pre">'UNKNOWN']</span></span></em>,</dd>
-</dl>
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#azulero.api.Tile" title="azulero.providers.tiling.Tile"><span class="pre">Tile</span></a><span class="p"><span class="pre">]</span></span></span></span></dt>
-<dd><p>Query the list of tiles which contain a given coordinate.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>coord</strong> – The target coordinate.</p></li>
-<li><p><strong>dsrs</strong> – The ordered list of dataset releases.</p></li>
-<li><p><strong>modes</strong> – The ordered list of processing modes (<cite>“UNKNOWN”</cite> is required for dataset release <cite>“Q1_R1”</cite>).</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The list of tiles.</p>
-</dd>
-</dl>
-</dd></dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="azulero.api.DataProvider.query_tile_datafiles">
-<span class="sig-name descname"><span class="pre">query_tile_datafiles</span></span><span class="sig-paren">(</span>
-<dl>
-<dd><em class="sig-param"><span class="n"><span class="pre">tile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#azulero.api.Tile" title="azulero.providers.tiling.Tile"><span class="pre">Tile</span></a></span></em>,</dd>
-</dl>
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span></dt>
-<dd><p>Query the datafiles of a tile.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>tile</strong> – The tile attributes including index and Dataset Release name.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The list of file names.</p>
-</dd>
-</dl>
-</dd></dl>
-</dd></dl>
-<dl class="py class">
-<dt class="sig sig-object py" id="azulero.api.Tile">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">azulero.api.</span></span><span class="sig-name descname"><span class="pre">Tile</span></span><span class="sig-paren">(</span>
-<dl>
-<dd><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'UNKNOWN'</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">dsr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'UNKNOWN'</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">distance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>,</dd>
-</dl>
-<span class="sig-paren">)</span></dt>
-<dd><p>Tile attributes.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>index</strong> – The tile index.</p></li>
-<li><p><strong>mode</strong> – The survey mode.</p></li>
-<li><p><strong>dsr</strong> – The Dataset Release name.</p></li>
-<li><p><strong>distance</strong> – The optional distance to target.</p></li>
-</ul>
-</dd>
-</dl>
 </dd></dl>
 <dl class="py class">
 <dt class="sig sig-object py" id="azulero.api.Transform">
@@ -330,7 +329,7 @@ Otherwise, you will be prompted for the password associated to the given user na
 <dd><em class="sig-param"><span class="n"><span class="pre">bgr_curves</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">([(0.5,</span> <span class="pre">0.55)],</span> <span class="pre">[],</span> <span class="pre">[])</span></span></em>,</dd>
 </dl>
 <span class="sig-paren">)</span></dt>
-<dd><p>Transformation parameters.</p>
+<dd><p>Transformation parameters (see <a class="reference internal" href="process.html"><span class="doc">azul process</span></a>).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -355,33 +354,6 @@ Otherwise, you will be prompted for the password associated to the given user na
 </dl>
 </dd></dl>
 <dl class="py function">
-<dt class="sig sig-object py" id="azulero.api.process_iyjh">
-<span class="sig-prename descclassname"><span class="pre">azulero.api.</span></span><span class="sig-name descname"><span class="pre">process_iyjh</span></span><span class="sig-paren">(</span>
-<dl>
-<dd><em class="sig-param"><span class="n"><span class="pre">iyjh</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">wcs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">WCS</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">transform</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#azulero.api.Transform" title="azulero.image.color.Transform"><span class="pre">Transform</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Transform()</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>,</dd>
-</dl>
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span></dt>
-<dd><p>Process an image according to transformation parameters,
-optionally save the rendered color image.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>iyjh</strong> – A stack of the I, Y, J, H arrays (e.g. <code class="docutils literal notranslate"><span class="pre">iyjh[1]</span></code> is the NIR-Y channel).</p></li>
-<li><p><strong>wcs</strong> – The WCS parameters or <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
-<li><p><strong>transform</strong> – The transformation parameters.</p></li>
-<li><p><strong>output</strong> – The output file name.
-An empty string disables writing.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A normalized BGR image.</p>
-</dd>
-</dl>
-</dd></dl>
-<dl class="py function">
 <dt class="sig sig-object py" id="azulero.api.read_iyjh">
 <span class="sig-prename descclassname"><span class="pre">azulero.api.</span></span><span class="sig-name descname"><span class="pre">read_iyjh</span></span><span class="sig-paren">(</span>
 <dl>
@@ -401,12 +373,39 @@ In the former case, if more than one SIF file is found for a channel, they will 
 <li><p><strong>slicing</strong> – An optional slicing for loading only a region in memory.</p></li>
 <li><p><strong>channels</strong> – The channel names.
 For a MEF file, the extension names must match the channel names.</p></li>
-<li><p><strong>template</strong> – The glob pattern template in which <cite>{channel}</cite> will be substituted by the channel names,
+<li><p><strong>template</strong> – The glob pattern template in which <code class="docutils literal notranslate"><span class="pre">{channel}</span></code> will be substituted by the channel names,
 in order to locate the SIF files.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The I, Y, J, H stack.</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="azulero.api.process_iyjh">
+<span class="sig-prename descclassname"><span class="pre">azulero.api.</span></span><span class="sig-name descname"><span class="pre">process_iyjh</span></span><span class="sig-paren">(</span>
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">iyjh</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">wcs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">WCS</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">transform</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#azulero.api.Transform" title="azulero.image.color.Transform"><span class="pre">Transform</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Transform()</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>,</dd>
+</dl>
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span></dt>
+<dd><p>Process an image according to transformation parameters,
+optionally save the rendered color image (see <a class="reference internal" href="process.html"><span class="doc">azul process</span></a>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>iyjh</strong> – A stack of the I, Y, J, H arrays (e.g. <code class="docutils literal notranslate"><span class="pre">iyjh[1]</span></code> is the NIR-Y channel).</p></li>
+<li><p><strong>wcs</strong> – The WCS parameters or <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>transform</strong> – The transformation parameters.</p></li>
+<li><p><strong>output</strong> – The output file name.
+An empty string disables writing.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A normalized BGR image.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -434,17 +433,17 @@ in order to locate the SIF files.</p></li>
 <ul>
 <li><a :data-current="activeSection === '#introduction'" class="reference internal" href="#introduction">Introduction</a></li>
 <li><a :data-current="activeSection === '#module-azulero.api'" class="reference internal" href="#module-azulero.api">API reference</a><ul>
+<li><a :data-current="activeSection === '#azulero.api.Tile'" class="reference internal" href="#azulero.api.Tile"><code class="docutils literal notranslate"><span class="pre">Tile</span></code></a></li>
 <li><a :data-current="activeSection === '#azulero.api.DataProvider'" class="reference internal" href="#azulero.api.DataProvider"><code class="docutils literal notranslate"><span class="pre">DataProvider</span></code></a><ul>
-<li><a :data-current="activeSection === '#azulero.api.DataProvider.download_cutouts'" class="reference internal" href="#azulero.api.DataProvider.download_cutouts"><code class="docutils literal notranslate"><span class="pre">DataProvider.download_cutouts()</span></code></a></li>
-<li><a :data-current="activeSection === '#azulero.api.DataProvider.download_datafiles'" class="reference internal" href="#azulero.api.DataProvider.download_datafiles"><code class="docutils literal notranslate"><span class="pre">DataProvider.download_datafiles()</span></code></a></li>
 <li><a :data-current="activeSection === '#azulero.api.DataProvider.query_coord_tiles'" class="reference internal" href="#azulero.api.DataProvider.query_coord_tiles"><code class="docutils literal notranslate"><span class="pre">DataProvider.query_coord_tiles()</span></code></a></li>
 <li><a :data-current="activeSection === '#azulero.api.DataProvider.query_tile_datafiles'" class="reference internal" href="#azulero.api.DataProvider.query_tile_datafiles"><code class="docutils literal notranslate"><span class="pre">DataProvider.query_tile_datafiles()</span></code></a></li>
+<li><a :data-current="activeSection === '#azulero.api.DataProvider.download_datafiles'" class="reference internal" href="#azulero.api.DataProvider.download_datafiles"><code class="docutils literal notranslate"><span class="pre">DataProvider.download_datafiles()</span></code></a></li>
+<li><a :data-current="activeSection === '#azulero.api.DataProvider.download_cutouts'" class="reference internal" href="#azulero.api.DataProvider.download_cutouts"><code class="docutils literal notranslate"><span class="pre">DataProvider.download_cutouts()</span></code></a></li>
 </ul>
 </li>
-<li><a :data-current="activeSection === '#azulero.api.Tile'" class="reference internal" href="#azulero.api.Tile"><code class="docutils literal notranslate"><span class="pre">Tile</span></code></a></li>
 <li><a :data-current="activeSection === '#azulero.api.Transform'" class="reference internal" href="#azulero.api.Transform"><code class="docutils literal notranslate"><span class="pre">Transform</span></code></a></li>
-<li><a :data-current="activeSection === '#azulero.api.process_iyjh'" class="reference internal" href="#azulero.api.process_iyjh"><code class="docutils literal notranslate"><span class="pre">process_iyjh()</span></code></a></li>
 <li><a :data-current="activeSection === '#azulero.api.read_iyjh'" class="reference internal" href="#azulero.api.read_iyjh"><code class="docutils literal notranslate"><span class="pre">read_iyjh()</span></code></a></li>
+<li><a :data-current="activeSection === '#azulero.api.process_iyjh'" class="reference internal" href="#azulero.api.process_iyjh"><code class="docutils literal notranslate"><span class="pre">process_iyjh()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -455,7 +454,7 @@ in order to locate the SIF files.</p></li>
 </div><footer class="py-6 border-t border-border md:py-0">
 <div class="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
 <div class="flex flex-col items-center gap-4 px-8 md:flex-row md:gap-2 md:px-0">
-<p class="text-sm leading-loose text-center text-muted-foreground md:text-left">© 2025-2026, Antoine Basset (CNES) and contributors. Last updated: Oct 05, 2026. Built with <a class="font-medium underline underline-offset-4" href="https://www.sphinx-doc.org" rel="noreferrer">Sphinx 9.1.0</a></p>
+<p class="text-sm leading-loose text-center text-muted-foreground md:text-left">© 2025-2026, Antoine Basset (CNES) and contributors. Last updated: Oct 06, 2026. Built with <a class="font-medium underline underline-offset-4" href="https://www.sphinx-doc.org" rel="noreferrer">Sphinx 9.1.0</a></p>
 </div>
 </div>
 </footer>
