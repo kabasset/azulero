@@ -148,6 +148,11 @@ set the following environment variables in order to reproduce the images exactly
 <p class="admonition-title">Credit for all images in this page:</p>
 <p>ESA Euclid / Euclid Consortium / NASA / Q1-2025 / Antoine Basset (CNES).</p>
 </div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><strong>For access to private data</strong>, interactive mode of <a class="reference internal" href="retrieve.html"><span class="doc">azul retrieve</span></a> won’t work in pipelines.
+If no <code class="docutils literal notranslate"><span class="pre">.netrc</span></code> file is configured, you will have to rely on a workaround described at the bottom of the page.</p>
+</div>
 </section>
 <section id="pipeline-object-names-to-color-images">
 <h2>Pipeline: Object names to color images</h2>
@@ -230,7 +235,7 @@ and generate a similar output in one pipeline (there are a lot of files to downl
 <li><p>arrange renderings into a 14-column grid,</p></li>
 <li><p>display the resulting collage:</p></li>
 </ul>
-<a class="" data-lightbox="group-d46595fd-0a9b-4dc2-bc5d-1b370e7de44d" data-title="" href="_images/collage_56.46762095259402,-49.45093443791871_102020055_54.36856435116159,-28.53351499365056_102043551.png" title=""><img alt="" class="" height="auto" src="_images/collage_56.46762095259402,-49.45093443791871_102020055_54.36856435116159,-28.53351499365056_102043551.png" width="100%"/>
+<a class="" data-lightbox="group-4168f34f-43a0-4f06-93ee-af9fd42a7424" data-title="" href="_images/collage_56.46762095259402,-49.45093443791871_102020055_54.36856435116159,-28.53351499365056_102043551.png" title=""><img alt="" class="" height="auto" src="_images/collage_56.46762095259402,-49.45093443791871_102020055_54.36856435116159,-28.53351499365056_102043551.png" width="100%"/>
 </a></section>
 <section id="pipeline-clipboard-to-slideshow">
 <h2>Pipeline: Clipboard to slideshow</h2>
@@ -278,7 +283,7 @@ The pipeline will be fed by the clipboard, therefore we will just select the tab
 </span></code></pre></div>
 </div>
 <p>which gives:</p>
-<a class="" data-lightbox="group-38ed9f00-ceee-49bf-82eb-a9277290b905" data-title="" href="_images/collage_UGC11116_102159776_LEDA2697349_102159776.png" title=""><img alt="" class="" height="auto" src="_images/collage_UGC11116_102159776_LEDA2697349_102159776.png" width="100%"/>
+<a class="" data-lightbox="group-b5690bae-1e11-406b-a494-73f8d2697988" data-title="" href="_images/collage_UGC11116_102159776_LEDA2697349_102159776.png" title=""><img alt="" class="" height="auto" src="_images/collage_UGC11116_102159776_LEDA2697349_102159776.png" width="100%"/>
 </a><p>Since we did not pass option <code class="docutils literal notranslate"><span class="pre">-n</span> <span class="pre">1</span></code> to <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code>,
 all of the tiles which contain a target are retrieved,
 which is why there are two images of LEDA2697349.
@@ -343,6 +348,19 @@ collage -&gt; open' src="_images/plantuml-89f6e558cfca0d4a1224da1ce5abc4faf6dfd4
 <li><p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">arrange</span></code> streams the path to the collage file toward <code class="docutils literal notranslate"><span class="pre">open</span></code>.</p></li>
 </ul>
 </section>
+<section id="authentication-workaround">
+<h2>Authentication workaround</h2>
+<p>In order to access private data, you have to provide your credentials.
+If you are working in a shared environment like ESA Datalabs, you should not save them as a <code class="docutils literal notranslate"><span class="pre">.netrc</span></code> file.
+In this specific case, please start by exporting your credentials in the pipeline session with <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">env</span></code> as follows:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp"># </span>Unix
+</span><span id="line-2"><span class="gp">$ </span><span class="ge">export</span><span class="w"> </span><span class="k">$(</span>azul<span class="w"> </span>env<span class="w"> </span><span class="ge">print-user</span><span class="k">)</span>
+</span><span id="line-3">
+</span><span id="line-4"><span class="gp"># </span>Windows
+</span><span id="line-5"><span class="gp">$ </span><span class="k">for</span><span class="w"> </span>/f<span class="w"> </span>%%x<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="o">(</span><span class="s1">'azul env </span><span class="ge">print-user</span><span class="s1">'</span><span class="o">)</span><span class="w"> </span><span class="k">do</span><span class="w"> </span><span class="nb">set</span><span class="w"> </span><span class="s2">"%%x"</span>
+</span></code></pre></div>
+</div>
+</section>
 </section>
 </div><div class="flex justify-between items-center pt-6 mt-12 border-t border-border gap-4">
 <div class="mr-auto">
@@ -369,6 +387,7 @@ collage -&gt; open' src="_images/plantuml-89f6e558cfca0d4a1224da1ce5abc4faf6dfd4
 <li><a :data-current="activeSection === '#pipeline-online-catalog-to-collage'" class="reference internal" href="#pipeline-online-catalog-to-collage">Pipeline: Online catalog to collage</a></li>
 <li><a :data-current="activeSection === '#pipeline-clipboard-to-slideshow'" class="reference internal" href="#pipeline-clipboard-to-slideshow">Pipeline: Clipboard to slideshow</a></li>
 <li><a :data-current="activeSection === '#dissecting-a-pipeline'" class="reference internal" href="#dissecting-a-pipeline">Dissecting a pipeline</a></li>
+<li><a :data-current="activeSection === '#authentication-workaround'" class="reference internal" href="#authentication-workaround">Authentication workaround</a></li>
 </ul>
 </div>
 </aside>
@@ -377,7 +396,7 @@ collage -&gt; open' src="_images/plantuml-89f6e558cfca0d4a1224da1ce5abc4faf6dfd4
 </div><footer class="py-6 border-t border-border md:py-0">
 <div class="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
 <div class="flex flex-col items-center gap-4 px-8 md:flex-row md:gap-2 md:px-0">
-<p class="text-sm leading-loose text-center text-muted-foreground md:text-left">© 2025-2026, Antoine Basset (CNES) and contributors. Last updated: Oct 06, 2026. Built with <a class="font-medium underline underline-offset-4" href="https://www.sphinx-doc.org" rel="noreferrer">Sphinx 9.1.0</a></p>
+<p class="text-sm leading-loose text-center text-muted-foreground md:text-left">© 2025-2026, Antoine Basset (CNES) and contributors. Last updated: Oct 07, 2026. Built with <a class="font-medium underline underline-offset-4" href="https://www.sphinx-doc.org" rel="noreferrer">Sphinx 9.1.0</a></p>
 </div>
 </div>
 </footer>
