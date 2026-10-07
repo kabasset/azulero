@@ -6,6 +6,7 @@ from functools import lru_cache
 import getpass
 import logging
 import os
+import re
 import shlex
 import subprocess
 import sys
@@ -79,7 +80,7 @@ def progress_str(sequence, format="[{i}/{n}]"):
         i += 1
 
 
-class _LogFormatter(logging.Formatter):
+class _BasicLogFormatter(logging.Formatter):
 
     def __init__(self, logger, sep=" - "):
         super().__init__()
@@ -96,11 +97,16 @@ class _LogFormatter(logging.Formatter):
             fmt = f"%(levelname)s{self.sep}%(message)s"
 
         if is_debug:
-            fmt = (
-                f"%(asctime)s{self.sep}%(filename)s{self.sep}%(lineno)d{self.sep}{fmt}"
-            )
+            fmt = f"%(asctime)s{self.sep}{fmt}"
+            # %(filename)s and %(lineno)d are wrong
         self._style._fmt = self._colorize(record.levelno, fmt)
         return super().format(record)
+
+    def _colorize(self, level, message):
+        raise NotImplementedError()
+
+
+class _LogTermFormatter(_BasicLogFormatter):
 
     def _colorize(self, level, message):
         if not supports_color():
@@ -109,6 +115,18 @@ class _LogFormatter(logging.Formatter):
             return colorize("41;1", message)
         if level >= logging.WARNING:
             return colorize("31;1", message)
+        return message
+
+
+class _LogFileFormatter(_BasicLogFormatter):
+
+    def format(self, record: logging.LogRecord):
+        record.msg = re.sub(r"\x1b\[.*?(;.*?)?m", "", record.msg)
+        # TODO Use an internal format, e.g. HTML or MD, easier to parse?
+        # TODO Would be easier to style differently for term and file
+        return super().format(record)
+
+    def _colorize(self, level, message):
         return message
 
 
@@ -124,7 +142,12 @@ class FancyStderrLogger:
         self._logger = logging.getLogger(name)
         self._empty_line = False
         handler = logging.StreamHandler(sys.stderr)
-        handler.setFormatter(_LogFormatter(self._logger))
+        handler.setFormatter(_LogTermFormatter(self._logger))
+        self._logger.addHandler(handler)
+
+    def add_file(self, filename):
+        handler = logging.FileHandler(filename)
+        handler.setFormatter(_LogFileFormatter(self._logger))
         self._logger.addHandler(handler)
 
     @property

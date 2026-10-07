@@ -58,7 +58,13 @@ def add_parser():
         type=str,
         default="INFO",
         choices=["DEBUG", "INFO", "WARNING", "ERROR"],
-        help=f"Log level.",
+        help="Log level.",
+    )
+    parser.add_argument(
+        "--logfile",
+        type=str,
+        metavar="PATH",
+        help="Path to a log file (append messages if the file already exists).",
     )
 
     subparsers = parser.add_subparsers(title="Commands", dest="cmd")
@@ -83,6 +89,8 @@ def run():
     args = parser.parse_args()
 
     logger.level = args.log
+    if args.logfile:
+        logger.add_file(args.logfile)
 
     log_title()
 

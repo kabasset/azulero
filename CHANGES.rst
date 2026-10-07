@@ -5,6 +5,7 @@ New features
 ^^^^^^^^^^^^
 
 - New command ``azul env`` dedicated to environment setup.
+- New global option ``--logfile`` triggers writing logs to a given file.
 
 ``azul process``
 
