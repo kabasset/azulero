@@ -28,24 +28,29 @@ def tile(res, target):
 class SAS:
 
     def __init__(self, env: str, user: str | None):
+        self.env = env
+
         # Intercept stderr, stdout
         err, out = StringIO(), StringIO()
         with contextlib.redirect_stderr(err), contextlib.redirect_stdout(out):
-
             from astroquery.esa.euclid import EuclidClass
 
-            self.env = env
             self.__euclid = EuclidClass(environment=env)
 
-            if self.env != "PDR":  # The only environment without authentication
-                self._authenticate(user)
+        if self.env != "PDR":  # The only environment without authentication
+            self._authenticate(user)
 
         if err.getvalue():
             raise RuntimeError(err.getvalue())
 
     def _authenticate(self, user: str | None):
+
         auth = Auth("easidr.esac.esa.int", user)
-        self.__euclid.login(user=auth.user, password=auth.password.value)
+
+        # Intercept stderr, stdout
+        err, out = StringIO(), StringIO()
+        with contextlib.redirect_stderr(err), contextlib.redirect_stdout(out):
+            self.__euclid.login(user=auth.user, password=auth.password.value)
 
     def __del__(self):
         err, out = StringIO(), StringIO()
