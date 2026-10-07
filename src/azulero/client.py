@@ -110,11 +110,11 @@ def log_title():
 
 def log_args(args):
     logger.info(f"Command: {args.cmd}")
+    value = lambda arg, name: (
+        arg[name].partition(":")[0] if name == "user" else arg[name]
+    )
     for k in vars(args):
         if k not in ["func", "cmd"]:
-            value = lambda arg, name: (
-                arg[name].partition(":")[0] if name == "user" else arg[name]
-            )
             logger.info(f"  {k}: {value(vars(args), k)}")
 
 
