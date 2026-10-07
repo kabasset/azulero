@@ -5,6 +5,7 @@
 import argparse
 from functools import lru_cache
 import os
+import sys
 
 from azulero.cli.process import default_transform, default_workspace
 from azulero.tools.messaging import (
@@ -13,6 +14,7 @@ from azulero.tools.messaging import (
     read_pipe_args,
     write_pipe_args,
 )
+from azulero.tools.secret import Auth
 from azulero.tools.setup import setup_wizard
 
 
@@ -190,6 +192,23 @@ presets = {
 }
 
 
+def print_user(prefix):
+    """
+    Print the user name and password.
+
+    This command should ONLY be used to export the user credential for pipelines.
+    See :doc:`pipeline`.
+    """
+    if sys.stdout.isatty():
+        raise RuntimeError(
+            "This command will print your credentials to stdout. "
+            "It can only be used within a pipeline or as an expression, e.g. ``export $(azul env print-user)``"
+        )
+    auth = Auth("", None)
+    line = f"{prefix}RETRIEVE_USER='{auth.user}:{auth.password.value}'"
+    print(line)
+
+
 def add_parser(subparsers, help):
 
     parser = subparsers.add_parser(
@@ -226,11 +245,22 @@ def add_parser(subparsers, help):
 
 
 def run(args):
+
     if args.setup:
         setup_wizard(args.workspace, args.prefix)
         return
+
     if not args.variables:
         return list_presets(args.prefix)
+
+    if "print-user" in args.variables:
+        if len(args.variables) != 1:
+            raise ValueError(
+                "Special value ``set-user`` cannot be used in combination other presets."
+            )
+        print_user(args.prefix)
+        return
+
     environment = {}
     for arg in args.variables:
         if "=" in arg:

@@ -59,7 +59,13 @@ class Auth:
                 self._prompt_password()
 
     def _prompt_user(self):
-        self.user = logger.prompt_clear(f"Enter user name for host {self.host}:")
+        msg = "Enter user name"
+        if self.host:
+            msg += f" for host {self.host}"
+        self.user = logger.prompt_clear(f"{msg}:")
 
     def _prompt_password(self):
-        self.password = Secret.prompt(f"Enter password for {self.user}@{self.host}:")
+        msg = f"Enter password for {self.user}"
+        if self.host:
+            msg += f"@{self.host}"
+        self.password = Secret.prompt(f"{msg}:")

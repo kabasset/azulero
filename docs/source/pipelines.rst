@@ -35,6 +35,12 @@ set the following environment variables in order to reproduce the images exactly
    ESA Euclid / Euclid Consortium / NASA / Q1-2025 / Antoine Basset (CNES).
 
 
+.. warning::
+
+   **For access to private data**, interactive mode of :doc:`retrieve` won't work in pipelines.
+   If no ``.netrc`` file is configured, you will have to rely on a workaround described at the bottom of the page.
+
+
 Pipeline: Object names to color images
 --------------------------------------
 
@@ -268,3 +274,20 @@ The message flow is illustrated below:
 * ``azul retrieve`` streams the workdirs toward ``azul process``.
 * ``azul process`` streams the paths to the renderings toward ``azul arrange``.
 * ``azul arrange`` streams the path to the collage file toward ``open``.
+
+
+Authentication workaround
+-------------------------
+
+In order to access private data, you have to provide your credentials.
+If you are working in a shared environment like ESA Datalabs, you should not save them as a ``.netrc`` file.
+In this specific case, please start by exporting your credentials in the pipeline session with ``azul env`` as follows:
+
+.. code-block:: console
+   :emphasize-text: export print-user
+
+   # Unix
+   $ export $(azul env print-user)
+
+   # Windows
+   $ for /f %%x in ('azul env print-user') do set "%%x"

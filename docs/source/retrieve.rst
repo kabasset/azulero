@@ -158,9 +158,14 @@ There are several such providers, which store different sets of data:
 ``dss`` (Distributed Storage System)
    Contains everything but is much slower than other providers.
 
-For private data, if you did not setup a netrc file as described in :ref:`setup`,
-please use option ``--user`` to enter your username;
-you will then be prompted for the associated password.
+For private data, if you did not setup a ``.netrc`` file as described in :ref:`setup`,
+you may use option ``--user`` to enter your user name;
+the option triggers an interactive mode in which you will then be prompted for the associated password.
+If ``--user`` is not passed, you will also be prompted for your user name.
+
+.. warning::
+
+   The interactive mode is incompatible with pipelines: see :doc:`pipelines` for a specific workaround.
 
 
 Query

@@ -30,7 +30,8 @@ If you simply want to get the development version from time to time, use:
 
 .. code-block:: console
 
-   $ pip install --force-reinstall git+https://github.com/kabasset/azulero
+   $ pip uninstall azulero
+   $ pip install git+https://github.com/kabasset/azulero
 
 If instead, you want to modify the sources or update very often,
 better clone the repository locally:
