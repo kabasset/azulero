@@ -202,7 +202,8 @@ def print_user(prefix):
     if sys.stdout.isatty():
         raise RuntimeError(
             "This command will print your credentials to stdout. "
-            "It can only be used within a pipeline or as an expression, e.g. ``export $(azul env print-user)``"
+            "It can only be used within a pipeline or as an expression, e.g.: "
+            "``export $(azul env print-user)``."
         )
     auth = Auth("", None)
     line = f"{prefix}RETRIEVE_USER='{auth.user}:{auth.password.value}'"
@@ -256,7 +257,7 @@ def run(args):
     if "print-user" in args.variables:
         if len(args.variables) != 1:
             raise ValueError(
-                "Special value ``set-user`` cannot be used in combination other presets."
+                "Special value ``set-user`` cannot be used in combination with other presets."
             )
         print_user(args.prefix)
         return
