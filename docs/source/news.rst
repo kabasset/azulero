@@ -11,6 +11,7 @@ This version simplifies **environment management**:
   made of both predefined and arbitrary variables.
 * ``azul env q1`` optimizes processing parameters for Q1 data,
   therefore we updated the default parameters to match the improved signal-to-noise ratio of DR1 data.
+* ``azul env print-user`` can be used to pass the user credentials to pipelines when a ``.netrc`` file is not available.
 * Finally, the :doc:`python` supports passing of both user name and password (as option ``user=f"{name}:{password}"``)
   to the data provider factory in case they were already stored in Python variables.
 

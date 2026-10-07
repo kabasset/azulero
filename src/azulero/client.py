@@ -112,7 +112,10 @@ def log_args(args):
     logger.info(f"Command: {args.cmd}")
     for k in vars(args):
         if k not in ["func", "cmd"]:
-            logger.info(f"  {k}: {vars(args)[k]}")
+            value = lambda arg, name: (
+                arg[name].partition(":")[0] if name == "user" else arg[name]
+            )
+            logger.info(f"  {k}: {value(vars(args), k)}")
 
 
 def log_citation():
