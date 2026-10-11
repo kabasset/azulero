@@ -42,19 +42,19 @@ def add_parser():
         help="Parent workspace",
     )
     parser.add_argument(
-        "--input",
-        type=str,
-        default=default_workspace.input_pattern,
-        metavar="PATTERN",
-        help="Input file pattern, where ``{channel}`` is replaced with the channel name",
-    )
-    parser.add_argument(
         "--channels",
         type=str,
         nargs=4,
         metavar=("I_NAME", "Y_NAME", "J_NAME", "H_NAME"),
         default=default_workspace.channel_names,
         help="Channel names to be rendered in the input file pattern.",
+    )
+    parser.add_argument(
+        "--input",
+        type=str,
+        default=default_workspace.input_pattern,
+        metavar="PATTERN",
+        help="Input file pattern, where ``{channel}`` is replaced with the channel name",
     )
     parser.add_argument(
         "--log",
