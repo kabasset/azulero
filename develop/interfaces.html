@@ -188,11 +188,6 @@ Only for slicing notations, we follow NumPy’s convention with the vertical axi
 <h2>Global options</h2>
 <p>Global options are:</p>
 <dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">--log</span></code></dt><dd><p>The log level, either <code class="docutils literal notranslate"><span class="pre">DEBUG</span></code>, <code class="docutils literal notranslate"><span class="pre">INFO</span></code> (the default), <code class="docutils literal notranslate"><span class="pre">WARNING</span></code> or <code class="docutils literal notranslate"><span class="pre">ERROR</span></code>.</p>
-</dd>
-<dt><code class="docutils literal notranslate"><span class="pre">--logfile</span></code></dt><dd><p>The optional path template to a log file (see placeholders below).
-If the file already exists, messages are written at the end; Otherwise, the file is created.</p>
-</dd>
 <dt><code class="docutils literal notranslate"><span class="pre">--workspace</span></code></dt><dd><p>The path to the workspace.
 Defaults to the current directory.</p>
 </dd>
@@ -203,6 +198,11 @@ Unless you generate MER-like data yourself, you should not use this option.</p>
 It must contain placeholder <code class="docutils literal notranslate"><span class="pre">{channel}</span></code>, which is rendered accordingly to the values of option <code class="docutils literal notranslate"><span class="pre">--channels</span></code>.
 For example, <code class="docutils literal notranslate"><span class="pre">*_{channel}_*.fits</span></code> would accept files with <code class="docutils literal notranslate"><span class="pre">.fits</span></code> extension
 which contain the band name (e.g. <code class="docutils literal notranslate"><span class="pre">NIR-J</span></code>) separated from other chunks by underscores.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">--log</span></code></dt><dd><p>The log level, either <code class="docutils literal notranslate"><span class="pre">DEBUG</span></code>, <code class="docutils literal notranslate"><span class="pre">INFO</span></code> (the default), <code class="docutils literal notranslate"><span class="pre">WARNING</span></code> or <code class="docutils literal notranslate"><span class="pre">ERROR</span></code>.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">--logfile</span></code></dt><dd><p>The optional path template to a log file (see placeholders below).
+If the file already exists, messages are written at the end; Otherwise, the file is created.</p>
 </dd>
 </dl>
 <table class="docutils align-default">
