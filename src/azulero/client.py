@@ -3,6 +3,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import argparse
+import datetime
+import tempfile
 import dotenv
 from pathlib import Path
 
@@ -16,6 +18,7 @@ from azulero.cli import (
     roam,
     crop,
 )
+from azulero.tools import parsing
 from azulero.tools.workspace import Workspace
 from azulero.tools.messaging import logger, parse_envargs, write_pipe_args
 
@@ -89,10 +92,13 @@ def run():
     args = parser.parse_args()
 
     logger.level = args.log
-    if args.logfile:
-        logger.add_file(args.logfile)
 
     log_title()
+
+    if args.logfile:
+        logfile = render_logfile(args)
+        logger.info(f"Log file: {logfile}")
+        logger.add_file(logfile)
 
     if args.cmd != "cite":
         log_args(args)
@@ -108,6 +114,21 @@ def read_dotenv():
     filename = dotenv.find_dotenv(usecwd=True)
     dotenv.load_dotenv(dotenv_path=filename)
     return filename
+
+
+def render_logfile(args):
+    path = Path(
+        parsing.render_template(
+            args.logfile,
+            workspace=args.workspace,
+            cmd=args.cmd,
+            now=datetime.datetime.now(),
+            utcnow=datetime.datetime.now(datetime.timezone.utc),
+        )
+    )
+    prefix, _, suffix = path.name.partition("{rand}")
+    _, name = tempfile.mkstemp(suffix, prefix, path.parent)
+    return path.parent / name
 
 
 def log_title():

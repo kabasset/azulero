@@ -83,6 +83,9 @@ Global options are:
 
 ``--log``
    The log level, either ``DEBUG``, ``INFO`` (the default), ``WARNING`` or ``ERROR``.
+``--logfile``
+   The optional path template to a log file (see placeholders below).
+   If the file already exists, messages are written at the end; Otherwise, the file is created.
 ``--workspace``
    The path to the workspace.
    Defaults to the current directory.
@@ -94,6 +97,24 @@ Global options are:
    It must contain placeholder ``{channel}``, which is rendered accordingly to the values of option ``--channels``.
    For example, ``*_{channel}_*.fits`` would accept files with ``.fits`` extension
    which contain the band name (e.g. ``NIR-J``) separated from other chunks by underscores.
+
+================ ==================
+Placeholder name Substitution value
+================ ==================
+``{workspace}``  Workspace path
+``{cmd}``        Command name, e.g. ``process``
+``{now}``        Local time
+``{utcnow}``     UTC time
+``{rand}``       A random sequence
+================ ==================
+
+Times are optionally formatted with `datetime <https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes>`_,
+according to a format string separated from the placeholder name by a colon, e.g.:
+
+.. code-block:: console
+   :emphasize-text: :%Y-%m-%dT%H:%M:%S.%f
+   
+   --logfile {workspace}/azul_{cmd}_{utcnow:%Y-%m-%dT%H:%M:%S.%f}Z_{rand}.log
 
 
 .. _streams:
