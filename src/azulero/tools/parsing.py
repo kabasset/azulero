@@ -147,7 +147,11 @@ def render_template(text: str, *args, **kwargs) -> str:
         text = re.sub(pattern, str(args[i]), text)
     for k in kwargs:
         text = text.replace(placeholder(k), str(kwargs[k]))
+        # With fallback
         pattern = r"\{" + str(k) + r"\|[A-Za-z0-9_]+\}"
         text = re.sub(pattern, str(kwargs[k]), text)
+        # With format
+        pattern = r"\{" + str(k) + r":[^\}]+\}"
+        text = re.sub(pattern, lambda p: p.group().format(**{k: kwargs[k]}), text)
     pattern = r"\{\-?[A-Za-z0-9_]+\|([A-Za-z0-9_]+)\}"  # possibly negative int or str (could be more specific)
     return re.sub(pattern, r"\1", text)

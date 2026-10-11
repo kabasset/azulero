@@ -98,6 +98,9 @@ def run():
     if args.logfile:
         logfile = render_logfile(args)
         logger.info(f"Log file: {logfile}")
+        logger.info("")
+
+        # Add file now, in order not to log the log file path in the log file
         logger.add_file(logfile)
 
     if args.cmd != "cite":
