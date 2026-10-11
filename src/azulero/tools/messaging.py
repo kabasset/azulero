@@ -13,12 +13,20 @@ import sys
 
 
 def parse_envargs(command=None, prefix=os.environ.get("AZULERO_PREFIX", "AZUL")):
+
     if command is None:
         prefix += "_"
     else:
         prefix += command.upper() + "_"
+
+    def parse_var(v):
+        try:
+            return eval(v, {}, {})
+        except Exception:
+            return v
+
     args = {
-        var.removeprefix(prefix).lower(): eval(os.environ[var], {}, {})
+        var.removeprefix(prefix).lower(): parse_var(os.environ[var])
         for var in os.environ
         if var.startswith(prefix)
     }

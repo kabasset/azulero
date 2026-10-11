@@ -40,6 +40,14 @@ def current_env(prefix):
     }
 
 
+def preset_logfile(prefix):
+    """
+    Write logs to file.
+    """
+    template = "{workspace}/azul_{cmd}_{utcnow:%Y-%m-%dT%H:%M:%S.%f}Z_{rand}.log"
+    return {prefix + "_LOGFILE": template}
+
+
 def preset_q1_data(prefix):
     """
     Retrieve Q1 data.
@@ -57,7 +65,7 @@ def preset_q1_processing(prefix):
     return {
         prefix + "PROCESS_WHITE": 22.5,
         prefix + "PROCESS_STRETCH": 28.25,
-        prefix + "PROCESS_BLACK": 29.0,
+        prefix + "PROCESS_OFFSET": 29.0,
     }
 
 
@@ -175,6 +183,7 @@ def preset_process_png(prefix):
 
 presets = {
     "current": current_env,
+    "logfile": preset_logfile,
     "q1-data": preset_q1_data,
     "q1-processing": preset_q1_processing,
     "q1": preset_q1,
