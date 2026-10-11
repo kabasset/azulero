@@ -128,13 +128,14 @@
 <p>This version simplifies <strong>environment management</strong>:</p>
 <ul class="simple">
 <li><p>For first-time users, new command <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">env</span> <span class="pre">--setup</span></code> opens a setup wizard.</p></li>
-<li><p>For regular users, new command <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">env</span></code> aims at specifying multiple environments
-made of both predefined and arbitrary variables.</p></li>
+<li><p>For regular users, new command <a class="reference internal" href="env.html"><span class="doc">azul env</span></a> aims at specifying multiple environments
+made of both predefined and custom variables.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">env</span> <span class="pre">q1</span></code> optimizes processing parameters for Q1 data,
 therefore we updated the default parameters to match the improved signal-to-noise ratio of DR1 data.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">env</span> <span class="pre">print-user</span></code> can be used to pass the user credentials to pipelines when a <code class="docutils literal notranslate"><span class="pre">.netrc</span></code> file is not available.</p></li>
-<li><p>Finally, the <a class="reference internal" href="python.html"><span class="doc">Python API</span></a> supports passing of both user name and password (as option <code class="docutils literal notranslate"><span class="pre">user=f"{name}:{password}"</span></code>)
+<li><p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">env</span> <span class="pre">print-user</span></code> can be used to pass the user credentials to <a class="reference internal" href="pipelines.html"><span class="doc">Pipelines</span></a> when a <code class="docutils literal notranslate"><span class="pre">.netrc</span></code> file is not available.</p></li>
+<li><p>The <a class="reference internal" href="python.html"><span class="doc">Python API</span></a> supports passing of both user name and password (as option <code class="docutils literal notranslate"><span class="pre">user=f"{name}:{password}"</span></code>)
 to the data provider factory in case they were already stored in Python variables.</p></li>
+<li><p>Finally, global option <code class="docutils literal notranslate"><span class="pre">--logfile</span></code> enables writing logs to a file.</p></li>
 </ul>
 </section>
 <section id="version-2-1">
@@ -246,7 +247,7 @@ Here is an overview (for more details, see the <a class="reference internal" hre
 </div><footer class="py-6 border-t border-border md:py-0">
 <div class="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
 <div class="flex flex-col items-center gap-4 px-8 md:flex-row md:gap-2 md:px-0">
-<p class="text-sm leading-loose text-center text-muted-foreground md:text-left">© 2025-2026, Antoine Basset (CNES) and contributors. Last updated: Oct 07, 2026. Built with <a class="font-medium underline underline-offset-4" href="https://www.sphinx-doc.org" rel="noreferrer">Sphinx 9.1.0</a></p>
+<p class="text-sm leading-loose text-center text-muted-foreground md:text-left">© 2025-2026, Antoine Basset (CNES) and contributors. Last updated: Oct 11, 2026. Built with <a class="font-medium underline underline-offset-4" href="https://www.sphinx-doc.org" rel="noreferrer">Sphinx 9.1.0</a></p>
 </div>
 </div>
 </footer>

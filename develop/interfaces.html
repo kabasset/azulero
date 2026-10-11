@@ -190,6 +190,9 @@ Only for slicing notations, we follow NumPy’s convention with the vertical axi
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">--log</span></code></dt><dd><p>The log level, either <code class="docutils literal notranslate"><span class="pre">DEBUG</span></code>, <code class="docutils literal notranslate"><span class="pre">INFO</span></code> (the default), <code class="docutils literal notranslate"><span class="pre">WARNING</span></code> or <code class="docutils literal notranslate"><span class="pre">ERROR</span></code>.</p>
 </dd>
+<dt><code class="docutils literal notranslate"><span class="pre">--logfile</span></code></dt><dd><p>The optional path template to a log file (see placeholders below).
+If the file already exists, messages are written at the end; Otherwise, the file is created.</p>
+</dd>
 <dt><code class="docutils literal notranslate"><span class="pre">--workspace</span></code></dt><dd><p>The path to the workspace.
 Defaults to the current directory.</p>
 </dd>
@@ -202,6 +205,35 @@ For example, <code class="docutils literal notranslate"><span class="pre">*_{cha
 which contain the band name (e.g. <code class="docutils literal notranslate"><span class="pre">NIR-J</span></code>) separated from other chunks by underscores.</p>
 </dd>
 </dl>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Placeholder name</p></th>
+<th class="head"><p>Substitution value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">{workspace}</span></code></p></td>
+<td><p>Workspace path</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">{cmd}</span></code></p></td>
+<td><p>Command name, e.g. <code class="docutils literal notranslate"><span class="pre">process</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">{now}</span></code></p></td>
+<td><p>Local time</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">{utcnow}</span></code></p></td>
+<td><p>UTC time</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">{rand}</span></code></p></td>
+<td><p>A random sequence</p></td>
+</tr>
+</tbody>
+</table>
+<p>Times are optionally formatted with <a class="reference external" href="https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes" rel="noreferrer" target="_blank">datetime</a>,
+according to a format string separated from the placeholder name by a colon, e.g.:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="go">--logfile {workspace}/azul_{cmd}_{utcnow</span><span class="ge">:%Y-%m-%dT%H:%M:%S.%f</span><span class="go">}Z_{rand}.log</span>
+</span></code></pre></div>
+</div>
 </section>
 <section id="standard-streams">
 <span id="streams"></span><h2>Standard streams</h2>
@@ -344,7 +376,7 @@ This really helps!</p>
 </div><footer class="py-6 border-t border-border md:py-0">
 <div class="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
 <div class="flex flex-col items-center gap-4 px-8 md:flex-row md:gap-2 md:px-0">
-<p class="text-sm leading-loose text-center text-muted-foreground md:text-left">© 2025-2026, Antoine Basset (CNES) and contributors. Last updated: Oct 07, 2026. Built with <a class="font-medium underline underline-offset-4" href="https://www.sphinx-doc.org" rel="noreferrer">Sphinx 9.1.0</a></p>
+<p class="text-sm leading-loose text-center text-muted-foreground md:text-left">© 2025-2026, Antoine Basset (CNES) and contributors. Last updated: Oct 11, 2026. Built with <a class="font-medium underline underline-offset-4" href="https://www.sphinx-doc.org" rel="noreferrer">Sphinx 9.1.0</a></p>
 </div>
 </div>
 </footer>
