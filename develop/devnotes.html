@@ -158,15 +158,28 @@ in addition to the unsharp masking amplitude control offered by option <code cla
 </section>
 <section id="authentication">
 <h2>Authentication</h2>
-<p>Using private data providers requires authenticating with a username and password.
-Storing them locally in a netrc file is convenient in private machines such as laptops,
+<p>Using private data providers requires authenticating with a user name and password.
+Storing them locally in a <code class="docutils literal notranslate"><span class="pre">.netrc</span></code> file is convenient in private machines such as laptops,
 as it does not require the user to enter their password manually for each command.
 However, doing so in shared environments like Datalabs and SDCs is not secure,
-as the netrc file may be accessible to administrators and privileged users.
+as the <code class="docutils literal notranslate"><span class="pre">.netrc</span></code> file may be accessible to administrators and privileged users.
 For this purpose, an interactive mode was added, where the user is requested to enter their password.
 All other options have been discarded because they leave traces in files possibly accessed by other users,
-including command history files, and are not more secure than a netrc file.
-Anything more convenient than systematically entering the password would be nice, but we had no better idea…</p>
+including command history files, and are not more secure than a <code class="docutils literal notranslate"><span class="pre">.netrc</span></code> file.</p>
+<p>For pipelines, which cannot rely on the interactive mode since <code class="docutils literal notranslate"><span class="pre">stdin</span></code> is reserved to message passing,
+another utility is provided: <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">env</span> <span class="pre">print-user</span></code>
+(the name is voluntarily explicit and non trivial in order to make users think twice before using it).
+It is itself an interactive command which prompts the user for its name and password
+and returns them to the standard output.
+More precisely, the command has to be used as an expression like:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">$ </span><span class="nb">export</span><span class="w"> </span><span class="k">$(</span>azul<span class="w"> </span>env<span class="w"> </span>print-user<span class="k">)</span>
+</span></code></pre></div>
+</div>
+<p>which exports Azulero variable <code class="docutils literal notranslate"><span class="pre">AZULRETRIEVE_USER</span></code> in the terminal session
+such that the password is never written to a file.</p>
+<p>This tool is also convenient to memoize the credentials in a terminal session
+in which several <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code> commands are to be run,
+in order to enter the password only once.</p>
 </section>
 <section id="dps-tile-lookup">
 <h2>DPS tile lookup</h2>
@@ -243,7 +256,7 @@ A data model would be welcome…</p>
 </div><footer class="py-6 border-t border-border md:py-0">
 <div class="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
 <div class="flex flex-col items-center gap-4 px-8 md:flex-row md:gap-2 md:px-0">
-<p class="text-sm leading-loose text-center text-muted-foreground md:text-left">© 2025-2026, Antoine Basset (CNES) and contributors. Last updated: Oct 11, 2026. Built with <a class="font-medium underline underline-offset-4" href="https://www.sphinx-doc.org" rel="noreferrer">Sphinx 9.1.0</a></p>
+<p class="text-sm leading-loose text-center text-muted-foreground md:text-left">© 2025-2026, Antoine Basset (CNES) and contributors. Last updated: Oct 12, 2026. Built with <a class="font-medium underline underline-offset-4" href="https://www.sphinx-doc.org" rel="noreferrer">Sphinx 9.1.0</a></p>
 </div>
 </div>
 </footer>
