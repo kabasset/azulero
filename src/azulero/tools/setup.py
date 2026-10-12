@@ -78,7 +78,7 @@ def setup_public(workspace: Path, prefix: str):
 def setup_euclid(workspace: Path, prefix: str):
     logger.warning(
         "The wizard will ask for your credentials. "
-        "If you don't want to store your username or password, just press Enter."
+        "If you don't want to store your user name or password, just press Enter."
     )
     logger.header(2, "ESA Cosmos authentication")
     cosmos_auth = setup_cosmos()
@@ -125,4 +125,4 @@ def write_to_netrc(auth: Auth, host: str = ""):
                 logger.info(f"Store password for {machine}.")
                 f.write(f"  password {password}\n")
         else:
-            logger.warning(f"No username given for {machine}. Skip.")
+            logger.warning(f"No user name given for {machine}. Skip.")

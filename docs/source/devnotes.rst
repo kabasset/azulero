@@ -46,15 +46,32 @@ in addition to the unsharp masking amplitude control offered by option ``--stren
 Authentication
 --------------
 
-Using private data providers requires authenticating with a username and password.
-Storing them locally in a netrc file is convenient in private machines such as laptops,
+Using private data providers requires authenticating with a user name and password.
+Storing them locally in a ``.netrc`` file is convenient in private machines such as laptops,
 as it does not require the user to enter their password manually for each command.
 However, doing so in shared environments like Datalabs and SDCs is not secure,
-as the netrc file may be accessible to administrators and privileged users.
+as the ``.netrc`` file may be accessible to administrators and privileged users.
 For this purpose, an interactive mode was added, where the user is requested to enter their password.
 All other options have been discarded because they leave traces in files possibly accessed by other users,
-including command history files, and are not more secure than a netrc file.
-Anything more convenient than systematically entering the password would be nice, but we had no better idea...
+including command history files, and are not more secure than a ``.netrc`` file.
+
+For pipelines, which cannot rely on the interactive mode since ``stdin`` is reserved to message passing,
+another utility is provided: ``azul env print-user``
+(the name is voluntarily explicit and non trivial in order to make users think twice before using it).
+It is itself an interactive command which prompts the user for its name and password
+and returns them to the standard output.
+More precisely, the command has to be used as an expression like:
+
+.. code-block:: console
+
+   $ export $(azul env print-user)
+
+which exports Azulero variable ``AZULRETRIEVE_USER`` in the terminal session
+such that the password is never written to a file.
+
+This tool is also convenient to memoize the credentials in a terminal session
+in which several ``azul retrieve`` commands are to be run,
+in order to enter the password only once.
 
 
 DPS tile lookup
