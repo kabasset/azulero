@@ -26,11 +26,13 @@ If you already have an old version installed, use:
 Development version
 ^^^^^^^^^^^^^^^^^^^
 
-If you simply want to get the development version from time to time, use:
+If you simply want to get the development version from time to time,
+uninstall the current version and install from the sources:
 
 .. code-block:: console
+   :emphasize-text: uninstall
 
-   $ pip uninstall azulero
+   $ pip uninstall --yes azulero
    $ pip install git+https://github.com/kabasset/azulero
 
 If instead, you want to modify the sources or update very often,
@@ -78,7 +80,7 @@ For Euclid members
 Accessing public data requires no configuration.
 
 Internal data retrieval requires authentication,
-which can be set up in the netrc configuration file (``~/.netrc`` on Unix, ``%HOMEPATH%\.netrc`` on Windows) as follows:
+which can be stored in the ``.netrc`` configuration file (``~/.netrc`` on Unix, ``%HOMEPATH%\.netrc`` on Windows) as follows:
 
 * For internal SAS data, use your LDAP credentials:
 
@@ -125,10 +127,6 @@ No other configuration is needed for public data.
 
 ESA Datalabs users
 ^^^^^^^^^^^^^^^^^^
-
-For authenticating to private data providers,
-Datalabs users are encouraged to rely on interactive runs (see above)
-in order to avoid storing their credentials in any Datalabs file.
 
 MER datafiles are directly accessible from ESA Datalabs, such that no download is needed.
 To enable this feature permanently in Datalabs, add the following line to the ``.bashrc`` file
@@ -208,3 +206,6 @@ On top of the sequence are the inputs, and below the sequence are the (intermedi
 After this overview section, inputs and outputs are described.
 Then, more details are given for each step and parameter.
 Additional sections may dive deeper on a case-by-case basis.
+
+Users of the :doc:`python` should still read the commands documentation:
+this is where the algorithms and their parameters are described.
