@@ -7,7 +7,7 @@ from functools import lru_cache
 import os
 import sys
 
-from azulero.cli.process import default_transform, default_workspace
+lazy from azulero.cli.process import default_transform, default_workspace
 from azulero.tools.messaging import (
     logger,
     parse_envargs,

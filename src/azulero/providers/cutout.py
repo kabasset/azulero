@@ -3,10 +3,10 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from pathlib import Path
-from astropy.coordinates import Angle, SkyCoord
-from astropy.io import fits
-from astropy.nddata import Cutout2D
-from astropy.wcs import WCS
+lazy from astropy.coordinates import Angle, SkyCoord
+lazy from astropy.io import fits
+lazy from astropy.nddata import Cutout2D
+lazy from astropy.wcs import WCS
 
 from azulero.tools.messaging import logger
 from azulero.providers import tiling, protocol

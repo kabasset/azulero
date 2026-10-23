@@ -4,9 +4,9 @@
 
 import argparse
 from pathlib import Path
-from astropy.coordinates import SkyCoord
-from astropy.io import fits
-from astropy import wcs
+lazy from astropy.coordinates import SkyCoord
+lazy from astropy.io import fits
+lazy from astropy import wcs
 import cv2
 from dataclasses import dataclass
 import numpy as np

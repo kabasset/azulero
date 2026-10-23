@@ -5,8 +5,8 @@
 from dataclasses import dataclass
 import numpy as np
 import cv2
-from scipy import interpolate
-from skimage.filters import unsharp_mask as sksharpen
+lazy from scipy import interpolate
+lazy from skimage.filters import unsharp_mask as sksharpen
 
 from azulero.image import tune
 from azulero.tools.messaging import logger

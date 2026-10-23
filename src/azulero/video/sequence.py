@@ -3,9 +3,9 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from typing import Any
-from astropy import units as u
-from astropy.coordinates import SkyCoord, Angle
-from astropy.wcs import WCS
+lazy from astropy import units as u
+lazy from astropy.coordinates import SkyCoord, Angle
+lazy from astropy.wcs import WCS
 from dataclasses import dataclass
 import numpy as np
 from pathlib import Path

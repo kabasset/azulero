@@ -2,9 +2,8 @@
 # SPDX-PackageSourceInfo: https://github.com/kabasset/azulero
 # SPDX-License-Identifier: Apache-2.0
 
-from dataclasses import dataclass
 import numpy as np
-import scipy.interpolate as interp
+lazy import scipy.interpolate as interp
 
 from azulero.video import sequence
 

@@ -2,10 +2,8 @@
 # SPDX-PackageSourceInfo: https://github.com/kabasset/azulero
 # SPDX-License-Identifier: Apache-2.0
 
-from typing import Iterable
-
-from astropy import units
-from astropy.coordinates import Angle, SkyCoord
+lazy from astropy import units
+lazy from astropy.coordinates import Angle, SkyCoord
 from dataclasses import dataclass, field
 import json
 from pathlib import Path

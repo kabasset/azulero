@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import argparse
-from astropy.coordinates import Angle
+lazy from astropy.coordinates import Angle
 
 from azulero.image import io
 from azulero.providers import factory

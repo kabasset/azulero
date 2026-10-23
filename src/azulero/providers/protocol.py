@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from pathlib import Path
-from astropy.coordinates import SkyCoord
+lazy from astropy.coordinates import SkyCoord
 from typing import Protocol, runtime_checkable
 
 from azulero.providers.tiling import Tile, Target

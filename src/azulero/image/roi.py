@@ -2,7 +2,7 @@
 # SPDX-PackageSourceInfo: https://github.com/kabasset/azulero
 # SPDX-License-Identifier: Apache-2.0
 
-from astropy.wcs import WCS
+lazy from astropy.wcs import WCS
 import cv2
 from dataclasses import dataclass
 import numpy as np

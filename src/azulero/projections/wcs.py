@@ -4,9 +4,9 @@
 
 import numpy as np
 import cv2
-from scipy.spatial.transform import Rotation
-from astropy.coordinates import SkyCoord, Angle
-from astropy.wcs import WCS
+lazy from scipy.spatial.transform import Rotation
+lazy from astropy.coordinates import SkyCoord, Angle
+lazy from astropy.wcs import WCS
 
 from azulero.video.sequence import Frame
 

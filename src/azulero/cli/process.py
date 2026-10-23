@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import argparse
-from astropy.wcs import WCS
+lazy from astropy.wcs import WCS
 import numpy as np
 from pathlib import Path
 

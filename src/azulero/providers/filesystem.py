@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from abc import abstractmethod
-from astropy.coordinates import SkyCoord
 from pathlib import Path
 
 from azulero.providers import protocol

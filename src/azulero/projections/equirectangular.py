@@ -4,7 +4,7 @@
 
 import numpy as np
 import cv2
-from scipy.spatial.transform import Rotation
+lazy from scipy.spatial.transform import Rotation
 
 
 class Projection:

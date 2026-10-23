@@ -4,8 +4,8 @@
 
 import enum
 import numpy as np
-from skimage.restoration import inpaint as skinpaint
-from skimage.segmentation import clear_border as skclear_border
+lazy from skimage.restoration import inpaint as skinpaint
+lazy from skimage.segmentation import clear_border as skclear_border
 from skimage.measure import label as sklabel
 import cv2
 

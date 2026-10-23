@@ -2,7 +2,7 @@
 # SPDX-PackageSourceInfo: https://github.com/kabasset/azulero
 # SPDX-License-Identifier: Apache-2.0
 
-from astropy.coordinates import Angle
+lazy from astropy.coordinates import Angle
 import numpy as np
 from pathlib import Path
 import re

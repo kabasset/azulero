@@ -3,8 +3,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import argparse
-from astropy import units
-from astropy.coordinates import Angle
+lazy from astropy import units
+lazy from astropy.coordinates import Angle
 import numpy as np
 from pathlib import Path
 import cv2

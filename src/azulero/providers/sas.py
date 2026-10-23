@@ -3,8 +3,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from pathlib import Path
-from astropy.coordinates import SkyCoord
-from astropy.table import Table
+lazy from astropy.coordinates import SkyCoord
+lazy from astropy.table import Table
 
 # from astroquery.esa.euclid import EuclidClass # import later to intercept prints
 import contextlib  # intercept astroquery prints

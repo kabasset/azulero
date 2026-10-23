@@ -4,12 +4,12 @@
 
 from typing import Iterable
 
-from astropy.coordinates import SkyCoord
+lazy from astropy.coordinates import SkyCoord
 import csv
 import gzip
 from io import BytesIO, StringIO
 from pathlib import Path
-import requests
+lazy import requests
 
 from azulero.providers.tiling import Tile
 from azulero.providers.spherical import ConvexPolygon, radec_to_xyz
