@@ -4,7 +4,6 @@
 
 import numpy as np
 import cv2
-lazy from scipy.spatial.transform import Rotation
 
 
 class Projection:
@@ -140,6 +139,9 @@ def uv2coor(
 
 
 def rotation_matrix(rad: float, ax: int | np.ndarray | list):
+
+    from scipy.spatial.transform import Rotation  # lazy
+
     if isinstance(ax, int):
         ax = (np.arange(3) == ax).astype(float)
     ax = np.array(ax)

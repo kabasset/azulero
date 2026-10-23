@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import numpy as np
-lazy import scipy.interpolate as interp
 
 from azulero.video import sequence
 
@@ -49,8 +48,11 @@ def sin_spline(start: sequence.IndexedValue, stop: sequence.IndexedValue):
     """
     Spline-interpolate trajectory between knots with sine sampling.
     """
+
+    from scipy.interpolate import make_interp_spline  # lazy
+
     knots = np.stack([*start.value, stop.value])
-    b = interp.make_interp_spline(
+    b = make_interp_spline(
         np.linspace(0, 1, len(knots)), knots, k=min(3, len(knots) - 1)
     )
     u = sin_sampling(start.index, stop.index)

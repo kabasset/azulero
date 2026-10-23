@@ -5,7 +5,6 @@
 from dataclasses import dataclass
 import numpy as np
 import cv2
-lazy from scipy import interpolate
 lazy from skimage.filters import unsharp_mask as sksharpen
 
 from azulero.image import tune
@@ -141,7 +140,10 @@ def adjust_curve(data: np.ndarray, knots: list):
             knots.append((1, 1))
     else:
         knots = [(0, 0), (1, 1)]
+
+    from scipy.interpolate import make_interp_spline  # lazy
+
     x, y = list(map(list, zip(*knots)))
     k = min(len(knots) - 1, 3)
-    spline = interpolate.make_interp_spline(x, y, k)
+    spline = make_interp_spline(x, y, k)
     return np.clip(spline(data), 0.0, 1.0, dtype=np.float32)  # TODO inplace

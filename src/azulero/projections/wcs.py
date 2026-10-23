@@ -4,7 +4,6 @@
 
 import numpy as np
 import cv2
-lazy from scipy.spatial.transform import Rotation
 lazy from astropy.coordinates import SkyCoord, Angle
 lazy from astropy.wcs import WCS
 
@@ -99,6 +98,9 @@ def _xyz2uv(xyz: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
 
 
 def rotation_matrix(rad: Angle, ax: int | np.ndarray | list):
+
+    from scipy.spatial.transform import Rotation  # lazy
+
     if isinstance(ax, int):
         ax = (np.arange(3) == ax).astype(float)
     ax = np.array(ax)
