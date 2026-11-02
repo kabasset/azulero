@@ -104,16 +104,21 @@ class DataProvider:
 
         t, r = parsing.parse_target(target, radius, otype=str)
         assert r is None or isinstance(r, Angle)
-        if "," in t:
+
+        if t.count(",") == 1:
             logger.info(f"Coordinates: {t}")
             ra, dec = t.split(",")
             radec = SkyCoord(ra, dec, unit="deg")
         else:
+            if "," in t:
+                ra, dec, t = t.split(",", maxsplit=2)
+                radec = SkyCoord(ra=ra, dec=dec, unit="deg")
+            else:
+                radec = SkyCoord.from_name(t, parse=True)
+                if radec.ra is None or radec.dec is None:
+                    logger.error(f"Cannot find object: {t}")
+                    return []
             logger.info(f"Named object: {t}")
-            radec = SkyCoord.from_name(t, parse=True)
-            if radec.ra is None or radec.dec is None:
-                logger.error(f"Cannot find object: {t}")
-                return []
             logger.bullet(
                 f"Coordinates: {radec.ra.degree:.2f}° {radec.dec.degree:.2f}°"
             )
