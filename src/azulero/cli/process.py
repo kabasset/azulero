@@ -13,6 +13,7 @@ from azulero.tools.messaging import (
     parse_envargs,
     read_pipe_args,
     write_pipe_args,
+    progress_str,
 )
 from azulero.tools import parsing
 from azulero.tools.timing import Timer
@@ -246,13 +247,12 @@ def run(args):
 
     ios = Workspace.from_args(args)
 
-    for target in args.workdirs:
+    for progress, target in progress_str(args.workdirs):
+        logger.header(1, f"{progress} Target: {target}")
         process_target(ios, target, transform)
 
 
 def process_target(ios: Workspace, arg: str, transform: color.Transform):
-
-    logger.header(1, f"Target: {arg}")
 
     target, slicing = parsing.parse_target(arg)
     parts = list(Path(target).parts)
