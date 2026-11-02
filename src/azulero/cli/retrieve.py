@@ -69,7 +69,7 @@ def add_parser(subparsers, help):
     parser.add_argument(
         "--radius",
         "-r",
-        type=Angle,
+        type=lambda a: Angle(a),  # lazy import of Angle
         metavar="ANGLE",
         help=(
             "Default cone search angle (if set, will retrieve cutouts instead of tiles). "
