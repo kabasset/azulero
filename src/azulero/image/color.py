@@ -26,10 +26,10 @@ class Transform(object):
     j_to_r: float = 0.25
     hue: float = -20.0
     saturation: float = 1.2
-    stretch: float = 28.75
-    bw: tuple = (30.0, 22.5)
-    neg_overshoot: float = 0.4
-    bgr_curves: tuple = ([(0.5, 0.55)], [], [])
+    stretch: float = 28.25
+    bw: tuple = (30.0, 23.5)
+    neg_overshoot: float = 1.0
+    bgr_curves: tuple = ([(0.1, 0.1), (0.5, 0.55)], [], [])
 
 
 def sharpen(data, radii, strength):
@@ -71,7 +71,13 @@ def stretch_iyjh(iyjh: np.ndarray, transform: Transform):
     w = transform.bw[1]
     if w == 0:
         w = tune.propose_white_point(iyjh[0], transform.iyjh_zero_points[0])
-        logger.bullet(f"Auto-tune white point: {w:0.2f}")
+        if w == 0:
+            logger.warning(
+                f"Unable to auto-tune white point; "
+                f"Fall back to default value: {Transform().bw[1]}"
+            )
+        else:
+            logger.bullet(f"Auto-tune white point: {w:0.2f}")
     whites = abmag_to_value(w, np.array(transform.iyjh_zero_points))
     scaling = (np.array(transform.iyjh_scaling) / whites)[:, np.newaxis, np.newaxis]
     a = abmag_to_value(w, transform.stretch)
