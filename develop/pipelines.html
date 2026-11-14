@@ -235,7 +235,7 @@ and generate a similar output in one pipeline (there are a lot of files to downl
 <li><p>arrange renderings into a 14-column grid,</p></li>
 <li><p>display the resulting collage:</p></li>
 </ul>
-<a class="" data-lightbox="group-a27bc901-5302-4a4a-b32f-06099ba94667" data-title="" href="_images/collage_56.46762095259402,-49.45093443791871_102020055_54.36856435116159,-28.53351499365056_102043551.png" title=""><img alt="" class="" height="auto" src="_images/collage_56.46762095259402,-49.45093443791871_102020055_54.36856435116159,-28.53351499365056_102043551.png" width="100%"/>
+<a class="" data-lightbox="group-d0894948-3ac3-48c3-a83d-28d91f3ae203" data-title="" href="_images/collage_56.46762095259402,-49.45093443791871_102020055_54.36856435116159,-28.53351499365056_102043551.png" title=""><img alt="" class="" height="auto" src="_images/collage_56.46762095259402,-49.45093443791871_102020055_54.36856435116159,-28.53351499365056_102043551.png" width="100%"/>
 </a></section>
 <section id="pipeline-clipboard-to-slideshow">
 <h2>Pipeline: Clipboard to slideshow</h2>
@@ -283,7 +283,7 @@ The pipeline will be fed by the clipboard, therefore we will just select the tab
 </span></code></pre></div>
 </div>
 <p>which gives:</p>
-<a class="" data-lightbox="group-78d9cf59-2f64-481e-8d2d-a73412066c36" data-title="" href="_images/collage_UGC11116_102159776_LEDA2697349_102159776.png" title=""><img alt="" class="" height="auto" src="_images/collage_UGC11116_102159776_LEDA2697349_102159776.png" width="100%"/>
+<a class="" data-lightbox="group-cc665e03-a035-4dcc-bc95-4472f0af4182" data-title="" href="_images/collage_UGC11116_102159776_LEDA2697349_102159776.png" title=""><img alt="" class="" height="auto" src="_images/collage_UGC11116_102159776_LEDA2697349_102159776.png" width="100%"/>
 </a><p>Since we did not pass option <code class="docutils literal notranslate"><span class="pre">-n</span> <span class="pre">1</span></code> to <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">retrieve</span></code>,
 all of the tiles which contain a target are retrieved,
 which is why there are two images of LEDA2697349.
@@ -348,6 +348,23 @@ collage -&gt; open' src="_images/plantuml-89f6e558cfca0d4a1224da1ce5abc4faf6dfd4
 <li><p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">arrange</span></code> streams the path to the collage file toward <code class="docutils literal notranslate"><span class="pre">open</span></code>.</p></li>
 </ul>
 </section>
+<section id="checkpoint-resume">
+<h2>Checkpoint-resume</h2>
+<p>In order not to rerun a full pipeline
+– typically, not retrieving data again just to change a processing parameter –
+Azulero can save its output messages to a file named <strong>manifest</strong>.
+The manifest can later be used as the input message of a sub-pipeline.</p>
+<p>For example, assume we forgot to pass option <code class="docutils literal notranslate"><span class="pre">-w</span> <span class="pre">0</span></code> and need to rerun a <code class="docutils literal notranslate"><span class="pre">retrieve</span> <span class="pre">|</span> <span class="pre">process</span></code> pipeline.
+Using the manifest as checkpoint will enable running only <code class="docutils literal notranslate"><span class="pre">process</span></code>.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">$ </span>azul<span class="w"> </span>--<span class="ge">manifest</span><span class="w"> </span><span class="o">{</span>cmd<span class="o">}</span>.out<span class="w"> </span>retrieve<span class="w"> </span>NGC6505<span class="w"> </span>-r<span class="w"> </span>1m<span class="w"> </span><span class="p">|</span><span class="w"> </span>azul<span class="w"> </span>process
+</span><span id="line-2"><span class="gp">$ </span>cat<span class="w"> </span>retrieve.out<span class="w"> </span><span class="p">|</span><span class="w"> </span>azul<span class="w"> </span>process<span class="w"> </span>-w<span class="w"> </span><span class="m">0</span>
+</span></code></pre></div>
+</div>
+<p>Environment variable <code class="docutils literal notranslate"><span class="pre">AZUL_MANIFEST</span></code> may be handy to automate manifest writing, e.g.:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">$ </span><span class="nb">export</span><span class="w"> </span><span class="ge">AZUL_MANIFEST</span><span class="o">={</span>cmd<span class="o">}</span>_<span class="o">{</span>utcnow<span class="o">}</span>.out
+</span></code></pre></div>
+</div>
+</section>
 <section id="authentication-workaround">
 <h2>Authentication workaround</h2>
 <p>In order to access private data, you have to provide your credentials.
@@ -387,6 +404,7 @@ In this specific case, please start by exporting your credentials in the pipelin
 <li><a :data-current="activeSection === '#pipeline-online-catalog-to-collage'" class="reference internal" href="#pipeline-online-catalog-to-collage">Pipeline: Online catalog to collage</a></li>
 <li><a :data-current="activeSection === '#pipeline-clipboard-to-slideshow'" class="reference internal" href="#pipeline-clipboard-to-slideshow">Pipeline: Clipboard to slideshow</a></li>
 <li><a :data-current="activeSection === '#dissecting-a-pipeline'" class="reference internal" href="#dissecting-a-pipeline">Dissecting a pipeline</a></li>
+<li><a :data-current="activeSection === '#checkpoint-resume'" class="reference internal" href="#checkpoint-resume">Checkpoint-resume</a></li>
 <li><a :data-current="activeSection === '#authentication-workaround'" class="reference internal" href="#authentication-workaround">Authentication workaround</a></li>
 </ul>
 </div>

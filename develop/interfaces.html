@@ -204,6 +204,10 @@ which contain the band name (e.g. <code class="docutils literal notranslate"><sp
 <dt><code class="docutils literal notranslate"><span class="pre">--logfile</span></code></dt><dd><p>The optional path template to a log file (see placeholders below).
 If the file already exists, messages are written at the end; Otherwise, the file is created.</p>
 </dd>
+<dt><code class="docutils literal notranslate"><span class="pre">--manifest</span></code></dt><dd><p>The optional path template to a manifest, to which <code class="docutils literal notranslate"><span class="pre">stdout</span></code> is copied (see placeholders below).
+If the file already exists, messages are written at the end; Otherwise, the file is created.
+The manifests may serve as checkpoints, from which a pipeline may be resumed (see <a class="reference internal" href="pipelines.html"><span class="doc">Pipelines</span></a>).</p>
+</dd>
 </dl>
 <table class="docutils align-default">
 <thead>
