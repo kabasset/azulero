@@ -69,6 +69,12 @@ def add_parser():
         metavar="PATH",
         help="Path to a log file (append messages if the file already exists).",
     )
+    parser.add_argument(
+        "--manifest",
+        type=str,
+        metavar="PATH",
+        help="Path to a manifest to copy stdout (append if the file already exists).",
+    )
 
     subparsers = parser.add_subparsers(title="Commands", dest="cmd")
     env.add_parser(subparsers, "Set predefined and custom environment variables.")
@@ -96,12 +102,18 @@ def run():
     log_title()
 
     if args.logfile:
-        logfile = render_logfile(args)
+        logfile = render_logfile(args.logfile, args)
         logger.info(f"Log file: {logfile}")
         logger.info("")
 
-        # Add file now, in order not to log the log file path in the log file
+        # Add file now, in order not to log the log file path in the log file!
         logger.add_file(logfile)
+
+    if args.manifest:
+        manifest = render_logfile(args.manifest, args)
+        logger.info(f"Manifest: {manifest}")
+        logger.info("")
+        logger.add_manifest(manifest)
 
     if args.cmd != "cite":
         log_args(args)
@@ -119,16 +131,17 @@ def read_dotenv():
     return filename
 
 
-def render_logfile(args):
+def render_logfile(filename, args):
     path = Path(
         parsing.render_template(
-            args.logfile,
+            filename,
             workspace=args.workspace,
             cmd=args.cmd,
             now=datetime.datetime.now(),
             utcnow=datetime.datetime.now(datetime.timezone.utc),
         )
     )
+    path.parent.mkdir(parents=True, exist_ok=True)
     prefix, _, suffix = path.name.partition("{rand}")
     _, name = tempfile.mkstemp(suffix, prefix, path.parent)
     return path.parent / name

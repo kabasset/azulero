@@ -6,6 +6,7 @@ from functools import lru_cache
 import getpass
 import logging
 import os
+from pathlib import Path
 import re
 import shlex
 import subprocess
@@ -46,9 +47,11 @@ def write_pipe_args(args, log=True, sh=True):
         logger.header(1, "Output")
         for a in args:
             logger.bullet(str(a))
+    encode = lambda a: shlex.quote(str(a)) if sh else str(a)
+    text = "\n".join(encode(a) for a in args)
+    logger.manifest(text)
     if not sys.stdout.isatty():
-        encode = lambda a: shlex.quote(str(a)) if sh else str(a)
-        print("\n".join(encode(a) for a in args))
+        print(text)
         return True
     return False
 
@@ -143,7 +146,8 @@ header_color_codes = {1: "92;1", 2: "96;1", 3: "94;1"}
 
 class FancyStderrLogger:
     """
-    Stderr logger with support for fancy messages such as headers and bullet lists.
+    Stderr logger with support for log file, manifest,
+    and fancy messages such as headers and bullet lists.
     """
 
     def __init__(self, name="azulero"):
@@ -152,11 +156,15 @@ class FancyStderrLogger:
         handler = logging.StreamHandler(sys.stderr)
         handler.setFormatter(_LogTermFormatter(self._logger))
         self._logger.addHandler(handler)
+        self._manifest = None
 
     def add_file(self, filename):
         handler = logging.FileHandler(filename)
         handler.setFormatter(_LogFileFormatter(self._logger))
         self._logger.addHandler(handler)
+
+    def add_manifest(self, filename):
+        self._manifest = Path(filename)
 
     @property
     def level(self):
@@ -212,6 +220,13 @@ class FancyStderrLogger:
         sys.stderr.write(text)
         sys.stderr.flush()
         self._empty_line = False
+
+    def manifest(self, text):
+        logger.warning(f"{self._manifest} << {text}")
+        if self._manifest is None:
+            return
+        with open(self._manifest, "a") as f:
+            f.write(text)
 
     def prompt_clear(self, text: str):
         self._print(text + " ")
