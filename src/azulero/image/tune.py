@@ -13,6 +13,8 @@ def propose_white_point(data: np.ndarray, zp: float):
     logger.debug(f"Compute image percentiles in AB magnitude:")
     qs = [0, 0.01, 0.1, 1, 50, 99, 99.9, 99.95, 100]
     percentiles = stats.percentiles(data[data > 0], qs)
+    if not percentiles:  # No enough data
+        return 0
     percentiles.values = list(-2.5 * np.log10(percentiles.values) + zp)
     for q in percentiles:
         logger.debug(f"• {q}: {percentiles[q]}")

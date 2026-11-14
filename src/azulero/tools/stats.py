@@ -36,5 +36,7 @@ def percentiles(data: np.ndarray, qs: list):
     """
     sorted = data.flatten()
     last = len(sorted) - 1
+    if last < 0:
+        return None
     sorted.sort()  # TODO partial sort upto `round(max(qs) / 100 * last)`
     return KeysValues(qs, [sorted[round(q / 100 * last)] for q in qs])
