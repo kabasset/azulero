@@ -39,6 +39,9 @@ class SAS:
 
         if self.env != "PDR":  # The only environment without authentication
             self._authenticate(user)
+            self.table_name = "sedm"
+        else:
+            self.table_name = "dr1"
 
         if err.getvalue():
             raise RuntimeError(err.getvalue())
@@ -66,10 +69,8 @@ class SAS:
         return res
 
     def query_tile_attributes(self, index: str) -> list[Tile]:
-        select_text = "data_set_release"
-        if self.env != "PDR":  # FIXME what will happen when DR1 will be in PDR?
-            select_text += ",processing_mode"
-        q = f"SELECT {select_text} FROM sedm.mosaic_product WHERE mosaic_product.tile_index={index}"
+        select_text = "data_set_release,processing_mode"
+        q = f"SELECT {select_text} FROM {self.table_name}.mosaic_product WHERE mosaic_product.tile_index={index}"
         res = self.get_table(q)
         return [
             Tile(
@@ -83,11 +84,9 @@ class SAS:
     def query_radec_tiles(self, radec: SkyCoord, dsrs: list[str]) -> list[Tile]:
         dsrs_text = ",".join("'" + d + "'" for d in dsrs)
         select_text = "tile_index,ra,dec,data_set_release"
-        if self.env != "PDR":
-            select_text += ",processing_mode"
         assert radec.ra is not None and radec.dec is not None
         q = (
-            f"SELECT {select_text} FROM sedm.mosaic_product "
+            f"SELECT {select_text} FROM {self.table_name}.mosaic_product "
             f"WHERE (mosaic_product.data_set_release IN ({dsrs_text})) "
             f"AND INTERSECTS(CIRCLE({radec.ra.value},{radec.dec.value},0),fov)=1"
         )
@@ -95,14 +94,14 @@ class SAS:
         return [tile(r, radec) for r in res]
 
     def query_tile_datafiles(self, tile: Tile) -> dict[str, str]:
-        products = self.__euclid.get_product_list(
-            tile_index=tile.index, product_type="DpdMerBksMosaic"
-        )
-        if products is None:
+        select_text = "file_name,filter_name,release_name"
+        q = f"SELECT {select_text} FROM {self.table_name}.mosaic_product WHERE mosaic_product.tile_index={tile.index}"
+        res = self.get_table(q)
+        if not res:
             raise FileNotFoundError(tile.index)
         return {
             str(p["file_name"]): str(p["filter_name"])
-            for p in products
+            for p in res
             if str(p["release_name"]) == tile.dsr
         }
 
@@ -110,7 +109,7 @@ class SAS:
         self.__euclid.get_product(file_name=name, output_file=path)
 
     def download_cutout(self, name: str, path: Path, target: Target):
-        q = f"SELECT file_path, instrument_name FROM sedm.mosaic_product WHERE file_name='{name}'"
+        q = f"SELECT file_path, instrument_name FROM {self.table_name}.mosaic_product WHERE file_name='{name}'"
         res = self.get_table(q)[0]
         self.__euclid.get_cutout(
             file_path=Path(res["file_path"]) / name,  # type: ignore
