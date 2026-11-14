@@ -49,7 +49,7 @@ def write_pipe_args(args, log=True, sh=True):
             logger.bullet(str(a))
     encode = lambda a: shlex.quote(str(a)) if sh else str(a)
     text = "\n".join(encode(a) for a in args)
-    logger.manifest(text)
+    logger.manifest(text + "\n")
     if not sys.stdout.isatty():
         print(text)
         return True
@@ -222,7 +222,6 @@ class FancyStderrLogger:
         self._empty_line = False
 
     def manifest(self, text):
-        logger.warning(f"{self._manifest} << {text}")
         if self._manifest is None:
             return
         with open(self._manifest, "a") as f:
