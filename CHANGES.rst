@@ -5,7 +5,7 @@ New features
 ^^^^^^^^^^^^
 
 - New command ``azul env`` dedicated to environment setup.
-- New global option ``--logfile`` triggers writing logs to a given file.
+- New global options ``--logfile`` (resp. ``--manifest``) triggers writing logs (resp. output messages) to a given file.
 
 ``azul retrieve``
 

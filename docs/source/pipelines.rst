@@ -276,6 +276,31 @@ The message flow is illustrated below:
 * ``azul arrange`` streams the path to the collage file toward ``open``.
 
 
+Checkpoint-resume
+-----------------
+
+In order not to rerun a full pipeline
+-- typically, not retrieving data again just to change a processing parameter --
+Azulero can save its output messages to a file named **manifest**.
+The manifest can later be used as the input message of a sub-pipeline.
+
+For example, assume we forgot to pass option ``-w 0`` and need to rerun a ``retrieve | process`` pipeline.
+Using the manifest as checkpoint will enable running only ``process``.
+
+.. code-block:: console
+   :emphasize-text: manifest
+   
+   $ azul --manifest {cmd}.out retrieve NGC6505 -r 1m | azul process
+   $ cat retrieve.out | azul process -w 0
+
+Environment variable ``AZUL_MANIFEST`` may be handy to automate manifest writing, e.g.:
+
+.. code-block:: console
+   :emphasize-text: AZUL_MANIFEST
+
+   $ export AZUL_MANIFEST={cmd}_{utcnow}.out
+
+
 Authentication workaround
 -------------------------
 

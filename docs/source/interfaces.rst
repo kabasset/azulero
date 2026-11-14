@@ -97,6 +97,10 @@ Global options are:
 ``--logfile``
    The optional path template to a log file (see placeholders below).
    If the file already exists, messages are written at the end; Otherwise, the file is created.
+``--manifest``
+   The optional path template to a manifest, to which ``stdout`` is copied (see placeholders below).
+   If the file already exists, messages are written at the end; Otherwise, the file is created.
+   The manifests may serve as checkpoints, from which a pipeline may be resumed (see :doc:`pipelines`).
 
 ================ ==================
 Placeholder name Substitution value
