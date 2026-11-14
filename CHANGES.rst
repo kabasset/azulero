@@ -7,6 +7,10 @@ New features
 - New command ``azul env`` dedicated to environment setup.
 - New global option ``--logfile`` triggers writing logs to a given file.
 
+``azul retrieve``
+
+- Update ``pdr`` provider interface to new SAS interface.
+
 ``azul process``
 
 - Increase default values of options ``-a`` and ``-b`` following SNR improvement in DR1 wrt. Q1.

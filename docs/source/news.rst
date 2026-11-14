@@ -4,6 +4,11 @@ What's new
 Version 2.2
 -----------
 
+.. warning::
+   While publishing `DR1 <https://www.cosmos.esa.int/web/euclid/data-release-dr1>`_,
+   ESA have updated their data retrieval interface, which makes ``pdr`` provider fail in previous versions of Azulero.
+   Version 2.2 implements the new interface such that ``pdr`` now retrieves DR1 data.
+
 This version simplifies **environment management**:
 
 * For first-time users, new command ``azul env --setup`` opens a setup wizard.
