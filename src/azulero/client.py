@@ -142,9 +142,11 @@ def render_logfile(filename, args):
         )
     )
     path.parent.mkdir(parents=True, exist_ok=True)
-    prefix, _, suffix = path.name.partition("{rand}")
-    _, name = tempfile.mkstemp(suffix, prefix, path.parent)
-    return path.parent / name
+    if "{rand}" in path.name:
+        prefix, _, suffix = path.name.partition("{rand}")
+        _, name = tempfile.mkstemp(suffix, prefix, path.parent)
+        return path.parent / name
+    return path
 
 
 def log_title():
