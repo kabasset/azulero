@@ -206,7 +206,7 @@ If the file already exists, messages are written at the end; Otherwise, the file
 </dd>
 <dt><code class="docutils literal notranslate"><span class="pre">--manifest</span></code></dt><dd><p>The optional path template to a manifest, to which <code class="docutils literal notranslate"><span class="pre">stdout</span></code> is copied (see placeholders below).
 If the file already exists, messages are written at the end; Otherwise, the file is created.
-The manifests may serve as checkpoints, from which a pipeline may be resumed (see <a class="reference internal" href="pipelines.html"><span class="doc">Pipelines</span></a>).</p>
+The manifests may serve as checkpoints, from which a pipeline may be resumed (see <a class="reference internal" href="pipelines.html#checkpoint"><span class="std std-ref">Checkpoint-resume</span></a>).</p>
 </dd>
 </dl>
 <table class="docutils align-default">
@@ -247,7 +247,8 @@ according to a format string separated from the placeholder name by a colon, e.g
 If <code class="docutils literal notranslate"><span class="pre">stdin</span></code> is also empty, then the command stops early.</p>
 </dd>
 <dt><code class="docutils literal notranslate"><span class="pre">stdout</span></code></dt><dd><p>The results of the command (e.g. path to workdir or rendered image) are written to <code class="docutils literal notranslate"><span class="pre">stdout</span></code>
-for further use by commands down a pipeline.</p>
+for further use by commands down a pipeline.
+If global option <code class="docutils literal notranslate"><span class="pre">--manifest</span></code> is set, the output messages are also written to the specified file.</p>
 </dd>
 <dt><code class="docutils literal notranslate"><span class="pre">stderr</span></code></dt><dd><p>Azulero commands log to <code class="docutils literal notranslate"><span class="pre">stderr</span></code>.</p>
 </dd>
@@ -380,7 +381,7 @@ This really helps!</p>
 </div><footer class="py-6 border-t border-border md:py-0">
 <div class="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
 <div class="flex flex-col items-center gap-4 px-8 md:flex-row md:gap-2 md:px-0">
-<p class="text-sm leading-loose text-center text-muted-foreground md:text-left">© 2025-2026, Antoine Basset (CNES) and contributors. Last updated: Nov 14, 2026. Built with <a class="font-medium underline underline-offset-4" href="https://www.sphinx-doc.org" rel="noreferrer">Sphinx 9.2.0</a></p>
+<p class="text-sm leading-loose text-center text-muted-foreground md:text-left">© 2025-2026, Antoine Basset (CNES) and contributors. Last updated: Nov 15, 2026. Built with <a class="font-medium underline underline-offset-4" href="https://www.sphinx-doc.org" rel="noreferrer">Sphinx 9.2.0</a></p>
 </div>
 </div>
 </footer>
