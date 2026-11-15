@@ -44,9 +44,17 @@ including with parallelization (see :doc:`pipelines`).
 As an example, the collage on the right is the unedited output of a single command line
 (credit: ESA Euclid / Euclid Consortium / NASA / Q1-2025 / Antoine Basset, CNES).
 
+For Python (particularly ESA Datalabs notebook users), a :doc:`python` is exposed.
+Rendering a color image from photometric channels is simply done ase:
+
+.. code-block:: python
+   :emphasize-text: process_iyjh
+
+   >>> colored = azul.process_iyjh(data)
+
 .. tip::
    
-   Check our Q1 processing in Azulite_,
+   Check our Q1 processing in Azulite_ (DR1 incoming),
    where you can navigate the sky in full Azulero colors and export cutouts.
 
 

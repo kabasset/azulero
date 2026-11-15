@@ -38,7 +38,7 @@ set the following environment variables in order to reproduce the images exactly
 .. warning::
 
    **For access to private data**, interactive mode of :doc:`retrieve` won't work in pipelines.
-   If no ``.netrc`` file is configured, you will have to rely on a workaround described at the bottom of the page.
+   If no ``.netrc`` file is configured, you will have to rely on a workaround described at the bottom of the page (:ref:`printuser`).
 
 
 Pipeline: Object names to color images
@@ -276,6 +276,8 @@ The message flow is illustrated below:
 * ``azul arrange`` streams the path to the collage file toward ``open``.
 
 
+.. _checkpoint:
+
 Checkpoint-resume
 -----------------
 
@@ -300,6 +302,8 @@ Environment variable ``AZUL_MANIFEST`` may be handy to automate manifest writing
 
    $ export AZUL_MANIFEST={cmd}_{utcnow}.out
 
+
+.. _printuser:
 
 Authentication workaround
 -------------------------

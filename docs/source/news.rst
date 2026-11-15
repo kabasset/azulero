@@ -14,13 +14,16 @@ This version simplifies **environment management**:
 * For first-time users, new command ``azul env --setup`` opens a setup wizard.
 * For regular users, new command :doc:`env` aims at specifying multiple environments
   made of both predefined and custom variables.
-* ``azul env q1`` optimizes processing parameters for Q1 data,
+* Preset ``azul env q1`` optimizes processing parameters for Q1 data,
   therefore we updated the default parameters to match the improved signal-to-noise ratio of DR1 data.
 * ``azul env print-user`` can be used to pass the user credentials to :doc:`pipelines` when a ``.netrc`` file is not available.
 * The :doc:`python` supports passing of both user name and password (as option ``user=f"{name}:{password}"``)
   to the data provider factory in case they were already stored in Python variables.
 * Finally, global options ``--logfile`` and ``--manifest`` enable writing logs and output messages, respectively, to files.
-  Manifests are especially handy to implement pipeline checkpoints.
+  Manifests are especially handy to implement pipeline checkpoints (:ref:`checkpoint`).
+
+More details: :doc:`changes`.
+
 
 Version 2.1
 -----------

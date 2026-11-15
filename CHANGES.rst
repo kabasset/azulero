@@ -13,7 +13,7 @@ New features
 
 ``azul process``
 
-- Increase default values of options ``-a`` and ``-b`` following SNR improvement in DR1 wrt. Q1.
+- Increase default stretching parameters following SNR improvement in DR1 wrt. Q1.
 
 ``azul env``
 

@@ -100,7 +100,7 @@ Global options are:
 ``--manifest``
    The optional path template to a manifest, to which ``stdout`` is copied (see placeholders below).
    If the file already exists, messages are written at the end; Otherwise, the file is created.
-   The manifests may serve as checkpoints, from which a pipeline may be resumed (see :doc:`pipelines`).
+   The manifests may serve as checkpoints, from which a pipeline may be resumed (see :ref:`checkpoint`).
 
 ================ ==================
 Placeholder name Substitution value
@@ -134,6 +134,7 @@ Azulero commands read and write different types of messages from and to the diff
 ``stdout``
    The results of the command (e.g. path to workdir or rendered image) are written to ``stdout``
    for further use by commands down a pipeline.
+   If global option ``--manifest`` is set, the output messages are also written to the specified file.
 ``stderr``
    Azulero commands log to ``stderr``.
 
