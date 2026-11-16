@@ -61,26 +61,45 @@ For example, to download a cutout without installing, launch:
 Setup
 -----
 
-.. tip::
+.. note::
+
+   Since version 2.2, accessing public data requires no configuration.
+   You can skip this section if you do not intend to use private data!
+
+Euclid Consortium members can access private data when authenticated.
+Three authentication methods are provided, which will be described in the following subsections:
+
+``.netrc`` file
+   In personal environments, credentials can be stored once for all in the ``.netrc`` file.
+
+Interactive authentication
+   In shared environments, passwords should not be stored in any file.
+   If only the user name is written in the ``.netrc`` file, an interactive mode is triggered
+   and you will be prompted for your password.
+
+Session authentication
+   Special command ``azul env print-user`` aims at authenticating the user for an entire terminal session
+   without having the password appear in any file or terminal history.
+   The interactive mode will be prompted to feed a dedicated environment variable.
+
+
+Setup wizard and ``.netrc`` file
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. admonition:: Setup wizard
+   :class: tip
 
    Since version 2.2, a setup wizard will guide you through the initial setup.
-   It will perform the steps described in this section.
-   You can either follow the instructions below
-   or run the following command from your target Azulero workspace:
+   It will perform the steps described here.
+   You can either follow the instructions below or run the following command:
 
    .. code-block:: console
       :emphasize-text: --setup
 
       $ azul env --setup
 
-
-For Euclid members
-^^^^^^^^^^^^^^^^^^
-
-Accessing public data requires no configuration.
-
-Internal data retrieval requires authentication,
-which can be stored in the ``.netrc`` configuration file (``~/.netrc`` on Unix, ``%HOMEPATH%\.netrc`` on Windows) as follows:
+Credentials can be stored in the ``.netrc`` configuration file
+(``~/.netrc`` on Unix, ``%HOMEPATH%\.netrc`` on Windows) as follows:
 
 * For internal SAS data, use your LDAP credentials:
 
@@ -103,26 +122,26 @@ which can be stored in the ``.netrc`` configuration file (``~/.netrc`` on Unix, 
        login <EC_login>
        password <EC_password>
 
-In order to avoid storing sensitive data in shared environments like Datalabs,
-passwords can be omitted, which triggers interactive mode:
-in this case, you will be prompted for your password at startup.
 
+.. _printuser:
 
-For other users
-^^^^^^^^^^^^^^^
+Session authentication
+^^^^^^^^^^^^^^^^^^^^^^
 
-Because you will retrieve only public data,
-you can setup your environment to always restrict queries to the public archive.
-To do so, simply set the environment variable ``AZULRETRIEVE_FROM`` to ``pdr``
-(see :doc:`retrieve` and :ref:`named_options` to understand why).
-Typically, Bash users may add the following to the ``.bashrc`` file:
+If you are working in a shared environment like ESA Datalabs,
+you should not save secrets in a ``.netrc`` file or terminal history.
+In this specific case, please start by exporting your credentials using ``azul env`` as follows:
 
 .. code-block:: console
-   :emphasize-text: pdr
+   :emphasize-text: export print-user
 
-   $ export AZULRETRIEVE_FROM=pdr
+   # Unix
+   $ export $(azul env print-user)
 
-No other configuration is needed for public data.
+   # Windows
+   $ for /f %%x in ('azul env print-user') do set "%%x"
+
+Authentication will be forgotten when the session closes.
 
 
 ESA Datalabs users

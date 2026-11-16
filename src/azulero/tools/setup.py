@@ -28,19 +28,14 @@ def setup_wizard(workspace: Path, prefix: str):
     clear_term()
     logger.header(1, "Welcome to the setup wizard!")
 
-    if prompt_choice("Are you a Euclid Consortium member?"):
-        clear_term()
-        setup_euclid(workspace, prefix)
-    else:
-        clear_term()
-        setup_public(workspace, prefix)
+    setup_euclid(workspace, prefix)
 
     logger.info("")
     logger.prompt_obfuscated("Press Enter to continue.", echo_char=None)
     clear_term()
     logger.header(1, "Setup complete!")
     logger.info(f"You can now use Azulero commands, e.g.:")
-    logger.command("azul retrieve UGC11169 -r 30s | azul process -w 0")
+    logger.command("azul retrieve UGC11169 -r 30s | azul process")
     logger.info(
         f"Don't forget to read the docs: "
         + colorize(
@@ -48,31 +43,6 @@ def setup_wizard(workspace: Path, prefix: str):
             "https://kabasset.github.io/azulero/develop/quickstart.html",
         )
     )
-
-
-def setup_public(workspace: Path, prefix: str):
-    logger.header(1, "Access to public data")
-    logger.header(2, "Verify the workspace")
-
-    if prompt_choice(
-        f"Currently configured workspace is '{str(workspace.absolute())}'. "
-        f"Do you want to change it?"
-    ):
-        workspace = Path(logger.prompt_clear("Please enter a new workspace:"))
-    workspace.mkdir(parents=True, exist_ok=True)
-
-    logger.header(2, "Set the data provider to 'pdr'")
-
-    dotenv = workspace / ".env"
-    cmd = "azul env pdr >> " + str(dotenv)
-
-    logger.info("The following command should be run before working with Azulero:")
-    logger.command(cmd)
-    if prompt_choice("Do you want me to run it?"):
-        with open(dotenv, "a+") as f:
-            f.write(prefix + "RETRIEVE_FROM=PDR\n")
-    else:
-        logger.info("It's your choice!")
 
 
 def setup_euclid(workspace: Path, prefix: str):
