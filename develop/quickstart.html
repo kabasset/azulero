@@ -169,6 +169,15 @@ For example, to download a cutout without installing, launch:</p>
 <p>Since version 2.2, accessing public data requires no configuration.
 You can skip this section if you do not intend to use private data!</p>
 </div>
+<div class="tip admonition">
+<p class="admonition-title">Setup wizard</p>
+<p>To access internal data, a setup wizard will guide you through the initial setup.
+It will perform the steps described in this section.
+You can either follow the instructions below or run the following command from your workspace (see <a class="reference internal" href="interfaces.html#workspace"><span class="std std-ref">Workspace, input and output paths</span></a>):</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">$ </span>azul<span class="w"> </span>env<span class="w"> </span><span class="ge">--setup</span>
+</span></code></pre></div>
+</div>
+</div>
 <p>Euclid Consortium members can access private data when authenticated.
 Three authentication methods are provided, which will be described in the following subsections:</p>
 <dl class="simple">
@@ -183,17 +192,8 @@ without having the password appear in any file or terminal history.
 The interactive mode will be prompted to feed a dedicated environment variable.</p>
 </dd>
 </dl>
-<section id="setup-wizard-and-netrc-file">
-<h3>Setup wizard and <code class="docutils literal notranslate"><span class="pre">.netrc</span></code> file</h3>
-<div class="tip admonition">
-<p class="admonition-title">Setup wizard</p>
-<p>Since version 2.2, a setup wizard will guide you through the initial setup.
-It will perform the steps described here.
-You can either follow the instructions below or run the following command:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">$ </span>azul<span class="w"> </span>env<span class="w"> </span><span class="ge">--setup</span>
-</span></code></pre></div>
-</div>
-</div>
+<section id="netrc-file">
+<h3><code class="docutils literal notranslate"><span class="pre">.netrc</span></code> file</h3>
 <p>Credentials can be stored in the <code class="docutils literal notranslate"><span class="pre">.netrc</span></code> configuration file
 (<code class="docutils literal notranslate"><span class="pre">~/.netrc</span></code> on Unix, <code class="docutils literal notranslate"><span class="pre">%HOMEPATH%\.netrc</span></code> on Windows) as follows:</p>
 <ul>
@@ -233,9 +233,9 @@ In this specific case, please start by exporting your credentials using <code cl
 <section id="esa-datalabs-users">
 <h3>ESA Datalabs users</h3>
 <p>MER datafiles are directly accessible from ESA Datalabs, such that no download is needed.
-To enable this feature permanently in Datalabs, add the following line to the <code class="docutils literal notranslate"><span class="pre">.bashrc</span></code> file
-(see <a class="reference internal" href="retrieve.html"><span class="doc">azul retrieve</span></a> for details):</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">$ </span><span class="nb">export</span><span class="w"> </span><span class="nv">AZULRETRIEVE_DATA</span><span class="o">=</span><span class="ge">labs</span>
+To enable this feature permanently in your workspace,
+add the following line to a <code class="docutils literal notranslate"><span class="pre">.env</span></code> file at the root of the workspace:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="n">AZULRETRIEVE_DATA</span><span class="o">=</span><span class="ge">labs</span>
 </span></code></pre></div>
 </div>
 </section>
@@ -247,7 +247,7 @@ we propose to create an image before (carefully) reading the next pages!</p>
 <p>We will start by downloading some Euclid data around a colorful and large-enough-but-not-too-large galaxy:
 <a class="reference external" href="https://www.cosmos.esa.int/web/euclid/euclid-nearby-galaxies-collage" rel="noreferrer" target="_blank">UGC 11169</a>.
 Go to your favorite directory and run:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">$ </span>azul<span class="w"> </span><span class="ge">retrieve</span><span class="w"> </span>UGC11169<span class="w"> </span>-r<span class="w"> </span>30s<span class="w"> </span><span class="p">|</span><span class="w"> </span>azul<span class="w"> </span><span class="ge">process</span><span class="w"> </span>-w<span class="w"> </span><span class="m">0</span>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">$ </span>azul<span class="w"> </span><span class="ge">retrieve</span><span class="w"> </span>UGC11169<span class="w"> </span>-r<span class="w"> </span>30s<span class="w"> </span><span class="p">|</span><span class="w"> </span>azul<span class="w"> </span><span class="ge">process</span>
 </span></code></pre></div>
 </div>
 <p>This will retrieve and process an area of 1’ x 1’ or roughly 600 x 600 pixels around the galaxy core.
@@ -327,7 +327,7 @@ this is where the algorithms and their parameters are described.</p>
 </ul>
 </li>
 <li><a :data-current="activeSection === '#setup'" class="reference internal" href="#setup">Setup</a><ul>
-<li><a :data-current="activeSection === '#setup-wizard-and-netrc-file'" class="reference internal" href="#setup-wizard-and-netrc-file">Setup wizard and <code class="docutils literal notranslate"><span class="pre">.netrc</span></code> file</a></li>
+<li><a :data-current="activeSection === '#netrc-file'" class="reference internal" href="#netrc-file"><code class="docutils literal notranslate"><span class="pre">.netrc</span></code> file</a></li>
 <li><a :data-current="activeSection === '#session-authentication'" class="reference internal" href="#session-authentication">Session authentication</a></li>
 <li><a :data-current="activeSection === '#esa-datalabs-users'" class="reference internal" href="#esa-datalabs-users">ESA Datalabs users</a></li>
 </ul>
