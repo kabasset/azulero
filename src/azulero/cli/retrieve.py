@@ -56,7 +56,7 @@ def add_parser(subparsers, help):
     parser.add_argument(
         "--from",
         type=str,
-        default="idr",
+        default="pdr",
         choices=factory.product_databases.keys(),
         help="Data provider.",
     )

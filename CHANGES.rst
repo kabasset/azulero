@@ -10,6 +10,7 @@ New features
 ``azul retrieve``
 
 - Update ``pdr`` provider interface to new SAS interface.
+- Make ``pdr`` the default provider.
 
 ``azul process``
 

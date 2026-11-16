@@ -63,16 +63,6 @@ def preset_q1_processing(prefix):
     }
 
 
-def preset_dr1_data(prefix):
-    """
-    Retrieve DR1 data.
-    """
-    return {
-        prefix + "RETRIEVE_FROM": "pdr",
-        prefix + "RETRIEVE_DSR": "DR1_R1,DR1_R2",
-    }
-
-
 def preset_otf_data(prefix):
     """
     Retrieve on-the-fly data.
@@ -163,7 +153,6 @@ def preset_process_png(prefix):
 presets = {
     "current": current_env,
     "logfile": preset_logfile,
-    "dr1": preset_dr1_data,
     "otf": preset_otf_data,
     "dss": preset_dss,
     "datalabs": preset_datalabs,
