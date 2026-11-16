@@ -41,9 +41,9 @@ def current_env(prefix):
     # FIXME rm password from AZULRETRIEVE_USER?
 
 
-def preset_logfile(prefix):
+def preset_logfiles(prefix):
     """
-    Write logs (``stderr``) and manifest (``stdout``) to files.
+    Write logs (stderr) and manifest (stdout) to files.
     """
     stem = "{workspace}/azul_{cmd}_{utcnow:%Y-%m-%dT%H:%M:%S.%f}Z_{rand}"
     return {
@@ -152,7 +152,7 @@ def preset_process_png(prefix):
 
 presets = {
     "current": current_env,
-    "logfile": preset_logfile,
+    "logfiles": preset_logfiles,
     "otf": preset_otf_data,
     "dss": preset_dss,
     "datalabs": preset_datalabs,
