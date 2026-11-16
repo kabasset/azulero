@@ -131,19 +131,28 @@
 ESA have updated their data retrieval interface, which makes <code class="docutils literal notranslate"><span class="pre">pdr</span></code> provider fail in previous versions of Azulero.
 Version 2.2 implements the new interface such that <code class="docutils literal notranslate"><span class="pre">pdr</span></code> now retrieves DR1 data.</p>
 </div>
-<p>This version simplifies <strong>environment management</strong>:</p>
-<ul class="simple">
+<p>This version focuses on <strong>Data Release 1</strong> and simplifies <strong>environment management</strong>.
+For Euclid Consortium members, new Datalabs-focused <strong>authentication</strong> methods are implemented.</p>
+<dl class="simple">
+<dt>Data Release 1</dt><dd><ul class="simple">
+<li><p>The default data provider is now <code class="docutils literal notranslate"><span class="pre">pdr</span></code>, such that no configuration is needed anymore for non-Euclid members.</p></li>
+<li><p>We updated the default rendering parameters to take advantage of the improved signal-to-noise ratio of DR1 data.</p></li>
+</ul>
+</dd>
+<dt>Environment management</dt><dd><ul class="simple">
+<li><p>New command <a class="reference internal" href="env.html"><span class="doc">azul env</span></a> aims at specifying multiple environments made of both predefined and custom variables.</p></li>
+<li><p>Global options <code class="docutils literal notranslate"><span class="pre">--logfile</span></code> and <code class="docutils literal notranslate"><span class="pre">--manifest</span></code> enable writing logs and output messages, respectively, to files.
+Manifests are especially handy to implement pipeline checkpoints (<a class="reference internal" href="pipelines.html#checkpoint"><span class="std std-ref">Checkpoint-resume</span></a>).</p></li>
+</ul>
+</dd>
+<dt>Authentication</dt><dd><ul class="simple">
 <li><p>For first-time users, new command <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">env</span> <span class="pre">--setup</span></code> opens a setup wizard.</p></li>
-<li><p>For regular users, new command <a class="reference internal" href="env.html"><span class="doc">azul env</span></a> aims at specifying multiple environments
-made of both predefined and custom variables.</p></li>
-<li><p>Preset <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">env</span> <span class="pre">q1</span></code> optimizes processing parameters for Q1 data,
-therefore we updated the default parameters to match the improved signal-to-noise ratio of DR1 data.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">env</span> <span class="pre">print-user</span></code> can be used to pass the user credentials to <a class="reference internal" href="pipelines.html"><span class="doc">Pipelines</span></a> when a <code class="docutils literal notranslate"><span class="pre">.netrc</span></code> file is not available.</p></li>
 <li><p>The <a class="reference internal" href="python.html"><span class="doc">Python API</span></a> supports passing of both user name and password (as option <code class="docutils literal notranslate"><span class="pre">user=f"{name}:{password}"</span></code>)
 to the data provider factory in case they were already stored in Python variables.</p></li>
-<li><p>Finally, global options <code class="docutils literal notranslate"><span class="pre">--logfile</span></code> and <code class="docutils literal notranslate"><span class="pre">--manifest</span></code> enable writing logs and output messages, respectively, to files.
-Manifests are especially handy to implement pipeline checkpoints (<a class="reference internal" href="pipelines.html#checkpoint"><span class="std std-ref">Checkpoint-resume</span></a>).</p></li>
 </ul>
+</dd>
+</dl>
 <p>More details: <a class="reference internal" href="changes.html"><span class="doc">Change log</span></a>.</p>
 </section>
 <section id="version-2-1">

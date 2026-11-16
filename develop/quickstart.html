@@ -164,21 +164,38 @@ For example, to download a cutout without installing, launch:</p>
 </section>
 <section id="setup">
 <span id="id1"></span><h2>Setup</h2>
-<div class="admonition tip">
-<p class="admonition-title">Tip</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Since version 2.2, accessing public data requires no configuration.
+You can skip this section if you do not intend to use private data!</p>
+</div>
+<p>Euclid Consortium members can access private data when authenticated.
+Three authentication methods are provided, which will be described in the following subsections:</p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">.netrc</span></code> file</dt><dd><p>In personal environments, credentials can be stored once for all in the <code class="docutils literal notranslate"><span class="pre">.netrc</span></code> file.</p>
+</dd>
+<dt>Interactive authentication</dt><dd><p>In shared environments, passwords should not be stored in any file.
+If only the user name is written in the <code class="docutils literal notranslate"><span class="pre">.netrc</span></code> file, an interactive mode is triggered
+and you will be prompted for your password.</p>
+</dd>
+<dt>Session authentication</dt><dd><p>Special command <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">env</span> <span class="pre">print-user</span></code> aims at authenticating the user for an entire terminal session
+without having the password appear in any file or terminal history.
+The interactive mode will be prompted to feed a dedicated environment variable.</p>
+</dd>
+</dl>
+<section id="setup-wizard-and-netrc-file">
+<h3>Setup wizard and <code class="docutils literal notranslate"><span class="pre">.netrc</span></code> file</h3>
+<div class="tip admonition">
+<p class="admonition-title">Setup wizard</p>
 <p>Since version 2.2, a setup wizard will guide you through the initial setup.
-It will perform the steps described in this section.
-You can either follow the instructions below
-or run the following command from your target Azulero workspace:</p>
+It will perform the steps described here.
+You can either follow the instructions below or run the following command:</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">$ </span>azul<span class="w"> </span>env<span class="w"> </span><span class="ge">--setup</span>
 </span></code></pre></div>
 </div>
 </div>
-<section id="for-euclid-members">
-<h3>For Euclid members</h3>
-<p>Accessing public data requires no configuration.</p>
-<p>Internal data retrieval requires authentication,
-which can be stored in the <code class="docutils literal notranslate"><span class="pre">.netrc</span></code> configuration file (<code class="docutils literal notranslate"><span class="pre">~/.netrc</span></code> on Unix, <code class="docutils literal notranslate"><span class="pre">%HOMEPATH%\.netrc</span></code> on Windows) as follows:</p>
+<p>Credentials can be stored in the <code class="docutils literal notranslate"><span class="pre">.netrc</span></code> configuration file
+(<code class="docutils literal notranslate"><span class="pre">~/.netrc</span></code> on Unix, <code class="docutils literal notranslate"><span class="pre">%HOMEPATH%\.netrc</span></code> on Windows) as follows:</p>
 <ul>
 <li><p>For internal SAS data, use your LDAP credentials:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="n">machine</span> <span class="n">easidr</span><span class="o">.</span><span class="n">esac</span><span class="o">.</span><span class="n">esa</span><span class="o">.</span><span class="n">int</span>
@@ -198,21 +215,20 @@ which can be stored in the <code class="docutils literal notranslate"><span clas
 </div>
 </li>
 </ul>
-<p>In order to avoid storing sensitive data in shared environments like Datalabs,
-passwords can be omitted, which triggers interactive mode:
-in this case, you will be prompted for your password at startup.</p>
 </section>
-<section id="for-other-users">
-<h3>For other users</h3>
-<p>Because you will retrieve only public data,
-you can setup your environment to always restrict queries to the public archive.
-To do so, simply set the environment variable <code class="docutils literal notranslate"><span class="pre">AZULRETRIEVE_FROM</span></code> to <code class="docutils literal notranslate"><span class="pre">pdr</span></code>
-(see <a class="reference internal" href="retrieve.html"><span class="doc">azul retrieve</span></a> and <a class="reference internal" href="interfaces.html#named-options"><span class="std std-ref">Named options</span></a> to understand why).
-Typically, Bash users may add the following to the <code class="docutils literal notranslate"><span class="pre">.bashrc</span></code> file:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">$ </span><span class="nb">export</span><span class="w"> </span><span class="nv">AZULRETRIEVE_FROM</span><span class="o">=</span><span class="ge">pdr</span>
+<section id="session-authentication">
+<span id="printuser"></span><h3>Session authentication</h3>
+<p>If you are working in a shared environment like ESA Datalabs,
+you should not save secrets in a <code class="docutils literal notranslate"><span class="pre">.netrc</span></code> file or terminal history.
+In this specific case, please start by exporting your credentials using <code class="docutils literal notranslate"><span class="pre">azul</span> <span class="pre">env</span></code> as follows:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp"># </span>Unix
+</span><span id="line-2"><span class="gp">$ </span><span class="ge">export</span><span class="w"> </span><span class="k">$(</span>azul<span class="w"> </span>env<span class="w"> </span><span class="ge">print-user</span><span class="k">)</span>
+</span><span id="line-3">
+</span><span id="line-4"><span class="gp"># </span>Windows
+</span><span id="line-5"><span class="gp">$ </span><span class="k">for</span><span class="w"> </span>/f<span class="w"> </span>%%x<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="o">(</span><span class="s1">'azul env </span><span class="ge">print-user</span><span class="s1">'</span><span class="o">)</span><span class="w"> </span><span class="k">do</span><span class="w"> </span><span class="nb">set</span><span class="w"> </span><span class="s2">"%%x"</span>
 </span></code></pre></div>
 </div>
-<p>No other configuration is needed for public data.</p>
+<p>Authentication will be forgotten when the session closes.</p>
 </section>
 <section id="esa-datalabs-users">
 <h3>ESA Datalabs users</h3>
@@ -311,8 +327,8 @@ this is where the algorithms and their parameters are described.</p>
 </ul>
 </li>
 <li><a :data-current="activeSection === '#setup'" class="reference internal" href="#setup">Setup</a><ul>
-<li><a :data-current="activeSection === '#for-euclid-members'" class="reference internal" href="#for-euclid-members">For Euclid members</a></li>
-<li><a :data-current="activeSection === '#for-other-users'" class="reference internal" href="#for-other-users">For other users</a></li>
+<li><a :data-current="activeSection === '#setup-wizard-and-netrc-file'" class="reference internal" href="#setup-wizard-and-netrc-file">Setup wizard and <code class="docutils literal notranslate"><span class="pre">.netrc</span></code> file</a></li>
+<li><a :data-current="activeSection === '#session-authentication'" class="reference internal" href="#session-authentication">Session authentication</a></li>
 <li><a :data-current="activeSection === '#esa-datalabs-users'" class="reference internal" href="#esa-datalabs-users">ESA Datalabs users</a></li>
 </ul>
 </li>
