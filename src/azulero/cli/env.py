@@ -7,7 +7,7 @@ from functools import lru_cache
 import os
 import sys
 
-from azulero.cli.process import default_transform, default_workspace
+from azulero.cli.process import default_workspace
 from azulero.tools.messaging import (
     logger,
     parse_envargs,
@@ -38,23 +38,17 @@ def current_env(prefix):
         for (k, v) in os.environ.items()
         if k.startswith(azulero_prefix())
     }
+    # FIXME rm password from AZULRETRIEVE_USER?
 
 
 def preset_logfile(prefix):
     """
-    Write logs to file.
+    Write logs (``stderr``) and manifest (``stdout``) to files.
     """
-    template = "{workspace}/azul_{cmd}_{utcnow:%Y-%m-%dT%H:%M:%S.%f}Z_{rand}.log"
-    return {prefix + "_LOGFILE": template}
-
-
-def preset_q1_data(prefix):
-    """
-    Retrieve Q1 data.
-    """
+    stem = "{workspace}/azul_{cmd}_{utcnow:%Y-%m-%dT%H:%M:%S.%f}Z_{rand}"
     return {
-        prefix + "RETRIEVE_FROM": "pdr",
-        prefix + "RETRIEVE_DSR": "Q1_R1",
+        prefix + "_LOGFILE": stem + ".log",
+        prefix + "_MANIFEST": stem + ".out",
     }
 
 
@@ -69,27 +63,14 @@ def preset_q1_processing(prefix):
     }
 
 
-def preset_q1(prefix):
-    """
-    Retrieve Q1 data and process with Q1 default parameters.
-    """
-    return {**preset_q1_data(prefix), **preset_q1_processing(prefix)}
-
-
 def preset_dr1_data(prefix):
     """
     Retrieve DR1 data.
     """
     return {
+        prefix + "RETRIEVE_FROM": "pdr",
         prefix + "RETRIEVE_DSR": "DR1_R1,DR1_R2",
     }
-
-
-def preset_pdr(prefix):
-    """
-    Retrieve public data.
-    """
-    return {prefix + "RETRIEVE_FROM": "pdr"}
 
 
 def preset_otf_data(prefix):
@@ -97,7 +78,7 @@ def preset_otf_data(prefix):
     Retrieve on-the-fly data.
     """
     return {
-        prefix + "RETRIEVE_FROM": "otf",
+        prefix + "RETRIEVE_FROM": "dss",  # SAS' otf is generally outdated
         prefix + "RETRIEVE_DSR": "F-006",
     }
 
@@ -121,7 +102,7 @@ def preset_datalabs(prefix):
 
 def preset_yjh_to_bgr(prefix):
     """
-    Process with NIR colors only.
+    Process with NIR colors only, use VIS for lightness, don't adjust hue.
     """
     return {
         prefix + "PROCESS_IB": 0,
@@ -131,9 +112,9 @@ def preset_yjh_to_bgr(prefix):
     }
 
 
-def preset_yhj_to_lbgr(prefix):
+def preset_yjh_to_lbgr(prefix):
     """
-    Process with NIR colors and lightness only.
+    Process with NIR colors and lightness, don't adjust hue.
     """
     return {**preset_yjh_to_bgr(prefix), prefix + "PROCESS_NIRL": 1}
 
@@ -149,15 +130,13 @@ def preset_adjust_not(prefix):
     }
 
 
-def preset_process_heavy(prefix):
+def preset_adjust_heavy(prefix):
     """
-    Process more aggressively (heavier sharpening, saturation, overflow clipping).
+    Process more aggressively (heavier sharpening and saturation).
     """
     return {
-        prefix + "PROCESS_FWHM": tuple(w * 1.5 for w in default_transform.iyjh_fwhm),
         prefix + "PROCESS_SHARPEN": 0.7,
         prefix + "PROCESS_SATURATION": 1.4,
-        prefix + "PROCESS_OVERFLOW": 0.1,
     }
 
 
@@ -184,18 +163,15 @@ def preset_process_png(prefix):
 presets = {
     "current": current_env,
     "logfile": preset_logfile,
-    "q1-data": preset_q1_data,
-    "q1-processing": preset_q1_processing,
-    "q1": preset_q1,
     "dr1": preset_dr1_data,
-    "pdr": preset_pdr,
     "otf": preset_otf_data,
     "dss": preset_dss,
     "datalabs": preset_datalabs,
     "yjh-bgr": preset_yjh_to_bgr,
-    "yjh-lbgr": preset_yhj_to_lbgr,
+    "yjh-lbgr": preset_yjh_to_lbgr,
     "adjust-not": preset_adjust_not,
-    "process-heavy": preset_process_heavy,
+    "process-q1": preset_q1_processing,
+    "process-heavy": preset_adjust_heavy,
     "process-jpg": preset_process_jpg,
     "process-png": preset_process_png,
 }
@@ -206,7 +182,7 @@ def print_user(prefix):
     Print the user name and password.
 
     This command should ONLY be used to export the user credential for pipelines.
-    See :doc:`pipeline`.
+    See :ref:`printuser`.
     """
     if sys.stdout.isatty():
         raise RuntimeError(
