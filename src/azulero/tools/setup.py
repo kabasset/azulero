@@ -2,6 +2,7 @@
 # SPDX-PackageSourceInfo: https://github.com/kabasset/azulero
 # SPDX-License-Identifier: Apache-2.0
 
+from azulero import _version
 import os
 from pathlib import Path
 
@@ -60,11 +61,16 @@ def setup_wizard(workspace: Path, prefix: str):
     next_step("Setup complete!", True)
     logger.info(f"You can now use Azulero commands, e.g.:")
     logger.command("azul retrieve UGC11169 -r 30s | azul process")
+    version = _version.__version__
+    if len(version.split(".")) == 2:
+        version = "develop"
+    else:
+        version = "v" + version
     logger.info(
         f"Don't forget to read the docs: "
         + colorize(
             header_color_codes[2],
-            "https://kabasset.github.io/azulero/develop/quickstart.html",
+            f"https://kabasset.github.io/azulero/{version}/quickstart.html",
         )
     )
 
