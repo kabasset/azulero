@@ -66,6 +66,18 @@ Setup
    Since version 2.2, accessing public data requires no configuration.
    You can skip this section if you do not intend to use private data!
 
+.. admonition:: Setup wizard
+   :class: tip
+
+   To access internal data, a setup wizard will guide you through the initial setup.
+   It will perform the steps described in this section.
+   You can either follow the instructions below or run the following command from your workspace (see :ref:`workspace`):
+
+   .. code-block:: console
+      :emphasize-text: --setup
+
+      $ azul env --setup
+
 Euclid Consortium members can access private data when authenticated.
 Three authentication methods are provided, which will be described in the following subsections:
 
@@ -82,21 +94,8 @@ Session authentication
    without having the password appear in any file or terminal history.
    The interactive mode will be prompted to feed a dedicated environment variable.
 
-
-Setup wizard and ``.netrc`` file
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. admonition:: Setup wizard
-   :class: tip
-
-   Since version 2.2, a setup wizard will guide you through the initial setup.
-   It will perform the steps described here.
-   You can either follow the instructions below or run the following command:
-
-   .. code-block:: console
-      :emphasize-text: --setup
-
-      $ azul env --setup
+``.netrc`` file
+^^^^^^^^^^^^^^^
 
 Credentials can be stored in the ``.netrc`` configuration file
 (``~/.netrc`` on Unix, ``%HOMEPATH%\.netrc`` on Windows) as follows:
@@ -148,13 +147,13 @@ ESA Datalabs users
 ^^^^^^^^^^^^^^^^^^
 
 MER datafiles are directly accessible from ESA Datalabs, such that no download is needed.
-To enable this feature permanently in Datalabs, add the following line to the ``.bashrc`` file
-(see :doc:`retrieve` for details):
+To enable this feature permanently in your workspace,
+add the following line to a ``.env`` file at the root of the workspace:
 
-.. code-block:: console
+.. code-block::
    :emphasize-text: labs
 
-   $ export AZULRETRIEVE_DATA=labs
+   AZULRETRIEVE_DATA=labs
 
 
 Your first image
@@ -170,7 +169,7 @@ Go to your favorite directory and run:
 .. code-block:: console
    :emphasize-text: retrieve process
 
-   $ azul retrieve UGC11169 -r 30s | azul process -w 0
+   $ azul retrieve UGC11169 -r 30s | azul process
 
 This will retrieve and process an area of 1' x 1' or roughly 600 x 600 pixels around the galaxy core.
 Wait for a few seconds for the commands to complete...
