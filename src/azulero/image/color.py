@@ -26,8 +26,8 @@ class Transform(object):
     j_to_r: float = 0.25
     hue: float = -20.0
     saturation: float = 1.2
-    stretch: float = 28.25
-    bw: tuple = (30.0, 23.5)
+    stretch: float = 28.0
+    bw: tuple = (29.5, 23.5)
     neg_overshoot: float = 1.0
     bgr_curves: tuple = ([(0.1, 0.1), (0.5, 0.55)], [], [])
 
