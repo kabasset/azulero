@@ -49,7 +49,7 @@ def add_parser(subparsers, help):
     parser.add_argument(
         "--dsr",
         type=str,
-        default="DR1_R2,DR1_R1,Q1_R1",
+        default="DR1_R2,DR1_R1",
         metavar="NAMES",
         help="Comma-separated list of data set releases in order of preference.",
     )

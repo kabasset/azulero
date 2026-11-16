@@ -20,15 +20,6 @@ Translation to Windows is left as an exercise!
 For a better understanding of what actually happens,
 the last section dissects the data flow of a simple pipeline.
 
-The results will be presented for public Q1 data only;
-set the following environment variables in order to reproduce the images exactly (see :ref:`named_options`):
-
-.. code-block:: console
-   :emphasize-text: AZULRETRIEVE_FROM AZULRETRIEVE_DSR
-
-   $ export AZULRETRIEVE_FROM=pdr
-   $ export AZULRETRIEVE_DSR=Q1_R1
-
 .. admonition:: Credit for all images in this page:
    :class: hint
 

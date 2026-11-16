@@ -45,12 +45,12 @@ As an example, the collage on the right is the unedited output of a single comma
 (credit: ESA Euclid / Euclid Consortium / NASA / Q1-2025 / Antoine Basset, CNES).
 
 For Python (particularly ESA Datalabs notebook users), a :doc:`python` is exposed.
-Rendering a color image from photometric channels is simply done ase:
+For example, color images are rendered as:
 
 .. code-block:: python
    :emphasize-text: process_iyjh
 
-   >>> colored = azul.process_iyjh(data)
+   >>> bgr = azul.process_iyjh(iyjh)
 
 .. tip::
    

@@ -42,7 +42,7 @@ For convenience, ``azul retrieve`` features have also been ported to the API, as
    radius = Angle("30s")
 
    provider = azul.DataProvider("pdr")
-   tiles = provider.query_coord_tiles(coord, ["Q1_R1"])
+   tiles = provider.query_coord_tiles(coord)
    datafiles = provider.query_tile_datafiles(tiles[0])
    provider.download_cutouts(datafiles, Path("workdir"), coord, radius)
 
