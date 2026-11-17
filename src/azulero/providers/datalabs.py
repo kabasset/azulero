@@ -14,6 +14,6 @@ class Datalabs(LocalDataStore):
         self._sas = sas
 
     def _datafile_path(self, name):
-        q = f"SELECT file_name, datalabs_path FROM sedm.mosaic_product WHERE file_name='{name}'"
+        q = f"SELECT file_name, datalabs_path FROM {self._sas.table_name}.mosaic_product WHERE file_name='{name}'"
         res = self._sas.get_table(q)[0]
         return Path(res["datalabs_path"]) / res["file_name"]  # type: ignore

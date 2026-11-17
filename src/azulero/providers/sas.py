@@ -41,7 +41,7 @@ class SAS:
             self._authenticate(user)
             self.table_name = "sedm"
         else:
-            self.table_name = "dr1"
+            self.table_name = "dr1"  # FIXME no q1?
 
         if err.getvalue():
             raise RuntimeError(err.getvalue())
