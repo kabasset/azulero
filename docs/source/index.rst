@@ -52,9 +52,10 @@ For example, color images are rendered as:
 
    >>> bgr = azul.process_iyjh(iyjh)
 
-.. tip::
-   
-   Check our Q1 processing in Azulite_ (DR1 incoming),
+.. note::
+
+   Check our image gallery_,
+   and our Q1 processing in Azulite_ (DR1 incoming),
    where you can navigate the sky in full Azulero colors and export cutouts.
 
 
@@ -121,8 +122,3 @@ In addition to these direct contributions, we would like to thank the Euclid com
 for the support they showed and the quick and surprisingly detailed answers they gave to our sometimes dummy questions.
 It is a real pleasure and an extraordinary journey working in such a collaboration
 with so many world-renowned experts and brilliant newcomers.
-
-
-.. _Azulite: https://kabasset.github.io/azulite/index.html
-.. _eummy: https://github.com/schirmermischa/eummy
-.. _euniverse: https://github.com/schirmermischa/euniverse
