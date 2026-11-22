@@ -21,7 +21,7 @@ For a better understanding of what actually happens,
 the last section dissects the data flow of a simple pipeline.
 
 .. admonition:: Credit for all images in this page:
-   :class: hint
+   :class: note
 
    ESA Euclid / Euclid Consortium / NASA / Q1-2025 / Antoine Basset (CNES).
 

@@ -278,10 +278,24 @@ def crop_pyramid(
     factor = pyramid.atleast_wide(
         pyramid[1].shape[1] / params.hfov * video_format[0] * 2
     )  # FIXME handle rotation
+    hfov = params.hfov / factor
+    post_zoom: float | None = None  # crop_planar doesn't support zoom > 1
+    if hfov < video_format[0]:
+        post_zoom = video_format[0] / hfov  # type: ignore
+        hfov = video_format[0]
     scaled_params = sequence.Frame(
-        params.index, params.center / factor, params.hfov / factor, params.roll
+        params.index, params.center / factor, hfov, params.roll
     )
-    return crop_planar(pyramid[factor], scaled_params, video_format)
+    crop = crop_planar(pyramid[factor], scaled_params, video_format)
+    if post_zoom is None:
+        return crop
+    return zoom_planar(crop, post_zoom, video_format)
+
+
+def zoom_planar(image: np.ndarray, factor: float, video_format: tuple[int, int]):
+    cy, cx = [i / 2 for i in image.shape[:-1]]
+    rot_mat = cv2.getRotationMatrix2D((cx, cy), 0, factor)
+    return cv2.warpAffine(image, rot_mat, video_format, flags=cv2.INTER_CUBIC)
 
 
 def crop_planar(
